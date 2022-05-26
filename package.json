@@ -1,0 +1,76 @@
+{
+  "name": "unicef-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.28",
+    "@fortawesome/free-solid-svg-icons": "^5.13.0",
+    "@fortawesome/react-fontawesome": "^0.1.9",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "animate.css": "^4.1.0",
+    "axios": "^0.24.0",
+    "bootstrap": "^4.5.0",
+    "lodash": "^4.17.15",
+    "npx": "^10.2.2",
+    "react": "^16.13.1",
+    "react-bootstrap": "^1.0.1",
+    "react-dom": "^16.13.1",
+    "react-icons": "^4.3.1",
+    "react-notifications-component": "^2.4.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.1",
+    "react-toggle": "^4.1.1",
+    "styled-components": "^5.3.3",
+    "typescript": "^4.5.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook -s public"
+  },
+  "eslintConfig": {
+    "extends": "react-app",
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^6.5.4",
+    "@storybook/addon-essentials": "^6.5.4",
+    "@storybook/addon-interactions": "^6.5.4",
+    "@storybook/addon-links": "^6.5.4",
+    "@storybook/builder-webpack4": "^6.5.4",
+    "@storybook/manager-webpack4": "^6.5.4",
+    "@storybook/node-logger": "^6.5.4",
+    "@storybook/preset-create-react-app": "^3.2.0",
+    "@storybook/react": "^6.5.4",
+    "@storybook/testing-library": "0.0.11",
+    "@types/react-router-dom": "^5.3.2",
+    "@types/styled-components": "^5.1.23",
+    "sass": "^1.45.2"
+  }
+}

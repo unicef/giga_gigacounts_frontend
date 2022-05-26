@@ -1,0 +1,171 @@
+:root {
+
+	/* Colors */
+
+	--color-darkest-blue: #073071;
+	--color-dark-blue: #175DCE;
+	--color-blue: #277AFF;
+	--color-light-blue: #6FA6FE;
+	--color-lighter-blue: #B6D2FF;
+	--color-lightest-blue: #E5EFFF;
+
+	--color-black: #222222;
+	--color-darkest-grey: #393939;
+	--color-darker-grey: #5F5F5F;
+	--color-dark-grey: #747474;
+	--color-mid-grey: #9E9E9E;
+	--color-light-grey: #D0D0D0;
+	--color-lightest-grey: #FAFAFA;
+	--color-white: #FFFFFF;
+
+	--color-red: #F94B4B;
+	--color-red-on-blue: #FF7575;
+	--color-orange: #FF9F40;
+	--color-orange-on-blue: #F9BF68;
+	--color-green: #46C66D;
+	--color-green-on-blue: #6FE883;
+	--color-dark-green: #07706D;
+
+	--color-white-15: rgba(255, 255, 255, 0.15);
+	--color-white-40: rgba(255, 255, 255, 0.4);
+	--color-black-10: rgba(0, 0, 0, 0.1);
+	--color-black-50: rgba(0, 0, 0, 0.5);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("./fonts/OpenSans-Light.ttf") format("opentype");
+    font-weight: 300;
+  }
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("./fonts/OpenSans-Regular.ttf") format("opentype");
+    font-weight: normal;
+  }
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("./fonts/OpenSans-SemiBold.ttf") format("opentype");
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("./fonts/OpenSans-Bold.ttf") format("opentype");
+    font-weight: 700;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+::-moz-selection { 
+	background: var(--color-lightest-blue)
+  }
+::selection { 
+	background: var(--color-lightest-blue)
+  }
+
+body {
+	font-family: 'Open Sans';
+	font-style: normal;
+}
+
+
+h1 {
+	font-weight: 600;
+	font-size: 32px;
+	line-height: 128%;
+	letter-spacing: 0.015em;
+}
+
+h2 {
+	font-weight: 300;
+	font-size: 36px;
+	line-height: 122%;
+	letter-spacing: 0.006em;
+}
+
+h3 {
+	font-weight: 400;
+	font-size: 36px;
+	line-height: 122%;
+	letter-spacing: 0.015em;
+}
+
+h4 {
+	font-weight: 600;
+	font-size: 21px;
+	line-height: 150%;
+	letter-spacing: 0.003em;
+}
+
+h5 {
+	font-weight: 600;
+	font-size: 16px;
+	line-height: 150%;
+	letter-spacing: 0.018em;
+	text-transform: uppercase;
+}
+
+h6 {
+
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 148%;
+	letter-spacing: 0.002em;
+}
+
+h6 b {
+	font-weight: 600;
+	letter-spacing: 0.003em;
+}
+
+a {
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 148%;
+	letter-spacing: 0.002em;
+	text-decoration-line: underline;
+	color: var( --color-dark-blue );
+}
+
+p {
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 156%;
+	letter-spacing: 0.003em;
+	margin: 0.8em 0;
+}
+
+p b {
+	font-weight: 600;
+	letter-spacing: 0.0032em;
+	margin: 0.8em 0;
+}
+
+small {
+	display: block;
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 148%;
+	letter-spacing: 0.018em;
+	margin: 0.8em 0;
+}
+
+small b {
+	display: block;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	margin: 0.8em 0;
+}
+
+.super-small {
+	font-weight: 600;
+	font-size: 8px;
+	line-height: 148%;
+	letter-spacing: 0.015em;
+}
