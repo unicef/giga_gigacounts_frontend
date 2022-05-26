@@ -99,8 +99,8 @@ export const Navigation = ({
             }
         }
         onMouseOver={()=>{setHovered(true)}} 
-        onMouseOut={()=>{setHovered(false)}
-    }>
+        onMouseOut={()=>{setHovered(false)}}
+        >
         {hovered ? <StyledLogo src="./logos/giga-logo-inline.svg"></StyledLogo> : <StyledLogo src="./logos/giga-logo.svg"></StyledLogo>}
         <MenuContainer style={hovered ? {width: '174px'} : {width: '58px'}}>
             {!admin && <CountryBlock collapsed={!hovered} countryName={countryName} countryPath={countryPath} />}

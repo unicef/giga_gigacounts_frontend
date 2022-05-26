@@ -12,7 +12,7 @@ const StyledButton = styled.div`
 
 
     /* Inside auto layout */
-
+    cursor: pointer;
     flex: none;
     order: 0;
     align-self: stretch;
@@ -70,7 +70,8 @@ export const NavItem = ({
         height: '24px',
         flexDirection: 'column',
         gap: '4px'
-    }}
+    }
+    }
       {...props}
     >
       <StyledIcon alt="icon" src={iconPath}></StyledIcon>

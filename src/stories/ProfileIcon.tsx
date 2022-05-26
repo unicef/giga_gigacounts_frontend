@@ -14,9 +14,6 @@ const StyledButton = styled.div`
 
     height: 40px;
 
-
-    /* Inside auto layout */
-
     flex: none;
     order: 2;
     flex-grow: 0;
@@ -45,22 +42,13 @@ const NameContainer = styled.div`
     justify-content: center;
     align-items: flex-start;
     padding: 0px;
-
-    width: 124px;
-    height: 40px;
-
-
-    /* Inside auto layout */
-
-    flex: none;
-    order: 1;
-    flex-grow: 1;
+    gap: 
 `
 
 const Name = styled.div`
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: center;
     padding: 0px;
 
     width: 124px;
@@ -86,13 +74,11 @@ const Role = styled.p`
     font-weight: 400;
     font-size: 12px;
     line-height: 148%;
-    /* identical to box height, or 18px */
+    margin: 0;
 
     letter-spacing: 0.018em;
 
-    /* Primary/Lightest Blue */
-
-    color: #E5EFFF;
+    color: var(--color-light-blue);
 
     /* Inside auto layout */
 
@@ -113,7 +99,7 @@ const NameText = styled.p`
     font-weight: 600;
     font-size: 14px;
     line-height: 156%;
-    /* identical to box height, or 22px */
+    margin: 0;
 
     letter-spacing: 0.003em;
 
@@ -122,18 +108,6 @@ const NameText = styled.p`
     flex: none;
     order: 0;
     flex-grow: 1;
-`
-
-const Logout = styled.div`
-    width: 22px;
-    height: 22px;
-
-
-    /* Inside auto layout */
-
-    flex: none;
-    order: 1;
-    flex-grow: 0;
 `
 
 interface NavItemProps {
@@ -152,7 +126,6 @@ export const ProfileIcon = ({
   role,
   ...props
 }: NavItemProps) => {
-    console.log(collapsed)
   return (
     <StyledButton
       style={!collapsed ? 
@@ -169,9 +142,7 @@ export const ProfileIcon = ({
       <NameContainer>
           <Name>
               <NameText><b>{name}</b></NameText>
-              <Logout>
-                  <img alt='logout' src='./utils/logout.svg'></img>
-              </Logout>
+              <img style={{cursor: 'pointer'}} onClick={()=>{console.log('logout')}} alt='logout' src='./utils/logout.svg'></img>
           </Name>
           <Role>
             {role}
