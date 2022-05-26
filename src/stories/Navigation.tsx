@@ -29,12 +29,8 @@ const StyledLogo = styled.img`
 const StyledDivider = styled.div`
     height: 2px;
 
-    /* Transparent/White 15% */
-
     background: rgba(255, 255, 255, 0.15);
     border-radius: 2px;
-
-    /* Inside auto layout */
 
     flex: none;
     order: 1;
