@@ -1,0 +1,189 @@
+@font-face {
+    font-family: 'Giga';
+    src: url('../fonts/giga.eot');
+    src: url('../fonts/giga.eot') format('embedded-opentype'), 
+        url('../fonts/giga.woff2') format('woff2'), 
+        url('../fonts/giga.woff') format('woff'), 
+        url('../fonts/giga.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  .icon {
+    display: inline-block;
+    font: normal normal normal 1em/1 'Giga';
+    color: inherit;
+    flex-shrink: 0;
+    speak: none;
+    text-transform: none;
+    /* Better Font Rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .icon-20 {
+    font-size: 20px;
+  }
+  .icon-24 {
+    font-size: 24px;
+  }
+  
+  /* Icons -------------------------*/
+  
+  .icon-arrow-up::before {
+    content: "\ea02";
+  }
+  
+  .icon-calendar::before {
+    content: "\ea03";
+  }
+  
+  .icon-chain::before {
+    content: "\ea04";
+  }
+  
+  .icon-up-speed::before {
+    content: "\ea05";
+  }
+  
+  .icon-trash::before {
+    content: "\ea06";
+  }
+  
+  .icon-sent::before {
+    content: "\ea07";
+  }
+  
+  .icon-search::before {
+    content: "\ea08";
+  }
+  
+  .icon-school::before {
+    content: "\ea09";
+  }
+  
+  .icon-question::before {
+    content: "\ea0a";
+  }
+  
+  .icon-plus::before {
+    content: "\ea0b";
+  }
+  
+  .icon-plug::before {
+    content: "\ea0c";
+  }
+  
+  .icon-pin::before {
+    content: "\ea0d";
+  }
+  
+  .icon-person::before {
+    content: "\ea0e";
+  }
+  
+  .icon-ongoing::before {
+    content: "\ea0f";
+  }
+  
+  .icon-network::before {
+    content: "\ea10";
+  }
+  
+  .icon-meter::before {
+    content: "\ea11";
+  }
+  
+  .icon-globe::before {
+    content: "\ea12";
+  }
+  
+  .icon-logout::before {
+    content: "\ea13";
+  }
+  
+  .icon-list::before {
+    content: "\ea14";
+  }
+  
+  .icon-image::before {
+    content: "\ea15";
+  }
+  
+  .icon-gear::before {
+    content: "\ea16";
+  }
+  
+  .icon-files::before {
+    content: "\ea17";
+  }
+  
+  .icon-filter::before {
+    content: "\ea18";
+  }
+  
+  .icon-file::before {
+    content: "\ea19";
+  }
+  
+  .icon-expired::before {
+    content: "\ea1a";
+  }
+  
+  .icon-draft::before {
+    content: "\ea1b";
+  }
+  
+  .icon-download::before {
+    content: "\ea1c";
+  }
+  
+  .icon-down-speed::before {
+    content: "\ea1d";
+  }
+  
+  .icon-dot::before {
+    content: "\ea1e";
+  }
+  
+  .icon-date::before {
+    content: "\ea1f";
+  }
+  
+  .icon-dashboard::before {
+    content: "\ea20";
+  }
+  
+  .icon-copy::before {
+    content: "\ea21";
+  }
+  
+  .icon-contract::before {
+    content: "\ea22";
+  }
+  
+  .icon-confirmed::before {
+    content: "\ea23";
+  }
+  
+  .icon-completed::before {
+    content: "\ea24";
+  }
+  
+  .icon-coins::before {
+    content: "\ea25";
+  }
+  
+  .icon-close::before {
+    content: "\ea26";
+  }
+  
+  .icon-checkmark::before {
+    content: "\ea27";
+  }
+  
+  .icon-arrow-down::before {
+    content: "\ea28";
+  }
+  
+  
