@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
+import { useHistory } from "react-router-dom";
 
 const StyledLoginForm = styled.div`
     display: flex;
@@ -177,6 +179,8 @@ const WRONG_CREDENTIALS_DESCRIPTION = 'Please contact giga administrator for ass
 
 export const LoginForm = () => {
 
+  const history = useHistory();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('')
   const [emailError, setEmailError] = useState(false);
@@ -191,16 +195,28 @@ export const LoginForm = () => {
 
   const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setPassword(event.target.value);
-      setPasswordError(true);
+      setPasswordError(false);
       setWrongCredentialsError(false);
   }
-  const login = () => {
+  const login = async () => {
       if(email === ''){
           setEmailError(true)
       } else if(password === ''){
           setPasswordError(true)
       } else {
-        setWrongCredentialsError(true)
+        try {
+            setEmailError(false);
+            setPasswordError(false);
+            const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`,{
+                email,
+                password
+            })
+            localStorage.setItem('session', res.data.token);
+            history.push("/dashboard");
+        } catch (err) {
+            setWrongCredentialsError(true);
+        }
+       
       }
   }
   return (

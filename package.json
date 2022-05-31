@@ -11,8 +11,6 @@
     "@testing-library/user-event": "^7.2.1",
     "animate.css": "^4.1.0",
     "axios": "^0.24.0",
-    "bootstrap": "^4.5.0",
-    "lodash": "^4.17.15",
     "npx": "^10.2.2",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
