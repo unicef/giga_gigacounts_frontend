@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useHistory } from "react-router-dom";
+import bcrypt from 'bcrypt';
 
 const StyledLoginForm = styled.div`
     display: flex;
@@ -177,6 +178,8 @@ const EMPTY_PASSWORD_MESSAGE = 'Password field is empty';
 const WRONG_CREDENTIALS_TITLE = 'Invalid Credentials';
 const WRONG_CREDENTIALS_DESCRIPTION = 'Please contact giga administrator for assistance';
 
+const HASH_SALT = 'N9iQShGQX4dq';
+
 export const LoginForm = () => {
 
   const history = useHistory();
@@ -207,9 +210,10 @@ export const LoginForm = () => {
         try {
             setEmailError(false);
             setPasswordError(false);
+            const encryptedPassword = await bcrypt.hash(password, HASH_SALT);
             const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`,{
                 email,
-                password
+                encryptedPassword
             })
             localStorage.setItem('session', res.data.token);
             history.push("/dashboard");
