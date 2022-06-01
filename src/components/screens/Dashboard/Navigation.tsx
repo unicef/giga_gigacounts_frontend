@@ -57,12 +57,6 @@ const MenuContainer = styled.div`
     flex-grow: 1;
 `
 
-const StyledLabel = styled.h5`
-    flex: none;
-    order: 1;
-    flex-grow: 0;
-`
-
 interface CountryBlockProps {
   admin: boolean;
   countryPath?: string;
