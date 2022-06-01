@@ -112,7 +112,7 @@ const NameText = styled.p`
 
 interface NavItemProps {
   collapsed?: boolean;
-  name: string;
+  name?: string;
   onClick?: () => void;
   role? : string;
 }
