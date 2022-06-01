@@ -4,14 +4,18 @@ import {
     Route,
     Switch
   } from "react-router-dom";
-import Home from './screens/Home';
+import Dashboard from './screens/Dashboard';
+import Login from './screens/Login/index';
 
 const App: React.FC = () => {
     return (
         <BrowserRouter>
             <Switch>
             <Route exact path="/">
-                <Home />
+                <Login />
+            </Route>
+            <Route path="/dashboard">
+                <Dashboard />
             </Route>
             </Switch>
         </BrowserRouter>

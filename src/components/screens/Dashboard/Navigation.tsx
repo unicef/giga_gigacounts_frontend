@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { CountryBlock } from './CountryBlock';
-import { NavItem } from './NavItem';
-import { ProfileIcon } from './ProfileIcon';
+import { CountryBlock } from '../../../stories/CountryBlock';
+import { NavItem } from '../../../stories/NavItem';
+import { ProfileIcon } from '../../../stories/ProfileIcon';
 
 const StyledNav = styled.div`
     background-color: var(--color-dark-blue);
