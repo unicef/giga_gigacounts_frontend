@@ -209,9 +209,10 @@ export const LoginForm = () => {
             setEmailError(false);
             setPasswordError(false);
             const encryptedPassword = await web3.utils.sha3(password);
+            console.log(encryptedPassword)
             const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`,{
                 email,
-                encryptedPassword
+                password: encryptedPassword
             })
             localStorage.setItem('session', res.data.token);
             history.push("/dashboard");

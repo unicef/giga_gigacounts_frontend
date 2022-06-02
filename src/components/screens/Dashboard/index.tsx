@@ -8,6 +8,7 @@ const Dashboard: React.FC = () => {
     const [role, setRole] = useState('')
     const [name, setName] = useState('')
     const [countryCode, setCountryCode] = useState('')
+    const [contractCounts, setContractCounts] = useState([])
     useEffect(()=>{
         const getProfile = async () => {
             const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/profile`, {headers: {
@@ -22,13 +23,13 @@ const Dashboard: React.FC = () => {
             const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/contract/count/status`, {headers: {
                 'Authorization': `Bearer ${localStorage.getItem('session')}` || '',
             }})
-            console.log(res);
+            setContractCounts(res.data.counts)
         }
         getProfile()
         getContractsCount()
     }, [])
     return (
-        <Navigation admin={role === ADMIN_ROLE} countryName={countryName} role={role} countryPath={`./flags/${countryCode || 'AC'}.svg`} name={name} />
+        <Navigation admin={role === ADMIN_ROLE} countryName={countryName} role={role} countryPath={`./flags/${countryCode || 'AC'}.svg`} name={name} contractCounts={contractCounts}/>
     )
 }
   

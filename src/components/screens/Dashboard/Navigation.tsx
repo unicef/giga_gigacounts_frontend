@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { CountryBlock } from './CountryBlock';
 import { NavItem } from './NavItem';
@@ -63,6 +63,7 @@ interface CountryBlockProps {
   countryName?: string;
   name?: string;
   role?: string;
+  contractCounts: {status: string, count: string}[];
 }
 
 /**
@@ -73,9 +74,47 @@ export const Navigation = ({
   countryPath,
   countryName,
   name,
-  role
+  role,
+  contractCounts
 }: CountryBlockProps) => {
   const [hovered, setHovered] = useState(true);
+  const [allContractsCount, setAllContractCount] = useState(0);
+  const [draftCount, setDraftCount] = useState(0);
+  const [sentCount, setSentCount] = useState(0);
+  const [confirmedCount, setConfirmedCount] = useState(0);
+  const [ongoingCount, setOngoingCount] = useState(0);
+  const [expiredCount, setExpiredCount] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
+
+  useEffect(()=>{
+    let allCount = 0;
+    contractCounts.forEach((contractCount) =>{
+        allCount += parseInt(contractCount.count)
+        switch (contractCount.status) {
+            case 'Draft':
+                setDraftCount(parseInt(contractCount.count))
+                break;
+            case 'Sent':
+                setSentCount(parseInt(contractCount.count))
+                break;
+            case 'Confirmed':
+                setConfirmedCount(parseInt(contractCount.count))
+                break;
+            case 'Ongoing':
+                setOngoingCount(parseInt(contractCount.count))
+                break;
+            case 'Expired':
+                setExpiredCount(parseInt(contractCount.count))
+                break;
+            case 'Completed':
+                setCompletedCount(parseInt(contractCount.count))
+                break;
+            default:
+                break;
+        }
+    })
+    setAllContractCount(allCount)
+  }, [contractCounts])
   return (
     <StyledNav 
         style={hovered ?
@@ -98,11 +137,13 @@ export const Navigation = ({
         <MenuContainer style={hovered ? {width: '174px'} : {width: '58px'}}>
             {!admin && <CountryBlock collapsed={!hovered} countryName={countryName} countryPath={countryPath} />}
             <StyledDivider style={hovered ? {width: '174px'} : {width: '58px'}} />
-            <div style={{order: 3}}><NavItem collapsed={!hovered} label='All Contracts' number='14' iconPath='./icons/list.svg' ></NavItem></div>
-            <div style={{order: 4}}><NavItem collapsed={!hovered} label='Drafts' number='2' iconPath='./icons/move.svg' ></NavItem></div>
-            <div style={{order: 5}}><NavItem collapsed={!hovered} label='Sent' number='4' iconPath='./icons/pin.svg' ></NavItem></div>
-            <div style={{order: 6}}><NavItem collapsed={!hovered} label='Confirmed' number='3' iconPath='./icons/location.svg' ></NavItem></div>
-            <div style={{order: 7}}><NavItem collapsed={!hovered} label='Ongoing' number='7' iconPath='./icons/location-filled.svg' ></NavItem></div>
+            <div style={{order: 3}}><NavItem collapsed={!hovered} label='All Contracts' number={allContractsCount.toString()} iconPath='./icons/list.svg' ></NavItem></div>
+            <div style={{order: 4}}><NavItem collapsed={!hovered} label='Drafts' number={draftCount.toString()} iconPath='./icons/move.svg' ></NavItem></div>
+            <div style={{order: 5}}><NavItem collapsed={!hovered} label='Sent' number={sentCount.toString()} iconPath='./icons/pin.svg' ></NavItem></div>
+            <div style={{order: 6}}><NavItem collapsed={!hovered} label='Confirmed' number={confirmedCount.toString()} iconPath='./icons/location.svg' ></NavItem></div>
+            <div style={{order: 7}}><NavItem collapsed={!hovered} label='Ongoing' number={ongoingCount.toString()} iconPath='./icons/location-filled.svg' ></NavItem></div>
+            <div style={{order: 7}}><NavItem collapsed={!hovered} label='Expired' number={expiredCount.toString()} iconPath='./icons/location-filled.svg' ></NavItem></div>
+            <div style={{order: 7}}><NavItem collapsed={!hovered} label='Completed' number={completedCount.toString()} iconPath='./icons/location-filled.svg' ></NavItem></div>
         </MenuContainer>
         <ProfileIcon collapsed={!hovered} name={name} role={role}></ProfileIcon>
     </StyledNav>
