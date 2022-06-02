@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { CountryBlock } from './CountryBlock';
+import { CountryBlock } from '../components/screens/Dashboard/CountryBlock';
 
 export default {
   title: 'Example/CountryBlock',

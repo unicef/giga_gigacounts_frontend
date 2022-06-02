@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { NavItem } from './NavItem';
+import { NavItem } from '../components/screens/Dashboard/NavItem';
 
 export default {
   title: 'Example/NavItem',

@@ -18,7 +18,14 @@ const Dashboard: React.FC = () => {
             setRole(res.data.role);
             setCountryCode(res.data.country.code)
         }
+        const getContractsCount = async () => {
+            const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/contract/count/status`, {headers: {
+                'Authorization': `Bearer ${localStorage.getItem('session')}` || '',
+            }})
+            console.log(res);
+        }
         getProfile()
+        getContractsCount()
     }, [])
     return (
         <Navigation admin={role === ADMIN_ROLE} countryName={countryName} role={role} countryPath={`./flags/${countryCode || 'AC'}.svg`} name={name} />

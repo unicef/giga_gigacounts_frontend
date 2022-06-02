@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 const StyledButton = styled.div`
     p {
@@ -126,6 +127,13 @@ export const ProfileIcon = ({
   role,
   ...props
 }: NavItemProps) => {
+  const history = useHistory();
+
+  const logout = () => {
+    localStorage.removeItem('session');
+    history.push("/");
+  }
+
   return (
     <StyledButton
       style={!collapsed ? 
@@ -142,7 +150,7 @@ export const ProfileIcon = ({
       <NameContainer>
           <Name>
               <NameText><b>{name?.substring(0, 8)}</b></NameText>
-              <img style={{cursor: 'pointer'}} onClick={()=>{console.log('logout')}} alt='logout' src='./utils/logout.svg'></img>
+              <img style={{cursor: 'pointer'}} onClick={logout} alt='logout' src='./utils/logout.svg'></img>
           </Name>
           <Role>
             {role}
