@@ -18,7 +18,7 @@ const StyledNav = styled.div`
 
     position: relative;
     width: 228px;
-    height: 876px;
+    height: 100%;
 `
 
 const StyledLogo = styled.img`
@@ -46,7 +46,7 @@ const MenuContainer = styled.div`
     gap: 14px;
 
     width: 58px;
-    height: 690px;
+    height: 100%;
 
 
     /* Inside auto layout */
@@ -57,16 +57,12 @@ const MenuContainer = styled.div`
     flex-grow: 1;
 `
 
-const StyledLabel = styled.h5`
-    flex: none;
-    order: 1;
-    flex-grow: 0;
-`
-
 interface CountryBlockProps {
   admin: boolean;
   countryPath?: string;
   countryName?: string;
+  name?: string;
+  role?: string;
 }
 
 /**
@@ -75,9 +71,11 @@ interface CountryBlockProps {
 export const Navigation = ({
   admin = false,
   countryPath,
-  countryName
+  countryName,
+  name,
+  role
 }: CountryBlockProps) => {
-  const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(true);
   return (
     <StyledNav 
         style={hovered ?
@@ -94,8 +92,7 @@ export const Navigation = ({
                 width: '72px'
             }
         }
-        onMouseOver={()=>{setHovered(true)}} 
-        onMouseOut={()=>{setHovered(false)}}
+
         >
         {hovered ? <StyledLogo src="./logos/giga-logo-inline.svg"></StyledLogo> : <StyledLogo src="./logos/giga-logo.svg"></StyledLogo>}
         <MenuContainer style={hovered ? {width: '174px'} : {width: '58px'}}>
@@ -107,7 +104,7 @@ export const Navigation = ({
             <div style={{order: 6}}><NavItem collapsed={!hovered} label='Confirmed' number='3' iconPath='./icons/location.svg' ></NavItem></div>
             <div style={{order: 7}}><NavItem collapsed={!hovered} label='Ongoing' number='7' iconPath='./icons/location-filled.svg' ></NavItem></div>
         </MenuContainer>
-        <ProfileIcon collapsed={!hovered} name='Juan Pablo' role='Admin'></ProfileIcon>
+        <ProfileIcon collapsed={!hovered} name={name} role={role}></ProfileIcon>
     </StyledNav>
   );
 };

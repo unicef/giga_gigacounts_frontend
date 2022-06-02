@@ -112,7 +112,7 @@ const NameText = styled.p`
 
 interface NavItemProps {
   collapsed?: boolean;
-  name: string;
+  name?: string;
   onClick?: () => void;
   role? : string;
 }
@@ -141,7 +141,7 @@ export const ProfileIcon = ({
       {!collapsed && 
       <NameContainer>
           <Name>
-              <NameText><b>{name}</b></NameText>
+              <NameText><b>{name?.substring(0, 8)}</b></NameText>
               <img style={{cursor: 'pointer'}} onClick={()=>{console.log('logout')}} alt='logout' src='./utils/logout.svg'></img>
           </Name>
           <Role>
