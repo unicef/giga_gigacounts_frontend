@@ -14,10 +14,12 @@ const Dashboard: React.FC = () => {
             const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/profile`, {headers: {
                 'Authorization': `Bearer ${localStorage.getItem('session')}` || '',
             }})
-            setCountryName(res.data.country.name);
+            if(role === ADMIN_ROLE) {
+                setCountryName(res.data.country.name);
+                setCountryCode(res.data.country.code)
+            }
             setName(res.data.name);
             setRole(res.data.role);
-            setCountryCode(res.data.country.code)
         }
         const getContractsCount = async () => {
             const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/contract/count/status`, {headers: {
