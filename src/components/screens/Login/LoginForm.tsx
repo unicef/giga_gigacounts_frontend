@@ -251,14 +251,12 @@ export const LoginForm = () => {
       setEmailError(true);
     }
     if (password === '') {
-      console.log('click');
       setPasswordError(true);
     } else {
       try {
         setEmailError(false);
         setPasswordError(false);
         const encryptedPassword = await web3.utils.sha3(password);
-        console.log(encryptedPassword);
         const res = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/login`,
           {
@@ -273,8 +271,6 @@ export const LoginForm = () => {
       }
     }
   };
-
-  console.log(emailError, passwordError);
 
   return (
     <StyledLoginForm>

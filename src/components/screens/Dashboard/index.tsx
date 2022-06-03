@@ -14,7 +14,7 @@ const Dashboard: React.FC = () => {
             const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/profile`, {headers: {
                 'Authorization': `Bearer ${localStorage.getItem('session')}` || '',
             }})
-            if(role === ADMIN_ROLE) {
+            if(res.data.role !== ADMIN_ROLE) {
                 setCountryName(res.data.country.name);
                 setCountryCode(res.data.country.code)
             }
