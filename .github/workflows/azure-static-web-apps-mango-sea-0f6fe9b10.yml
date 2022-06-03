@@ -24,6 +24,7 @@ jobs:
         env:
           SKIP_PREFLIGHT_CHECK: true
           CI: false
+          REACT_APP_BACKEND_URL: https://unicef-giga-be-dev.azurewebsites.net
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MANGO_SEA_0F6FE9B10 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
