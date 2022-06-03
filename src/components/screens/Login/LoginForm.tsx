@@ -257,11 +257,14 @@ export const LoginForm = () => {
         setEmailError(false);
         setPasswordError(false);
         const encryptedPassword = await web3.utils.sha3(password);
-        console.log(encryptedPassword);
-        const res = await axios.post(`http://127.0.0.1:3333/login`, {
-          email,
-          password: encryptedPassword,
-        });
+
+        const res = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/login`,
+          {
+            email,
+            password: encryptedPassword,
+          }
+        );
         localStorage.setItem('session', res.data.token);
         history.push('/dashboard');
       } catch (err) {

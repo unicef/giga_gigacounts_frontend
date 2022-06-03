@@ -179,7 +179,7 @@ export const Navigation = ({
               collapsed={!hovered}
               label='Sent'
               number={sentCount.toString()}
-              iconPath='./icons/pin.svg'
+              iconPath='./icons/sent.svg'
             ></NavItem>
           </div>
           <div style={{ order: 6 }}>
@@ -187,7 +187,7 @@ export const Navigation = ({
               collapsed={!hovered}
               label='Confirmed'
               number={confirmedCount.toString()}
-              iconPath='./icons/location.svg'
+              iconPath='./icons/confirmed.svg'
             ></NavItem>
           </div>
           <div style={{ order: 7 }}>
@@ -195,7 +195,7 @@ export const Navigation = ({
               collapsed={!hovered}
               label='Ongoing'
               number={ongoingCount.toString()}
-              iconPath='./icons/location-filled.svg'
+              iconPath='./icons/ongoing.svg'
             ></NavItem>
           </div>
           <div style={{ order: 7 }}>
@@ -203,7 +203,7 @@ export const Navigation = ({
               collapsed={!hovered}
               label='Expired'
               number={expiredCount.toString()}
-              iconPath='./icons/location-filled.svg'
+              iconPath='./icons/expired.svg'
             ></NavItem>
           </div>
           <div style={{ order: 7 }}>
@@ -211,7 +211,7 @@ export const Navigation = ({
               collapsed={!hovered}
               label='Completed'
               number={completedCount.toString()}
-              iconPath='./icons/location-filled.svg'
+              iconPath='./icons/completed.svg'
             ></NavItem>
           </div>
         </MenuContainer>

@@ -12,12 +12,15 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const getProfile = async () => {
-      const res = await axios.get(`http://127.0.0.1:3333/user/profile`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('session')}` || '',
-        },
-      });
-      if (role === ADMIN_ROLE) {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/user/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('session')}` || '',
+          },
+        }
+      );
+      if (res.data.role !== ADMIN_ROLE) {
         setCountryName(res.data.country.name);
         setCountryCode(res.data.country.code);
       }
@@ -26,7 +29,7 @@ const Dashboard: React.FC = () => {
     };
     const getContractsCount = async () => {
       const res = await axios.get(
-        `http://127.0.0.1:3333/contract/count/status`,
+        `${process.env.REACT_APP_BACKEND_URL}/contract/count/status`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('session')}` || '',
