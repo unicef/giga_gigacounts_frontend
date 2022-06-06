@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { ProfileIcon } from './ProfileIcon';
+import { ProfileIcon } from '../components/screens/Dashboard/ProfileIcon';
 
 export default {
   title: 'Example/ProfileIcon',
