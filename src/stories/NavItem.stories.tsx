@@ -1,16 +1,16 @@
-import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { NavItem } from '../components/screens/Dashboard/NavItem';
+import { NavItem } from '../components/Dashboard/Navigation/NavItem/NavItem';
 
 export default {
   title: 'Example/NavItem',
-  component: NavItem,
+  component: NavItem
 } as ComponentMeta<typeof NavItem>;
 
 const Template: ComponentStory<typeof NavItem> = (args) => <NavItem {...args} />;
 
 export const Selected = Template.bind({});
+
 Selected.args = {
   label: 'Selected',
   number: '5',
@@ -20,6 +20,7 @@ Selected.args = {
 };
 
 export const Default = Template.bind({});
+
 Default.args = {
   label: 'Unselected',
   collapsed: false,
@@ -28,7 +29,8 @@ Default.args = {
 };
 
 export const Collapsed = Template.bind({});
+
 Collapsed.args = {
-    collapsed: true,
-    iconPath: './icons/list.svg'
-}
+  collapsed: true,
+  iconPath: './icons/list.svg'
+};
