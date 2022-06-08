@@ -31,14 +31,15 @@ export const NavItem: React.FC<NavItemProps> = ({
     >
       <StyledIcon alt="icon" src={iconPath}></StyledIcon>
       {!collapsed && (
-        <StyledLabel>
-          <p style={{ fontWeight: selected ? 'bold' : 'normal' }}>{label}</p>
-        </StyledLabel>
-      )}
-      {!collapsed && (
-        <StyledContractCount>
-          <p>{number}</p>
-        </StyledContractCount>
+        <>
+          <StyledLabel>
+            <p style={{ fontWeight: selected ? 'bold' : 'normal' }}>{label}</p>
+          </StyledLabel>
+
+          <StyledContractCount>
+            <p>{number}</p>
+          </StyledContractCount>
+        </>
       )}
     </StyledButton>
   );
