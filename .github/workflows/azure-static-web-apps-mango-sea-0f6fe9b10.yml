@@ -5,25 +5,45 @@ on:
     branches:
       - dev
   workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Target ENV for deployment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - stage
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+    env:
+      DEPLOY_TARGET_ENV: ${{ github.event.inputs.target_env || 'dev' }}
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Set vars for DEV
+        if: env.DEPLOY_TARGET_ENV == 'dev'
+        run: |
+          echo "REACT_APP_BACKEND_URL=https://unicef-giga-backend-dev.azurewebsites.net" >> $GITHUB_ENV
+          echo "AZURE_STATIC_WEB_APPS_API_TOKEN_VAR_NAME=AZURE_STATIC_WEB_APPS_API_TOKEN_MANGO_SEA_0F6FE9B10" >> $GITHUB_ENV
+      - name: Set vars for STAGE
+        if: env.DEPLOY_TARGET_ENV == 'stage'
+        run: |
+          echo "REACT_APP_BACKEND_URL=https://unicef-giga-backend-stage.azurewebsites.net" >> $GITHUB_ENV
+          echo "AZURE_STATIC_WEB_APPS_API_TOKEN_VAR_NAME=AZURE_STATIC_WEB_APPS_API_TOKEN_VICTORIOUS_GRASS_00B647910" >> $GITHUB_ENV
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         env:
           SKIP_PREFLIGHT_CHECK: true
           CI: false
-          REACT_APP_BACKEND_URL: https://unicef-giga-backend-dev.azurewebsites.net
+          REACT_APP_BACKEND_URL: ${{ env.REACT_APP_BACKEND_URL }}
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_MANGO_SEA_0F6FE9B10 }}
+          azure_static_web_apps_api_token: ${{ secrets[env.AZURE_STATIC_WEB_APPS_API_TOKEN_VAR_NAME] }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: 'upload'
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
