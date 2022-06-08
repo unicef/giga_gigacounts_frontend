@@ -187,8 +187,8 @@ input[type='email'] {
   padding: 6px 12px 4px;
   /* margin-bottom: 18px; */
 
-  border: none;
   color: var(--color-black);
+  border: 1px solid var(--color-black-10);
   background-color: var(--color-lightest-grey);
 }
 
@@ -206,6 +206,13 @@ input[type='email']:focus {
   padding: 5px 11px 3px;
   border: 1px solid var(--color-blue);
   background-color: var(--color-white);
+}
+
+input[type='text']:focus-visible,
+input[type='password']:focus-visible,
+input[type='number']:focus-visible,
+input[type='email']:focus-visible {
+  outline: none;
 }
 
 .input-error {
@@ -226,10 +233,9 @@ input[type='submit'] {
   text-align: center;
   letter-spacing: 0.012em;
   text-transform: uppercase;
-
   padding: 9px 16px;
   margin: 4px 0;
-
+  width: 100%;
   border: none;
   color: var(--color-white);
   background-color: var(--color-blue);
