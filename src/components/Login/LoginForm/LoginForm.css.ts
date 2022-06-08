@@ -155,17 +155,10 @@ export const Button = styled.button<{ order?: string }>`
   align-items: center;
   padding: 9px 16px;
   gap: 4px;
-
   width: 324px;
   height: 32px;
-
-  /* Primary/Blue */
-
   background: #277aff;
   border-radius: 2px;
-
-  /* Inside auto layout */
-
   flex: none;
   order: 1;
   align-self: stretch;
