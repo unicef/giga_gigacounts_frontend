@@ -1,7 +1,9 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": [
+    "@typescript-eslint"
+  ],
   "extends": [
     "eslint:recommended",
     "prettier",
@@ -9,6 +11,6 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "no-console": 2 // Remember, this means error!
+    "no-console": 1 // Remember, this means warning!
   }
 }

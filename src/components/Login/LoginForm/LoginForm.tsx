@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import web3 from 'web3';
+
 import { Button } from 'react-bootstrap';
 import {
-  StyledLoginForm,
+  LoginFormContainer,
   Logo,
-  FormContainer,
+  Form,
   InputContainer,
   InputFrame,
   Input,
@@ -24,86 +25,79 @@ const WRONG_CREDENTIALS_DESCRIPTION = 'Please contact giga administrator for ass
 export const LoginForm: React.FC = (): JSX.Element => {
   const history = useHistory();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [wrongCredentialsError, setWrongCredentialsError] = useState(false);
 
-  const onEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmailError(false);
-    setWrongCredentialsError(false);
-    setEmail(event.target.value);
-  };
+  const handleSubmit = async (e: React.SyntheticEvent): Promise<boolean | undefined> => {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      email: { value: string };
+      password: { value: string };
+    };
 
-  const onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
-    setPasswordError(false);
-    setWrongCredentialsError(false);
-  };
+    const email = target.email.value;
+    const password = target.password.value;
 
-  const login = async () => {
     if (email === '') {
       setEmailError(true);
+      return false;
     }
     if (password === '') {
       setPasswordError(true);
-    } else {
-      try {
-        setEmailError(false);
-        setPasswordError(false);
-        const encryptedPassword = await web3.utils.sha3(password);
+      return false;
+    }
 
-        const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
-          email,
-          password: encryptedPassword
-        });
-        localStorage.setItem('session', res.data.token);
-        history.push('/dashboard');
-      } catch (err) {
-        setWrongCredentialsError(true);
-      }
+    try {
+      setEmailError(false);
+      setPasswordError(false);
+      const encryptedPassword = await web3.utils.sha3(password);
+
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+        email,
+        password: encryptedPassword
+      });
+
+      localStorage.setItem('session', res.data.token);
+      history.push('/dashboard');
+    } catch (err) {
+      setWrongCredentialsError(true);
     }
   };
 
   return (
-    <StyledLoginForm>
+    <LoginFormContainer>
       <Logo alt="logo" src="./logos/giga-logo-color.svg"></Logo>
-      <FormContainer>
-        <InputContainer>
-          <InputFrame>
-            <Input
-              type="email"
-              onChange={onEmailChange}
-              value={email}
-              className={emailError ? 'input-error' : ''}
-              placeholder="Email"
-            />
+      <Form error={wrongCredentialsError} onSubmit={(e) => handleSubmit(e)}>
+        <InputContainer order="0" error={wrongCredentialsError}>
+          <InputFrame order="0">
+            <Input type="email" name="email" className={emailError ? 'input-error' : ''} placeholder="Email" />
             {emailError && <EmailErrorMessage>{EMPTY_EMAIL_MESSAGE}</EmailErrorMessage>}
           </InputFrame>
-          <InputFrame>
+          <InputFrame order="1">
             <Input
-              onChange={onPasswordChange}
               type="password"
-              value={password}
-              placeholder="Password"
+              name="password"
               className={passwordError ? 'input-error' : ''}
+              placeholder="Password"
             />
             {passwordError && <EmailErrorMessage>{EMPTY_EMAIL_MESSAGE}</EmailErrorMessage>}
           </InputFrame>
+          {wrongCredentialsError && (
+            <InputFrame order="2">
+              <ErrorContainer>
+                <ErrorMessage>
+                  <ErrorTitle>
+                    <b>{WRONG_CREDENTIALS_TITLE}</b>
+                  </ErrorTitle>
+                  <ErrorDescription>{WRONG_CREDENTIALS_DESCRIPTION}</ErrorDescription>
+                </ErrorMessage>
+              </ErrorContainer>
+            </InputFrame>
+          )}
         </InputContainer>
-        {wrongCredentialsError && (
-          <ErrorContainer>
-            <ErrorMessage>
-              <ErrorTitle>
-                <b>{WRONG_CREDENTIALS_TITLE}</b>
-              </ErrorTitle>
-              <ErrorDescription>{WRONG_CREDENTIALS_DESCRIPTION}</ErrorDescription>
-            </ErrorMessage>
-          </ErrorContainer>
-        )}
-        <Button onClick={login}>Sign In</Button>
-      </FormContainer>
-    </StyledLoginForm>
+        <Button type="submit">Sign In</Button>
+      </Form>
+    </LoginFormContainer>
   );
 };

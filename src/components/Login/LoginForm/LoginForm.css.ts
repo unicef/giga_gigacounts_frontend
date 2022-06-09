@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledLoginForm = styled.div`
+export const LoginFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -25,12 +25,12 @@ export const Logo = styled.img`
   z-index: 1;
 `;
 
-export const FormContainer = styled.div`
+export const Form = styled.form<{ error: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 0px;
-  gap: 20px;
+  gap: ${(props) => (props.error ? '0px' : '20px')};
   width: 324px;
   height: 156px;
   flex: none;
@@ -40,14 +40,47 @@ export const FormContainer = styled.div`
   z-index: 0;
 `;
 
-export const InputContainer = styled.div`
+export const InputContainer = styled.div<{ order?: string; error: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 0px;
   gap: 4px;
   width: 324px;
-  height: 104px;
+  height: ${(props) => (props.error ? '186px' : '104px')};
+  flex: none;
+  order: ${(props) => props.order || '0'};
+  align-self: stretch;
+  flex-grow: 0;
+`;
+
+export const InputFrame = styled.div<{ order?: string }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px 0px 18px;
+  gap: 3px;
+  width: 324px;
+  height: 50px;
+  border-radius: 2px;
+  flex: none;
+  order: ${(props) => props.order || '0'};
+  align-self: stretch;
+  flex-grow: 0;
+`;
+
+export const Input = styled.input`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 5px 12px;
+  gap: 10px;
+  width: 324px;
+  height: 32px;
+  background: #ffffff;
+  border: 1px solid #f94b4b;
+  border-radius: 2px;
   flex: none;
   order: 0;
   align-self: stretch;
@@ -69,56 +102,6 @@ export const EmailErrorMessage = styled.span`
   flex-grow: 1;
 `;
 
-export const InputFrame = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0px 0px 18px;
-  gap: 3px;
-  width: 324px;
-  height: 50px;
-  border-radius: 2px;
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-`;
-
-export const Input = styled.input`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 5px 12px;
-  gap: 10px;
-  width: 324px;
-  height: 32px;
-  background: #fafafa;
-  border-radius: 2px;
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-`;
-
-export const Button = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 9px 16px;
-  gap: 4px;
-  color: var(--color-white);
-  width: 324px;
-  height: 32px;
-  background: var(--color-blue);
-  border-radius: 2px;
-  border-style: none;
-  flex: none;
-  order: 2;
-  align-self: stretch;
-  flex-grow: 0;
-`;
-
 export const ErrorContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -131,7 +114,7 @@ export const ErrorContainer = styled.div`
   background: var(--color-red);
   border-radius: 2px;
   flex: none;
-  order: 1;
+  order: '0';
   align-self: stretch;
   flex-grow: 0;
 `;
@@ -163,4 +146,21 @@ export const ErrorDescription = styled.p`
   flex-grow: 0;
   margin: 0;
   font-size: 12px;
+`;
+
+export const Button = styled.button<{ order?: string }>`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 9px 16px;
+  gap: 4px;
+  width: 324px;
+  height: 32px;
+  background: #277aff;
+  border-radius: 2px;
+  flex: none;
+  order: 1;
+  align-self: stretch;
+  flex-grow: 0;
 `;
