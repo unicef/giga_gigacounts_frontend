@@ -18,10 +18,13 @@
   --color-white: #ffffff;
 
   --color-red: #f94b4b;
+  --color-darker-red: #C51515;
   --color-red-on-blue: #ff7575;
   --color-orange: #ff9f40;
+  --color-darker-orange: #D27201;
   --color-orange-on-blue: #f9bf68;
   --color-green: #46c66d;
+  --color-darker-green: #149B62;
   --color-green-on-blue: #6fe883;
   --color-dark-green: #07706d;
 
