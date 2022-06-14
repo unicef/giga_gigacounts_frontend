@@ -147,20 +147,3 @@ export const ErrorDescription = styled.p`
   margin: 0;
   font-size: 12px;
 `;
-
-export const Button = styled.button<{ order?: string }>`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 9px 16px;
-  gap: 4px;
-  width: 324px;
-  height: 32px;
-  background: #277aff;
-  border-radius: 2px;
-  flex: none;
-  order: 1;
-  align-self: stretch;
-  flex-grow: 0;
-`;

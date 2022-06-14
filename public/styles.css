@@ -225,7 +225,7 @@ input[type='email']:focus-visible {
   border: 1px solid var(--color-red) !important;
 }
 
-button,
+/* button, */
 input[type='submit'] {
   font-weight: 600;
   font-size: 14px;
@@ -241,7 +241,7 @@ input[type='submit'] {
   background-color: var(--color-blue);
 }
 
-button:active,
+/* button:active, */
 input[type='submit']:active {
   background-color: var(--color-dark-blue);
 }

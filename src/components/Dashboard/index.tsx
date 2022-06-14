@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navigation from './Navigation/Navigation';
+import Contracts from './Contracts';
+
+import { DashboardContainer } from './index.css';
 
 const ADMIN_ROLE = 'Giga Admin';
 
@@ -38,14 +41,17 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <Navigation
-      admin={role === ADMIN_ROLE}
-      countryName={countryName}
-      role={role}
-      countryPath={`./flags/${countryCode || 'AC'}.svg`}
-      name={name}
-      contractCounts={contractCounts}
-    />
+    <DashboardContainer>
+      <Navigation
+        admin={role === ADMIN_ROLE}
+        countryName={countryName}
+        role={role}
+        countryPath={`./flags/${countryCode || 'AC'}.svg`}
+        name={name}
+        contractCounts={contractCounts}
+      />
+      <Contracts />
+    </DashboardContainer>
   );
 };
 
