@@ -32,5 +32,4 @@ export const ContractListItem = styled.div`
   order: 2;
   align-self: stretch;
   flex-grow: 0;
-  z-index: 14;
 `;
