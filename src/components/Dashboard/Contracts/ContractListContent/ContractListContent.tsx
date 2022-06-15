@@ -1,4 +1,5 @@
 import ContractDefaultListItem from '../ContractListContent/ContractDefaultListItem/ContractDefaultListItem';
+import ContractLtaListItem from './ContractLtaListItem/ContractLtaListItem';
 import { ContractListContainer, ContractListItem } from './ContractListContent.css';
 
 interface ContractListProps {
@@ -8,8 +9,9 @@ interface ContractListProps {
 const ContractListContent: React.FC<ContractListProps> = ({ ...props }: ContractListProps): JSX.Element => {
   return (
     <ContractListContainer>
-      <ContractListItem></ContractListItem>
       <ContractDefaultListItem></ContractDefaultListItem>
+      <ContractLtaListItem></ContractLtaListItem>
+      <ContractListItem></ContractListItem>
       <ContractListItem></ContractListItem>
       <ContractListItem></ContractListItem>
       <ContractListItem></ContractListItem>

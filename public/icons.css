@@ -1,202 +1,321 @@
 @font-face {
-    font-family: 'Giga';
-    src: url('../fonts/giga.eot');
-    src: url('../fonts/giga.eot') format('embedded-opentype'), 
-        url('../fonts/giga.woff2') format('woff2'), 
-        url('../fonts/giga.woff') format('woff'), 
-        url('../fonts/giga.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
+  font-family: 'Giga';
+  src: url('../fonts/icon-font/giga.eot');
+  src: url('../fonts/icon-font/giga.eot') format('embedded-opentype'),
+    url('../fonts/icon-font/giga.woff2') format('woff2'), url('../fonts/icon-font/giga.woff') format('woff'),
+    url('../fonts/icon-font/giga.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
-  .icon {
-    display: inline-block;
-    font: normal normal normal 1em/1 'Giga';
-    color: inherit;
-    flex-shrink: 0;
-    speak: none;
-    text-transform: none;
-    /* Better Font Rendering */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+.icon {
+  display: inline-block;
+  font: normal normal normal 1em/1 'Giga';
+  color: inherit;
+  flex-shrink: 0;
+  speak: none;
+  text-transform: none;
+  /* Better Font Rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  .icon-18 {
-    font-size: 18px;
-  }
+.icon-18 {
+  font-size: 18px;
+}
 
-  .icon-20 {
-    font-size: 20px;
-  }
+.icon-20 {
+  font-size: 20px;
+}
 
-  .icon-22 {
-    font-size: 22px;
-  }
+.icon-22 {
+  font-size: 22px;
+}
 
-  .icon-24 {
-    font-size: 24px;
-  }
-  
-  /* Icons -------------------------*/
-  
-  .icon-arrow-up::before {
-    content: "\ea02";
-  }
-  
-  .icon-calendar::before {
-    content: "\ea03";
-  }
-  
-  .icon-chain::before {
-    content: "\ea04";
-  }
-  
-  .icon-up-speed::before {
-    content: "\ea05";
-  }
-  
-  .icon-trash::before {
-    content: "\ea06";
-  }
-  
-  .icon-sent::before {
-    content: "\ea07";
-  }
-  
-  .icon-search::before {
-    content: "\ea08";
-  }
-  
-  .icon-school::before {
-    content: "\ea09";
-  }
-  
-  .icon-question::before {
-    content: "\ea0a";
-  }
-  
-  .icon-plus::before {
-    content: "\ea0b";
-  }
-  
-  .icon-plug::before {
-    content: "\ea0c";
-  }
-  
-  .icon-pin::before {
-    content: "\ea0d";
-  }
-  
-  .icon-person::before {
-    content: "\ea0e";
-  }
-  
-  .icon-ongoing::before {
-    content: "\ea0f";
-  }
-  
-  .icon-network::before {
-    content: "\ea10";
-  }
-  
-  .icon-meter::before {
-    content: "\ea11";
-  }
-  
-  .icon-globe::before {
-    content: "\ea12";
-  }
-  
-  .icon-logout::before {
-    content: "\ea13";
-  }
-  
-  .icon-list::before {
-    content: "\ea14";
-  }
-  
-  .icon-image::before {
-    content: "\ea15";
-  }
-  
-  .icon-gear::before {
-    content: "\ea16";
-  }
-  
-  .icon-files::before {
-    content: "\ea17";
-  }
-  
-  .icon-filter::before {
-    content: "\ea18";
-  }
-  
-  .icon-file::before {
-    content: "\ea19";
-  }
-  
-  .icon-expired::before {
-    content: "\ea1a";
-  }
-  
-  .icon-draft::before {
-    content: "\ea1b";
-  }
-  
-  .icon-download::before {
-    content: "\ea1c";
-  }
-  
-  .icon-down-speed::before {
-    content: "\ea1d";
-  }
-  
-  .icon-dot::before {
-    content: "\ea1e";
-  }
-  
-  .icon-date::before {
-    content: "\ea1f";
-  }
-  
-  .icon-dashboard::before {
-    content: "\ea20";
-  }
-  
-  .icon-copy::before {
-    content: "\ea21";
-  }
-  
-  .icon-contract::before {
-    content: "\ea22";
-  }
-  
-  .icon-confirmed::before {
-    content: "\ea23";
-  }
-  
-  .icon-completed::before {
-    content: "\ea24";
-  }
-  
-  .icon-coins::before {
-    content: "\ea25";
-  }
-  
-  .icon-close::before {
-    content: "\ea26";
-  }
-  
-  .icon-checkmark::before {
-    content: "\ea27";
-  }
-  
-  .icon-arrow-down::before {
-    content: "\ea28";
-  }
+.icon-24 {
+  font-size: 24px;
+}
 
-  .icon-error::before {
-    content: "\ea29";
-  }
-  
-  
+/*  Icon Colors  */
+
+.icon-darkest-blue {
+  color: var(--color-darkest-blue);
+}
+
+.icon-dark-blue {
+  color: var(--color-dark-blue);
+}
+
+.icon-dark-blue {
+  color: var(--color-dark-blue);
+}
+
+.icon-blue {
+  color: var(--color-blue);
+}
+
+.icon-light-blue {
+  color: var(--color-light-blue);
+}
+
+.icon-lighter-blue {
+  color: var(--color-lighter-blue);
+}
+
+.icon-lightest-blue {
+  color: var(--color-lightest-blue);
+}
+
+.icon-black {
+  color: var(--color-black);
+}
+
+.icon-darkest-grey {
+  color: var(--color-darkest-grey);
+}
+
+.icon-darker-grey {
+  color: var(--color-darker-grey);
+}
+
+.icon-dark-grey {
+  color: var(--color-dark-grey);
+}
+
+.icon-mid-grey {
+  color: var(--color-mid-grey);
+}
+
+.icon-light-grey {
+  color: var(--color-light-grey);
+}
+
+.icon-lightest-grey {
+  color: var(--color-lightest-grey);
+}
+
+.icon-white {
+  color: var(--color-white);
+}
+
+.icon-red {
+  color: var(--color-red);
+}
+
+.icon-darker-red {
+  color: var(--color-darker-red);
+}
+
+.icon-red-on-blue {
+  color: var(--color-red-on-blue);
+}
+
+.icon-orange {
+  color: var(--color-orange);
+}
+
+.icon-darker-orange {
+  color: var(--color-darker-orange);
+}
+
+.icon-orange-on-blue {
+  color: var(--color-orange-on-blue);
+}
+
+.icon-green {
+  color: var(--color-green);
+}
+
+.icon-darker-green {
+  color: var(--color-darker-green);
+}
+
+.icon-green-on-blue {
+  color: var(--color-green-on-blue);
+}
+
+.icon-dark-green {
+  color: var(--color-dark-green);
+}
+
+.icon-white-15 {
+  color: var(--color-white-15);
+}
+
+.icon-white-40 {
+  color: var(--color-white-40);
+}
+
+.icon-white-60 {
+  color: var(--color-white-60);
+}
+
+.icon-black-10 {
+  color: var(--color-black-10);
+}
+
+.icon-black-50 {
+  color: var(--color-black-50);
+}
+
+/* Icons -------------------------*/
+
+.icon-arrow-up::before {
+  content: '\ea02';
+}
+
+.icon-calendar::before {
+  content: '\ea03';
+}
+
+.icon-chain::before {
+  content: '\ea04';
+}
+
+.icon-up-speed::before {
+  content: '\ea05';
+}
+
+.icon-trash::before {
+  content: '\ea06';
+}
+
+.icon-sent::before {
+  content: '\ea07';
+}
+
+.icon-search::before {
+  content: '\ea08';
+}
+
+.icon-school::before {
+  content: '\ea09';
+}
+
+.icon-question::before {
+  content: '\ea0a';
+}
+
+.icon-plus::before {
+  content: '\ea0b';
+}
+
+.icon-plug::before {
+  content: '\ea0c';
+}
+
+.icon-pin::before {
+  content: '\ea0d';
+}
+
+.icon-person::before {
+  content: '\ea0e';
+}
+
+.icon-ongoing::before {
+  content: '\ea0f';
+}
+
+.icon-network::before {
+  content: '\ea10';
+}
+
+.icon-meter::before {
+  content: '\ea11';
+}
+
+.icon-globe::before {
+  content: '\ea12';
+}
+
+.icon-logout::before {
+  content: '\ea13';
+}
+
+.icon-list::before {
+  content: '\ea14';
+}
+
+.icon-image::before {
+  content: '\ea15';
+}
+
+.icon-gear::before {
+  content: '\ea16';
+}
+
+.icon-files::before {
+  content: '\ea17';
+}
+
+.icon-filter::before {
+  content: '\ea18';
+}
+
+.icon-file::before {
+  content: '\ea19';
+}
+
+.icon-expired::before {
+  content: '\ea1a';
+}
+
+.icon-draft::before {
+  content: '\ea1b';
+}
+
+.icon-download::before {
+  content: '\ea1c';
+}
+
+.icon-down-speed::before {
+  content: '\ea1d';
+}
+
+.icon-dot::before {
+  content: '\ea1e';
+}
+
+.icon-date::before {
+  content: '\ea1f';
+}
+
+.icon-dashboard::before {
+  content: '\ea20';
+}
+
+.icon-copy::before {
+  content: '\ea21';
+}
+
+.icon-contract::before {
+  content: '\ea22';
+}
+
+.icon-confirmed::before {
+  content: '\ea23';
+}
+
+.icon-completed::before {
+  content: '\ea24';
+}
+
+.icon-coins::before {
+  content: '\ea25';
+}
+
+.icon-close::before {
+  content: '\ea26';
+}
+
+.icon-checkmark::before {
+  content: '\ea27';
+}
+
+.icon-arrow-down::before {
+  content: '\ea28';
+}
+
+.icon-error::before {
+  content: '\ea29';
+}
