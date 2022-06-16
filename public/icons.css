@@ -21,9 +21,18 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  .icon-18 {
+    font-size: 18px;
+  }
+
   .icon-20 {
     font-size: 20px;
   }
+
+  .icon-22 {
+    font-size: 22px;
+  }
+
   .icon-24 {
     font-size: 24px;
   }
@@ -184,6 +193,10 @@
   
   .icon-arrow-down::before {
     content: "\ea28";
+  }
+
+  .icon-error::before {
+    content: "\ea29";
   }
   
   
