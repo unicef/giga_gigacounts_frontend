@@ -70,7 +70,7 @@ export const ContractButton = styled(Button)`
     text-align: center;
     letter-spacing: 0.012em;
     text-transform: uppercase;
-    color: #175dce;
+    color: var(--color-dark-blue);
     flex: none;
     order: 1;
     flex-grow: 0;
@@ -83,5 +83,5 @@ export const StyledIcon = styled.img`
   height: 13.5px;
   left: 5px;
   top: 5px;
-  background: #175dce;
+  background: var(--color-dark-blue);
 `;
