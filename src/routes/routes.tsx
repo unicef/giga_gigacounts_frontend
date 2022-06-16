@@ -6,7 +6,7 @@ export const DASHBOARD_ROUTE = '/dashboard';
 export const NOT_FOUND_ROUTE = '*';
 
 const Dashboard = lazy(() => import('../components/Dashboard/index'));
-const NotFound = lazy(() => import('../components/common/NotFound'));
+const NotFound = lazy(() => import('../components/common/NotFound/NotFound'));
 
 export const routes: Array<RouteProps> = [
   {

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import web3 from 'web3';
 
-import { Button } from 'react-bootstrap';
+import { Button } from '../../common/Button/Button';
 import {
   LoginFormContainer,
   Logo,
@@ -29,7 +29,7 @@ export const LoginForm: React.FC = (): JSX.Element => {
   const [passwordError, setPasswordError] = useState(false);
   const [wrongCredentialsError, setWrongCredentialsError] = useState(false);
 
-  const handleSubmit = async (e: React.SyntheticEvent): Promise<boolean | undefined> => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     const target = e.target as typeof e.target & {
       email: { value: string };
@@ -39,30 +39,32 @@ export const LoginForm: React.FC = (): JSX.Element => {
     const email = target.email.value;
     const password = target.password.value;
 
-    if (email === '') {
-      setEmailError(true);
-      return false;
-    }
-    if (password === '') {
-      setPasswordError(true);
-      return false;
-    }
+    if (email === '') setEmailError(true);
+    if (password === '') setPasswordError(true);
+    else {
+      try {
+        const encryptedPassword = await web3.utils.sha3(password);
 
-    try {
-      setEmailError(false);
-      setPasswordError(false);
-      const encryptedPassword = await web3.utils.sha3(password);
+        const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+          email,
+          password: encryptedPassword
+        });
 
-      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
-        email,
-        password: encryptedPassword
-      });
-
-      localStorage.setItem('session', res.data.token);
-      history.push('/dashboard');
-    } catch (err) {
-      setWrongCredentialsError(true);
+        localStorage.setItem('session', res.data.token);
+        history.push('/dashboard');
+      } catch (err) {
+        setWrongCredentialsError(true);
+      }
     }
+  };
+
+  const handleEmailInput = () => {
+    setEmailError(false);
+    setWrongCredentialsError(false);
+  };
+  const handlePasswordInput = () => {
+    setPasswordError(false);
+    setWrongCredentialsError(false);
   };
 
   return (
@@ -71,15 +73,22 @@ export const LoginForm: React.FC = (): JSX.Element => {
       <Form error={wrongCredentialsError} onSubmit={(e) => handleSubmit(e)}>
         <InputContainer order="0" error={wrongCredentialsError}>
           <InputFrame order="0">
-            <Input type="email" name="email" className={emailError ? 'input-error' : ''} placeholder="Email" />
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email"
+              className={emailError ? 'input-error' : ''}
+              onChange={handleEmailInput}
+            />
             {emailError && <EmailErrorMessage>{EMPTY_EMAIL_MESSAGE}</EmailErrorMessage>}
           </InputFrame>
           <InputFrame order="1">
             <Input
               type="password"
               name="password"
-              className={passwordError ? 'input-error' : ''}
               placeholder="Password"
+              className={passwordError ? 'input-error' : ''}
+              onChange={handlePasswordInput}
             />
             {passwordError && <EmailErrorMessage>{EMPTY_EMAIL_MESSAGE}</EmailErrorMessage>}
           </InputFrame>
@@ -96,7 +105,7 @@ export const LoginForm: React.FC = (): JSX.Element => {
             </InputFrame>
           )}
         </InputContainer>
-        <Button type="submit">Sign In</Button>
+        <Button type="submit" label="Sign In" />
       </Form>
     </LoginFormContainer>
   );

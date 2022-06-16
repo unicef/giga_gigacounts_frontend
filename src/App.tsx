@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppWrapper } from './components/common/AppWrapper';
+import { AppWrapper } from './components/common/AppWrapper/AppWrapper';
 
 const App: React.FC = (): JSX.Element => {
   // here should be added other wrappers

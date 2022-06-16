@@ -9,9 +9,6 @@ interface NavItemProps {
   selected?: boolean;
 }
 
-/**
- * Primary UI component for user interaction
- */
 export const NavItem: React.FC<NavItemProps> = ({
   collapsed = false,
   label,
