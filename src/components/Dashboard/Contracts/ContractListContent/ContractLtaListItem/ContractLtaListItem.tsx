@@ -18,7 +18,7 @@ interface ContractListProps {
 const ContractLtaListItem: React.FC<ContractListProps> = ({ ...props }: ContractListProps): JSX.Element => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const toggleLtaContainer = () => setIsExpanded(!isExpanded);
+  const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState);
 
   return (
     <ContractLtaListItemContainer isExpanded={isExpanded}>

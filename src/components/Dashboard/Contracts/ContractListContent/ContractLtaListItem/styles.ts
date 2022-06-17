@@ -23,9 +23,7 @@ export const ContractLtaHeader = styled.div<{ isExpanded: boolean }>`
   gap: 8px;
   height: 32px;
   flex: none;
-  order: 0;
   align-self: stretch;
-  flex-grow: 0;
 `;
 
 export const ContractLtaIcon = styled.div`
@@ -55,9 +53,9 @@ export const ContractLtaNumber = styled.p<{ isExpanded: boolean }>`
   letter-spacing: 0.003em;
   color: ${(props) => (props.isExpanded ? 'var(--color-white)' : 'var(--color-darkest-grey)')};
   flex: none;
-  order: 1;
+  /* order: 1;
   flex-grow: 1;
-  z-index: 1;
+  z-index: 1; */
 `;
 
 export const IconShowMore = styled.span<{ isExpanded: boolean }>`

@@ -7,7 +7,6 @@ export const ContractLtaListItemsContainer = styled.div<{ isExpanded: boolean }>
   isolation: isolate;
   position: relative;
   width: 280px;
-  height: auto;
 `;
 
 export const ContractLtaHeader = styled.div<{ isExpanded: boolean }>`
