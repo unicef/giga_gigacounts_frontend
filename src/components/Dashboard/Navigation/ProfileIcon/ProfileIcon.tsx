@@ -22,10 +22,8 @@ export const ProfileIcon: React.FC<NavItemProps> = ({
   };
 
   return (
-    <StyledButton
-      style={!collapsed ? { width: '174px', height: '40px', alignSelf: 'stretch' } : { width: '40px', height: '40px' }}
-      {...props}
-    >
+    <StyledButton style={collapsed ? {paddingLeft: '10px'} : {}}
+      {...props}  >
       <StyledIcon alt="icon" src="./utils/profilePlaceholder.svg"></StyledIcon>
       {!collapsed && (
         <NameContainer>

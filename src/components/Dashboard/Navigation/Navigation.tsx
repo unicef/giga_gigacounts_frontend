@@ -70,89 +70,71 @@ const Navigation: React.FC<CountryProps> = ({
       style={
         hovered
           ? {
-              alignItems: 'flex-start',
-              padding: '12px 24px 16px 30px',
-              gap: '34px',
-              width: '228px',
-              justifyContent: 'space-between'
-              //   transition: 'all .3s ease-in-out',
+              width: '270px',
+              padding: '8px 24px 16px 30px',
+              transition: 'all .2s ease-out',
             }
           : {
-              alignItems: 'center',
-              padding: '8px 6px 16px 8px',
-              gap: '32px',
               width: '72px',
-              justifyContent: 'space-between'
+              padding: '8px 6px 16px 8px',
+              transition: 'all .5s ease-out',
             }
       }
     >
-      <div>
-        {hovered ? (
-          <StyledLogo src="./logos/giga-logo-inline.svg"></StyledLogo>
-        ) : (
-          <StyledLogo src="./logos/giga-logo.svg"></StyledLogo>
-        )}
-        <MenuContainer style={hovered ? { width: '174px' } : { width: '58px' }}>
+
+      {hovered ? (
+                <StyledLogo src="./logos/giga-logo-inline.svg"></StyledLogo>
+              ) : (
+                <StyledLogo src="./logos/giga-logo.svg"></StyledLogo>
+              )}
+        <MenuContainer>
           {!admin && <Country collapsed={!hovered} countryName={countryName} countryPath={countryPath} />}
-          <StyledDivider style={hovered ? { width: '174px' } : { width: '58px' }} />
-          <div style={{ order: 3 }}>
+          <StyledDivider/>
+
             <NavItem
               collapsed={!hovered}
               label="All Contracts"
               number={allContractsCount.toString()}
               iconPath="./icons/list.svg"
             ></NavItem>
-          </div>
-          <div style={{ order: 4 }}>
             <NavItem
               collapsed={!hovered}
               label="Drafts"
               number={draftCount.toString()}
               iconPath="./icons/draft.svg"
             ></NavItem>
-          </div>
-          <div style={{ order: 5 }}>
             <NavItem
               collapsed={!hovered}
               label="Sent"
               number={sentCount.toString()}
               iconPath="./icons/sent.svg"
             ></NavItem>
-          </div>
-          <div style={{ order: 6 }}>
             <NavItem
               collapsed={!hovered}
               label="Confirmed"
               number={confirmedCount.toString()}
               iconPath="./icons/confirmed.svg"
             ></NavItem>
-          </div>
-          <div style={{ order: 7 }}>
             <NavItem
               collapsed={!hovered}
               label="Ongoing"
               number={ongoingCount.toString()}
               iconPath="./icons/ongoing.svg"
             ></NavItem>
-          </div>
-          <div style={{ order: 7 }}>
             <NavItem
               collapsed={!hovered}
               label="Expired"
               number={expiredCount.toString()}
               iconPath="./icons/expired.svg"
             ></NavItem>
-          </div>
-          <div style={{ order: 7 }}>
             <NavItem
               collapsed={!hovered}
               label="Completed"
               number={completedCount.toString()}
               iconPath="./icons/completed.svg"
             ></NavItem>
-          </div>
+
         </MenuContainer>
-      </div>
       <ProfileIcon collapsed={!hovered} name={name} role={role}></ProfileIcon>
     </StyledNav>
   );

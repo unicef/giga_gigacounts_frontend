@@ -1,4 +1,4 @@
-import { StyledButton, StyledIcon, StyledLabel, StyledContractCount } from './NavItem.css';
+import { StyledButton} from './NavItem.css';
 
 interface NavItemProps {
   collapsed?: boolean;
@@ -18,24 +18,13 @@ export const NavItem: React.FC<NavItemProps> = ({
   ...props
 }: NavItemProps): JSX.Element => {
   return (
-    <StyledButton
-      style={
-        !collapsed
-          ? { width: '158px', height: '24px', flexDirection: 'row', gap: '8px' }
-          : { width: '58px', height: '24px', flexDirection: 'column', gap: '4px' }
-      }
-      {...props}
-    >
-      <StyledIcon alt="icon" src={iconPath}></StyledIcon>
+    <StyledButton style={collapsed ? {paddingLeft: '16px'} : {}}
+      {...props} >
+      <img src={iconPath}></img>
       {!collapsed && (
         <>
-          <StyledLabel>
-            <p style={{ fontWeight: selected ? 'bold' : 'normal' }}>{label}</p>
-          </StyledLabel>
-
-          <StyledContractCount>
-            <p>{number}</p>
-          </StyledContractCount>
+            <p style={{ fontWeight: selected ? 'bold' : 'normal', width: '100%'}}>{label}</p>
+            <p style={{ fontWeight: selected ? 'bold' : 'normal'}}>{number}</p>
         </>
       )}
     </StyledButton>

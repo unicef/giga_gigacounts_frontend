@@ -4,34 +4,20 @@ export const StyledButton = styled.div`
   p {
     color: var(--color-white);
   }
+  width: 100%;
   background-color: var(--color-dark-blue);
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 0px;
-  gap: 10px;
-
-  height: 40px;
-
-  flex: none;
-  order: 2;
-  flex-grow: 0;
+  gap: 10px
 `;
 
 export const StyledIcon = styled.img`
   width: 40px;
   height: 40px;
-
-  /* Primary/Light Blue */
-
   background: var(--color-light-blue);
-  border-radius: 100px;
-
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
-  flex-grow: 0;
+  border-radius: 100px
 `;
 
 export const NameContainer = styled.div`
@@ -49,19 +35,13 @@ export const Name = styled.div`
   align-items: center;
   padding: 0px;
 
-  width: 124px;
-  height: 22px;
+  width: 100%;
 
-  /* Inside auto layout */
-
-  flex: none;
-  order: 0;
   align-self: stretch;
-  flex-grow: 0;
 `;
 
 export const Role = styled.p`
-  width: 124px;
+  width: 100%;
   height: 18px;
 
   /* Small */
@@ -79,10 +59,7 @@ export const Role = styled.p`
 
   /* Inside auto layout */
 
-  flex: none;
-  order: 1;
   align-self: stretch;
-  flex-grow: 0;
 `;
 
 export const NameText = styled.p`
