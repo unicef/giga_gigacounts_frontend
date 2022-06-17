@@ -1,5 +1,5 @@
 import { useHistory } from 'react-router-dom';
-import { StyledButton, StyledIcon, NameContainer, Name, NameText, Role } from './ProfileIcon.css';
+import { UserBlock } from './ProfileIcon.css';
 
 interface NavItemProps {
   collapsed?: boolean;
@@ -22,20 +22,26 @@ export const ProfileIcon: React.FC<NavItemProps> = ({
   };
 
   return (
-    <StyledButton style={collapsed ? {paddingLeft: '10px'} : {}}
+    <UserBlock className='noselect' style={collapsed ? {paddingLeft: '10px'} : {}}
       {...props}  >
-      <StyledIcon alt="icon" src="./utils/profilePlaceholder.svg"></StyledIcon>
+
+      <div  className='icon icon-24 icon-person icon-white' 
+            style={{  gridArea: 'userpick',
+                      alignSelf: 'start',
+                      height: '40px',
+                      padding: '7px',
+                      marginTop: '2px',
+                      backgroundColor: 'var(--color-light-blue)', 
+                      border: '2px solid var(--color-white-15)', 
+                      borderRadius: '100px'}} />
+
       {!collapsed && (
-        <NameContainer>
-          <Name>
-            <NameText>
-              <b>{name?.substring(0, 8)}</b>
-            </NameText>
-            <img style={{ cursor: 'pointer' }} onClick={logout} alt="logout" src="./utils/logout.svg"></img>
-          </Name>
-          <Role>{role}</Role>
-        </NameContainer>
+        <>
+        <p style={{gridArea: 'name', color: 'var(--color-white)', margin: '0'}}><b>{name?.substring(0, 8)}</b></p>
+        <small style={{ gridArea: 'role', color: 'var(--color-lightest-blue)', margin: '0'}}>{role}</small>
+        <div className='icon icon-18 icon-logout icon-lighter-blue'  style={{ cursor: 'pointer', marginTop: '1px'}} onClick={ logout }/>
+        </>
       )}
-    </StyledButton>
+    </UserBlock>
   );
 };

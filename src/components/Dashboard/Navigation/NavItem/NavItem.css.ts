@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const StyledButton = styled.div`
+export const Label = styled.div`
   p {
     color: var(--color-white);
     white-space: nowrap;
@@ -13,4 +13,5 @@ export const StyledButton = styled.div`
   gap: 8px;
   cursor: pointer;
   background-color: var(--color-dark-blue);
+  transition: all .2s ease-out;
 `;

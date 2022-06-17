@@ -64,78 +64,54 @@ const Navigation: React.FC<CountryProps> = ({
   }, [contractCounts]);
 
   return (
-    <StyledNav
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={
-        hovered
-          ? {
-              width: '270px',
-              padding: '8px 24px 16px 30px',
-              transition: 'all .2s ease-out',
-            }
-          : {
-              width: '72px',
-              padding: '8px 6px 16px 8px',
-              transition: 'all .5s ease-out',
-            }
-      }
-    >
+    <StyledNav onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
+      style={ hovered ? { width: '270px', padding: '8px 24px 16px 30px', transition: 'width .2s ease-out, padding .2s ease-out' }
+                      : { width: '72px', padding: '8px 6px 16px 8px', transition: 'width .5s ease-out, padding .2s ease-out' }} >
 
-      {hovered ? (
-                <StyledLogo src="./logos/giga-logo-inline.svg"></StyledLogo>
-              ) : (
-                <StyledLogo src="./logos/giga-logo.svg"></StyledLogo>
-              )}
+      { hovered ? (<StyledLogo src="./logos/giga-logo-inline.svg"/>) 
+                : (<StyledLogo src="./logos/giga-logo.svg"/>)}
+
         <MenuContainer>
           {!admin && <Country collapsed={!hovered} countryName={countryName} countryPath={countryPath} />}
+
           <StyledDivider/>
 
-            <NavItem
-              collapsed={!hovered}
-              label="All Contracts"
-              number={allContractsCount.toString()}
-              iconPath="./icons/list.svg"
-            ></NavItem>
-            <NavItem
-              collapsed={!hovered}
-              label="Drafts"
-              number={draftCount.toString()}
-              iconPath="./icons/draft.svg"
-            ></NavItem>
-            <NavItem
-              collapsed={!hovered}
-              label="Sent"
-              number={sentCount.toString()}
-              iconPath="./icons/sent.svg"
-            ></NavItem>
-            <NavItem
-              collapsed={!hovered}
-              label="Confirmed"
-              number={confirmedCount.toString()}
-              iconPath="./icons/confirmed.svg"
-            ></NavItem>
-            <NavItem
-              collapsed={!hovered}
-              label="Ongoing"
-              number={ongoingCount.toString()}
-              iconPath="./icons/ongoing.svg"
-            ></NavItem>
-            <NavItem
-              collapsed={!hovered}
-              label="Expired"
-              number={expiredCount.toString()}
-              iconPath="./icons/expired.svg"
-            ></NavItem>
-            <NavItem
-              collapsed={!hovered}
-              label="Completed"
-              number={completedCount.toString()}
-              iconPath="./icons/completed.svg"
-            ></NavItem>
+          <NavItem  collapsed={!hovered}
+                    label="All Contracts"
+                    number={allContractsCount.toString()}
+                    icon="icon-list" />
+
+          <NavItem  collapsed={!hovered}
+                    label="Drafts"
+                    number={draftCount.toString()}
+                    icon="icon-draft" />
+
+          <NavItem  collapsed={!hovered}
+                    label="Sent"
+                    number={sentCount.toString()}
+                    icon="icon-sent" />
+
+          <NavItem  collapsed={!hovered}
+                    label="Confirmed"
+                    number={confirmedCount.toString()}
+                    icon="icon-confirmed" />
+          <NavItem  collapsed={!hovered}
+                    label="Ongoing"
+                    number={ongoingCount.toString()}
+                    icon="icon-ongoing" />
+                    
+          <NavItem  collapsed={!hovered}
+                    label="Expired"
+                    number={expiredCount.toString()}
+                    icon="icon-expired" />
+
+          <NavItem  collapsed={!hovered}
+                    label="Completed"
+                    number={completedCount.toString()}
+                    icon="icon-completed" />
 
         </MenuContainer>
-      <ProfileIcon collapsed={!hovered} name={name} role={role}></ProfileIcon>
+      <ProfileIcon collapsed={!hovered} name={name} role={role} />
     </StyledNav>
   );
 };

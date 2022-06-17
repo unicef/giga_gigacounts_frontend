@@ -1,10 +1,10 @@
-import { StyledButton} from './NavItem.css';
+import { Label } from './NavItem.css';
 
 interface NavItemProps {
   collapsed?: boolean;
   label: string;
   onClick?: () => void;
-  iconPath?: string;
+  icon?: string;
   number?: string;
   selected?: boolean;
 }
@@ -14,19 +14,18 @@ export const NavItem: React.FC<NavItemProps> = ({
   label,
   number,
   selected,
-  iconPath,
+  icon,
   ...props
 }: NavItemProps): JSX.Element => {
   return (
-    <StyledButton style={collapsed ? {paddingLeft: '16px'} : {}}
-      {...props} >
-      <img src={iconPath}></img>
+    <Label style={collapsed ? {paddingLeft: '16px'} : {}} {...props} >
+        < div className={ icon + ' icon icon-24 ' + (selected ? 'icon-white' : 'icon-lighter-blue' )} />
       {!collapsed && (
         <>
             <p style={{ fontWeight: selected ? 'bold' : 'normal', width: '100%'}}>{label}</p>
             <p style={{ fontWeight: selected ? 'bold' : 'normal'}}>{number}</p>
         </>
       )}
-    </StyledButton>
+    </Label>
   );
 };
