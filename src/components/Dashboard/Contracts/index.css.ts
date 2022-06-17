@@ -7,7 +7,8 @@ export const ContractsContainer = styled.div`
   padding: 0px;
   isolation: isolate;
   position: relative;
-  width: 320px;
+  min-width: 320px;
+  width:18%;
   height: inherit;
   background: #e5efff;
 `;

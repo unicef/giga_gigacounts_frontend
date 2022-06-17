@@ -72,6 +72,21 @@
   background: var(--color-lightest-blue);
 }
 
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+::-webkit-scrollbar-track {
+  width: 14px;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 4px solid transparent;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.15);
+  background-clip: padding-box;
+}
+
 body {
   font-family: 'Open Sans';
   font-style: normal;
@@ -229,24 +244,69 @@ input[type='email']:focus-visible {
 }
 
 /* button, */
-input[type='submit'] {
+input[type='submit'],
+button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   font-weight: 600;
   font-size: 14px;
   line-height: 100%;
-  text-align: center;
   letter-spacing: 0.012em;
   text-transform: uppercase;
-  padding: 9px 16px;
-  margin: 4px 0;
   width: 100%;
+  height: 32px;
   border: none;
+  border-radius: 2px;
   color: var(--color-white);
   background-color: var(--color-blue);
 }
 
 /* button:active, */
-input[type='submit']:active {
+input[type='submit']:active
+button:active {
   background-color: var(--color-dark-blue);
+}
+
+input[type='submit']:disabled
+button:disabled {
+  background-color: var(--color-light-grey);
+}
+
+.btn-red {
+  background-color: var(--color-red);
+}
+
+.btn-orange {
+  background-color: var(--color-orange);
+}
+
+.btn-green {
+  background-color: var(--color-green);
+}
+
+.btn-frameless {
+  color: var(--color-dark-blue);
+  background-color: transparent;
+}
+
+.btn-red:active {
+  background-color: var(--color-darker-red);
+}
+
+.btn-orange:active {
+  background-color: var(--color-darker-orange);
+}
+
+.btn-green:active {
+  background-color: var(--color-darker-green);
+}
+
+.btn-frameless:active {
+  color: var(--color-blue);
+  background-color: transparent;
 }
 
 .message {

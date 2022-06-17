@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import {
-  ContractLtaContent,
-  ContractLtaCreateOne,
   ContractLtaEmptyText,
   ContractLtaFooter,
   ContractLtaHeader,
@@ -36,12 +34,8 @@ const ContractLtaListItem: React.FC<ContractListProps> = ({ ...props }: Contract
 
       {isExpanded && (
         <>
-          <ContractLtaContent>
-            <ContractLtaEmptyText>There are no contracts followed by this LTA</ContractLtaEmptyText>
-          </ContractLtaContent>
-          <ContractLtaFooter>
-            <ContractLtaCreateOne>Create One</ContractLtaCreateOne>
-          </ContractLtaFooter>
+          <ContractLtaEmptyText>There are no contracts followed by this LTA</ContractLtaEmptyText>
+          <ContractLtaFooter>Create One</ContractLtaFooter>          
         </>
       )}
     </ContractLtaListItemContainer>

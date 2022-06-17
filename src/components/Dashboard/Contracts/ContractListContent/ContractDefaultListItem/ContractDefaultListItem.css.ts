@@ -6,10 +6,8 @@ export const ContractDefaultListItemContainer = styled.div`
   flex-direction: row;
   align-items: center;
   padding: 0px 0px 0px 12px;
-  width: 280px;
+  width: 100%;
   height: 65px;
-  left: 234px;
-  top: 42px;
   background: var(--color-light-blue);
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
   border-radius: 2px;
@@ -21,11 +19,8 @@ export const ContractDefaultListItemDetails = styled.div`
   align-items: flex-start;
   padding: 0px 0px 2px;
   gap: 4px;
-  width: 200px;
+  width: 100%;
   height: 46px;
-  flex: none;
-  order: 0;
-  flex-grow: 1;
 `;
 
 export const ContractDefaultListItemTitle = styled.div`
@@ -34,12 +29,8 @@ export const ContractDefaultListItemTitle = styled.div`
   align-items: center;
   padding: 0px;
   gap: 8px;
-  width: 219px;
+  width: 100%;
   height: 22px;
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
 
   & p {
     width: 94px;
@@ -51,9 +42,6 @@ export const ContractDefaultListItemTitle = styled.div`
     line-height: 156%;
     letter-spacing: 0.003em;
     color: var(--color-white);
-    flex: none;
-    order: 1;
-    flex-grow: 0;
   }
 `;
 
@@ -63,12 +51,8 @@ export const ContractDefaultListItemSchoolStatus = styled.div`
   align-items: center;
   padding: 0px;
   gap: 10px;
-  width: 219px;
+  width: 100%;
   height: 18px;
-  flex: none;
-  order: 1;
-  align-self: stretch;
-  flex-grow: 0;
 `;
 
 export const ContractDefaultListItemStatus = styled.div`
@@ -81,10 +65,6 @@ export const ContractDefaultListItemStatus = styled.div`
   width: 65px;
   height: 65px;
   background: var(--color-light-blue);
-  flex: none;
-  order: 1;
-  align-self: stretch;
-  flex-grow: 0;
 `;
 
 export const StyledIcon = styled.img`
@@ -92,9 +72,6 @@ export const StyledIcon = styled.img`
   width: 28px;
   height: 28px;
   background: var(--color-white);
-  flex: none;
-  order: 0;
-  flex-grow: 0;
 `;
 
 export const Status = styled.p`
@@ -108,7 +85,4 @@ export const Status = styled.p`
   letter-spacing: 0.015em;
   color: var(--color-white);
   margin: 0;
-  flex: none;
-  order: 1;
-  flex-grow: 0;
 `;

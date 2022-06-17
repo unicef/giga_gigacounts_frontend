@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   ContractLtaContent,
-  ContractLtaCreateOne,
   ContractLtaFooter,
   ContractLtaHeader,
   ContractLtaSubHeader,
@@ -89,9 +88,7 @@ const ContractLtaListItems: React.FC<ContractListProps> = ({ ...props }: Contrac
               <ContractLtaInfoIconsName>Sent</ContractLtaInfoIconsName>
             </ContractLtaInfoIcons>
           </ContractLtaSchoolStatus>
-          <ContractLtaFooter>
-            <ContractLtaCreateOne>Create Contract Here</ContractLtaCreateOne>
-          </ContractLtaFooter>
+          <ContractLtaFooter>Create Contract Here</ContractLtaFooter>
         </>
       )}
     </ContractLtaListItemsContainer>

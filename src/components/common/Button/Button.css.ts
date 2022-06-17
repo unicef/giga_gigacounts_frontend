@@ -14,8 +14,7 @@ export const ButtonComponent = styled.button`
   background-color: var(--color-blue);
   width: 100%;
 
-  &:hover {
+  &:active{
     background-color: var(--color-dark-blue);
-    color: var(--color-white);
   }
 `;
