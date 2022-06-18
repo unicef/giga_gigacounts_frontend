@@ -18,13 +18,13 @@
   --color-white: #ffffff;
 
   --color-red: #f94b4b;
-  --color-darker-red: #C51515;
+  --color-darker-red: #c51515;
   --color-red-on-blue: #ff7575;
   --color-orange: #ff9f40;
-  --color-darker-orange: #D27201;
+  --color-darker-orange: #d27201;
   --color-orange-on-blue: #f9bf68;
   --color-green: #46c66d;
-  --color-darker-green: #149B62;
+  --color-darker-green: #149b62;
   --color-green-on-blue: #6fe883;
   --color-dark-green: #07706d;
 
@@ -272,13 +272,11 @@ button {
 }
 
 /* button:active, */
-input[type='submit']:active
-button:active {
+input[type='submit']:active button:active {
   background-color: var(--color-dark-blue);
 }
 
-input[type='submit']:disabled
-button:disabled {
+input[type='submit']:disabled button:disabled {
   background-color: var(--color-light-grey);
 }
 
@@ -329,4 +327,45 @@ button:disabled {
 .message > p,
 .message > small {
   margin: 0;
+}
+
+.tooltip {
+  cursor: default;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  opacity: 0;
+
+  max-width: 150px;
+
+  padding: 2px 8px 3px;
+  border-radius: 4px;
+
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 148%;
+  letter-spacing: 0.03em;
+
+  background-color: var(--color-dark-blue);
+  color: var(--color-white);
+
+  box-shadow: -4px 6px 20px rgba(23, 78, 145, 0.2);
+
+  margin-top: -26px;
+  margin-left: -24px;
+  position: fixed;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out 0.5s;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

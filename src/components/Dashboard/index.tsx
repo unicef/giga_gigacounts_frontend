@@ -3,7 +3,8 @@ import axios from 'axios';
 import Navigation from './Navigation/Navigation';
 import Contracts from './Contracts';
 
-import { DashboardContainer } from './index.css';
+import { DashboardContainer } from './styles';
+import ContractGuide from './ContractGuide/ContractGuide';
 
 const ADMIN_ROLE = 'Giga Admin';
 
@@ -51,6 +52,7 @@ const Dashboard: React.FC = () => {
         contractCounts={contractCounts}
       />
       <Contracts />
+      <ContractGuide />
     </DashboardContainer>
   );
 };

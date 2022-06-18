@@ -1,59 +1,47 @@
-import {
-  ContractLtaContent,
-  ContractLtaInfo,
-  ContractNumber,
-  ContractStatus,
-  ContractSchool,
-  ContractNetwork,
-  ContractSchoolNumber,
-  ContractNetworkName,
-  ContractLtaInfoIcons,
-  ContractLtaSchoolStatus,
-  ContractLtaInfoIconsName
-} from './styles';
+import { useState } from 'react';
+import ContractStatusWidget from '../../../../common/ContractStatusWidget/index';
+import { ContractStatus, IContracts } from '../../@types/ContractType';
+import { Icons, SchoolInfo, IconsName, SchoolStatus, SchoolNumberCtr, Schools, Isp } from './styles';
 
-interface ContractSchoolStatusProps {
-  school: {
-    idx: number;
-    contractNumber: number;
-    contractSchoolNumber: number;
-    contractNetworkName: string;
-    contractSchoolStatusIcon: string;
-    contractInfoIconName: string;
-  };
+interface ISchoolStatusProps {
+  school: IContracts;
 }
 
-const ContractSchoolStatus: React.FC<ContractSchoolStatusProps> = ({
-  school
-}: ContractSchoolStatusProps): JSX.Element => {
-  const { contractNumber, contractSchoolNumber, contractNetworkName, contractSchoolStatusIcon, contractInfoIconName } =
-    school;
+const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({ school }: ISchoolStatusProps): JSX.Element => {
+  const [selected, setSelected] = useState<boolean>(false);
+  const { isp, numberOfSchools, status, name } = school;
 
-  const name =
-    contractNetworkName.length > 15 ? `${contractNetworkName.slice(0, 12) + '...'}` : `${contractNetworkName}`;
+  const newStatus = status.length > 15 ? `${status.slice(0, 12) + '...'}` : `${status}`;
+
+  const handleSelected = () => setSelected((prevState) => !prevState);
+
+  const pieChart = (): JSX.Element => {
+    if (status === ContractStatus.Ongoing) {
+      return <ContractStatusWidget selected={selected} average={25} good={50} expired={false} payments={50} />;
+    } else {
+      return (
+        <>
+          <span className={`icon icon-28 icon-${status.toLowerCase()} icon-light-blue`} />
+          <IconsName>{newStatus}</IconsName>
+        </>
+      );
+    }
+  };
 
   return (
-    <ContractLtaSchoolStatus>
-      <ContractLtaContent>
-        <ContractLtaInfo>
-          <ContractNumber>{contractNumber}</ContractNumber>
-          <ContractStatus>
-            <ContractSchool>
-              <span className="icon icon-18 icon-school icon-mid-grey" />
-            </ContractSchool>
-            <ContractSchoolNumber>{contractSchoolNumber}</ContractSchoolNumber>
-            <ContractNetwork>
-              <span className="icon icon-18 icon-network icon-mid-grey" />
-            </ContractNetwork>
-            <ContractNetworkName>{name}</ContractNetworkName>
-          </ContractStatus>
-        </ContractLtaInfo>
-      </ContractLtaContent>
-      <ContractLtaInfoIcons>
-        <span className={`icon icon-28 icon-${contractSchoolStatusIcon} icon-light-blue`} />
-        <ContractLtaInfoIconsName>{contractInfoIconName}</ContractLtaInfoIconsName>
-      </ContractLtaInfoIcons>
-    </ContractLtaSchoolStatus>
+    <SchoolStatus status={status}>
+      <SchoolInfo>
+        <SchoolNumberCtr>{name}</SchoolNumberCtr>
+        <span className="icon icon-18 icon-school icon-mid-grey" />
+        <Schools>{numberOfSchools}</Schools>
+        <span className="icon icon-18 icon-network icon-mid-grey" />
+        <Isp className="tooltip ellipsis">
+          {isp}
+          <span className="tooltiptext">{isp}</span>
+        </Isp>
+      </SchoolInfo>
+      <Icons onClick={handleSelected}>{pieChart()}</Icons>
+    </SchoolStatus>
   );
 };
 

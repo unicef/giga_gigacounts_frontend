@@ -11,7 +11,7 @@ export const ContractListContainer = styled.div`
   height: 100vh;
   overflow: hidden;
 
-  &: hover {
+  &:hover {
     overflow-y: scroll;
     padding-right: 0;
   }

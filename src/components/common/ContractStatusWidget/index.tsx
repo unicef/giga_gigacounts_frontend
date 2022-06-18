@@ -98,7 +98,8 @@ const drawChart = (
       diameter: innerChartWidth,
       stroke: innerChartWidth / 2,
       color: disconnectedColor,
-      percent: average + good
+      percent: 100 - (average + good),
+      start: average + good
     });
 
     dial(canvas, {
