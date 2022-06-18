@@ -12,7 +12,6 @@
   display: inline-block;
   font: normal normal normal 1em/1 'Giga';
   color: inherit;
-  flex-shrink: 0;
   speak: none;
   text-transform: none;
   /* Better Font Rendering */
@@ -36,6 +35,22 @@
 
 .icon-24 {
   font-size: 24px;
+}
+
+.icon-26 {
+  font-size: 26px;
+}
+
+.icon-28 {
+  font-size: 28px;
+}
+
+.icon-30 {
+  font-size: 30px;
+}
+
+.icon-32 {
+  font-size: 32px;
 }
 
 /*  Icon Colors ------------------- */

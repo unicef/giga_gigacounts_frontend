@@ -109,6 +109,7 @@ h1 {
   font-size: 32px;
   line-height: 128%;
   letter-spacing: 0.015em;
+  margin: 0;
 }
 
 h2 {
@@ -116,6 +117,7 @@ h2 {
   font-size: 36px;
   line-height: 122%;
   letter-spacing: 0.006em;
+  margin: 0;
 }
 
 h3 {
@@ -123,6 +125,7 @@ h3 {
   font-size: 36px;
   line-height: 122%;
   letter-spacing: 0.015em;
+  margin: 0;
 }
 
 h4 {
@@ -130,6 +133,7 @@ h4 {
   font-size: 21px;
   line-height: 150%;
   letter-spacing: 0.003em;
+  margin: 0;
 }
 
 h5 {
@@ -138,6 +142,7 @@ h5 {
   line-height: 150%;
   letter-spacing: 0.018em;
   text-transform: uppercase;
+  margin: 0;
 }
 
 h6 {
@@ -145,11 +150,13 @@ h6 {
   font-size: 16px;
   line-height: 148%;
   letter-spacing: 0.002em;
+  margin: 0;
 }
 
 h6 b {
   font-weight: 600;
   letter-spacing: 0.003em;
+  margin: 0;
 }
 
 a {
@@ -159,6 +166,7 @@ a {
   letter-spacing: 0.002em;
   text-decoration-line: underline;
   color: var(--color-dark-blue);
+  margin: 0;
 }
 
 p {
@@ -166,13 +174,13 @@ p {
   font-size: 14px;
   line-height: 156%;
   letter-spacing: 0.003em;
-  margin: 0.8em 0;
+  margin: 0;
 }
 
 p b {
   font-weight: 600;
   letter-spacing: 0.0032em;
-  margin: 0.8em 0;
+  margin: 0;
 }
 
 small {
@@ -181,14 +189,14 @@ small {
   font-size: 12px;
   line-height: 148%;
   letter-spacing: 0.018em;
-  margin: 0.8em 0;
+  margin: 0;
 }
 
 small b {
   display: block;
   font-weight: 600;
   letter-spacing: 0.02em;
-  margin: 0.8em 0;
+  margin: 0;
 }
 
 .super-small {
@@ -265,6 +273,7 @@ button {
   text-transform: uppercase;
   width: 100%;
   height: 32px;
+  padding: 0 16px;
   border: none;
   border-radius: 2px;
   color: var(--color-white);
