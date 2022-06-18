@@ -1,10 +1,10 @@
-import { ContractListFooterContainer } from './ContractListFooter.css';
+import { ContractListFooterContainer } from './styles';
 
 interface ContractListFooterProps {
   label?: string;
 }
 
-const ContractListFooter: React.FC<ContractListFooterProps> = ({ ...props }: ContractListFooterProps): JSX.Element => {
+const ContractListFooter: React.FC<ContractListFooterProps> = (): JSX.Element => {
   return (
     <ContractListFooterContainer>
       <button className="btn-frameless" onClick={() => console.log('click')}>

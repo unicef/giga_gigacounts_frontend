@@ -13,7 +13,7 @@ interface ContractListProps {
   label?: string;
 }
 
-const ContractLtaListItem: React.FC<ContractListProps> = ({ ...props }: ContractListProps): JSX.Element => {
+const ContractLtaListItem: React.FC<ContractListProps> = (): JSX.Element => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState);
@@ -35,7 +35,7 @@ const ContractLtaListItem: React.FC<ContractListProps> = ({ ...props }: Contract
       {isExpanded && (
         <>
           <ContractLtaEmptyText>There are no contracts followed by this LTA</ContractLtaEmptyText>
-          <ContractLtaFooter>Create One</ContractLtaFooter>          
+          <ContractLtaFooter>Create One</ContractLtaFooter>
         </>
       )}
     </ContractLtaListItemContainer>

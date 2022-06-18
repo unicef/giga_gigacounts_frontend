@@ -10,38 +10,29 @@ export const ContractLtaListItemsContainer = styled.div<{ isExpanded: boolean }>
   filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.15));
 `;
 
-export const ContractLtaHeader = styled.div<{ isExpanded: boolean }>`
-  width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px 12px 0px 0px;
+export const Header = styled.div<{ isExpanded: boolean }>`
+  display: grid;
+  grid-template-columns: [first] 32px [second] 1fr [third] 36px;
+  grid-template-rows: auto;
+  grid-template-areas: 'first second third';
   gap: 8px;
+  align-items: center;
+  width: 100%;
   height: 32px;
-  background: ${(props) => (props.isExpanded ? 'var(--color-light-blue)' : 'var(--color-white)')};
   border-radius: 2px;
-  transition: background .1s ease-out;
+  transition: background 0.1s ease-out;
+  background: ${(props) => (props.isExpanded ? 'var(--color-light-blue)' : 'var(--color-white)')};
 `;
 
-export const ContractLtaIcon = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 6px;
-  gap: 10px;
-  width: 32px;
+export const Hand = styled.span`
+  display: grid;
+  place-items: center;
   height: 32px;
-  background: var(--color-light-blue);
-  flex: none;
-  order: 0;
-  flex-grow: 0;
-  z-index: 2;
+  width: 32px;
+  background-color: var(--color-light-blue);
 `;
 
-export const ContractLtaNumber = styled.p<{ isExpanded: boolean }>`
-  width: 196px;
-  height: 22px;
+export const LtaNumber = styled.p<{ isExpanded: boolean }>`
   margin: 0;
   font-family: 'Open Sans';
   font-style: normal;
@@ -50,17 +41,12 @@ export const ContractLtaNumber = styled.p<{ isExpanded: boolean }>`
   line-height: 156%;
   letter-spacing: 0.003em;
   color: ${(props) => (props.isExpanded ? 'var(--color-white)' : 'var(--color-darkest-grey)')};
-  flex: none;
-  order: 1;
-  flex-grow: 1;
-  z-index: 1;
 `;
 
-export const IconShowMore = styled.span<{ isExpanded: boolean }>`
-  flex: none;
-  order: 2;
-  flex-grow: 0;
-  z-index: 0;
+export const ShowMore = styled.span<{ isExpanded: boolean }>`
+  grid-area: third;
+  width: 24px;
+  height: 24px;
 `;
 
 export const ContractLtaSubHeader = styled.div`
@@ -71,116 +57,10 @@ export const ContractLtaSubHeader = styled.div`
   border-radius: 0px 0px 2px 2px;
 `;
 
-export const ContractLtaSchoolStatus = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px 0px 0px 12px;
-  width: 100%;
-  height: 65px;
-  background: var(--color-white);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-`;
-
-export const ContractLtaContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0px 0px 2px;
-  gap: 4px;
-  width: 100%;
-  height: 46px;
-`;
-
-export const ContractLtaInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0px 0px 2px;
-  gap: 4px;
-`;
-
-export const ContractNumber = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px;
-  gap: 8px;
-  width: 100%;
-  height: 22px;
-`;
-
-export const ContractStatus = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 4px;
-  height: 18px;
-`;
-
-export const ContractSchool = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-`;
-
-export const ContractSchoolNumber = styled.p`
-  width: 40px;
-  height: 18px;
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 148%;
-  letter-spacing: 0.018em;
-  color: var(--color-dark-grey);
-`;
-
-export const ContractNetwork = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-`;
-
-export const ContractNetworkName = styled.p`
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 148%;
-  letter-spacing: 0.018em;
-  color: var(--color-dark-grey);
-`;
-
-export const ContractLtaInfoIcons = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 4px 16px;
-  gap: 2px;
-  width: 65px;
-  height: 65px;
-`;
-
-export const ContractLtaInfoIconsName = styled.p`
-  width: 26px;
-  height: 15px;
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-size: 10px;
-  line-height: 148%;
-  letter-spacing: 0.015em;
-  margin: 0;
-  color: var(--color-dark-grey);
-`;
-
 export const ContractLtaFooter = styled.a`
   width: 100%;
   padding: 12px;
-  margin: 0
-
+  margin: 0;
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;

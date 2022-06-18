@@ -1,95 +1,45 @@
 import { useState } from 'react';
+import { State } from '../../store/redux';
+import ContractSchoolStatus from '../ContactSchoolStatus/ContractSchoolStatus';
 import {
-  ContractLtaContent,
   ContractLtaFooter,
-  ContractLtaHeader,
   ContractLtaSubHeader,
-  ContractLtaIcon,
   ContractLtaListItemsContainer,
-  ContractLtaNumber,
-  IconShowMore,
-  ContractLtaInfo,
-  ContractNumber,
-  ContractStatus,
-  ContractSchool,
-  ContractNetwork,
-  ContractSchoolNumber,
-  ContractNetworkName,
-  ContractLtaInfoIcons,
-  ContractLtaSchoolStatus,
-  ContractLtaInfoIconsName
+  Header,
+  LtaNumber,
+  ShowMore,
+  Hand
 } from './styles';
 
 interface ContractListProps {
-  label?: string;
+  state: State;
 }
 
-const ContractLtaListItems: React.FC<ContractListProps> = ({ ...props }: ContractListProps): JSX.Element => {
+const ContractLtaListItems: React.FC<ContractListProps> = ({ state }): JSX.Element => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const toggleLtaContainer = () => setIsExpanded(!isExpanded);
+  const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState);
+
+  const ltaData = state.contracts?.slice(0, 2);
 
   return (
     <ContractLtaListItemsContainer isExpanded={isExpanded}>
-      <ContractLtaHeader isExpanded={isExpanded}>
-        <ContractLtaIcon>
-          <span className="icon icon-20 icon-contract icon-white" />
-        </ContractLtaIcon>
-        <ContractLtaNumber isExpanded={isExpanded}>LTA Number</ContractLtaNumber>
-        <IconShowMore
+      <Header isExpanded={isExpanded}>
+        <Hand className="icon icon-20 icon-contract icon-white" />
+        <LtaNumber isExpanded={isExpanded}>LTA Number</LtaNumber>
+        <ShowMore
           className={`icon icon-24 ${isExpanded ? 'icon-arrow-up icon-white' : 'icon-arrow-down icon-darkest-grey'}`}
           isExpanded={isExpanded}
           onClick={toggleLtaContainer}
         />
-      </ContractLtaHeader>
-      {!isExpanded && <ContractLtaSubHeader />}
-      {isExpanded && (
+      </Header>
+      {isExpanded ? (
         <>
-          <ContractLtaSchoolStatus>
-            <ContractLtaContent>
-              <ContractLtaInfo>
-                <ContractNumber>26315657</ContractNumber>
-                <ContractStatus>
-                  <ContractSchool>
-                    <span className="icon icon-18 icon-school icon-mid-grey" />
-                  </ContractSchool>
-                  <ContractSchoolNumber>71041</ContractSchoolNumber>
-                  <ContractNetwork>
-                    <span className="icon icon-18 icon-network icon-mid-grey" />
-                  </ContractNetwork>
-                  <ContractNetworkName>Reliance JIO</ContractNetworkName>
-                </ContractStatus>
-              </ContractLtaInfo>
-            </ContractLtaContent>
-            <ContractLtaInfoIcons>
-              <span className="icon icon-28 icon-draft icon-light-blue" />
-              <ContractLtaInfoIconsName>Draft</ContractLtaInfoIconsName>
-            </ContractLtaInfoIcons>
-          </ContractLtaSchoolStatus>
-
-          <ContractLtaSchoolStatus>
-            <ContractLtaContent>
-              <ContractLtaInfo>
-                <ContractNumber>43316557</ContractNumber>
-                <ContractStatus>
-                  <ContractSchool>
-                    <span className="icon icon-18 icon-school icon-mid-grey" />
-                  </ContractSchool>
-                  <ContractSchoolNumber>46742</ContractSchoolNumber>
-                  <ContractNetwork>
-                    <span className="icon icon-18 icon-network icon-mid-grey" />
-                  </ContractNetwork>
-                  <ContractNetworkName>AT&T</ContractNetworkName>
-                </ContractStatus>
-              </ContractLtaInfo>
-            </ContractLtaContent>
-            <ContractLtaInfoIcons>
-              <span className="icon icon-28 icon-sent icon-light-blue" />
-              <ContractLtaInfoIconsName>Sent</ContractLtaInfoIconsName>
-            </ContractLtaInfoIcons>
-          </ContractLtaSchoolStatus>
+          {ltaData !== undefined && ltaData.map((school, i) => <ContractSchoolStatus key={i} school={school} />)}
           <ContractLtaFooter>Create Contract Here</ContractLtaFooter>
         </>
+      ) : (
+        <ContractLtaSubHeader />
       )}
     </ContractLtaListItemsContainer>
   );

@@ -13,7 +13,7 @@ const ContractListContent: React.FC<ContractListProps> = ({ state }: ContractLis
   return (
     <ContractListContainer>
       <ContractLtaListItem></ContractLtaListItem>
-      <ContractLtaListItems></ContractLtaListItems>
+      <ContractLtaListItems state={state}></ContractLtaListItems>
       <ContractDefaultListItem></ContractDefaultListItem>
       <>
         {state.contracts !== undefined &&
