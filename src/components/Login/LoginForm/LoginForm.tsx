@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import web3 from 'web3';
 
-import { Button } from '../../common/Button/Button';
 import {
   LoginFormContainer,
   Logo,
@@ -105,7 +104,7 @@ export const LoginForm: React.FC = (): JSX.Element => {
             </InputFrame>
           )}
         </InputContainer>
-        <Button type="submit" label="Sign In" />
+        <button type="submit">Sign In</button>
       </Form>
     </LoginFormContainer>
   );

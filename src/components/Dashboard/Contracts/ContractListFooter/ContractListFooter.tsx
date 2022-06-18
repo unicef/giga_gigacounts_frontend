@@ -1,22 +1,16 @@
-import {
-  ContractListFooterContainer,
-  ContractListButtonContainer,
-  ContractButton,
-  StyledIcon
-} from './ContractListFooter.css';
+import { ContractListFooterContainer } from './styles';
 
 interface ContractListFooterProps {
   label?: string;
 }
 
-const ContractListFooter: React.FC<ContractListFooterProps> = ({ ...props }: ContractListFooterProps): JSX.Element => {
+const ContractListFooter: React.FC<ContractListFooterProps> = (): JSX.Element => {
   return (
     <ContractListFooterContainer>
-      <ContractListButtonContainer>
-        <ContractButton label="New Contract" onClick={() => console.log('click')}>
-          <StyledIcon />
-        </ContractButton>
-      </ContractListButtonContainer>
+      <button className="btn-frameless" onClick={() => console.log('click')}>
+        <div className="icon icon-24 icon-plus" />
+        New Contract
+      </button>
     </ContractListFooterContainer>
   );
 };

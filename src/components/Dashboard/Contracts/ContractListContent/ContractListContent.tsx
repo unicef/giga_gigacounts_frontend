@@ -1,34 +1,26 @@
 import ContractDefaultListItem from '../ContractListContent/ContractDefaultListItem/ContractDefaultListItem';
-import { ContractListContainer, ContractListItem } from './ContractListContent.css';
+import ContractLtaListItem from './ContractLtaListItem/ContractLtaListItem';
+import ContractLtaListItems from './ContractLtaListItems/ContractLtaListItems';
+import { ContractListContainer } from './styles';
+import ContractSchoolStatus from './ContactSchoolStatus/ContractSchoolStatus';
+import { State } from '../store/redux';
 
 interface ContractListProps {
-  label?: string;
+  state: State;
 }
 
-const ContractListContent: React.FC<ContractListProps> = ({ ...props }: ContractListProps): JSX.Element => {
+const ContractListContent: React.FC<ContractListProps> = ({ state }: ContractListProps): JSX.Element => {
   return (
     <ContractListContainer>
-      <ContractListItem></ContractListItem>
+      <ContractLtaListItem></ContractLtaListItem>
+      <ContractLtaListItems state={state}></ContractLtaListItems>
       <ContractDefaultListItem></ContractDefaultListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
-      <ContractListItem></ContractListItem>
+      <>
+        {state.contracts !== undefined &&
+          state.contracts.map((school, i) => {
+            return <ContractSchoolStatus key={i} school={school} />;
+          })}
+      </>
     </ContractListContainer>
   );
 };

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { IContractsData } from '../components/Dashboard/Contracts/@types/ContractType';
 
 const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/contract`;
 
@@ -24,11 +25,15 @@ axios.interceptors.response.use(
   }
 );
 
-export const getContracts = async (): Promise<any> => {
+export const getContracts = async (): Promise<IContractsData | Error> => {
   try {
-    return await axios.get(`${BASE_URL}`);
-  } catch (error) {
-    return error;
+    const response = await axios.get(`${BASE_URL}`);
+    if (response.status === 200) {
+      return response.data;
+    }
+    throw new Error('Failed to get the contracts');
+  } catch (error: unknown) {
+    return error as Error;
   }
 };
 
