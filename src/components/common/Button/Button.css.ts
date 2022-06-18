@@ -13,9 +13,11 @@ export const ButtonComponent = styled.button`
   color: var(--color-white);
   background-color: var(--color-blue);
   width: 100%;
+  transition: all .2s ease-in;
 
   &:hover {
     background-color: var(--color-dark-blue);
-    color: var(--color-white);
+    color: var(--color-white);    
+    transition: all .1s ease-out;
   }
 `;
