@@ -65,6 +65,14 @@
   box-sizing: border-box;
 }
 
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
 ::-moz-selection {
   background: var(--color-lightest-blue);
 }
@@ -221,7 +229,6 @@ input[type='text']:focus,
 input[type='password']:focus,
 input[type='number']:focus,
 input[type='email']:focus {
-  padding: 5px 11px 3px;
   border: 1px solid var(--color-blue);
   background-color: var(--color-white);
 }

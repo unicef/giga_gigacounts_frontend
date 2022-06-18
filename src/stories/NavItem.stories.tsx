@@ -16,7 +16,7 @@ Selected.args = {
   number: '5',
   selected: true,
   collapsed: false,
-  iconPath: './icons/list.svg'
+  icon: 'icon-list'
 };
 
 export const Default = Template.bind({});
@@ -25,12 +25,12 @@ Default.args = {
   label: 'Unselected',
   collapsed: false,
   number: '5',
-  iconPath: './icons/list.svg'
+  icon: 'icon-list'
 };
 
 export const Collapsed = Template.bind({});
 
 Collapsed.args = {
   collapsed: true,
-  iconPath: './icons/list.svg'
+  icon: 'icon-list'
 };
