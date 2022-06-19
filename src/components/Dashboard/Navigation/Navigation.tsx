@@ -80,7 +80,7 @@ const Navigation: React.FC<CountryProps> = ({
 
         <StyledDivider />
 
-        <NavItem collapsed={!hovered} label="All Contracts" number={allContractsCount.toString()} icon="icon-list" />
+        <NavItem collapsed={!hovered} selected={true} label="All Contracts" number={allContractsCount.toString()} icon="icon-list" />
 
         <NavItem collapsed={!hovered} label="Drafts" number={draftCount.toString()} icon="icon-draft" />
 

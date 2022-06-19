@@ -9,7 +9,7 @@ export const SchoolStatus = styled.section<{ status: string }>`
   width: 100%;
   height: 65px;
   background: ${(props) =>
-    props.status === ContractStatus.Draft || props.status === ContractStatus.Confirmed
+    props.status === ContractStatus.Draft || props.status === ContractStatus.Completed
       ? `var(--color-white-60)`
       : `var(--color-white)`};
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);

@@ -40,7 +40,7 @@ const ContractGuide: React.FC<ContractsProps> = (): JSX.Element => {
       </ContractGuideItem>
 
       <ContractGuideItem>
-        <span><ContractStatusWidget selected={false} average={10} good={80} expired={false} payments={100} /></span>
+        <span><ContractStatusWidget selected={false} average={10} good={80} expired={true} payments={60} /></span>
         <p><b>Expired</b></p>
         <div className='super-small'>When the end date passed the contract obtains expired status</div>
       </ContractGuideItem>
