@@ -41,5 +41,6 @@ export enum ContractStatus {
   Sent = 'Sent',
   Confirmed = 'Confirmed',
   Ongoing = 'Ongoing',
-  Expired = 'Expired'
+  Expired = 'Expired',
+  Completed = 'Completed'
 }

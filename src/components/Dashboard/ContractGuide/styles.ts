@@ -36,6 +36,7 @@ div{
   grid-area: description;
   color: var(--color-mid-grey);
 }
+
 button {
   margin-top: 12px;
   grid-area: button;

@@ -25,7 +25,7 @@ const ContractLtaListItems: React.FC<ContractListProps> = ({ state }): JSX.Eleme
   return (
     <ContractLtaListItemsContainer isExpanded={isExpanded}>
       <Header isExpanded={isExpanded}>
-        <Hand className="icon icon-20 icon-contract icon-white" />
+        <Hand className="icon icon-20 icon-agreement icon-white" />
         <LtaNumber isExpanded={isExpanded}>LTA Number</LtaNumber>
         <ShowMore
           className={`icon icon-24 ${isExpanded ? 'icon-arrow-up icon-white' : 'icon-arrow-down icon-darkest-grey'}`}

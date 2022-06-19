@@ -22,7 +22,7 @@ const ContractLtaListItem: React.FC<ContractListProps> = (): JSX.Element => {
     <ContractLtaListItemContainer isExpanded={isExpanded}>
       <ContractLtaHeader isExpanded={isExpanded}>
         <ContractLtaIcon>
-          <span className="icon icon-20 icon-contract icon-white" />
+          <span className="icon icon-20 icon-agreement icon-white" />
         </ContractLtaIcon>
         <ContractLtaNumber isExpanded={isExpanded}>LTA Number</ContractLtaNumber>
         <IconShowMore

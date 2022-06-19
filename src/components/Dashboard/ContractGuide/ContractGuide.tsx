@@ -17,7 +17,7 @@ const ContractGuide: React.FC<ContractsProps> = (): JSX.Element => {
         <span className='icon icon-32 icon-draft icon-light-blue'></span>
         <p><b>Draft</b></p>
         <div className='super-small'>The initial state of the contract where all the required information is completed.</div>
-        <button>Create Draft</button>
+        <button className='btn-blue'>Create Draft</button>
       </ContractGuideItem>
 
       <ContractGuideItem>
@@ -46,7 +46,7 @@ const ContractGuide: React.FC<ContractsProps> = (): JSX.Element => {
       </ContractGuideItem>
 
       <ContractGuideItem>
-        <span className='icon icon-24 icon-checkmark icon-blue completed'></span>
+        <span className='icon icon-18 icon-checkmark icon-blue completed'></span>
         <p><b>Completed</b></p>
         <div className='super-small'>There are no pending actions for a contract</div>
       </ContractGuideItem>

@@ -76,3 +76,13 @@ export const IconsName = styled.p`
   margin: 0;
   color: var(--color-dark-grey);
 `;
+
+export const IconCompleted = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 3.2px solid var(--color-black-10);
+  border-radius: 42px;
+`;

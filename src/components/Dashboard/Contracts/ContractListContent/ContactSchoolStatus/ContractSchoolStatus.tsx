@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ContractStatusWidget from '../../../../common/ContractStatusWidget/index';
 import { ContractStatus, IContracts } from '../../@types/ContractType';
-import { Icons, SchoolInfo, IconsName, SchoolStatus, SchoolNumberCtr, Schools, Isp } from './styles';
+import { Icons, SchoolInfo, IconsName, IconCompleted, SchoolStatus, SchoolNumberCtr, Schools, Isp } from './styles';
 
 interface ISchoolStatusProps {
   school: IContracts;
@@ -16,12 +16,16 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({ school }: ISchoolS
   const handleSelected = () => setSelected((prevState) => !prevState);
 
   const pieChart = (): JSX.Element => {
-    if (status === ContractStatus.Ongoing) {
-      return <ContractStatusWidget selected={selected} average={25} good={50} expired={false} payments={50} />;
-    } else {
+    if (status === ContractStatus.Ongoing || status === ContractStatus.Expired ) {
+      return <ContractStatusWidget selected={selected} average={15} good={60} expired={ status === 'Expired' } payments={60} />;
+    } 
+    else if (status === ContractStatus.Completed) {
+      return <IconCompleted className='icon icon-18 icon-checkmark icon-blue'/>;
+    } 
+    else {
       return (
         <>
-          <span className={`icon icon-28 icon-${status.toLowerCase()} icon-light-blue`} />
+          <span className={`icon icon-28 icon-${status.toLowerCase()} ${status === 'Confirmed' ? 'icon-green' : 'icon-light-blue'}`} />
           <IconsName>{newStatus}</IconsName>
         </>
       );

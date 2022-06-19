@@ -26,6 +26,9 @@ export const Logo = styled.img`
 `;
 
 export const Form = styled.form<{ error: boolean }>`
+  button {
+    width: 100%;
+  }
   display: flex;
   flex-direction: column;
   align-items: flex-start;
