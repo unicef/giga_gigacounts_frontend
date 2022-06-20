@@ -7,11 +7,14 @@ export const ContractLtaListItemContainer = styled.div<{ isExpanded: boolean }>`
   isolation: isolate;
   position: relative;
   width: 100%;
-  // height: ${(props) => (props.isExpanded ? '143px' : '32px')};
   background: ${(props) => (props.isExpanded ? 'var(--color-light-blue)' : 'var(--color-white)')};
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
   border-radius: 2px;
-  transition: background .1s ease-out;
+  transition: background 0.1s ease-out;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export const ContractLtaHeader = styled.div<{ isExpanded: boolean }>`
@@ -48,12 +51,9 @@ export const ContractLtaNumber = styled.p<{ isExpanded: boolean }>`
   color: ${(props) => (props.isExpanded ? 'var(--color-white)' : 'var(--color-darkest-grey)')};
 `;
 
-export const IconShowMore = styled.span<{ isExpanded: boolean }>`
-`;
+export const IconShowMore = styled.span<{ isExpanded: boolean }>``;
 
-export const ContractLtaContent = styled.div`
-
-`;
+export const ContractLtaContent = styled.div``;
 
 export const ContractLtaEmptyText = styled.p`
   width: 100%;
@@ -75,8 +75,7 @@ export const ContractLtaEmptyText = styled.p`
 export const ContractLtaFooter = styled.a`
   width: 100%;
   padding: 12px;
-  margin: 0
-
+  margin: 0;
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;

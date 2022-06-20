@@ -23,14 +23,13 @@ const ContractLtaListItems: React.FC<ContractListProps> = ({ state }): JSX.Eleme
   const ltaData = state.contracts?.slice(0, 2);
 
   return (
-    <ContractLtaListItemsContainer isExpanded={isExpanded}>
+    <ContractLtaListItemsContainer isExpanded={isExpanded} onClick={toggleLtaContainer}>
       <Header isExpanded={isExpanded}>
         <Hand className="icon icon-20 icon-agreement icon-white" />
         <LtaNumber isExpanded={isExpanded}>LTA Number</LtaNumber>
         <ShowMore
           className={`icon icon-24 ${isExpanded ? 'icon-arrow-up icon-white' : 'icon-arrow-down icon-darkest-grey'}`}
           isExpanded={isExpanded}
-          onClick={toggleLtaContainer}
         />
       </Header>
       {isExpanded ? (
