@@ -28,8 +28,14 @@ export const SchoolInfo = styled.div<{ status: string }>`
     gap: 8px;
   }
 
-  .selected {
-    // style here
+  &.selected {
+    background-color: var(--color-blue);
+    p {
+      color: var(--color-white);
+    }
+    div > p {
+      color: var(--color-white);
+    }
   }
 `;
 

@@ -48,9 +48,9 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
         {country?.flagUrl && <img src={country.flagUrl} width="30" height="20" alt="flag" />}
         <SchoolNumberCtr>{name}</SchoolNumberCtr>
       </div>
-      <span className="icon icon-18 icon-school icon-mid-grey" />
+      <span className={`icon icon-18 icon-school icon-${selected ? 'white' : 'mid-grey'}`} />
       <Schools>{numberOfSchools}</Schools>
-      <span className="icon icon-18 icon-network icon-mid-grey" />
+      <span className={`icon icon-18 icon-network icon-${selected ? 'white' : 'mid-grey'}`} />
       <Isp className="tooltip ellipsis">
         {isp}
         <span className="tooltiptext">{isp}</span>
