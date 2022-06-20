@@ -3,6 +3,7 @@ import Country from '../Country/Country';
 import { StyledNav, StyledLogo, MenuContainer, StyledDivider } from './styles';
 import { NavItem } from './NavItem/NavItem';
 import { ProfileIcon } from './ProfileIcon/ProfileIcon';
+import { useHistory } from 'react-router-dom';
 
 interface CountryProps {
   admin: boolean;
@@ -21,6 +22,8 @@ const Navigation: React.FC<CountryProps> = ({
   role,
   contractCounts
 }: CountryProps): JSX.Element => {
+  const history = useHistory();
+
   const [hovered, setHovered] = useState(false);
   const [allContractsCount, setAllContractCount] = useState(0);
   const [draftCount, setDraftCount] = useState(0);
@@ -73,7 +76,12 @@ const Navigation: React.FC<CountryProps> = ({
           : { width: '72px', padding: '8px 6px 16px 8px', transition: 'width .5s ease-out, padding .2s ease-out' }
       }
     >
-      {hovered ? <StyledLogo src="./logos/giga-logo-inline.svg" /> : <StyledLogo src="./logos/giga-logo.svg" />}
+      <StyledLogo
+        src={hovered ? './logos/giga-logo-inline.svg' : './logos/giga-logo.svg'}
+        onClick={() => {
+          history.push('/dashboard');
+        }}
+      />
 
       <MenuContainer>
         {!admin && <Country collapsed={!hovered} countryName={countryName} countryPath={countryPath} />}
