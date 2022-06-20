@@ -9,7 +9,7 @@ export const LoginFormContainer = styled.div`
   isolation: isolate;
   position: relative;
   width: 400px;
-  height: 876px;
+  height: 100%;
   background: #ffffff;
 `;
 

@@ -6,7 +6,7 @@ const Login: React.FC = (): JSX.Element => {
   return (
     <LoginContainer>
       <LoginForm />
-      <ImageContainer src="./utils/loginImage.png" />
+      <ImageContainer />
     </LoginContainer>
   );
 };
