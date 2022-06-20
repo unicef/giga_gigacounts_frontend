@@ -5,6 +5,7 @@ import ContractDefaultListItem from '../ContractListContent/ContractDefaultListI
 import ContractLtaListItem from './ContractLtaListItem/ContractLtaListItem';
 import ContractLtaListItems from './ContractLtaListItems/ContractLtaListItems';
 import ContractSchoolStatus from './ContactSchoolStatus/ContractSchoolStatus';
+import ContractLoader from './ContractLoader/ContractLoader';
 
 import { ContractListContainer } from './styles';
 
@@ -20,6 +21,7 @@ const ContractListContent: React.FC<ContractListProps> = ({ state, dispatch }: C
         <p>loading...</p>
       ) : (
         <>
+          <ContractLoader />
           <ContractLtaListItem />
           <ContractLtaListItems state={state} dispatch={dispatch} />
           <ContractDefaultListItem></ContractDefaultListItem>
