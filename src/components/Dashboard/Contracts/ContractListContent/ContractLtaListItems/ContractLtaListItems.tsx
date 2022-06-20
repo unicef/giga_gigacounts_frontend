@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { State } from '../../store/redux';
+import { Dispatch, useState } from 'react';
+import { Action, State } from '../../store/redux';
 import ContractSchoolStatus from '../ContactSchoolStatus/ContractSchoolStatus';
 import {
   ContractLtaFooter,
@@ -11,11 +11,12 @@ import {
   Hand
 } from './styles';
 
-interface ContractListProps {
+interface IContractListProps {
   state: State;
+  dispatch: Dispatch<Action>;
 }
 
-const ContractLtaListItems: React.FC<ContractListProps> = ({ state }): JSX.Element => {
+const ContractLtaListItems: React.FC<IContractListProps> = ({ state, dispatch }): JSX.Element => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState);
@@ -34,7 +35,10 @@ const ContractLtaListItems: React.FC<ContractListProps> = ({ state }): JSX.Eleme
       </Header>
       {isExpanded ? (
         <>
-          {ltaData !== undefined && ltaData.map((school, i) => <ContractSchoolStatus key={i} school={school} />)}
+          {ltaData !== undefined &&
+            ltaData.map((school, i) => (
+              <ContractSchoolStatus key={i} school={school} state={state} dispatch={dispatch} />
+            ))}
           <ContractLtaFooter>Create Contract Here</ContractLtaFooter>
         </>
       ) : (

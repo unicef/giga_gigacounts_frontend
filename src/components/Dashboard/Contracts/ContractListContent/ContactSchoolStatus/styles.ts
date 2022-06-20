@@ -27,6 +27,10 @@ export const SchoolInfo = styled.div<{ status: string }>`
     display: flex;
     gap: 8px;
   }
+
+  .selected {
+    // style here
+  }
 `;
 
 export const SchoolNumberCtr = styled.p`

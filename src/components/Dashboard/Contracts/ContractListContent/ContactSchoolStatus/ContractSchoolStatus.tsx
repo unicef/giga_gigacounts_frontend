@@ -1,17 +1,23 @@
-import { useState } from 'react';
+import { Dispatch, useState } from 'react';
 import ContractStatusWidget from '../../../../common/ContractStatusWidget/index';
 import { ContractStatus, IContracts } from '../../@types/ContractType';
+import { Action, ActionType, State } from '../../store/redux';
 import { Icons, SchoolInfo, IconsName, IconCompleted, SchoolNumberCtr, Schools, Isp } from './styles';
 
 interface ISchoolStatusProps {
   school: IContracts;
+  state: State;
+  dispatch: Dispatch<Action>;
 }
 
-const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({ school }: ISchoolStatusProps): JSX.Element => {
-  const [selected, setSelected] = useState<boolean>(false);
-  const { isp, numberOfSchools, status, name, country } = school;
+const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
+  school,
+  state,
+  dispatch
+}: ISchoolStatusProps): JSX.Element => {
+  const [selected, setSelected] = useState(false);
 
-  const newStatus = status.length > 15 ? `${status.slice(0, 12) + '...'}` : `${status}`;
+  const { isp, numberOfSchools, status, name, country } = school;
 
   const handleSelected = () => setSelected((prevState) => !prevState);
 
@@ -30,14 +36,14 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({ school }: ISchoolS
               status === 'Confirmed' ? 'icon-green' : 'icon-light-blue'
             }`}
           />
-          <IconsName>{newStatus}</IconsName>
+          <IconsName>{status}</IconsName>
         </>
       );
     }
   };
 
   return (
-    <SchoolInfo status={status} onClick={handleSelected}>
+    <SchoolInfo status={status} onClick={handleSelected} className={`${selected ? 'selected' : ''} `}>
       <div className="header">
         {country?.flagUrl && <img src={country.flagUrl} width="30" height="20" alt="flag" />}
         <SchoolNumberCtr>{name}</SchoolNumberCtr>
