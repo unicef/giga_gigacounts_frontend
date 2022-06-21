@@ -8,6 +8,10 @@ export const ContractLtaListItemsContainer = styled.div<{ isExpanded: boolean }>
   position: relative;
   width: 100%;
   filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.15));
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export const Header = styled.div<{ isExpanded: boolean }>`

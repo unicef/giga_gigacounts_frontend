@@ -15,7 +15,6 @@ const Contracts: React.FC<ContractsProps> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state);
 
   const fetchContracts = async () => {
-    dispatch({ type: ActionType.SET_LOADING });
     try {
       const response = await getContracts();
 
@@ -33,7 +32,7 @@ const Contracts: React.FC<ContractsProps> = (): JSX.Element => {
     <>
       <ContractsMenu>
         <ContractListHeader />
-        <ContractListContent state={localState} />
+        <ContractListContent state={localState} dispatch={dispatch} />
         <ContractListFooter />
       </ContractsMenu>
     </>

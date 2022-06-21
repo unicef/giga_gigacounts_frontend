@@ -19,11 +19,19 @@ export const NavItem: React.FC<NavItemProps> = ({
 }: NavItemProps): JSX.Element => {
   return (
     <Label style={collapsed ? {paddingLeft: '16px'} : {}} {...props} >
-        < div className={ icon + ' icon icon-24 ' + (selected ? 'icon-white' : 'icon-lighter-blue' )} />
+        < div className={ icon + ' icon icon-24 ' + (selected ? 'icon-white' : 'icon-light-blue' )} />
       {!collapsed && (
         <>
-            <p style={{ fontWeight: selected ? 'bold' : 'normal', width: '100%'}}>{label}</p>
-            <p style={{ fontWeight: selected ? 'bold' : 'normal'}}>{number}</p>
+            <p style={{ fontWeight: selected ? 'bold' : 'normal',
+                        color: selected ? 'var(--color-white)' : 'var(--color-lightest-blue)',
+                        width: '100%'
+                        }}>{label}
+            </p>
+
+            <p style={{ fontWeight: selected ? 'bold' : 'normal',
+                        color: selected ? 'var(--color-white)' : 'var(--color-lightest-blue)',
+                        }}>{number}
+            </p>
         </>
       )}
     </Label>

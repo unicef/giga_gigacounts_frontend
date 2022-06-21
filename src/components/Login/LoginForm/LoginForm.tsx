@@ -104,7 +104,7 @@ export const LoginForm: React.FC = (): JSX.Element => {
             </InputFrame>
           )}
         </InputContainer>
-        <button type="submit">Sign In</button>
+        <button type="submit" className='btn-blue'>Sign In</button>
       </Form>
     </LoginFormContainer>
   );

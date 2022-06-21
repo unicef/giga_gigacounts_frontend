@@ -39,26 +39,32 @@
 
 @font-face {
   font-family: 'Open Sans';
-  src: url('./fonts/OpenSans-Light.ttf') format('opentype');
+  src: url('../fonts/OpenSans-Light.ttf') format('opentype');
   font-weight: 300;
 }
 
 @font-face {
   font-family: 'Open Sans';
-  src: url('./fonts/OpenSans-Regular.ttf') format('opentype');
+  src: url('../fonts/OpenSans-Regular.ttf') format('opentype');
   font-weight: normal;
 }
 
 @font-face {
   font-family: 'Open Sans';
-  src: url('./fonts/OpenSans-SemiBold.ttf') format('opentype');
+  src: url('../fonts/OpenSans-SemiBold.ttf') format('opentype');
   font-weight: 600;
 }
 
 @font-face {
   font-family: 'Open Sans';
-  src: url('./fonts/OpenSans-Bold.ttf') format('opentype');
+  src: url('../fonts/OpenSans-Bold.ttf') format('opentype');
   font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Occupator';
+  src: url('../fonts/Occupator.otf') format('opentype');
+  font-weight: normal;
 }
 
 * {
@@ -109,6 +115,7 @@ h1 {
   font-size: 32px;
   line-height: 128%;
   letter-spacing: 0.015em;
+  margin: 0;
 }
 
 h2 {
@@ -116,6 +123,7 @@ h2 {
   font-size: 36px;
   line-height: 122%;
   letter-spacing: 0.006em;
+  margin: 0;
 }
 
 h3 {
@@ -123,6 +131,7 @@ h3 {
   font-size: 36px;
   line-height: 122%;
   letter-spacing: 0.015em;
+  margin: 0;
 }
 
 h4 {
@@ -130,6 +139,7 @@ h4 {
   font-size: 21px;
   line-height: 150%;
   letter-spacing: 0.003em;
+  margin: 0;
 }
 
 h5 {
@@ -138,6 +148,7 @@ h5 {
   line-height: 150%;
   letter-spacing: 0.018em;
   text-transform: uppercase;
+  margin: 0;
 }
 
 h6 {
@@ -145,11 +156,13 @@ h6 {
   font-size: 16px;
   line-height: 148%;
   letter-spacing: 0.002em;
+  margin: 0;
 }
 
 h6 b {
   font-weight: 600;
   letter-spacing: 0.003em;
+  margin: 0;
 }
 
 a {
@@ -159,6 +172,7 @@ a {
   letter-spacing: 0.002em;
   text-decoration-line: underline;
   color: var(--color-dark-blue);
+  margin: 0;
 }
 
 p {
@@ -166,13 +180,13 @@ p {
   font-size: 14px;
   line-height: 156%;
   letter-spacing: 0.003em;
-  margin: 0.8em 0;
+  margin: 0;
 }
 
 p b {
   font-weight: 600;
   letter-spacing: 0.0032em;
-  margin: 0.8em 0;
+  margin: 0;
 }
 
 small {
@@ -181,14 +195,14 @@ small {
   font-size: 12px;
   line-height: 148%;
   letter-spacing: 0.018em;
-  margin: 0.8em 0;
+  margin: 0;
 }
 
 small b {
   display: block;
   font-weight: 600;
   letter-spacing: 0.02em;
-  margin: 0.8em 0;
+  margin: 0;
 }
 
 .super-small {
@@ -196,6 +210,14 @@ small b {
   font-size: 11px;
   line-height: 148%;
   letter-spacing: 0.015em;
+}
+
+.dummy {
+  font-family: 'Occupator';
+  font-style: normal;
+  font-weight: normal;
+  letter-spacing: 0;
+  margin: 0;
 }
 
 /* Input Fields --------------------------------------------------- */
@@ -263,38 +285,45 @@ button {
   line-height: 100%;
   letter-spacing: 0.012em;
   text-transform: uppercase;
-  width: 100%;
   height: 32px;
+  padding: 0 16px;
   border: none;
   border-radius: 2px;
+}
+
+
+input[type='submit']:disabled 
+button:disabled {
+  background-color: var(--color-light-grey);
+}
+
+.btn-blue {
   color: var(--color-white);
   background-color: var(--color-blue);
 }
 
-/* button:active, */
-input[type='submit']:active button:active {
-  background-color: var(--color-dark-blue);
-}
-
-input[type='submit']:disabled button:disabled {
-  background-color: var(--color-light-grey);
-}
-
 .btn-red {
+  color: var(--color-white);
   background-color: var(--color-red);
 }
 
 .btn-orange {
+  color: var(--color-white);
   background-color: var(--color-orange);
 }
 
 .btn-green {
+  color: var(--color-white);
   background-color: var(--color-green);
 }
 
 .btn-frameless {
   color: var(--color-dark-blue);
   background-color: transparent;
+}
+
+.btn-blue:active {
+  background-color: var(--color-dark-blue);
 }
 
 .btn-red:active {

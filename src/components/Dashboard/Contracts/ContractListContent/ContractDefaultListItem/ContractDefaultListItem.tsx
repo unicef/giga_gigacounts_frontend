@@ -1,20 +1,19 @@
-import { Icons, IconsName, SchoolInfo, SchoolNumberCtr, SchoolStatus } from './styles';
-
-interface ContractListProps {
+import { Icons, IconsName, SchoolInfo, SchoolNumberCtr } from './styles';
+interface IContractListProps {
   label?: string;
 }
 
-const ContractDefaultListItem: React.FC<ContractListProps> = (): JSX.Element => {
+const ContractDefaultListItem: React.FC<IContractListProps> = (): JSX.Element => {
   return (
-    <SchoolStatus>
-      <SchoolInfo>
+    <SchoolInfo>
+      <div className="header">
         <SchoolNumberCtr>New Contract</SchoolNumberCtr>
-      </SchoolInfo>
+      </div>
       <Icons>
         <span className="icon icon-28 icon-draft icon-white" />
         <IconsName>Draft</IconsName>
       </Icons>
-    </SchoolStatus>
+    </SchoolInfo>
   );
 };
 

@@ -19,16 +19,15 @@ const ContractLtaListItem: React.FC<ContractListProps> = (): JSX.Element => {
   const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState);
 
   return (
-    <ContractLtaListItemContainer isExpanded={isExpanded}>
+    <ContractLtaListItemContainer isExpanded={isExpanded} onClick={toggleLtaContainer}>
       <ContractLtaHeader isExpanded={isExpanded}>
         <ContractLtaIcon>
-          <span className="icon icon-20 icon-contract icon-white" />
+          <span className="icon icon-20 icon-agreement icon-white" />
         </ContractLtaIcon>
         <ContractLtaNumber isExpanded={isExpanded}>LTA Number</ContractLtaNumber>
         <IconShowMore
           className={`icon icon-24 ${isExpanded ? 'icon-arrow-up icon-white' : 'icon-arrow-down icon-darkest-grey'}`}
           isExpanded={isExpanded}
-          onClick={toggleLtaContainer}
         />
       </ContractLtaHeader>
 

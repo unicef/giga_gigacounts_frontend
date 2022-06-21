@@ -17,6 +17,7 @@ export interface State {
   error?: Error;
   loading?: boolean;
   controller?: AbortController;
+  isSelected?: boolean;
 }
 
 export const reducer = (state: State, action: Action): State => {
@@ -27,7 +28,8 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         contracts: payload.contracts,
-        ltas: payload.ltas
+        ltas: payload.ltas,
+        loading: false
       };
 
     case ActionType.SET_ERROR:
@@ -54,6 +56,6 @@ export const state: State = {
   contracts: [],
   ltas: {},
   error: undefined,
-  loading: false,
+  loading: true,
   controller: undefined
 };

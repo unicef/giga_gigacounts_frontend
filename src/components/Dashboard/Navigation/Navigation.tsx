@@ -24,7 +24,7 @@ const Navigation: React.FC<CountryProps> = ({
 }: CountryProps): JSX.Element => {
   const history = useHistory();
 
-  const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(true);
   const [allContractsCount, setAllContractCount] = useState(0);
   const [draftCount, setDraftCount] = useState(0);
   const [sentCount, setSentCount] = useState(0);
@@ -88,7 +88,13 @@ const Navigation: React.FC<CountryProps> = ({
 
         <StyledDivider />
 
-        <NavItem collapsed={!hovered} label="All Contracts" number={allContractsCount.toString()} icon="icon-list" />
+        <NavItem
+          collapsed={!hovered}
+          selected={true}
+          label="All Contracts"
+          number={allContractsCount.toString()}
+          icon="icon-list"
+        />
 
         <NavItem collapsed={!hovered} label="Drafts" number={draftCount.toString()} icon="icon-draft" />
 

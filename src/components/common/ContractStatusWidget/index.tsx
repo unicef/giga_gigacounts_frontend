@@ -47,65 +47,73 @@ const drawChart = (
     return;
   }
 
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = '#fff'; // this BG color may change on card selection
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.save();
   ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 
   const blankColor = selected ? '#7DAFFF' : '#E6E6E6';
-  const paymentColor = selected ? '#FFFFFF' : '#6FA6FE';
-  const disconnectedColor = selected ? '#FF7575' : '#F94B4B';
-  const averageColor = selected ? '#F9BF68' : '#FF9F40';
-  const goodColor = selected ? '#6FE883' : '#46C66D';
+  const blueColor = selected ? '#FFFFFF' : '#6FA6FE';
+  const redColor = selected ? '#FF7575' : '#F94B4B';
+  const orangeColor = selected ? '#F9BF68' : '#FF9F40';
+  const greenColor = selected ? '#6FE883' : '#46C66D';
 
   const budgetStroke = 3;
   const chartSpacing = 3;
   const innerChartWidth = Math.min(canvas.clientWidth, canvas.clientHeight) - budgetStroke * 2 - chartSpacing * 2;
 
-  dial(canvas, {
-    diameter: Math.min(canvas.clientWidth, canvas.clientHeight),
-    stroke: budgetStroke,
-    color: disconnectedColor,
-    percent: 100
-  });
-  // Blank Dials
-
-  dial(canvas, {
-    diameter: Math.min(canvas.clientWidth, canvas.clientHeight),
-    stroke: budgetStroke,
-    color: blankColor,
-    percent: 100
-  });
-
   if (expired) {
+
+    // Schools Dial
+
+    dial(canvas, {
+      diameter: innerChartWidth,
+      stroke: innerChartWidth / 2,
+      color: redColor,
+      percent: 100,
+      start: average + good
+    });
+
+    dial(canvas, {
+      diameter: innerChartWidth,
+      stroke: innerChartWidth / 2,
+      color: blankColor,
+      percent: average + good
+    });
+
+    // Budget Dial
+
     dial(canvas, {
       diameter: Math.min(canvas.clientWidth, canvas.clientHeight),
       stroke: budgetStroke,
-      color: disconnectedColor,
+      color: redColor,
       percent: 100,
       start: payments
     });
 
     dial(canvas, {
-      diameter: innerChartWidth,
-      stroke: innerChartWidth / 2,
-      color: disconnectedColor,
-      percent: 100,
-      start: average + good
+      diameter: Math.min(canvas.clientWidth, canvas.clientHeight),
+      stroke: budgetStroke,
+      color: blankColor,
+      percent: payments
     });
+
   } else {
+
+    // Schools Dial
+
     dial(canvas, {
       diameter: innerChartWidth,
       stroke: innerChartWidth / 2,
-      color: disconnectedColor,
-      percent: 100 - (average + good),
+      color: redColor,
+      percent: 100,
       start: average + good
     });
 
     dial(canvas, {
       diameter: innerChartWidth,
       stroke: innerChartWidth / 2,
-      color: averageColor,
+      color: orangeColor,
       percent: average + good,
       start: good
     });
@@ -113,14 +121,24 @@ const drawChart = (
     dial(canvas, {
       diameter: innerChartWidth,
       stroke: innerChartWidth / 2,
-      color: goodColor,
+      color: greenColor,
       percent: good
+    });
+
+    // Budget Dial
+
+    dial(canvas, {
+      diameter: Math.min(canvas.clientWidth, canvas.clientHeight),
+      stroke: budgetStroke,
+      color: blankColor,
+      percent: 100,
+      start: payments
     });
 
     dial(canvas, {
       diameter: Math.min(canvas.clientWidth, canvas.clientHeight),
       stroke: budgetStroke,
-      color: paymentColor,
+      color: blueColor,
       percent: payments
     });
   }

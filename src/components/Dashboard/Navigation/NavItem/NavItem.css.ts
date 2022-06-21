@@ -2,9 +2,7 @@ import styled from 'styled-components';
 
 export const Label = styled.div`
   p {
-    color: var(--color-white);
     white-space: nowrap;
-    margin: 0;
   }
   width: 100%;
   display: flex;

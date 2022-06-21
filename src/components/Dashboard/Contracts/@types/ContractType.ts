@@ -28,7 +28,7 @@ export interface IContracts {
 }
 
 export interface ILtas {
-  id?: string;
+  [key: string]: [];
 }
 
 export interface IContractsData {
@@ -41,5 +41,6 @@ export enum ContractStatus {
   Sent = 'Sent',
   Confirmed = 'Confirmed',
   Ongoing = 'Ongoing',
-  Expired = 'Expired'
+  Expired = 'Expired',
+  Completed = 'Completed'
 }

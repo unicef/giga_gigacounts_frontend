@@ -1,32 +1,31 @@
 import styled from 'styled-components';
 
-export const SchoolStatus = styled.section`
-  display: grid;
-  grid-template-columns: [first] 1fr [second] 65px [third];
-  grid-template-rows: auto;
-  grid-template-areas: 'first second';
-  width: 100%;
-  height: 65px;
-  background: var(--color-light-blue);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-`;
-
 export const SchoolInfo = styled.div`
   display: grid;
-  grid-template-columns: min-content 40px min-content auto;
+  grid-template-columns: min-content 40px min-content auto 65px;
   grid-template-rows: 22px 18px;
   grid-template-areas:
-    'name  name   name   name'
-    'first school second budget';
+    'header header header header icon'
+    'first  school second budget icon';
   gap: 4px 8px;
-  justify-items: stretch;
-  align-items: stretch;
-  height: 46px;
-  margin: 9px 12px;
+  align-items: center;
+  padding: 10px 0 10px 12px;
+  width: 100%;
+  background: var(--color-light-blue);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  .header {
+    grid-area: header;
+    display: flex;
+    gap: 8px;
+  }
 `;
 
 export const SchoolNumberCtr = styled.p`
-  grid-area: name;
   margin: 0;
   font-family: 'Open Sans';
   font-style: normal;
@@ -38,12 +37,11 @@ export const SchoolNumberCtr = styled.p`
 `;
 
 export const Icons = styled.div`
+  grid-area: icon;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 2px;
-  height: 65px;
 `;
 
 export const IconsName = styled.p`

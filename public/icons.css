@@ -12,7 +12,6 @@
   display: inline-block;
   font: normal normal normal 1em/1 'Giga';
   color: inherit;
-  flex-shrink: 0;
   speak: none;
   text-transform: none;
   /* Better Font Rendering */
@@ -36,6 +35,42 @@
 
 .icon-24 {
   font-size: 24px;
+}
+
+.icon-26 {
+  font-size: 26px;
+}
+
+.icon-28 {
+  font-size: 28px;
+}
+
+.icon-30 {
+  font-size: 30px;
+}
+
+.icon-32 {
+  font-size: 32px;
+}
+
+.icon-34 {
+  font-size: 34px;
+}
+
+.icon-36 {
+  font-size: 36px;
+}
+
+.icon-38 {
+  font-size: 38px;
+}
+
+.icon-40 {
+  font-size: 40px;
+}
+
+.icon-42 {
+  font-size: 42px;
 }
 
 /*  Icon Colors ------------------- */
@@ -290,7 +325,7 @@
   content: '\ea21';
 }
 
-.icon-contract::before {
+.icon-agreement::before {
   content: '\ea22';
 }
 
