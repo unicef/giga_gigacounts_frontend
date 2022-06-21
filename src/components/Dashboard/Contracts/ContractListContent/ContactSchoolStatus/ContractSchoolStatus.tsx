@@ -64,7 +64,6 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
     if (school !== undefined && school.id !== undefined) {
       onToggle?.(school.id);
     }
-    console.log(school.id);
   };
 
   return (
