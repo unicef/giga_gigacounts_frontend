@@ -47,7 +47,7 @@ const Dashboard: React.FC = () => {
         admin={role === ADMIN_ROLE}
         countryName={countryName}
         role={role}
-        countryPath={`./flags/${countryCode || 'AC'}.svg`}
+        countryPath={`./flags/${countryCode || ''}.svg`}
         name={name}
         contractCounts={contractCounts}
       />

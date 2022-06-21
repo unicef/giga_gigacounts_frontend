@@ -15,9 +15,12 @@ export const LoginContainer = styled.div`
   background: #ffffff;
 `;
 
-export const ImageContainer = styled.img`
+export const ImageContainer = styled.div`
   flex: none;
   order: 1;
   align-self: stretch;
   flex-grow: 1;
+  background-image: url('./utils/loginImage.png');
+  background-repeat: repeat;
+  background-size: cover;
 `;

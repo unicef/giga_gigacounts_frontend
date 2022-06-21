@@ -11,6 +11,7 @@ export const StyledNav = styled.div`
 export const StyledLogo = styled.img`
   align-self: start;
   height: 58px;
+  cursor: pointer;
 `;
 export const StyledDivider = styled.div`
   width: 100%;
