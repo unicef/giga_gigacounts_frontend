@@ -8,11 +8,11 @@ export const ContractLoaderContainer = styled.div`
 
   background: linear-gradient(
     90deg,
-    var(--color-white-40),
-    var(--color-white),
-    var(--color-white-40),
-    var(--color-white),
-    var(--color-white-40)
+    var(--color-lightest-blue),
+    var(--color-lighter-blue),
+    var(--color-lightest-blue),
+    var(--color-lighter-blue),
+    var(--color-lightest-blue)
   );
   background-size: 200%;
 

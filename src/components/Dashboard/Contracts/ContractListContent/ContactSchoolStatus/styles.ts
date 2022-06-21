@@ -14,9 +14,11 @@ export const SchoolInfo = styled.div<{ status: string }>`
   width: 100%;
   background: ${(props) =>
     props.status === ContractStatus.Draft || props.status === ContractStatus.Completed
-      ? `var(--color-white-60)`
+      ? `var(--color-pale-blue)`
       : `var(--color-white)`};
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
 
   &:hover {
     cursor: pointer;

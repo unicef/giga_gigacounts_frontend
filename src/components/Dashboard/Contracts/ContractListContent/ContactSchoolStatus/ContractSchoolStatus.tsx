@@ -77,7 +77,7 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
             width="30"
             height="20"
             alt="flag"
-            style={{ border: '1px solid var(--color-white-40)' }}
+            style={{ border: '1px solid var(--color-white-60)' }}
           />
         )}
         <SchoolNumberCtr>{name}</SchoolNumberCtr>
