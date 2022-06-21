@@ -25,6 +25,7 @@ export interface IContracts {
   numberOfSchools: string;
   schoolsConnection: ISchoolsConnections;
   status: string;
+  totalSpent: number;
 }
 
 export interface ILtas {

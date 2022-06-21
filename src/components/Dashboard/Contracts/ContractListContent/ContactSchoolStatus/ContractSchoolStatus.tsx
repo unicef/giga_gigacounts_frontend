@@ -19,7 +19,8 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
   onToggle,
   dispatch
 }: ISchoolStatusProps): JSX.Element => {
-  const { isp, numberOfSchools, status, name, country } = school;
+  const { isp, numberOfSchools, status, name, country, totalSpent, schoolsConnection } = school;
+  console.log(totalSpent);
 
   const pieChart = () => {
     switch (status) {
@@ -28,10 +29,10 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
         return (
           <ContractStatusWidget
             selected={selected}
-            average={15}
-            good={60}
-            expired={status === 'Expired'}
-            payments={60}
+            average={schoolsConnection.atLeastOneBellowAvg}
+            good={schoolsConnection.allEqualOrAboveAvg}
+            expired={status === ContractStatus.Expired}
+            payments={totalSpent}
           />
         );
 
