@@ -6,14 +6,14 @@ export const ContractLoaderContainer = styled.div`
   flex-direction: column;
   gap: 16px;
 
-  background:  linear-gradient( 
-      90deg, 
-      var(--color-white-40), 
-      var(--color-white), 
-      var(--color-white-40),
-      var(--color-white), 
-      var(--color-white-40) 
-    );
+  background: linear-gradient(
+    90deg,
+    var(--color-white-40),
+    var(--color-white),
+    var(--color-white-40),
+    var(--color-white),
+    var(--color-white-40)
+  );
   background-size: 200%;
 
   background-clip: text;
@@ -21,20 +21,31 @@ export const ContractLoaderContainer = styled.div`
   -webkit-text-fill-color: transparent;
 
   animation: Loader 1.5s ease-out infinite;
-  
-  @-webkit-keyframes Loader { 
-    0%{background-position: 100% 100%}
-    100%{background-position: 0% 0%}
-  }
-  @-moz-keyframes Loader { 
-    0%{background-position: 100% 100%}
-    100%{background-position: 0% 0%}
-    }
-  @keyframes Loader { 
-      0%{background-position: 100% 100%}
-      100%{background-position: 0% 0%}
-  }
 
+  @-webkit-keyframes Loader {
+    0% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+  @-moz-keyframes Loader {
+    0% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+  @keyframes Loader {
+    0% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
 `;
 
 export const ContractLoaderItem = styled.div`
@@ -53,7 +64,7 @@ export const ContractLoaderItem = styled.div`
     grid-area: header;
   }
 
-  small{
+  small {
     grid-area: description;
   }
 

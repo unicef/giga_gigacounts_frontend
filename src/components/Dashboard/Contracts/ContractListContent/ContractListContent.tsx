@@ -1,4 +1,4 @@
-import { Dispatch } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 import { Action, State } from '../store/redux';
 
 import ContractDefaultListItem from '../ContractListContent/ContractDefaultListItem/ContractDefaultListItem';
@@ -15,20 +15,51 @@ interface ContractListProps {
 }
 
 const ContractListContent: React.FC<ContractListProps> = ({ state, dispatch }: ContractListProps): JSX.Element => {
+  const [ltaNumber, setLtaNumber] = useState<string[]>();
+  const [selected, setSelected] = useState<string>('');
+
+  const handleSelected = (id: string) => {
+    setSelected(id);
+  };
+
+  const getLtaNumber = () => {
+    const arr: string[] = [];
+    if (state.ltas !== undefined) {
+      for (const lta in state.ltas) {
+        arr.push(lta);
+      }
+      setLtaNumber(arr);
+    }
+  };
+
+  useEffect(() => {
+    getLtaNumber();
+  }, [state]);
+
   return (
     <ContractListContainer>
       {state.loading ? (
-        <p>loading...</p>
+        <ContractLoader />
       ) : (
         <>
-          <ContractLoader />
           <ContractLtaListItem />
-          <ContractLtaListItems state={state} dispatch={dispatch} />
+          {ltaNumber?.map((item, i) => {
+            return <ContractLtaListItems key={i} state={state} dispatch={dispatch} ltaNumber={item} />;
+          })}
           <ContractDefaultListItem></ContractDefaultListItem>
           <>
             {state.contracts !== undefined &&
               state.contracts.map((school, i) => {
-                return <ContractSchoolStatus key={i} school={school} state={state} dispatch={dispatch} />;
+                return (
+                  <ContractSchoolStatus
+                    key={i}
+                    school={school}
+                    state={state}
+                    dispatch={dispatch}
+                    onToggle={handleSelected}
+                    selected={selected === school.id}
+                  />
+                );
               })}
           </>
         </>

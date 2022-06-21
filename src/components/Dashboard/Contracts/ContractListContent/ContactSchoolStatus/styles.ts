@@ -29,7 +29,10 @@ export const SchoolInfo = styled.div<{ status: string }>`
   }
 
   &.selected {
-    background-color: var(--color-blue);
+    background: ${(props) =>
+      props.status === ContractStatus.Draft || props.status === ContractStatus.Completed
+        ? `var(--color-light-blue)`
+        : `var(--color-blue)`};
     p {
       color: var(--color-white);
     }

@@ -28,7 +28,7 @@ export interface IContracts {
 }
 
 export interface ILtas {
-  id?: string;
+  [key: string]: [];
 }
 
 export interface IContractsData {
