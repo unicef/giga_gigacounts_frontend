@@ -21,7 +21,7 @@ const Navigation: React.FC<CountryProps> = ({
   role,
   contractCounts
 }: CountryProps): JSX.Element => {
-  const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(true);
   const [allContractsCount, setAllContractCount] = useState(0);
   const [draftCount, setDraftCount] = useState(0);
   const [sentCount, setSentCount] = useState(0);
