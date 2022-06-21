@@ -47,6 +47,7 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
         );
 
       case ContractStatus.Draft:
+      case ContractStatus.Sent:
         return (
           <>
             <span
