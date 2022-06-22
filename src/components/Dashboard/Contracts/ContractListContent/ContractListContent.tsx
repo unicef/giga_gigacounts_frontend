@@ -8,6 +8,7 @@ import ContractSchoolStatus from './ContactSchoolStatus/ContractSchoolStatus';
 import ContractLoader from './ContractLoader/ContractLoader';
 
 import { ContractListContainer } from './styles';
+import { IContracts } from '../@types/ContractType';
 
 interface ContractListProps {
   state: State;
@@ -17,6 +18,8 @@ interface ContractListProps {
 const ContractListContent: React.FC<ContractListProps> = ({ state, dispatch }: ContractListProps): JSX.Element => {
   const [ltaNumber, setLtaNumber] = useState<string[]>();
   const [selected, setSelected] = useState<string>('');
+
+  const { contracts, loading } = state;
 
   const handleSelected = (id: string) => {
     setSelected(id);
@@ -36,32 +39,33 @@ const ContractListContent: React.FC<ContractListProps> = ({ state, dispatch }: C
     getLtaNumber();
   }, [state]);
 
+  const contractItem = (school: IContracts, i: number) => {
+    if (school?.added) {
+      return <ContractDefaultListItem key={i} />;
+    } else {
+      return (
+        <ContractSchoolStatus
+          key={i}
+          school={school}
+          state={state}
+          dispatch={dispatch}
+          onToggle={handleSelected}
+          selected={selected === school.id}
+        />
+      );
+    }
+  };
+
   return (
     <ContractListContainer>
-      {state.loading ? (
+      {loading ? (
         <ContractLoader />
       ) : (
         <>
-          <ContractLtaListItem />
           {ltaNumber?.map((item, i) => {
             return <ContractLtaListItems key={i} state={state} dispatch={dispatch} ltaNumber={item} />;
           })}
-          <ContractDefaultListItem></ContractDefaultListItem>
-          <>
-            {state.contracts !== undefined &&
-              state.contracts.map((school, i) => {
-                return (
-                  <ContractSchoolStatus
-                    key={i}
-                    school={school}
-                    state={state}
-                    dispatch={dispatch}
-                    onToggle={handleSelected}
-                    selected={selected === school.id}
-                  />
-                );
-              })}
-          </>
+          <>{contracts !== undefined && contracts.map((school, i) => contractItem(school, i))}</>
         </>
       )}
     </ContractListContainer>

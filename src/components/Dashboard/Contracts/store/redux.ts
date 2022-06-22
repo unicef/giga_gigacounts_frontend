@@ -1,7 +1,9 @@
 import { IContracts, ILtas } from '../@types/ContractType';
+import _ from 'lodash';
 
 export enum ActionType {
   RESPONSE = 'RESPONSE',
+  CREATE_CONTRACT = 'CREATE_CONTRACT',
   SET_LOADING = 'SET_LOADING',
   SET_ERROR = 'SET_ERROR'
 }
@@ -12,6 +14,7 @@ export interface Action {
 }
 
 export interface State {
+  contract?: IContracts;
   contracts?: IContracts[];
   ltas?: ILtas;
   error?: Error;
@@ -32,18 +35,27 @@ export const reducer = (state: State, action: Action): State => {
         loading: false
       };
 
+    case ActionType.CREATE_CONTRACT: {
+      const newContracts = _.cloneDeep(state.contracts);
+      newContracts?.unshift(payload);
+
+      return {
+        ...state,
+        contracts: newContracts
+      };
+    }
+
     case ActionType.SET_ERROR:
       return {
         ...state,
         error: payload
       };
 
-    case ActionType.SET_LOADING: {
+    case ActionType.SET_LOADING:
       return {
         ...state,
         loading: !state.loading
       };
-    }
 
     default:
       return {
@@ -57,5 +69,30 @@ export const state: State = {
   ltas: {},
   error: undefined,
   loading: true,
-  controller: undefined
+  controller: undefined,
+
+  contract: {
+    added: false,
+    budget: {
+      budget: '',
+      totalSpend: null
+    },
+    country: {
+      code: '',
+      flagUrl: '',
+      name: ''
+    },
+    id: '',
+    isp: '',
+    ltaId: null,
+    name: '',
+    numberOfSchools: '',
+    schoolsConnection: {
+      allEqualOrAboveAvg: 0,
+      atLeastOneBellowAvg: 0,
+      withoutConnection: 0
+    },
+    status: '',
+    totalSpent: 0
+  }
 };
