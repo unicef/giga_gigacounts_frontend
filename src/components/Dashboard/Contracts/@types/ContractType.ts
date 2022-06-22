@@ -16,16 +16,17 @@ export interface ISchoolsConnections {
 }
 
 export interface IContracts {
-  budget: IBudget;
-  country: ICountry;
-  id: string;
-  isp: string;
-  ltaId: null;
-  name: string;
-  numberOfSchools: string;
-  schoolsConnection: ISchoolsConnections;
+  added?: boolean;
+  budget?: IBudget;
+  country?: ICountry;
+  id?: string;
+  isp?: string;
+  ltaId?: null;
+  name?: string;
+  numberOfSchools?: string;
+  schoolsConnection?: ISchoolsConnections;
   status: string;
-  totalSpent: number;
+  totalSpent?: number;
 }
 
 export interface ILtas {

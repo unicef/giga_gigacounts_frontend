@@ -33,7 +33,7 @@ const Contracts: React.FC<ContractsProps> = (): JSX.Element => {
       <ContractsMenu>
         <ContractListHeader />
         <ContractListContent state={localState} dispatch={dispatch} />
-        <ContractListFooter />
+        <ContractListFooter dispatch={dispatch} />
       </ContractsMenu>
     </>
   );

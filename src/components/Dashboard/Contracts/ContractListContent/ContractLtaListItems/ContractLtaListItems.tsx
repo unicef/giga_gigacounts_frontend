@@ -1,7 +1,8 @@
 import { Dispatch, useEffect, useState } from 'react';
 import { IContracts } from '../../@types/ContractType';
-import { Action, State } from '../../store/redux';
+import { Action, ActionType, State } from '../../store/redux';
 import ContractSchoolStatus from '../ContactSchoolStatus/ContractSchoolStatus';
+import ContractDefaultListItem from '../ContractDefaultListItem/ContractDefaultListItem';
 import {
   ContractLtaFooter,
   ContractLtaSubHeader,
@@ -35,6 +36,33 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, 
 
   const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState);
 
+  const newContract = {
+    name: 'New Contract',
+    status: 'Draft',
+    added: true
+  };
+
+  const handleAddLtaContract = () => {
+    setLtaData((prevState) => [newContract, ...prevState]);
+  };
+
+  const contractItem = (school: IContracts, i: number) => {
+    if (school?.added) {
+      return <ContractDefaultListItem key={i} />;
+    } else {
+      return (
+        <ContractSchoolStatus
+          key={i}
+          school={school}
+          state={state}
+          dispatch={dispatch}
+          onToggle={handleSelected}
+          selected={selected === school.id}
+        />
+      );
+    }
+  };
+
   useEffect(() => {
     getLtaData();
   }, [state]);
@@ -51,17 +79,8 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, 
       </Header>
       {isExpanded ? (
         <>
-          {ltaData.map((school, i) => (
-            <ContractSchoolStatus
-              key={i}
-              school={school}
-              state={state}
-              dispatch={dispatch}
-              onToggle={handleSelected}
-              selected={selected === school.id}
-            />
-          ))}
-          <ContractLtaFooter>Create Contract Here</ContractLtaFooter>
+          {ltaData.map((school, i) => contractItem(school, i))}
+          <ContractLtaFooter onClick={handleAddLtaContract}>Create Contract Here</ContractLtaFooter>
         </>
       ) : (
         <ContractLtaSubHeader />
