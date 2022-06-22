@@ -61,13 +61,3 @@ The page will reload if you make edits.
 You will also see any lint errors in the console.
 
 Please ask for login email and password.
-
-## Plugins
-
-Unicef Giga is currently extended with the following plugins.
-Instructions on how to use them in your own application are linked below.
-
-| Plugin       | README                                |
-| ------------ | ------------------------------------- |
-| GitHub       | [plugins/github/README.md][plgh]      |
-| Google Drive | [plugins/googledrive/README.md][plgd] |
