@@ -7,7 +7,7 @@
   --color-light-blue: #6fa6fe;
   --color-lighter-blue: #b6d2ff;
   --color-lightest-blue: #e5efff;
-  --color-pale-blue: #F3F8FF;
+  --color-pale-blue: #f3f8ff;
 
   --color-black: #222222;
   --color-darkest-grey: #393939;
@@ -292,9 +292,7 @@ button {
   border-radius: 2px;
 }
 
-
-input[type='submit']:disabled 
-button:disabled {
+input[type='submit']:disabled button:disabled {
   background-color: var(--color-light-grey);
 }
 
@@ -321,6 +319,18 @@ button:disabled {
 .btn-frameless {
   color: var(--color-dark-blue);
   background-color: transparent;
+}
+
+.btn-transparent-grey {
+  padding: 0 14px;
+  border: 2px solid var(--color-light-grey);
+  color: var(--color-mid-grey);
+  background-color: transparent;
+}
+
+​ .btn-transparent-grey:active {
+  border: 2px solid var(--color-mid-grey);
+  color: var(--color-darker-grey);
 }
 
 .btn-blue:active {
