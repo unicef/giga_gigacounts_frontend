@@ -328,9 +328,25 @@ input[type='submit']:disabled button:disabled {
   background-color: transparent;
 }
 
-​ .btn-transparent-grey:active {
-  border: 2px solid var(--color-mid-grey);
-  color: var(--color-darker-grey);
+.btn-transparent-blue {
+  padding: 0 14px;
+  border: 2px solid var(--color-light-blue);
+  color: var(--color-dark-blue);
+  background-color: transparent;
+}
+
+.btn-transparent-red {
+  padding: 0 14px;
+  border: 2px solid var(--color-red);
+  color: var(--color-red);
+  background-color: transparent;
+}
+
+.btn-transparent-green {
+  padding: 0 14px;
+  border: 2px solid var(--color-green);
+  color: var(--color-darker-green);
+  background-color: transparent;
 }
 
 .btn-blue:active {
@@ -352,6 +368,140 @@ input[type='submit']:disabled button:disabled {
 .btn-frameless:active {
   color: var(--color-blue);
   background-color: transparent;
+}
+
+.btn-transparent-grey:active {
+  border: 2px solid var(--color-mid-grey);
+  color: var(--color-darker-grey);
+}
+
+.btn-transparent-blue:active {
+  border: 2px solid var(--color-darkest-blue);
+  color: var(--color-darkest-blue);
+}
+
+.btn-transparent-red:active {
+  border: 2px solid var(--color-darker-red);
+  color: var(--color-darker-red);
+}
+
+.btn-transparent-green:active {
+  border: 2px solid var(--color-darker-green);
+  color: var(--color-dark-green);
+}
+
+/* The container must be positioned relative: */
+
+.input-container {
+  display: flex;
+  align-items: center;
+  color: var(--color-black);
+  border: 1px solid var(--color-black-10);
+  background-color: var(--color-lightest-grey);
+}
+
+.input-container:focus-within {
+  border: 1px solid var(--color-blue);
+}
+
+.input-container input,
+.input-container input:focus {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.dropdown {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  position: relative;
+  cursor: pointer;
+  color: var(--color-dark-grey);
+}
+
+.dropdown::before {
+  position: absolute;
+  right: 6px;
+  font: normal normal normal 1em/1 'Giga';
+  font-size: 24px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--color-light-grey);
+  content: '\ea28';
+}
+
+.dropdown:focus {
+  color: var(--color-black);
+  background-color: var(--color-white);
+}
+
+.dropdown > img {
+  height: 100%;
+}
+
+select {
+  appearance: none;
+  width: 100%;
+  height: 100%;
+  padding: 0 36px 0 12px;
+  margin: 0;
+
+  font-family: inherit;
+  font-weight: 400;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  background: transparent;
+  cursor: inherit;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 156%;
+  letter-spacing: 0.003em;
+  color: var(--color-black);
+}
+
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+input[type="checkbox"]:before {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 16px;
+  height: 16px;
+
+  font: normal normal normal 1em/1 'Giga';
+  font-size: 34px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: '';
+
+  border: 1px solid var(--color-black-10);
+  border-radius: 2px;
+  color: var(--color-white);
+  background-color: var(--color-white);
+
+}
+
+input[type="checkbox"]:checked:before {
+  background-color: var(--color-light-blue);
+  content: '\ea1e';
 }
 
 .message {

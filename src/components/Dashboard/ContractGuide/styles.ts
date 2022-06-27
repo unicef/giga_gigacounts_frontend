@@ -1,16 +1,23 @@
 import styled from 'styled-components';
 
 export const ContractGuideContainer = styled.div`
+  & > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
   h5 {
     color: var(--color-light-blue);
   }
 
-  display: grid;
-  gap: 24px 54px;
+  display: flex;
+  gap: 54px;
   background: var(--color-white);
   margin: auto;
   height: 100%;
-  width: 30%;
+  width: 60%;
 `;
 
 export const ContractGuideItem = styled.div`
@@ -49,4 +56,12 @@ export const ContractGuideItem = styled.div`
     'icon title'
     'icon description'
     'icon button';
+`;
+
+
+export const ContractGuideChartItem = styled.div`
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  color: var(--color-darker-grey);
 `;
