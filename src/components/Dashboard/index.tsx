@@ -15,39 +15,39 @@ const Dashboard: React.FC = () => {
   const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [contractCounts, setContractCounts] = useState([]);
-  const [displayContractForm, setDisplayContractForm] = useState(true);
+  const [displayContractForm, setDisplayContractForm] = useState(false);
 
   const handleDisplayForm = () => setDisplayContractForm((prevState) => !prevState);
 
-  // useEffect(() => {
-  //   const getProfile = async () => {
-  //     const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/profile`, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('session')}` || ''
-  //       }
-  //     });
-  //     if (res.data.role !== ADMIN_ROLE) {
-  //       setCountryName(res.data.country.name);
-  //       setCountryCode(res.data.country.code);
-  //     }
-  //     setName(res.data.name);
-  //     setRole(res.data.role);
-  //   };
-  //   const getContractsCount = async () => {
-  //     const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/contract/count/status`, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem('session')}` || ''
-  //       }
-  //     });
-  //     setContractCounts(res.data.counts);
-  //   };
-  //   getProfile();
-  //   getContractsCount();
-  // }, []);
+  useEffect(() => {
+    const getProfile = async () => {
+      const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/profile`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('session')}` || ''
+        }
+      });
+      if (res.data.role !== ADMIN_ROLE) {
+        setCountryName(res.data.country.name);
+        setCountryCode(res.data.country.code);
+      }
+      setName(res.data.name);
+      setRole(res.data.role);
+    };
+    const getContractsCount = async () => {
+      const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/contract/count/status`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('session')}` || ''
+        }
+      });
+      setContractCounts(res.data.counts);
+    };
+    getProfile();
+    getContractsCount();
+  }, []);
 
   return (
     <DashboardContainer>
-      {/* <Navigation
+      <Navigation
         admin={role === ADMIN_ROLE}
         countryName={countryName}
         role={role}
@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
         name={name}
         contractCounts={contractCounts}
       />
-      <Contracts /> */}
+      <Contracts />
       {displayContractForm ? <CreateContract /> : <ContractGuide createDraft={handleDisplayForm} />}
     </DashboardContainer>
   );
