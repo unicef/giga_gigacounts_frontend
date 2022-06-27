@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const ContractListContainer = styled.div`
   width: 100%;
@@ -15,4 +15,4 @@ export const ContractListContainer = styled.div`
     overflow-y: scroll;
     padding-right: 0;
   }
-`;
+`

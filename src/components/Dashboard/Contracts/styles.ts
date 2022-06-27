@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const ContractsMenu = styled.div`
   display: flex;
@@ -11,4 +11,4 @@ export const ContractsMenu = styled.div`
   width: 18%;
   height: inherit;
   background: #e5efff;
-`;
+`

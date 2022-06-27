@@ -1,8 +1,8 @@
-import React from 'react';
-import { RouteComponentProps, Switch, Route } from 'react-router-dom';
+import React from 'react'
+import { RouteComponentProps, Switch, Route } from 'react-router-dom'
 
-import Login from '../components/Login/index';
-import { LOGIN_ROUTE, routes } from './routes';
+import Login from '../components/Login/index'
+import { LOGIN_ROUTE, routes } from './routes'
 
 export interface RouteProps {
   path: string | Array<string>;
@@ -29,5 +29,5 @@ export const RouterWrapper: React.FC<{ routes: Array<RouteProps> }> = (): JSX.El
         <Route key={i} exact={route.exact} component={route.component} path={route.path} />
       ))}
     </Switch>
-  );
-};
+  )
+}

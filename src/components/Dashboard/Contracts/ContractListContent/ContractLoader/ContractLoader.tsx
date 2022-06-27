@@ -1,4 +1,4 @@
-import { ContractLoaderContainer, ContractLoaderItem } from './styles';
+import { ContractLoaderContainer, ContractLoaderItem } from './styles'
 
 interface IContractListProps {
   label?: string;
@@ -50,7 +50,7 @@ const ContractLoader: React.FC<IContractListProps> = (): JSX.Element => {
       </ContractLoaderItem>
 
     </ContractLoaderContainer>
-  );
-};
+  )
+}
 
-export default ContractLoader;
+export default ContractLoader

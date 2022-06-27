@@ -1,9 +1,7 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint", "prettier"],
   "extends": [
     "eslint:recommended",
     "prettier",
@@ -11,6 +9,19 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "no-console": 1 // Remember, this means warning!
+    "no-console": 1, // Remember, this means warning!
+    "semi": ["warn", "never"],
+    "@typescript-eslint/semi": ["warn", "never"],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "paths": [
+          {
+            "name": "styled-components",
+            "message": "Please use the macro import instead (`import styled from 'styled-components/macro'`)."
+          }
+        ]
+      }
+    ]
   }
 }

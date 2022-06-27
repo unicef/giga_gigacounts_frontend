@@ -1,5 +1,5 @@
-import { useHistory } from 'react-router-dom';
-import { UserBlock } from './ProfileIcon.css';
+import { useHistory } from 'react-router-dom'
+import { UserBlock } from './ProfileIcon.css'
 
 interface NavItemProps {
   collapsed?: boolean;
@@ -14,12 +14,12 @@ export const ProfileIcon: React.FC<NavItemProps> = ({
   role,
   ...props
 }: NavItemProps): JSX.Element => {
-  const history = useHistory();
+  const history = useHistory()
 
   const logout = () => {
-    localStorage.removeItem('session');
-    history.push('/');
-  };
+    localStorage.removeItem('session')
+    history.push('/')
+  }
 
   return (
     <UserBlock className='noselect' style={collapsed ? {paddingLeft: '10px'} : {}}
@@ -43,5 +43,5 @@ export const ProfileIcon: React.FC<NavItemProps> = ({
         </>
       )}
     </UserBlock>
-  );
-};
+  )
+}

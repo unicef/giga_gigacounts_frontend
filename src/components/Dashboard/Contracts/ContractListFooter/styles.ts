@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const ContractListFooterContainer = styled.div`
   button {
@@ -11,4 +11,4 @@ export const ContractListFooterContainer = styled.div`
   bottom: 0;
   background: rgba(229, 239, 255, 0.6);
   backdrop-filter: blur(25px);
-`;
+`

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from 'react'
 import {
   ContractLtaEmptyText,
   ContractLtaFooter,
@@ -7,16 +7,16 @@ import {
   ContractLtaListItemContainer,
   ContractLtaNumber,
   IconShowMore
-} from './styles';
+} from './styles'
 
 interface ContractListProps {
   label?: string;
 }
 
 const ContractLtaListItem: React.FC<ContractListProps> = (): JSX.Element => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false)
 
-  const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState);
+  const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState)
 
   return (
     <ContractLtaListItemContainer isExpanded={isExpanded} onClick={toggleLtaContainer}>
@@ -38,7 +38,7 @@ const ContractLtaListItem: React.FC<ContractListProps> = (): JSX.Element => {
         </>
       )}
     </ContractLtaListItemContainer>
-  );
-};
+  )
+}
 
-export default ContractLtaListItem;
+export default ContractLtaListItem

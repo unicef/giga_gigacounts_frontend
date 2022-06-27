@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Navigation from './Navigation/Navigation';
-import Contracts from './Contracts';
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import Navigation from './Navigation/Navigation'
+import Contracts from './Contracts'
 
-import { DashboardContainer } from './styles';
-import ContractGuide from './ContractGuide/ContractGuide';
+import { DashboardContainer } from './styles'
+import ContractGuide from './ContractGuide/ContractGuide'
 
-const ADMIN_ROLE = 'Giga Admin';
+const ADMIN_ROLE = 'Giga Admin'
 
 const Dashboard: React.FC = () => {
-  const [countryName, setCountryName] = useState('');
-  const [role, setRole] = useState('');
-  const [name, setName] = useState('');
-  const [countryCode, setCountryCode] = useState('');
-  const [contractCounts, setContractCounts] = useState([]);
+  const [countryName, setCountryName] = useState('')
+  const [role, setRole] = useState('')
+  const [name, setName] = useState('')
+  const [countryCode, setCountryCode] = useState('')
+  const [contractCounts, setContractCounts] = useState([])
 
   useEffect(() => {
     const getProfile = async () => {
@@ -21,25 +21,25 @@ const Dashboard: React.FC = () => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('session')}` || ''
         }
-      });
+      })
       if (res.data.role !== ADMIN_ROLE) {
-        setCountryName(res.data.country.name);
-        setCountryCode(res.data.country.code);
+        setCountryName(res.data.country.name)
+        setCountryCode(res.data.country.code)
       }
-      setName(res.data.name);
-      setRole(res.data.role);
-    };
+      setName(res.data.name)
+      setRole(res.data.role)
+    }
     const getContractsCount = async () => {
       const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/contract/count/status`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('session')}` || ''
         }
-      });
-      setContractCounts(res.data.counts);
-    };
-    getProfile();
-    getContractsCount();
-  }, []);
+      })
+      setContractCounts(res.data.counts)
+    }
+    getProfile()
+    getContractsCount()
+  }, [])
 
   return (
     <DashboardContainer>
@@ -54,7 +54,7 @@ const Dashboard: React.FC = () => {
       <Contracts />
       <ContractGuide />
     </DashboardContainer>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const ContractLtaListItemsContainer = styled.div<{ isExpanded: boolean }>`
   display: flex;
@@ -12,7 +12,7 @@ export const ContractLtaListItemsContainer = styled.div<{ isExpanded: boolean }>
   &:hover {
     cursor: pointer;
   }
-`;
+`
 
 export const Header = styled.div<{ isExpanded: boolean }>`
   display: grid;
@@ -26,7 +26,7 @@ export const Header = styled.div<{ isExpanded: boolean }>`
   border-radius: 2px;
   transition: background 0.1s ease-out;
   background: ${(props) => (props.isExpanded ? 'var(--color-light-blue)' : 'var(--color-white)')};
-`;
+`
 
 export const Hand = styled.span`
   display: grid;
@@ -34,7 +34,7 @@ export const Hand = styled.span`
   height: 32px;
   width: 32px;
   background-color: var(--color-light-blue);
-`;
+`
 
 export const LtaNumber = styled.p<{ isExpanded: boolean }>`
   margin: 0;
@@ -45,13 +45,13 @@ export const LtaNumber = styled.p<{ isExpanded: boolean }>`
   line-height: 156%;
   letter-spacing: 0.003em;
   color: ${(props) => (props.isExpanded ? 'var(--color-white)' : 'var(--color-darkest-grey)')};
-`;
+`
 
 export const ShowMore = styled.span<{ isExpanded: boolean }>`
   grid-area: third;
   width: 24px;
   height: 24px;
-`;
+`
 
 export const ContractLtaSubHeader = styled.div`
   width: calc(100% - 10px);
@@ -59,7 +59,7 @@ export const ContractLtaSubHeader = styled.div`
   margin-right: 10px;
   background: rgba(255, 255, 255, 0.6);
   border-radius: 0px 0px 2px 2px;
-`;
+`
 
 export const ContractLtaFooter = styled.a`
   width: 100%;
@@ -75,4 +75,4 @@ export const ContractLtaFooter = styled.a`
   text-decoration-line: underline;
   color: var(--color-dark-blue);
   background: var(--color-white);
-`;
+`

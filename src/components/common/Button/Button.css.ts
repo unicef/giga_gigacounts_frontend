@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const ButtonComponent = styled.button`
   font-weight: 600;
@@ -20,4 +20,4 @@ export const ButtonComponent = styled.button`
     color: var(--color-white);
     transition: all 0.1s ease-out;
   }
-`;
+`

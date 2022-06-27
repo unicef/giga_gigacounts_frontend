@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { ContractStatus } from '../../@types/ContractType';
+import styled from 'styled-components/macro'
+import { ContractStatus } from 'src/components/Dashboard/Contracts/@types/ContractType'
 
 export const SchoolInfo = styled.div<{ status: string }>`
   display: grid;
@@ -42,7 +42,7 @@ export const SchoolInfo = styled.div<{ status: string }>`
       color: var(--color-white);
     }
   }
-`;
+`
 
 export const SchoolNumberCtr = styled.p`
   margin: 0;
@@ -53,7 +53,7 @@ export const SchoolNumberCtr = styled.p`
   line-height: 156%;
   letter-spacing: 0.003em;
   color: var(--color-darkest-grey);
-`;
+`
 
 export const Schools = styled.p`
   font-family: 'Open Sans';
@@ -64,9 +64,9 @@ export const Schools = styled.p`
   letter-spacing: 0.018em;
   color: var(--color-dark-grey);
   margin: 0;
-`;
+`
 
-export const Isp = styled(Schools)``;
+export const Isp = styled(Schools)``
 
 export const Icons = styled.div`
   grid-area: icon;
@@ -74,7 +74,7 @@ export const Icons = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 2px;
-`;
+`
 
 export const IconsName = styled.p`
   width: auto;
@@ -87,7 +87,7 @@ export const IconsName = styled.p`
   letter-spacing: 0.015em;
   margin: 0;
   color: var(--color-dark-grey);
-`;
+`
 
 export const IconCompleted = styled.div`
   display: flex;
@@ -97,4 +97,4 @@ export const IconCompleted = styled.div`
   height: 42px;
   border: 3.2px solid var(--color-black-10);
   border-radius: 42px;
-`;
+`

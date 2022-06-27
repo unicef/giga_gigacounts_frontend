@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const LoginFormContainer = styled.div`
   display: flex;
@@ -11,7 +11,7 @@ export const LoginFormContainer = styled.div`
   width: 400px;
   height: 100%;
   background: #ffffff;
-`;
+`
 
 export const Logo = styled.img`
   position: absolute;
@@ -23,7 +23,7 @@ export const Logo = styled.img`
   order: 1;
   flex-grow: 0;
   z-index: 1;
-`;
+`
 
 export const Form = styled.form<{ error: boolean }>`
   button {
@@ -41,7 +41,7 @@ export const Form = styled.form<{ error: boolean }>`
   align-self: stretch;
   flex-grow: 0;
   z-index: 0;
-`;
+`
 
 export const InputContainer = styled.div<{ order?: string; error: boolean }>`
   display: flex;
@@ -55,7 +55,7 @@ export const InputContainer = styled.div<{ order?: string; error: boolean }>`
   order: ${(props) => props.order || '0'};
   align-self: stretch;
   flex-grow: 0;
-`;
+`
 
 export const InputFrame = styled.div<{ order?: string }>`
   display: flex;
@@ -70,7 +70,7 @@ export const InputFrame = styled.div<{ order?: string }>`
   order: ${(props) => props.order || '0'};
   align-self: stretch;
   flex-grow: 0;
-`;
+`
 
 export const Input = styled.input`
   box-sizing: border-box;
@@ -88,7 +88,7 @@ export const Input = styled.input`
   order: 0;
   align-self: stretch;
   flex-grow: 0;
-`;
+`
 
 export const EmailErrorMessage = styled.span`
   width: 300px;
@@ -103,7 +103,7 @@ export const EmailErrorMessage = styled.span`
   flex: none;
   order: 0;
   flex-grow: 1;
-`;
+`
 
 export const ErrorContainer = styled.div`
   display: flex;
@@ -120,7 +120,7 @@ export const ErrorContainer = styled.div`
   order: '0';
   align-self: stretch;
   flex-grow: 0;
-`;
+`
 
 export const ErrorMessage = styled.div`
   display: flex;
@@ -132,7 +132,7 @@ export const ErrorMessage = styled.div`
   flex: none;
   order: 0;
   flex-grow: 1;
-`;
+`
 
 export const ErrorTitle = styled.p`
   flex: none;
@@ -140,7 +140,7 @@ export const ErrorTitle = styled.p`
   align-self: stretch;
   flex-grow: 0;
   margin: 0;
-`;
+`
 
 export const ErrorDescription = styled.p`
   flex: none;
@@ -149,4 +149,4 @@ export const ErrorDescription = styled.p`
   flex-grow: 0;
   margin: 0;
   font-size: 12px;
-`;
+`

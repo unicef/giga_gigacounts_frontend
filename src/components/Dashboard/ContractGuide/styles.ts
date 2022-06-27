@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const ContractGuideContainer = styled.div`
   h5 {
@@ -11,7 +11,7 @@ export const ContractGuideContainer = styled.div`
   margin: auto;
   height: 100%;
   width: 30%;
-`;
+`
 
 export const ContractGuideItem = styled.div`
   span {
@@ -49,4 +49,4 @@ export const ContractGuideItem = styled.div`
     'icon title'
     'icon description'
     'icon button';
-`;
+`

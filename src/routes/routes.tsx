@@ -1,12 +1,12 @@
-import { lazy } from 'react';
-import { RouteProps } from './RouterWrapper';
+import { lazy } from 'react'
+import { RouteProps } from './RouterWrapper'
 
-export const LOGIN_ROUTE = '/';
-export const DASHBOARD_ROUTE = '/dashboard';
-export const NOT_FOUND_ROUTE = '*';
+export const LOGIN_ROUTE = '/'
+export const DASHBOARD_ROUTE = '/dashboard'
+export const NOT_FOUND_ROUTE = '*'
 
-const Dashboard = lazy(() => import('../components/Dashboard/index'));
-const NotFound = lazy(() => import('../components/common/NotFound/NotFound'));
+const Dashboard = lazy(() => import('../components/Dashboard/index'))
+const NotFound = lazy(() => import('../components/common/NotFound/NotFound'))
 
 export const routes: Array<RouteProps> = [
   {
@@ -23,4 +23,4 @@ export const routes: Array<RouteProps> = [
     component: NotFound,
     title: 'Not Found'
   }
-];
+]

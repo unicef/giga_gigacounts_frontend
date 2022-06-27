@@ -1,6 +1,6 @@
-import { Dispatch } from 'react';
-import { Action, ActionType } from '../store/redux';
-import { ContractListFooterContainer } from './styles';
+import { Dispatch } from 'react'
+import { Action, ActionType } from '../store/redux'
+import { ContractListFooterContainer } from './styles'
 
 interface IFooterProps {
   dispatch: Dispatch<Action>;
@@ -11,9 +11,9 @@ const ContractListFooter: React.FC<IFooterProps> = ({ dispatch }): JSX.Element =
     name: 'New Contract',
     status: 'Draft',
     added: true
-  };
+  }
 
-  const handleAddContract = () => dispatch({ type: ActionType.CREATE_CONTRACT, payload: newContract });
+  const handleAddContract = () => dispatch({ type: ActionType.CREATE_CONTRACT, payload: newContract })
 
   return (
     <ContractListFooterContainer>
@@ -22,7 +22,7 @@ const ContractListFooter: React.FC<IFooterProps> = ({ dispatch }): JSX.Element =
         New Contract
       </button>
     </ContractListFooterContainer>
-  );
-};
+  )
+}
 
-export default ContractListFooter;
+export default ContractListFooter

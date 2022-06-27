@@ -1,17 +1,17 @@
-import React, { CSSProperties } from 'react';
-import { syncedHistory } from '../../../config/syncedHistory';
-import { ButtonComponent } from './Button.css';
+import React, { CSSProperties } from 'react'
+import { syncedHistory } from 'src/config/syncedHistory'
+import { ButtonComponent } from './Button.css'
 
 export type ButtonPropType = {
-  link?: string;
-  className?: string;
-  label?: string;
-  isDisabled?: boolean;
-  children?: React.ReactNode;
-  type?: 'submit' | 'reset' | 'button';
+  link?: string
+  className?: string
+  label?: string
+  isDisabled?: boolean
+  children?: React.ReactNode
+  type?: 'submit' | 'reset' | 'button'
 
-  onClick?: () => void;
-};
+  onClick?: () => void
+}
 
 export const Button: React.FC<ButtonPropType> = ({
   onClick,
@@ -20,23 +20,23 @@ export const Button: React.FC<ButtonPropType> = ({
   label = '',
   isDisabled,
   children = null,
-  type = 'button'
+  type = 'button',
 }) => {
   const clickHandler = (e: React.SyntheticEvent) => {
     if (onClick && !isDisabled) {
-      onClick();
+      onClick()
     }
 
     if (link && !isDisabled) {
-      e.stopPropagation();
-      e.preventDefault();
-      syncedHistory.push(link);
+      e.stopPropagation()
+      e.preventDefault()
+      syncedHistory.push(link)
     }
-  };
+  }
 
-  const style: CSSProperties = {};
+  const style: CSSProperties = {}
   if (isDisabled) {
-    style.pointerEvents = 'none';
+    style.pointerEvents = 'none'
   }
 
   return (
@@ -44,5 +44,5 @@ export const Button: React.FC<ButtonPropType> = ({
       {children}
       <span>{label}</span>
     </ButtonComponent>
-  );
-};
+  )
+}
