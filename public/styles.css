@@ -446,7 +446,6 @@ select {
   height: 100%;
   padding: 0 36px 0 12px;
   margin: 0;
-
   font-family: inherit;
   font-weight: 400;
   font-size: 14px;
@@ -454,6 +453,7 @@ select {
   outline: none;
   background: transparent;
   cursor: inherit;
+  z-index: 1;
 }
 
 select::-ms-expand {
@@ -472,13 +472,13 @@ label {
   color: var(--color-black);
 }
 
-input[type="checkbox"] {
+input[type='checkbox'] {
   -webkit-appearance: none;
   appearance: none;
   margin: 0;
 }
 
-input[type="checkbox"]:before {
+input[type='checkbox']:before {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -496,10 +496,9 @@ input[type="checkbox"]:before {
   border-radius: 2px;
   color: var(--color-white);
   background-color: var(--color-white);
-
 }
 
-input[type="checkbox"]:checked:before {
+input[type='checkbox']:checked:before {
   background-color: var(--color-light-blue);
   content: '\ea1e';
 }
