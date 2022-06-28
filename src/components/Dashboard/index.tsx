@@ -5,6 +5,7 @@ import Contracts from './Contracts'
 
 import { DashboardContainer } from './styles'
 import ContractGuide from './ContractGuide/ContractGuide'
+import CreateContract from '../Dashboard/CreateContract/index'
 
 const ADMIN_ROLE = 'Giga Admin'
 
@@ -14,13 +15,16 @@ const Dashboard: React.FC = () => {
   const [name, setName] = useState('')
   const [countryCode, setCountryCode] = useState('')
   const [contractCounts, setContractCounts] = useState([])
+  const [displayContractForm, setDisplayContractForm] = useState(false)
+
+  const toggleCreateDraftForm = () => setDisplayContractForm((prevState) => !prevState)
 
   useEffect(() => {
     const getProfile = async () => {
       const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/profile`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('session')}` || ''
-        }
+          Authorization: `Bearer ${localStorage.getItem('session')}` || '',
+        },
       })
       if (res.data.role !== ADMIN_ROLE) {
         setCountryName(res.data.country.name)
@@ -32,8 +36,8 @@ const Dashboard: React.FC = () => {
     const getContractsCount = async () => {
       const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/contract/count/status`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('session')}` || ''
-        }
+          Authorization: `Bearer ${localStorage.getItem('session')}` || '',
+        },
       })
       setContractCounts(res.data.counts)
     }
@@ -52,7 +56,7 @@ const Dashboard: React.FC = () => {
         contractCounts={contractCounts}
       />
       <Contracts />
-      <ContractGuide />
+      {displayContractForm ? <CreateContract /> : <ContractGuide createDraft={toggleCreateDraftForm} />}
     </DashboardContainer>
   )
 }
