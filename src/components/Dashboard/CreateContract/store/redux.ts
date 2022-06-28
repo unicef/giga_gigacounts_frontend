@@ -46,7 +46,7 @@ export interface State {
 export const reducer = (state: State, action: Action): State => {
   const { type, payload } = action
 
-  // console.log(type, payload)
+  console.log(type, payload)
 
   switch (type) {
     case ActionType.SET_ACTIVE_TAB: {
