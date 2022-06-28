@@ -1,8 +1,8 @@
-import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } from './styles';
-import ContractStatusWidget from '../../common/ContractStatusWidget/index';
+import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } from './styles'
+import ContractStatusWidget from '../../common/ContractStatusWidget/index'
 
 interface IContractsProps {
-  createDraft: () => void;
+  createDraft: () => void
 }
 
 const ContractGuide: React.FC<IContractsProps> = ({ createDraft }): JSX.Element => {
@@ -102,7 +102,7 @@ const ContractGuide: React.FC<IContractsProps> = ({ createDraft }): JSX.Element 
         </ContractGuideChartItem>
       </div>
     </ContractGuideContainer>
-  );
-};
+  )
+}
 
-export default ContractGuide;
+export default ContractGuide

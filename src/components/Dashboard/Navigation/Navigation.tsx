@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import Country from '../Country/Country';
-import { StyledNav, StyledLogo, MenuContainer, StyledDivider } from './styles';
-import { NavItem } from './NavItem/NavItem';
-import { ProfileIcon } from './ProfileIcon/ProfileIcon';
-import { useHistory } from 'react-router-dom';
+import { useEffect, useState } from 'react'
+import Country from '../Country/Country'
+import { StyledNav, StyledLogo, MenuContainer, StyledDivider } from './styles'
+import { NavItem } from './NavItem/NavItem'
+import { ProfileIcon } from './ProfileIcon/ProfileIcon'
+import { useHistory } from 'react-router-dom'
 
 interface CountryProps {
   admin: boolean;
@@ -22,49 +22,49 @@ const Navigation: React.FC<CountryProps> = ({
   role,
   contractCounts
 }: CountryProps): JSX.Element => {
-  const history = useHistory();
+  const history = useHistory()
 
-  const [hovered, setHovered] = useState(true);
-  const [allContractsCount, setAllContractCount] = useState(0);
-  const [draftCount, setDraftCount] = useState(0);
-  const [sentCount, setSentCount] = useState(0);
-  const [confirmedCount, setConfirmedCount] = useState(0);
-  const [ongoingCount, setOngoingCount] = useState(0);
-  const [expiredCount, setExpiredCount] = useState(0);
-  const [completedCount, setCompletedCount] = useState(0);
+  const [hovered, setHovered] = useState(true)
+  const [allContractsCount, setAllContractCount] = useState(0)
+  const [draftCount, setDraftCount] = useState(0)
+  const [sentCount, setSentCount] = useState(0)
+  const [confirmedCount, setConfirmedCount] = useState(0)
+  const [ongoingCount, setOngoingCount] = useState(0)
+  const [expiredCount, setExpiredCount] = useState(0)
+  const [completedCount, setCompletedCount] = useState(0)
 
-  const handleMouseEnter = () => setHovered(true);
-  const handleMouseLeave = () => setHovered(false);
+  const handleMouseEnter = () => setHovered(true)
+  const handleMouseLeave = () => setHovered(false)
 
   useEffect(() => {
-    let allCount = 0;
+    let allCount = 0
     contractCounts.forEach((contractCount) => {
-      allCount += parseInt(contractCount.count);
+      allCount += parseInt(contractCount.count)
       switch (contractCount.status) {
         case 'Draft':
-          setDraftCount(parseInt(contractCount.count));
-          break;
+          setDraftCount(parseInt(contractCount.count))
+          break
         case 'Sent':
-          setSentCount(parseInt(contractCount.count));
-          break;
+          setSentCount(parseInt(contractCount.count))
+          break
         case 'Confirmed':
-          setConfirmedCount(parseInt(contractCount.count));
-          break;
+          setConfirmedCount(parseInt(contractCount.count))
+          break
         case 'Ongoing':
-          setOngoingCount(parseInt(contractCount.count));
-          break;
+          setOngoingCount(parseInt(contractCount.count))
+          break
         case 'Expired':
-          setExpiredCount(parseInt(contractCount.count));
-          break;
+          setExpiredCount(parseInt(contractCount.count))
+          break
         case 'Completed':
-          setCompletedCount(parseInt(contractCount.count));
-          break;
+          setCompletedCount(parseInt(contractCount.count))
+          break
         default:
-          break;
+          break
       }
-    });
-    setAllContractCount(allCount);
-  }, [contractCounts]);
+    })
+    setAllContractCount(allCount)
+  }, [contractCounts])
 
   return (
     <StyledNav
@@ -79,7 +79,7 @@ const Navigation: React.FC<CountryProps> = ({
       <StyledLogo
         src={hovered ? './logos/giga-logo-inline.svg' : './logos/giga-logo.svg'}
         onClick={() => {
-          history.push('/dashboard');
+          history.push('/dashboard')
         }}
       />
 
@@ -109,7 +109,7 @@ const Navigation: React.FC<CountryProps> = ({
       </MenuContainer>
       <ProfileIcon collapsed={!hovered} name={name} role={role} />
     </StyledNav>
-  );
-};
+  )
+}
 
-export default Navigation;
+export default Navigation

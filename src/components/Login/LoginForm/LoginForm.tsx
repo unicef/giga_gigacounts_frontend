@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import axios from 'axios';
-import web3 from 'web3';
+import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import axios from 'axios'
+import web3 from 'web3'
 
 import {
   LoginFormContainer,
@@ -15,56 +15,56 @@ import {
   ErrorMessage,
   ErrorTitle,
   ErrorDescription
-} from './LoginForm.css';
+} from './LoginForm.css'
 
-const EMPTY_EMAIL_MESSAGE = 'The field can not be empty';
-const WRONG_CREDENTIALS_TITLE = 'Invalid Credentials';
-const WRONG_CREDENTIALS_DESCRIPTION = 'Please contact giga administrator for assistance';
+const EMPTY_EMAIL_MESSAGE = 'The field can not be empty'
+const WRONG_CREDENTIALS_TITLE = 'Invalid Credentials'
+const WRONG_CREDENTIALS_DESCRIPTION = 'Please contact giga administrator for assistance'
 
 export const LoginForm: React.FC = (): JSX.Element => {
-  const history = useHistory();
+  const history = useHistory()
 
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [wrongCredentialsError, setWrongCredentialsError] = useState(false);
+  const [emailError, setEmailError] = useState(false)
+  const [passwordError, setPasswordError] = useState(false)
+  const [wrongCredentialsError, setWrongCredentialsError] = useState(false)
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     const target = e.target as typeof e.target & {
       email: { value: string };
       password: { value: string };
-    };
+    }
 
-    const email = target.email.value;
-    const password = target.password.value;
+    const email = target.email.value
+    const password = target.password.value
 
-    if (email === '') setEmailError(true);
-    if (password === '') setPasswordError(true);
+    if (email === '') setEmailError(true)
+    if (password === '') setPasswordError(true)
     else {
       try {
-        const encryptedPassword = await web3.utils.sha3(password);
+        const encryptedPassword = await web3.utils.sha3(password)
 
         const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
           email,
           password: encryptedPassword
-        });
+        })
 
-        localStorage.setItem('session', res.data.token);
-        history.push('/dashboard');
+        localStorage.setItem('session', res.data.token)
+        history.push('/dashboard')
       } catch (err) {
-        setWrongCredentialsError(true);
+        setWrongCredentialsError(true)
       }
     }
-  };
+  }
 
   const handleEmailInput = () => {
-    setEmailError(false);
-    setWrongCredentialsError(false);
-  };
+    setEmailError(false)
+    setWrongCredentialsError(false)
+  }
   const handlePasswordInput = () => {
-    setPasswordError(false);
-    setWrongCredentialsError(false);
-  };
+    setPasswordError(false)
+    setWrongCredentialsError(false)
+  }
 
   return (
     <LoginFormContainer>
@@ -107,5 +107,5 @@ export const LoginForm: React.FC = (): JSX.Element => {
         <button type="submit" className='btn-blue'>Sign In</button>
       </Form>
     </LoginFormContainer>
-  );
-};
+  )
+}

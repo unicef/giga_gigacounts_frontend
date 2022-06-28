@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
 
 const NotFound: React.FC = (): JSX.Element => {
   return (
@@ -7,7 +7,7 @@ const NotFound: React.FC = (): JSX.Element => {
         <Link to="/">Go to Home </Link>
       </p>
     </div>
-  );
-};
+  )
+}
 
-export default NotFound;
+export default NotFound

@@ -1,11 +1,11 @@
-import React from 'react';
-import { StyledBlock, StyledImg, StyledLabel } from './Country.css';
+import React from 'react'
+import { StyledBlock, StyledImg, StyledLabel } from './Country.css'
 
 type CountryBlockProps = {
   countryPath?: string;
   countryName?: string;
   collapsed: boolean;
-};
+}
 
 const Country: React.FC<CountryBlockProps> = ({
   countryPath,
@@ -27,7 +27,7 @@ const Country: React.FC<CountryBlockProps> = ({
         </StyledLabel>
       )}
     </StyledBlock>
-  );
-};
+  )
+}
 
-export default Country;
+export default Country

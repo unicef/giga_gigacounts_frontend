@@ -1,4 +1,4 @@
-import { Icons, IconsName, SchoolInfo, SchoolNumberCtr } from './styles';
+import { Icons, IconsName, SchoolInfo, SchoolNumberCtr } from './styles'
 interface IContractListProps {
   label?: string;
 }
@@ -14,7 +14,7 @@ const ContractDefaultListItem: React.FC<IContractListProps> = (): JSX.Element =>
         <IconsName>Draft</IconsName>
       </Icons>
     </SchoolInfo>
-  );
-};
+  )
+}
 
-export default ContractDefaultListItem;
+export default ContractDefaultListItem

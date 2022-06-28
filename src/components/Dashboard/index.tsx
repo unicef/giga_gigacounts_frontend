@@ -1,49 +1,49 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Navigation from './Navigation/Navigation';
-import Contracts from './Contracts';
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import Navigation from './Navigation/Navigation'
+import Contracts from './Contracts'
 
-import { DashboardContainer } from './styles';
-import ContractGuide from './ContractGuide/ContractGuide';
-import CreateContract from '../Dashboard/CreateContract/index';
+import { DashboardContainer } from './styles'
+import ContractGuide from './ContractGuide/ContractGuide'
+import CreateContract from '../Dashboard/CreateContract/index'
 
-const ADMIN_ROLE = 'Giga Admin';
+const ADMIN_ROLE = 'Giga Admin'
 
 const Dashboard: React.FC = () => {
-  const [countryName, setCountryName] = useState('');
-  const [role, setRole] = useState('');
-  const [name, setName] = useState('');
-  const [countryCode, setCountryCode] = useState('');
-  const [contractCounts, setContractCounts] = useState([]);
-  const [displayContractForm, setDisplayContractForm] = useState(false);
+  const [countryName, setCountryName] = useState('')
+  const [role, setRole] = useState('')
+  const [name, setName] = useState('')
+  const [countryCode, setCountryCode] = useState('')
+  const [contractCounts, setContractCounts] = useState([])
+  const [displayContractForm, setDisplayContractForm] = useState(false)
 
-  const toggleCreateDraftForm = () => setDisplayContractForm((prevState) => !prevState);
+  const toggleCreateDraftForm = () => setDisplayContractForm((prevState) => !prevState)
 
   useEffect(() => {
     const getProfile = async () => {
       const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/user/profile`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('session')}` || ''
-        }
-      });
+          Authorization: `Bearer ${localStorage.getItem('session')}` || '',
+        },
+      })
       if (res.data.role !== ADMIN_ROLE) {
-        setCountryName(res.data.country.name);
-        setCountryCode(res.data.country.code);
+        setCountryName(res.data.country.name)
+        setCountryCode(res.data.country.code)
       }
-      setName(res.data.name);
-      setRole(res.data.role);
-    };
+      setName(res.data.name)
+      setRole(res.data.role)
+    }
     const getContractsCount = async () => {
       const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/contract/count/status`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('session')}` || ''
-        }
-      });
-      setContractCounts(res.data.counts);
-    };
-    getProfile();
-    getContractsCount();
-  }, []);
+          Authorization: `Bearer ${localStorage.getItem('session')}` || '',
+        },
+      })
+      setContractCounts(res.data.counts)
+    }
+    getProfile()
+    getContractsCount()
+  }, [])
 
   return (
     <DashboardContainer>
@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
       <Contracts />
       {displayContractForm ? <CreateContract /> : <ContractGuide createDraft={toggleCreateDraftForm} />}
     </DashboardContainer>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

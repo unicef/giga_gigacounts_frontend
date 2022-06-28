@@ -1,5 +1,5 @@
-import iconsCore from '../assets/icons';
+import iconsCore from '../assets/icons'
 
-const icons = { ...iconsCore };
+const icons = { ...iconsCore }
 
-export default icons;
+export default icons

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const StyledNav = styled.div`
   background-color: var(--color-dark-blue);
@@ -6,19 +6,19 @@ export const StyledNav = styled.div`
   flex-direction: column;
   gap: 32px;
   height: 100vh;
-`;
+`
 
 export const StyledLogo = styled.img`
   align-self: start;
   height: 58px;
   cursor: pointer;
-`;
+`
 export const StyledDivider = styled.div`
   width: 100%;
   height: 2px;
   background-color: var(--color-white-15);
   border-radius: 2px;
-`;
+`
 
 export const MenuContainer = styled.div`
   width: 100%;
@@ -27,4 +27,4 @@ export const MenuContainer = styled.div`
   align-items: center;
   gap: 16px;
   height: 100%;
-`;
+`

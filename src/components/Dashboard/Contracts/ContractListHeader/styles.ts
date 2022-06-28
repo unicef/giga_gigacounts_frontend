@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const ContractListHeaderContainer = styled.div`
   display: flex;
@@ -18,4 +18,4 @@ export const ContractListHeaderContainer = styled.div`
   order: 0;
   flex-grow: 0;
   z-index: 2;
-`;
+`

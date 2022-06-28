@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const LoginContainer = styled.div`
   display: flex;
@@ -13,7 +13,7 @@ export const LoginContainer = styled.div`
   bottom: 0px;
   right: 0px;
   background: #ffffff;
-`;
+`
 
 export const ImageContainer = styled.div`
   flex: none;
@@ -23,4 +23,4 @@ export const ImageContainer = styled.div`
   background-image: url('./utils/loginImage.png');
   background-repeat: repeat;
   background-size: cover;
-`;
+`

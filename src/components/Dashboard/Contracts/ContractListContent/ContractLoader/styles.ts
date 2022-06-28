@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const ContractLoaderContainer = styled.div`
   width: 100%;
@@ -46,7 +46,7 @@ export const ContractLoaderContainer = styled.div`
       background-position: 0% 0%;
     }
   }
-`;
+`
 
 export const ContractLoaderItem = styled.div`
   width: 100%;
@@ -72,4 +72,4 @@ export const ContractLoaderItem = styled.div`
     grid-area: icon;
     margin: auto;
   }
-`;
+`

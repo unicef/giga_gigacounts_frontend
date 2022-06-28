@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const ContractGuideContainer = styled.div`
   & > div {
@@ -18,7 +18,7 @@ export const ContractGuideContainer = styled.div`
   margin: auto;
   height: 100%;
   width: 60%;
-`;
+`
 
 export const ContractGuideItem = styled.div`
   span {
@@ -56,12 +56,11 @@ export const ContractGuideItem = styled.div`
     'icon title'
     'icon description'
     'icon button';
-`;
-
+`
 
 export const ContractGuideChartItem = styled.div`
   display: flex;
   gap: 16px;
   align-items: center;
   color: var(--color-darker-grey);
-`;
+`

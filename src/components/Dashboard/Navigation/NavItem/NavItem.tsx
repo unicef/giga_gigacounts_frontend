@@ -1,4 +1,4 @@
-import { Label } from './NavItem.css';
+import { Label } from './NavItem.css'
 
 interface NavItemProps {
   collapsed?: boolean;
@@ -35,5 +35,5 @@ export const NavItem: React.FC<NavItemProps> = ({
         </>
       )}
     </Label>
-  );
-};
+  )
+}

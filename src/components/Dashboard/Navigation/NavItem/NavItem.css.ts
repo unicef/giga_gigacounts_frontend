@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const Label = styled.div`
   p {
@@ -11,5 +11,5 @@ export const Label = styled.div`
   gap: 8px;
   cursor: pointer;
   background-color: var(--color-dark-blue);
-  transition: all .2s ease-out;
-`;
+  transition: all 0.2s ease-out;
+`

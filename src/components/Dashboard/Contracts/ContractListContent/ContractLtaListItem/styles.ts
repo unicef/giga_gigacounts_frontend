@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const ContractLtaListItemContainer = styled.div<{ isExpanded: boolean }>`
   display: flex;
@@ -15,7 +15,7 @@ export const ContractLtaListItemContainer = styled.div<{ isExpanded: boolean }>`
   &:hover {
     cursor: pointer;
   }
-`;
+`
 
 export const ContractLtaHeader = styled.div<{ isExpanded: boolean }>`
   box-sizing: border-box;
@@ -26,7 +26,7 @@ export const ContractLtaHeader = styled.div<{ isExpanded: boolean }>`
   gap: 8px;
   width: 100%;
   height: 32px;
-`;
+`
 
 export const ContractLtaIcon = styled.div`
   display: flex;
@@ -37,7 +37,7 @@ export const ContractLtaIcon = styled.div`
   width: 32px;
   height: 32px;
   background: var(--color-light-blue);
-`;
+`
 
 export const ContractLtaNumber = styled.p<{ isExpanded: boolean }>`
   width: 100%;
@@ -49,11 +49,11 @@ export const ContractLtaNumber = styled.p<{ isExpanded: boolean }>`
   line-height: 156%;
   letter-spacing: 0.003em;
   color: ${(props) => (props.isExpanded ? 'var(--color-white)' : 'var(--color-darkest-grey)')};
-`;
+`
 
-export const IconShowMore = styled.span<{ isExpanded: boolean }>``;
+export const IconShowMore = styled.span<{ isExpanded: boolean }>``
 
-export const ContractLtaContent = styled.div``;
+export const ContractLtaContent = styled.div``
 
 export const ContractLtaEmptyText = styled.p`
   width: 100%;
@@ -70,7 +70,7 @@ export const ContractLtaEmptyText = styled.p`
   line-height: 156%;
   text-align: center;
   letter-spacing: 0.003em;
-`;
+`
 
 export const ContractLtaFooter = styled.a`
   width: 100%;
@@ -86,4 +86,4 @@ export const ContractLtaFooter = styled.a`
   text-decoration-line: underline;
   color: var(--color-dark-blue);
   background: var(--color-white);
-`;
+`

@@ -1,8 +1,8 @@
-import { Dispatch, useEffect, useState } from 'react';
-import { IContracts } from '../../@types/ContractType';
-import { Action, State } from '../../store/redux';
-import ContractSchoolStatus from '../ContactSchoolStatus/ContractSchoolStatus';
-import ContractDefaultListItem from '../ContractDefaultListItem/ContractDefaultListItem';
+import { Dispatch, useEffect, useState } from 'react'
+import { IContracts } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { Action, State } from 'src/components/Dashboard/Contracts/store/redux'
+import ContractSchoolStatus from '../ContactSchoolStatus/ContractSchoolStatus'
+import ContractDefaultListItem from '../ContractDefaultListItem/ContractDefaultListItem'
 import {
   ContractLtaFooter,
   ContractLtaSubHeader,
@@ -10,45 +10,45 @@ import {
   Header,
   LtaNumber,
   ShowMore,
-  Hand
-} from './styles';
+  Hand,
+} from './styles'
 
 interface IContractListProps {
-  ltaNumber: string;
-  state: State;
-  dispatch: Dispatch<Action>;
+  ltaNumber: string
+  state: State
+  dispatch: Dispatch<Action>
 }
 
 const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, dispatch }): JSX.Element => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [ltaData, setLtaData] = useState<IContracts[]>([]);
-  const [selected, setSelected] = useState<string>('');
+  const [isExpanded, setIsExpanded] = useState<boolean>(false)
+  const [ltaData, setLtaData] = useState<IContracts[]>([])
+  const [selected, setSelected] = useState<string>('')
 
   const handleSelected = (id: string) => {
-    setSelected(id);
-  };
+    setSelected(id)
+  }
 
   const getLtaData = () => {
     if (ltaNumber !== undefined && state.ltas !== undefined) {
-      setLtaData(Object.values(state.ltas[ltaNumber]));
+      setLtaData(Object.values(state.ltas[ltaNumber]))
     }
-  };
+  }
 
-  const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState);
+  const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState)
 
   const newContract = {
     name: 'New Contract',
     status: 'Draft',
-    added: true
-  };
+    added: true,
+  }
 
   const handleAddLtaContract = () => {
-    setLtaData((prevState) => [newContract, ...prevState]);
-  };
+    setLtaData((prevState) => [newContract, ...prevState])
+  }
 
   const contractItem = (school: IContracts, i: number) => {
     if (school?.added) {
-      return <ContractDefaultListItem key={i} />;
+      return <ContractDefaultListItem key={i} />
     } else {
       return (
         <ContractSchoolStatus
@@ -59,13 +59,13 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, 
           onToggle={handleSelected}
           selected={selected === school.id}
         />
-      );
+      )
     }
-  };
+  }
 
   useEffect(() => {
-    getLtaData();
-  }, [state]);
+    getLtaData()
+  }, [state])
 
   return (
     <ContractLtaListItemsContainer isExpanded={isExpanded}>
@@ -86,7 +86,7 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, 
         <ContractLtaSubHeader />
       )}
     </ContractLtaListItemsContainer>
-  );
-};
+  )
+}
 
-export default ContractLtaListItems;
+export default ContractLtaListItems

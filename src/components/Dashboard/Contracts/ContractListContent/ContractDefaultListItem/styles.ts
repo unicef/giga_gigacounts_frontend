@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const SchoolInfo = styled.div`
   display: grid;
@@ -25,7 +25,7 @@ export const SchoolInfo = styled.div`
     display: flex;
     gap: 8px;
   }
-`;
+`
 
 export const SchoolNumberCtr = styled.p`
   margin: 0;
@@ -36,7 +36,7 @@ export const SchoolNumberCtr = styled.p`
   line-height: 156%;
   letter-spacing: 0.003em;
   color: var(--color-white);
-`;
+`
 
 export const Icons = styled.div`
   grid-area: icon;
@@ -44,7 +44,7 @@ export const Icons = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 2px;
-`;
+`
 
 export const IconsName = styled.p`
   width: auto;
@@ -57,4 +57,4 @@ export const IconsName = styled.p`
   letter-spacing: 0.015em;
   margin: 0;
   color: var(--color-white);
-`;
+`

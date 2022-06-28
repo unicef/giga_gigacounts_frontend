@@ -1,6 +1,6 @@
-import React from 'react';
-import { ImageContainer, LoginContainer } from './index.css';
-import { LoginForm } from './LoginForm/LoginForm';
+import React from 'react'
+import { ImageContainer, LoginContainer } from './index.css'
+import { LoginForm } from './LoginForm/LoginForm'
 
 const Login: React.FC = (): JSX.Element => {
   return (
@@ -8,7 +8,7 @@ const Login: React.FC = (): JSX.Element => {
       <LoginForm />
       <ImageContainer />
     </LoginContainer>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
