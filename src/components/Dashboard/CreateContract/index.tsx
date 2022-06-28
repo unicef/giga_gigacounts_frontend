@@ -16,6 +16,12 @@ interface ICreateContractsProps {
   label?: string;
 }
 
+const tabs = {
+  [ActiveTab.GeneralTab]: GeneralTab,
+  [ActiveTab.ConnectionTab]: ConnectionTab,
+  [ActiveTab.SchoolsTab]: SchoolsTab
+};
+
 const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state);
 
@@ -55,15 +61,7 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
       }
     });
 
-  const tabs = {
-    [ActiveTab.GeneralTab]: <GeneralTab state={state} dispatch={dispatch} />,
-    [ActiveTab.ConnectionTab]: <ConnectionTab state={state} dispatch={dispatch} />,
-    [ActiveTab.SchoolsTab]: <SchoolsTab state={state} dispatch={dispatch} />
-  };
-
-  const TabContent: React.FC = () => {
-    return <>{tabs[activeTab as keyof typeof tabs]}</>;
-  };
+  const TabContent = tabs[activeTab];
 
   const tabIconState = (status: string) => {
     switch (status) {
@@ -83,8 +81,6 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
         break;
     }
   };
-
-  console.log('state', localState);
 
   return (
     <CreateContractContainer>
@@ -138,7 +134,7 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
         </FormHeaderTabs>
       </Header>
       <GeneralContainer>
-        <TabContent />
+        <TabContent state={state} dispatch={dispatch} />
       </GeneralContainer>
     </CreateContractContainer>
   );

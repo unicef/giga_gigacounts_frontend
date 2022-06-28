@@ -33,7 +33,7 @@ export interface Action {
 
 export interface State {
   contractNumber: string;
-  activeTab: string;
+  activeTab: ActiveTab;
   error?: Error;
   loading?: boolean;
   missingData: boolean;
@@ -99,7 +99,7 @@ export const reducer = (state: State, action: Action): State => {
 
 export const state: State = {
   contractNumber: '',
-  activeTab: 'generalTab',
+  activeTab: ActiveTab.GeneralTab,
   error: undefined,
   loading: true,
   missingData: false,
