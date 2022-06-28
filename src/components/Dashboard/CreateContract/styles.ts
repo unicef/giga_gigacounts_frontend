@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const CreateContractContainer = styled.div`
   display: flex;
@@ -9,7 +9,7 @@ export const CreateContractContainer = styled.div`
   background: var(--color-white);
   width: 100vw;
   height: 100vh;
-`;
+`
 
 export const Header = styled.div`
   display: flex;
@@ -19,7 +19,7 @@ export const Header = styled.div`
   padding: 0px;
   width: 100%;
   border-bottom: 2px solid var(--color-lighter-blue);
-`;
+`
 
 export const FormHeaderActions = styled.div`
   display: flex;
@@ -57,7 +57,7 @@ export const FormHeaderActions = styled.div`
   button {
     cursor: pointer;
   }
-`;
+`
 
 export const FormHeaderTabs = styled.div`
   display: flex;
@@ -123,7 +123,7 @@ export const FormHeaderTabs = styled.div`
       }
     }
   }
-`;
+`
 
 export const FormHeaderMessage = styled.div`
   display: flex;
@@ -147,9 +147,9 @@ export const FormHeaderMessage = styled.div`
   .error {
     color: var(--color-red);
   }
-`;
+`
 
 export const GeneralContainer = styled.div`
   width: 100%;
   height: 100%;
-`;
+`

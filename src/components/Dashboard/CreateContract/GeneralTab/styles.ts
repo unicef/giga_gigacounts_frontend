@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components/macro'
 
 export const GeneralContainer = styled.div`
   display: flex;
@@ -6,4 +6,4 @@ export const GeneralContainer = styled.div`
   gap: 24px;
   width: 100%;
   height: 100%;
-`;
+`

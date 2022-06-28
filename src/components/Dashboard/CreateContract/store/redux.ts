@@ -1,7 +1,7 @@
 export enum ActiveTab {
   GeneralTab = 'generalTab',
   ConnectionTab = 'connectionTab',
-  SchoolsTab = 'schoolsTab'
+  SchoolsTab = 'schoolsTab',
 }
 
 export enum TabState {
@@ -10,56 +10,56 @@ export enum TabState {
   DefaultError = 'DefaultError',
   Selected = 'Selected',
   SelectedCompleted = 'SelectedCompleted',
-  SelectedError = 'SelectedError'
+  SelectedError = 'SelectedError',
 }
 
 export interface ITabItems {
-  id: string;
-  name: string;
-  tabStatus?: string;
+  id: string
+  name: string
+  tabStatus?: string
 }
 
 export enum ActionType {
   SET_CONTRACT_NAME = 'SET_CONTRACT_NAME',
   SET_ACTIVE_TAB = 'SET_ACTIVE_TAB',
   SET_LOADING = 'SET_LOADING',
-  SET_ERROR = 'SET_ERROR'
+  SET_ERROR = 'SET_ERROR',
 }
 
 export interface Action {
-  type: ActionType;
-  payload?: any;
+  type: ActionType
+  payload?: any
 }
 
 export interface State {
-  contractNumber: string;
-  activeTab: ActiveTab;
-  error?: Error;
-  loading?: boolean;
-  missingData: boolean;
-  invalidData: boolean;
-  tabGeneralStatus: string;
-  tabConnectionStatus: string;
-  tabSchoolStatus: string;
+  contractNumber: string
+  activeTab: ActiveTab
+  error?: Error
+  loading?: boolean
+  missingData: boolean
+  invalidData: boolean
+  tabGeneralStatus: string
+  tabConnectionStatus: string
+  tabSchoolStatus: string
 }
 
 export const reducer = (state: State, action: Action): State => {
-  const { type, payload } = action;
+  const { type, payload } = action
 
-  console.log(type, payload);
+  // console.log(type, payload)
 
   switch (type) {
     case ActionType.SET_ACTIVE_TAB: {
-      let missing = false;
-      let invalid = false;
+      let missing = false
+      let invalid = false
 
       if (payload.activeTab === ActiveTab.ConnectionTab) {
         // TODO - to be removed - just test message
-        missing = true;
+        missing = true
       }
       if (payload.activeTab === ActiveTab.SchoolsTab) {
         // TODO - to be removed - just test message
-        invalid = true;
+        invalid = true
       }
 
       return {
@@ -69,33 +69,33 @@ export const reducer = (state: State, action: Action): State => {
         tabConnectionStatus: payload.tabConnectionStatus,
         tabSchoolStatus: payload.tabSchoolStatus,
         missingData: missing,
-        invalidData: invalid
-      };
+        invalidData: invalid,
+      }
     }
 
     case ActionType.SET_CONTRACT_NAME:
       return {
         ...state,
-        contractNumber: payload
-      };
+        contractNumber: payload,
+      }
     case ActionType.SET_ERROR:
       return {
         ...state,
-        error: payload
-      };
+        error: payload,
+      }
 
     case ActionType.SET_LOADING:
       return {
         ...state,
-        loading: !state.loading
-      };
+        loading: !state.loading,
+      }
 
     default:
       return {
-        ...state
-      };
+        ...state,
+      }
   }
-};
+}
 
 export const state: State = {
   contractNumber: '',
@@ -106,5 +106,5 @@ export const state: State = {
   invalidData: false,
   tabGeneralStatus: TabState.Selected,
   tabConnectionStatus: TabState.Default,
-  tabSchoolStatus: TabState.Default
-};
+  tabSchoolStatus: TabState.Default,
+}

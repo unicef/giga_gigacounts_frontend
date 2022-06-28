@@ -1,8 +1,8 @@
-import { MouseEvent, useReducer } from 'react';
-import ConnectionTab from './ConnectionTab/ConnectionTab';
-import GeneralTab from './GeneralTab/GeneralTab';
-import SchoolsTab from './SchoolsTab/SchoolsTab';
-import { ActionType, ActiveTab, ITabItems, reducer, state, TabState } from './store/redux';
+import { MouseEvent, useReducer } from 'react'
+import ConnectionTab from './ConnectionTab/ConnectionTab'
+import GeneralTab from './GeneralTab/GeneralTab'
+import SchoolsTab from './SchoolsTab/SchoolsTab'
+import { ActionType, ActiveTab, ITabItems, reducer, state, TabState } from './store/redux'
 import {
   CreateContractContainer,
   Header,
@@ -10,7 +10,7 @@ import {
   FormHeaderTabs,
   GeneralContainer,
   FormHeaderMessage
-} from './styles';
+} from './styles'
 
 interface ICreateContractsProps {
   label?: string;
@@ -20,10 +20,10 @@ const tabs = {
   [ActiveTab.GeneralTab]: GeneralTab,
   [ActiveTab.ConnectionTab]: ConnectionTab,
   [ActiveTab.SchoolsTab]: SchoolsTab
-};
+}
 
 const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Element => {
-  const [localState, dispatch] = useReducer(reducer, state);
+  const [localState, dispatch] = useReducer(reducer, state)
 
   const {
     contractNumber,
@@ -33,7 +33,7 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
     tabGeneralStatus,
     tabConnectionStatus,
     tabSchoolStatus
-  } = localState;
+  } = localState
 
   const tabsItems: ITabItems[] = [
     {
@@ -48,7 +48,7 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
       id: 'schoolsTab',
       name: 'Schools'
     }
-  ];
+  ]
 
   const handleActiveTab = (e: MouseEvent<HTMLButtonElement>) =>
     dispatch({
@@ -59,28 +59,28 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
         tabConnectionStatus: TabState.Selected,
         tabSchoolStatus: TabState.Default
       }
-    });
+    })
 
-  const TabContent = tabs[activeTab];
+  const TabContent = tabs[activeTab]
 
   const tabIconState = (status: string) => {
     switch (status) {
       case TabState.Default:
-        return <span className={`icon icon-16 circle`} />;
+        return <span className={`icon icon-16 circle`} />
       case TabState.DefaultCompleted:
-        return <span className={`icon icon-16 icon-checkmark icon-light-blue circle`} />;
+        return <span className={`icon icon-16 icon-checkmark icon-light-blue circle`} />
       case TabState.DefaultError:
-        return <span className={`icon icon-16 icon-pointer circle`} />;
+        return <span className={`icon icon-16 icon-pointer circle`} />
       case TabState.Selected:
-        return <span className={`icon icon-16 circle selected`} />;
+        return <span className={`icon icon-16 circle selected`} />
       case TabState.SelectedCompleted:
-        return <span className={`icon icon-16 circle selected`} />;
+        return <span className={`icon icon-16 circle selected`} />
       case TabState.SelectedError:
-        return <span className={`icon icon-16 circle selected`} />;
+        return <span className={`icon icon-16 circle selected`} />
       default:
-        break;
+        break
     }
-  };
+  }
 
   return (
     <CreateContractContainer>
@@ -111,7 +111,7 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
                 {tab.name === ActiveTab.SchoolsTab && tabIconState(tabSchoolStatus)} */}
                 <p>{tab.name}</p>
               </button>
-            );
+            )
           })}
           <FormHeaderMessage>
             {activeTab === ActiveTab.GeneralTab && (
@@ -137,6 +137,6 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
         <TabContent state={state} dispatch={dispatch} />
       </GeneralContainer>
     </CreateContractContainer>
-  );
-};
-export default CreateContract;
+  )
+}
+export default CreateContract

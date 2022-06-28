@@ -1,6 +1,6 @@
-import { Dispatch } from 'react';
-import { Action, State } from '../store/redux';
-import { ConnectionContainer } from './styles';
+import { Dispatch } from 'react'
+import { Action, State } from '../store/redux'
+import { ConnectionContainer } from './styles'
 
 interface IConnectionProps {
   state: State;
@@ -8,7 +8,7 @@ interface IConnectionProps {
 }
 
 const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Element => {
-  return <ConnectionContainer>Connection</ConnectionContainer>;
-};
+  return <ConnectionContainer>Connection</ConnectionContainer>
+}
 
-export default ConnectionTab;
+export default ConnectionTab

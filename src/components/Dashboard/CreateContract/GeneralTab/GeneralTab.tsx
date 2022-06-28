@@ -1,6 +1,6 @@
-import { ChangeEvent, Dispatch, useState } from 'react';
-import { Action, ActionType, State } from '../store/redux';
-import { GeneralContainer } from './styles';
+import { ChangeEvent, Dispatch, useState } from 'react'
+import { Action, ActionType, State } from '../store/redux'
+import { GeneralContainer } from './styles'
 
 interface IGeneralProps {
   state: State;
@@ -10,11 +10,11 @@ interface IGeneralProps {
 const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {
   const handleContractNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.length === 0) {
-      dispatch({ type: ActionType.SET_CONTRACT_NAME, payload: '' });
-      return;
+      dispatch({ type: ActionType.SET_CONTRACT_NAME, payload: '' })
+      return
     }
-    dispatch({ type: ActionType.SET_CONTRACT_NAME, payload: ` - ${e.currentTarget.value}` });
-  };
+    dispatch({ type: ActionType.SET_CONTRACT_NAME, payload: ` - ${e.currentTarget.value}` })
+  }
 
   return (
     <GeneralContainer>
@@ -63,7 +63,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
         onBlur={handleContractNameChange}
       />
     </GeneralContainer>
-  );
-};
+  )
+}
 
-export default GeneralTab;
+export default GeneralTab
