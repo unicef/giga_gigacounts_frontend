@@ -1,9 +1,7 @@
-import _ from 'lodash';
-
 export enum ActiveTab {
-  General = 'General',
-  Connection = 'Connection',
-  Schools = 'Schools'
+  GeneralTab = 'generalTab',
+  ConnectionTab = 'connectionTab',
+  SchoolsTab = 'schoolsTab'
 }
 
 export enum TabState {
@@ -48,18 +46,18 @@ export interface State {
 export const reducer = (state: State, action: Action): State => {
   const { type, payload } = action;
 
-  // console.log(type, payload);
+  console.log(type, payload);
 
   switch (type) {
     case ActionType.SET_ACTIVE_TAB: {
       let missing = false;
       let invalid = false;
 
-      if (payload.activeTab === ActiveTab.Connection) {
+      if (payload.activeTab === ActiveTab.ConnectionTab) {
         // TODO - to be removed - just test message
         missing = true;
       }
-      if (payload.activeTab === ActiveTab.Schools) {
+      if (payload.activeTab === ActiveTab.SchoolsTab) {
         // TODO - to be removed - just test message
         invalid = true;
       }
@@ -101,7 +99,7 @@ export const reducer = (state: State, action: Action): State => {
 
 export const state: State = {
   contractNumber: '',
-  activeTab: 'General',
+  activeTab: 'generalTab',
   error: undefined,
   loading: true,
   missingData: false,

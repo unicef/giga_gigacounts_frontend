@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
   const [contractCounts, setContractCounts] = useState([]);
   const [displayContractForm, setDisplayContractForm] = useState(false);
 
-  const handleDisplayForm = () => setDisplayContractForm((prevState) => !prevState);
+  const toggleCreateDraftForm = () => setDisplayContractForm((prevState) => !prevState);
 
   useEffect(() => {
     const getProfile = async () => {
@@ -56,7 +56,7 @@ const Dashboard: React.FC = () => {
         contractCounts={contractCounts}
       />
       <Contracts />
-      {displayContractForm ? <CreateContract /> : <ContractGuide createDraft={handleDisplayForm} />}
+      {displayContractForm ? <CreateContract /> : <ContractGuide createDraft={toggleCreateDraftForm} />}
     </DashboardContainer>
   );
 };

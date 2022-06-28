@@ -9,7 +9,6 @@ const ContractGuide: React.FC<IContractsProps> = ({ createDraft }): JSX.Element 
   return (
     <ContractGuideContainer>
       <div>
-
         <h5>Contract Status guide</h5>
 
         <ContractGuideItem>
@@ -45,7 +44,7 @@ const ContractGuide: React.FC<IContractsProps> = ({ createDraft }): JSX.Element 
 
         <ContractGuideItem>
           <span>
-            <ContractStatusWidget selected={false} average={18} good={25} expired={false} payments={67} />
+            <ContractStatusWidget average={18} good={25} payments={67} />
           </span>
           <p>
             <b>Ongoing</b>
@@ -57,7 +56,7 @@ const ContractGuide: React.FC<IContractsProps> = ({ createDraft }): JSX.Element 
 
         <ContractGuideItem>
           <span>
-            <ContractStatusWidget selected={false} average={10} good={80} expired={true} payments={60} />
+            <ContractStatusWidget average={10} good={80} expired payments={60} />
           </span>
           <p>
             <b>Expired</b>
@@ -73,36 +72,35 @@ const ContractGuide: React.FC<IContractsProps> = ({ createDraft }): JSX.Element 
           <div className="super-small">There are no pending actions for a contract</div>
         </ContractGuideItem>
       </div>
-      
 
       <div>
-        
-        <img src='img/chart-example.svg' style={{height: '125px'}} alt='Chart'/>
+        <img src="img/chart-example.svg" style={{ height: '125px' }} alt="Chart" />
 
         <ContractGuideChartItem>
-          <img src='img/schools-green.svg' alt='Connected' />
+          <img src="img/schools-green.svg" alt="Connected" />
           <div className="super-small">Schools that have been connected and meet the expected quality of service.</div>
         </ContractGuideChartItem>
 
         <ContractGuideChartItem>
-          <img src='img/schools-orange.svg' alt='Average' />
-          <div className="super-small">Schools that have been connected but do not meet the minimum connectivity standards agreed with the providers.</div>
+          <img src="img/schools-orange.svg" alt="Average" />
+          <div className="super-small">
+            Schools that have been connected but do not meet the minimum connectivity standards agreed with the
+            providers.
+          </div>
         </ContractGuideChartItem>
 
         <ContractGuideChartItem>
-          <img src='img/schools-red.svg' alt='Poor' />
+          <img src="img/schools-red.svg" alt="Poor" />
           <div className="super-small">Schools that haven't been connected by service provider's yet.</div>
         </ContractGuideChartItem>
 
         <ContractGuideChartItem>
-          <img src='img/payments.svg' alt='Payments' />
-          <div className="super-small">Represents the part of the budget that has already been consumed by the payments done to the provider.</div>
+          <img src="img/payments.svg" alt="Payments" />
+          <div className="super-small">
+            Represents the part of the budget that has already been consumed by the payments done to the provider.
+          </div>
         </ContractGuideChartItem>
-
       </div>
-
-
-
     </ContractGuideContainer>
   );
 };

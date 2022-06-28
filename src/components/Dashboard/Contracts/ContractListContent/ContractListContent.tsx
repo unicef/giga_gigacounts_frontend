@@ -2,7 +2,6 @@ import { Dispatch, useEffect, useState } from 'react';
 import { Action, State } from '../store/redux';
 
 import ContractDefaultListItem from '../ContractListContent/ContractDefaultListItem/ContractDefaultListItem';
-import ContractLtaListItem from './ContractLtaListItem/ContractLtaListItem';
 import ContractLtaListItems from './ContractLtaListItems/ContractLtaListItems';
 import ContractSchoolStatus from './ContactSchoolStatus/ContractSchoolStatus';
 import ContractLoader from './ContractLoader/ContractLoader';

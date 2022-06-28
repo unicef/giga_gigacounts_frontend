@@ -7,10 +7,8 @@ interface ISchoolsProps {
   dispatch: Dispatch<Action>;
 }
 
-const Schools: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element => {
-  console.log('schools state', state);
-
+const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element => {
   return <SchoolsContainer>Schools</SchoolsContainer>;
 };
 
-export default Schools;
+export default SchoolsTab;

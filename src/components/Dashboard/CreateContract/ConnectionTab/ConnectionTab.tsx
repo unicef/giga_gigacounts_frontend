@@ -7,10 +7,8 @@ interface IConnectionProps {
   dispatch: Dispatch<Action>;
 }
 
-const Connection: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Element => {
-  console.log('connection state', state);
-
+const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Element => {
   return <ConnectionContainer>Connection</ConnectionContainer>;
 };
 
-export default Connection;
+export default ConnectionTab;

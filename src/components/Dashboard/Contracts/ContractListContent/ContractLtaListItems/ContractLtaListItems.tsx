@@ -1,6 +1,6 @@
 import { Dispatch, useEffect, useState } from 'react';
 import { IContracts } from '../../@types/ContractType';
-import { Action, ActionType, State } from '../../store/redux';
+import { Action, State } from '../../store/redux';
 import ContractSchoolStatus from '../ContactSchoolStatus/ContractSchoolStatus';
 import ContractDefaultListItem from '../ContractDefaultListItem/ContractDefaultListItem';
 import {

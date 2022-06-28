@@ -7,10 +7,8 @@ interface IGeneralProps {
   dispatch: Dispatch<Action>;
 }
 
-const General: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {
-  console.log('general state', state);
-
-  const handleContractName = (e: ChangeEvent<HTMLInputElement>) => {
+const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {
+  const handleContractNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value.length === 0) {
       dispatch({ type: ActionType.SET_CONTRACT_NAME, payload: '' });
       return;
@@ -61,11 +59,11 @@ const General: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {
         type="text"
         name="contactName"
         placeholder="Contract Name"
-        onChange={handleContractName}
-        onBlur={handleContractName}
+        onChange={handleContractNameChange}
+        onBlur={handleContractNameChange}
       />
     </GeneralContainer>
   );
 };
 
-export default General;
+export default GeneralTab;
