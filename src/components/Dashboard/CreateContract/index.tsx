@@ -26,7 +26,7 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
   const [localState, dispatch] = useReducer(reducer, state)
 
   const {
-    contractNumber,
+    generalTabForm,
     activeTab,
     invalidData,
     missingData,
@@ -87,11 +87,11 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
       <Header>
         <FormHeaderActions>
           <div>
-            <h5>New Contract {contractNumber}</h5>
+            <h5>New Contract {generalTabForm.contractNumber}</h5>
           </div>
           <div>
             <button className="btn-transparent-grey active">Discard</button>
-            {contractNumber && <button className="btn-blue">Save Draft</button>}
+            {generalTabForm.contractNumber && <button className="btn-blue">Save Draft</button>}
           </div>
           {true && <button className="btn-green">Publish</button>}
         </FormHeaderActions>
@@ -133,7 +133,7 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
           </FormHeaderMessage>
         </FormHeaderTabs>
       </Header>
-      <TabContent state={state} dispatch={dispatch} />
+      <TabContent state={localState} dispatch={dispatch} />
     </CreateContractContainer>
   )
 }

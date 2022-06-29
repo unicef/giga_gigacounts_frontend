@@ -1,3 +1,5 @@
+import { ICountries, ICurrency, ILtas } from 'src/api/createContract'
+
 export enum ActiveTab {
   GeneralTab = 'generalTab',
   ConnectionTab = 'connectionTab',
@@ -20,10 +22,14 @@ export interface ITabItems {
 }
 
 export enum ActionType {
+  GET_FORM_DATA = 'GET_FORM_DATA',
+  SET_COUNTRIES = 'SET_COUNTRIES',
   SET_CONTRACT_NAME = 'SET_CONTRACT_NAME',
   SET_ACTIVE_TAB = 'SET_ACTIVE_TAB',
   SET_LOADING = 'SET_LOADING',
   SET_ERROR = 'SET_ERROR',
+  SET_COUNTRY_CODE = 'SET_COUNTRY_CODE',
+  SET_BEHALF_GOVERNMENT = 'SET_BEHALF_GOVERNMENT',
 }
 
 export interface Action {
@@ -32,7 +38,6 @@ export interface Action {
 }
 
 export interface State {
-  contractNumber: string
   activeTab: ActiveTab
   error?: Error
   loading?: boolean
@@ -41,6 +46,17 @@ export interface State {
   tabGeneralStatus: string
   tabConnectionStatus: string
   tabSchoolStatus: string
+
+  countries: ICountries[]
+  currencies: ICurrency[]
+  ltas: ILtas[]
+
+  generalTabForm: {
+    contractNumber: string
+    countryCode: string
+    behalfOfGovernment: boolean
+  }
+  flag: string
 }
 
 export const reducer = (state: State, action: Action): State => {
@@ -73,11 +89,47 @@ export const reducer = (state: State, action: Action): State => {
       }
     }
 
+    case ActionType.GET_FORM_DATA: {
+      const { countries, currencies, ltas } = payload
+      return {
+        ...state,
+        countries,
+        currencies,
+        ltas,
+        loading: false,
+      }
+    }
+
+    case ActionType.SET_COUNTRY_CODE:
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          countryCode: payload,
+        },
+        flag: payload,
+      }
+
     case ActionType.SET_CONTRACT_NAME:
       return {
         ...state,
-        contractNumber: payload,
+        generalTabForm: {
+          ...state.generalTabForm,
+          contractNumber: payload,
+        },
       }
+
+    case ActionType.SET_BEHALF_GOVERNMENT: {
+      console.log(payload)
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          behalfOfGovernment: !state.generalTabForm.behalfOfGovernment,
+        },
+      }
+    }
+
     case ActionType.SET_ERROR:
       return {
         ...state,
@@ -98,7 +150,6 @@ export const reducer = (state: State, action: Action): State => {
 }
 
 export const state: State = {
-  contractNumber: '',
   activeTab: ActiveTab.GeneralTab,
   error: undefined,
   loading: true,
@@ -107,4 +158,14 @@ export const state: State = {
   tabGeneralStatus: TabState.Selected,
   tabConnectionStatus: TabState.Default,
   tabSchoolStatus: TabState.Default,
+  countries: [],
+  currencies: [],
+  ltas: [],
+
+  generalTabForm: {
+    contractNumber: '',
+    countryCode: '',
+    behalfOfGovernment: false,
+  },
+  flag: 'BW',
 }

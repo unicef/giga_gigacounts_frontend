@@ -438,6 +438,8 @@ input[type='submit']:disabled button:disabled {
 
 .dropdown > img {
   height: 100%;
+  position: relative;
+  left: -1px;
 }
 
 select {
