@@ -1,3 +1,7 @@
+import { IMetric } from 'src/api/metrics'
+import { IIsp } from 'src/api/isp'
+import _ from 'lodash'
+
 export enum ActiveTab {
   GeneralTab = 'generalTab',
   ConnectionTab = 'connectionTab',
@@ -24,11 +28,19 @@ export enum ActionType {
   SET_ACTIVE_TAB = 'SET_ACTIVE_TAB',
   SET_LOADING = 'SET_LOADING',
   SET_ERROR = 'SET_ERROR',
+  SET_EXPECTED_METRIC = 'SET_EXPECTED_METRIC',
+  RESPONSE_METRICS = 'RESPONSE_METRICS',
+  RESPONSE_ISPS = 'RESPONSE_ISPS',
 }
 
 export interface Action {
   type: ActionType
   payload?: any
+}
+
+export interface ExpectedMetric {
+  metricId: number
+  value: number
 }
 
 export interface State {
@@ -41,6 +53,9 @@ export interface State {
   tabGeneralStatus: string
   tabConnectionStatus: string
   tabSchoolStatus: string
+  expectedMetrics: { metrics: ExpectedMetric[] }
+  metrics: IMetric[]
+  isps: IIsp[]
 }
 
 export const reducer = (state: State, action: Action): State => {
@@ -90,6 +105,36 @@ export const reducer = (state: State, action: Action): State => {
         loading: !state.loading,
       }
 
+    case ActionType.SET_EXPECTED_METRIC: {
+      const newExpectedMetrics = _.cloneDeep(state.expectedMetrics)
+      const index = newExpectedMetrics.metrics.findIndex((m) => m.metricId === payload.metricId)
+
+      if (index >= 0) {
+        newExpectedMetrics.metrics[index].value = payload.value
+      } else {
+        newExpectedMetrics.metrics.unshift(payload)
+      }
+
+      return {
+        ...state,
+        expectedMetrics: newExpectedMetrics,
+      }
+    }
+
+    case ActionType.RESPONSE_METRICS: {
+      return {
+        ...state,
+        metrics: payload,
+      }
+    }
+
+    case ActionType.RESPONSE_ISPS: {
+      return {
+        ...state,
+        isps: payload,
+      }
+    }
+
     default:
       return {
         ...state,
@@ -107,4 +152,7 @@ export const state: State = {
   tabGeneralStatus: TabState.Selected,
   tabConnectionStatus: TabState.Default,
   tabSchoolStatus: TabState.Default,
+  expectedMetrics: { metrics: [] },
+  metrics: [],
+  isps: [],
 }

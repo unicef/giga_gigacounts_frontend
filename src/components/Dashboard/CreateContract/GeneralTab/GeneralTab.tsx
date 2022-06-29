@@ -3,8 +3,8 @@ import { Action, ActionType, State } from '../store/redux'
 import { GeneralContainer } from './styles'
 
 interface IGeneralProps {
-  state: State;
-  dispatch: Dispatch<Action>;
+  state: State
+  dispatch: Dispatch<Action>
 }
 
 const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {

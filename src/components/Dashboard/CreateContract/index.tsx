@@ -1,4 +1,4 @@
-import { MouseEvent, useReducer } from 'react'
+import { MouseEvent, useReducer, useEffect } from 'react'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -9,17 +9,17 @@ import {
   FormHeaderActions,
   FormHeaderTabs,
   GeneralContainer,
-  FormHeaderMessage
+  FormHeaderMessage,
 } from './styles'
 
 interface ICreateContractsProps {
-  label?: string;
+  label?: string
 }
 
 const tabs = {
   [ActiveTab.GeneralTab]: GeneralTab,
   [ActiveTab.ConnectionTab]: ConnectionTab,
-  [ActiveTab.SchoolsTab]: SchoolsTab
+  [ActiveTab.SchoolsTab]: SchoolsTab,
 }
 
 const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Element => {
@@ -32,22 +32,23 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
     missingData,
     tabGeneralStatus,
     tabConnectionStatus,
-    tabSchoolStatus
+    tabSchoolStatus,
+    metrics,
   } = localState
 
   const tabsItems: ITabItems[] = [
     {
       id: 'generalTab',
-      name: 'General'
+      name: 'General',
     },
     {
       id: 'connectionTab',
-      name: 'Connection'
+      name: 'Connection',
     },
     {
       id: 'schoolsTab',
-      name: 'Schools'
-    }
+      name: 'Schools',
+    },
   ]
 
   const handleActiveTab = (e: MouseEvent<HTMLButtonElement>) =>
@@ -57,8 +58,8 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
         activeTab: e.currentTarget.id,
         tabGeneralStatus: TabState.DefaultError,
         tabConnectionStatus: TabState.Selected,
-        tabSchoolStatus: TabState.Default
-      }
+        tabSchoolStatus: TabState.Default,
+      },
     })
 
   const TabContent = tabs[activeTab]
@@ -134,7 +135,7 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
         </FormHeaderTabs>
       </Header>
       <GeneralContainer>
-        <TabContent state={state} dispatch={dispatch} />
+        <TabContent state={localState} dispatch={dispatch} />
       </GeneralContainer>
     </CreateContractContainer>
   )
