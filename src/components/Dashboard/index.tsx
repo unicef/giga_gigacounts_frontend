@@ -15,7 +15,7 @@ const Dashboard: React.FC = () => {
   const [name, setName] = useState('')
   const [countryCode, setCountryCode] = useState('')
   const [contractCounts, setContractCounts] = useState([])
-  const [displayContractForm, setDisplayContractForm] = useState(true)
+  const [displayContractForm, setDisplayContractForm] = useState(false)
 
   const toggleCreateDraftForm = () => setDisplayContractForm((prevState) => !prevState)
 
@@ -47,7 +47,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <DashboardContainer>
-      {/* <Navigation
+      <Navigation
         admin={role === ADMIN_ROLE}
         countryName={countryName}
         role={role}
@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
         name={name}
         contractCounts={contractCounts}
       />
-      <Contracts /> */}
+      <Contracts />
       {displayContractForm ? <CreateContract /> : <ContractGuide createDraft={toggleCreateDraftForm} />}
     </DashboardContainer>
   )
