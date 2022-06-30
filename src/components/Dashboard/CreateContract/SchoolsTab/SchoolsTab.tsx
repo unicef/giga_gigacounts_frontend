@@ -3,11 +3,11 @@ import { Action, State } from '../store/redux'
 import { SchoolsContainer } from './styles'
 
 interface ISchoolsProps {
-  state: State;
-  dispatch: Dispatch<Action>;
+  state: State
+  dispatch: Dispatch<Action>
 }
 
-const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element => {
+const SchoolsTab: React.FC<ISchoolsProps> = (): JSX.Element => {
   return <SchoolsContainer>Schools</SchoolsContainer>
 }
 

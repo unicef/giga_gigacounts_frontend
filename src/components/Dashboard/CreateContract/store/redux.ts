@@ -34,6 +34,7 @@ export enum ActionType {
 
 export interface Action {
   type: ActionType
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any
 }
 
@@ -61,9 +62,6 @@ export interface State {
 
 export const reducer = (state: State, action: Action): State => {
   const { type, payload } = action
-
-  console.log(type, payload)
-
   switch (type) {
     case ActionType.SET_ACTIVE_TAB: {
       let missing = false
@@ -120,7 +118,6 @@ export const reducer = (state: State, action: Action): State => {
       }
 
     case ActionType.SET_BEHALF_GOVERNMENT: {
-      console.log(payload)
       return {
         ...state,
         generalTabForm: {
