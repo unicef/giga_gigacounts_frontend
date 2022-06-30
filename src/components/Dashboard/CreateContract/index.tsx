@@ -3,14 +3,7 @@ import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
 import { ActionType, ActiveTab, ITabItems, reducer, state, TabState } from './store/redux'
-import {
-  CreateContractContainer,
-  Header,
-  FormHeaderActions,
-  FormHeaderTabs,
-  GeneralContainer,
-  FormHeaderMessage,
-} from './styles'
+import { CreateContractContainer, Header, FormHeaderActions, FormHeaderTabs, FormHeaderMessage } from './styles'
 
 interface ICreateContractsProps {
   label?: string
@@ -22,18 +15,10 @@ const tabs = {
   [ActiveTab.SchoolsTab]: SchoolsTab,
 }
 
-const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Element => {
+const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)
 
-  const {
-    generalTabForm,
-    activeTab,
-    invalidData,
-    missingData,
-    tabGeneralStatus,
-    tabConnectionStatus,
-    tabSchoolStatus,
-  } = localState
+  const { generalTabForm, activeTab, invalidData, missingData } = localState
 
   const tabsItems: ITabItems[] = [
     {
@@ -62,25 +47,6 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
     })
 
   const TabContent = tabs[activeTab]
-
-  const tabIconState = (status: string) => {
-    switch (status) {
-      case TabState.Default:
-        return <span className={`icon icon-16 circle`} />
-      case TabState.DefaultCompleted:
-        return <span className={`icon icon-16 icon-checkmark icon-light-blue circle`} />
-      case TabState.DefaultError:
-        return <span className={`icon icon-16 icon-pointer circle`} />
-      case TabState.Selected:
-        return <span className={`icon icon-16 circle selected`} />
-      case TabState.SelectedCompleted:
-        return <span className={`icon icon-16 circle selected`} />
-      case TabState.SelectedError:
-        return <span className={`icon icon-16 circle selected`} />
-      default:
-        break
-    }
-  }
 
   return (
     <CreateContractContainer>

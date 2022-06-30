@@ -3,11 +3,11 @@ import { Action, State } from '../store/redux'
 import { ConnectionContainer } from './styles'
 
 interface IConnectionProps {
-  state: State;
-  dispatch: Dispatch<Action>;
+  state: State
+  dispatch: Dispatch<Action>
 }
 
-const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Element => {
+const ConnectionTab: React.FC<IConnectionProps> = (): JSX.Element => {
   return <ConnectionContainer>Connection</ConnectionContainer>
 }
 

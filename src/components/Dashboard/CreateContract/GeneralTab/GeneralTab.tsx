@@ -54,8 +54,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
   }
 
   const handleFileEvent = (e: ChangeEvent<HTMLInputElement>) => {
-    const chosenFiles = Array.prototype.slice.call(e.target.files)
-    console.log(chosenFiles)
+    Array.prototype.slice.call(e.target.files)
   }
 
   const onInputFiles = () => inputFileRef.current?.click()
