@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, useEffect, useState, useRef } from 'react'
+import { ChangeEvent, Dispatch, useEffect, useRef, useCallback } from 'react'
 import { getCountries, getCurrency, getLtas } from 'src/api/createContract'
 import { Action, ActionType, State } from '../store/redux'
 import {
@@ -22,33 +22,34 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
   const { countries, currencies, ltas, flag } = state
   const inputFileRef = useRef<HTMLInputElement>(null)
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
-      const getAllCountries = await getCountries()
-      const getAllCurrencies = await getCurrency()
-      const getAllLtas = await getLtas()
+      const allCountries = await getCountries()
+      const allCurrencies = await getCurrency()
+      const allLtas = await getLtas()
 
       dispatch({
         type: ActionType.GET_FORM_DATA,
         payload: {
-          countries: getAllCountries,
-          currencies: getAllCurrencies,
-          ltas: getAllLtas,
+          countries: allCountries,
+          currencies: allCurrencies,
+          ltas: allLtas,
         },
       })
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
-  }
-  const onSelectCountry = (e: ChangeEvent<HTMLSelectElement>) => {
+  }, [])
+
+  const onCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     dispatch({ type: ActionType.SET_COUNTRY_CODE, payload: e.currentTarget.value })
   }
 
-  const onBehalfGovernment = () => {
+  const onBehalfGovernmentChange = () => {
     dispatch({ type: ActionType.SET_BEHALF_GOVERNMENT })
   }
 
-  const handleContractNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onContractNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: ActionType.SET_CONTRACT_NAME, payload: e.currentTarget.value })
   }
 
@@ -61,7 +62,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [fetchData])
 
   return (
     <GeneralContainer>
@@ -70,7 +71,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
           <Country>
             <div className="input-container dropdown">
               <img src={`flags/${flag}.svg`} alt={flag} />
-              <select onChange={onSelectCountry}>
+              <select onChange={onCountryChange}>
                 {countries?.map((country) => (
                   <option key={country.id} value={country.code}>
                     {country.name}
@@ -79,7 +80,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
               </select>
             </div>
             <label>
-              <input type="checkbox" onChange={onBehalfGovernment} />
+              <input type="checkbox" onChange={onBehalfGovernmentChange} />
               On behalf of the government
             </label>
           </Country>
@@ -87,8 +88,8 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
             type="text"
             name="contactName"
             placeholder="Contract Name"
-            onChange={handleContractNameChange}
-            onBlur={handleContractNameChange}
+            onChange={onContractNameChange}
+            onBlur={onContractNameChange}
           />
           <div className="input-container dropdown">
             <select defaultValue="default">

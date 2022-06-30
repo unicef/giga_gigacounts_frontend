@@ -92,7 +92,7 @@ export const UploadFiles = styled.div`
   padding: 0px;
   gap: 16px;
 
-  #fileUpload {
+  input[type='file'] {
     display: none;
   }
 `
