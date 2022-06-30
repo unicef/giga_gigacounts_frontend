@@ -76,6 +76,8 @@ const ContractGuide: React.FC<IContractsProps> = ({ createDraft }): JSX.Element 
       <div>
         <img src="img/chart-example.svg" style={{ height: '125px' }} alt="Chart" />
 
+        <h5 style={{ marginTop: '21px'}} >Schools connectivity dial</h5>
+
         <ContractGuideChartItem>
           <img src="img/schools-green.svg" alt="Connected" />
           <div className="super-small">Schools that have been connected and meet the expected quality of service.</div>
@@ -93,6 +95,8 @@ const ContractGuide: React.FC<IContractsProps> = ({ createDraft }): JSX.Element 
           <img src="img/schools-red.svg" alt="Poor" />
           <div className="super-small">Schools that haven't been connected by service provider's yet.</div>
         </ContractGuideChartItem>
+
+        <h5 style={{ marginTop: '21px'}} >Payments Dial</h5>
 
         <ContractGuideChartItem>
           <img src="img/payments.svg" alt="Payments" />
