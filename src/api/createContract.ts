@@ -26,8 +26,8 @@ export interface ILtas {
 axios.interceptors.request.use(
   function (config) {
     const AUTH_TOKEN = localStorage.getItem('session')
-    if (config !== undefined && config.headers !== undefined) {
-      config.headers.Authorization = AUTH_TOKEN ? `Bearer ${AUTH_TOKEN}` : ''
+    if (config !== undefined && config.headers !== undefined && AUTH_TOKEN !== undefined) {
+      config.headers.Authorization = `Bearer ${AUTH_TOKEN}`
     }
     return config
   },
@@ -53,7 +53,7 @@ export const getCountries = async (): Promise<ICountries | Error> => {
     }
     throw new Error('Failed to get the contracts')
   } catch (error: unknown) {
-    return error as Error
+    throw error as Error
   }
 }
 
