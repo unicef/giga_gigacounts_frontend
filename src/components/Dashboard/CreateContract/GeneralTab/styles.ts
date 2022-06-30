@@ -92,31 +92,6 @@ export const UploadFiles = styled.div`
   padding: 0px;
   gap: 16px;
 
-  & div {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 24px 32px;
-    gap: 8px;
-    width: 100%;
-    height: 72px;
-    background: #fafafa;
-    border: 2px dashed rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-
-    & .uploadFile {
-      font-family: 'Open Sans';
-      font-style: normal;
-      font-weight: 400;
-      font-size: 14px;
-      line-height: 156%;
-      letter-spacing: 0.003em;
-      color: var(--color-darker-grey);
-      text-decoration: none;
-    }
-  }
-
   #fileUpload {
     display: none;
   }

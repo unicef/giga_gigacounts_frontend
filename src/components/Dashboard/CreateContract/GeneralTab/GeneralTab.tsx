@@ -20,6 +20,7 @@ interface IGeneralProps {
 
 const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {
   const { countries, currencies, ltas, flag } = state
+  const inputFileRef = useRef<HTMLInputElement>(null)
 
   const fetchData = async () => {
     try {
@@ -55,6 +56,8 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
     const chosenFiles = Array.prototype.slice.call(e.target.files)
     console.log(chosenFiles)
   }
+
+  const onInputFiles = () => inputFileRef.current?.click()
 
   useEffect(() => {
     fetchData()
@@ -144,13 +147,17 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
           </p>
         </Attachments>
         <UploadFiles>
-          <input id="fileUpload" type="file" multiple accept="application/pdf, image/png" onChange={handleFileEvent} />
-          <div>
-            <label htmlFor="fileUpload">
-              <span className="icon icon-24 icon-file icon-mid-grey" />
-              <a className={`uploadFile`}>Upload files</a>
-            </label>
-          </div>
+          <input
+            ref={inputFileRef}
+            id="fileUpload"
+            type="file"
+            multiple
+            accept="application/pdf, image/png"
+            onChange={handleFileEvent}
+          />
+          <button className="btn btn-blue" onClick={onInputFiles}>
+            Upload Files
+          </button>
         </UploadFiles>
       </AttachmentContainer>
     </GeneralContainer>
