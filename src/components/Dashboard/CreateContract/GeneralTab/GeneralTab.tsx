@@ -63,8 +63,6 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
     fetchData()
   }, [])
 
-  console.log(state)
-
   return (
     <GeneralContainer>
       <FormContainer>
