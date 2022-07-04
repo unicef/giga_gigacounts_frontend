@@ -13,11 +13,11 @@ export interface IMetric {
   suggestedMetrics: ISuggestedMetrics[]
 }
 
-const BASE_URL = `/metric`
+const ENDPOINT_URL = `/metric`
 
 export const getSuggestedMetrics = async (): Promise<IMetric[] | Error> => {
   try {
-    const response = await instance.get(`${BASE_URL}/suggested-values`)
+    const response = await instance.get(`${ENDPOINT_URL}/suggested-values`)
     if (response.status === 200) {
       return response.data
     }

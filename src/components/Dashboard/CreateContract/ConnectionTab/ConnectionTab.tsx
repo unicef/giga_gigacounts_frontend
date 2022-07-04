@@ -33,7 +33,7 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
-  }, [])
+  }, [dispatch])
 
   const fetchIsps = useCallback(async () => {
     try {
@@ -42,7 +42,7 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     fetchSuggestedMetrics()

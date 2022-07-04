@@ -1,6 +1,6 @@
 import instance from './init'
 
-const BASE_URL = `/isp`
+const ENDPOINT_URL = `/isp`
 
 export interface IIsp {
   id: number
@@ -10,12 +10,7 @@ export interface IIsp {
 
 export const getIsp = async (countryId?: number, ltaId?: number): Promise<IIsp[] | Error> => {
   try {
-    let url = `${BASE_URL}`
-
-    if (countryId) url = `${url}?countryId=${countryId}`
-    if (ltaId) url = `${url}${countryId ? '&' : '?'}ltaId=${ltaId}`
-
-    const response = await instance.get(url, {
+    const response = await instance.get(ENDPOINT_URL, {
       params: {
         countryId,
         ltaId,
