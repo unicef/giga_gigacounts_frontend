@@ -139,20 +139,45 @@ export const SearchButton = styled.button`
   color: var(--color-white);
 `
 
-// #icon {
-//   background-image: url(../images/icons/dollar.png);
-//   background-repeat: no-repeat;
-//   background-position: 2px 3px;
-// }
-// <input id="icon" style="text-indent:17px;" type="text" placeholder="Username" />
-// display: grid;
-// width: 100%;
-// grid-template-columns: 90% 10%;
-// justify-items: baseline;
-// align-items: center;
-// background-image: url('./search.svg');
-// background-repeat: no-repeat;
-// background-position: 2px 3px;
-{
-  /* <input type="text" name="selectedValue" placeholder="Search School Name / ID" /> */
-}
+export const SchoolsTableContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  height: 95%;
+  width: 100%;
+`
+
+export const SchoolsTableHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  width: 100%;
+  justify-content: space-between;
+  padding: 8px 16px;
+  gap: 8px;
+  border-bottom: 1px solid;
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+`
+
+export const NameHeaderLabel = styled.p`
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 156%;
+  letter-spacing: 0.003em;
+  align-self: flex-start;
+  color: var(--color-dark-grey);
+`
+
+export const IdHeaderLabel = styled.p`
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 156%;
+  letter-spacing: 0.003em;
+  align-self: flex-end;
+  color: var(--color-dark-grey);
+`

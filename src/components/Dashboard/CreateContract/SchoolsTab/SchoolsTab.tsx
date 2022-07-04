@@ -14,6 +14,10 @@ import {
   SchoolSearchInput,
   SearchIcon,
   SearchButton,
+  SchoolsTableContainer,
+  SchoolsTableHeader,
+  NameHeaderLabel,
+  IdHeaderLabel,
 } from './styles'
 
 interface ISchoolsProps {
@@ -43,6 +47,12 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
           <SchoolSearchInput type="text" name="selectedValue" placeholder="Search School Name / ID" />
           <SearchButton>Search</SearchButton>
         </SchoolSearchHeader>
+        <SchoolsTableContainer>
+          <SchoolsTableHeader>
+            <NameHeaderLabel>School Name</NameHeaderLabel>
+            <IdHeaderLabel>ID</IdHeaderLabel>
+          </SchoolsTableHeader>
+        </SchoolsTableContainer>
       </SchoolSearchContainer>
     </SchoolsContainer>
   )
