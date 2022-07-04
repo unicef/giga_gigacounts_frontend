@@ -1,12 +1,10 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "prettier"],
+  "plugins": ["prettier"],
   "extends": [
-    "eslint:recommended",
     "prettier",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "react-app"
   ],
   "rules": {
     "no-console": 1, // Remember, this means warning!

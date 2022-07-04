@@ -1,7 +1,7 @@
 import { ContractListHeaderContainer } from './styles'
 
 interface ContractListHeaderProps {
-  label?: string;
+  label?: string
 }
 
 const ContractListHeader: React.FC<ContractListHeaderProps> = (): JSX.Element => {

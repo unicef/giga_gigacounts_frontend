@@ -50,7 +50,7 @@ import sent from '../icons/sent.svg'
 import trash from '../icons/trash.svg'
 import internetService from '../icons/internet-service.svg'
 
-export default {
+const icons = {
   arrowDown,
   back,
   backward,
@@ -98,3 +98,5 @@ export default {
   trash,
   internetService,
 }
+
+export default icons

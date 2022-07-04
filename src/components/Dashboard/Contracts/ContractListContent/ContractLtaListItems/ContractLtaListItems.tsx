@@ -28,12 +28,6 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, 
     setSelected(id)
   }
 
-  const getLtaData = () => {
-    if (ltaNumber !== undefined && state.ltas !== undefined) {
-      setLtaData(Object.values(state.ltas[ltaNumber]))
-    }
-  }
-
   const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState)
 
   const newContract = {
@@ -64,8 +58,14 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, 
   }
 
   useEffect(() => {
+    const getLtaData = () => {
+      if (ltaNumber !== undefined && state.ltas !== undefined) {
+        setLtaData(Object.values(state.ltas[ltaNumber]))
+      }
+    }
+
     getLtaData()
-  }, [state])
+  }, [ltaNumber, state])
 
   return (
     <ContractLtaListItemsContainer isExpanded={isExpanded}>

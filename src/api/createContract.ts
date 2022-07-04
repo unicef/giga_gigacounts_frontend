@@ -53,7 +53,7 @@ export const getCountries = async (): Promise<ICountries | Error> => {
     }
     throw new Error('Failed to get the contracts')
   } catch (error: unknown) {
-    throw error as Error
+    throw error
   }
 }
 
@@ -65,7 +65,7 @@ export const getCurrency = async (): Promise<ICurrency | Error> => {
     }
     throw new Error('Failed to get the currencies')
   } catch (error: unknown) {
-    return error as Error
+    throw error
   }
 }
 
@@ -77,6 +77,6 @@ export const getLtas = async (): Promise<ILtas | Error> => {
     }
     throw new Error('Failed to get the currencies')
   } catch (error: unknown) {
-    return error as Error
+    throw error
   }
 }

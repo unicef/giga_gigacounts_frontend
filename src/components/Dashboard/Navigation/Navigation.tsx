@@ -5,13 +5,13 @@ import { NavItem } from './NavItem/NavItem'
 import { ProfileIcon } from './ProfileIcon/ProfileIcon'
 import { useHistory } from 'react-router-dom'
 
-interface CountryProps {
-  admin: boolean;
-  countryPath?: string;
-  countryName?: string;
-  name?: string;
-  role?: string;
-  contractCounts: { status: string; count: string }[];
+export interface CountryProps {
+  admin: boolean
+  countryPath?: string
+  countryName?: string
+  name?: string
+  role?: string
+  contractCounts: { status: string; count: string }[]
 }
 
 const Navigation: React.FC<CountryProps> = ({
@@ -20,7 +20,7 @@ const Navigation: React.FC<CountryProps> = ({
   countryName,
   name,
   role,
-  contractCounts
+  contractCounts,
 }: CountryProps): JSX.Element => {
   const history = useHistory()
 

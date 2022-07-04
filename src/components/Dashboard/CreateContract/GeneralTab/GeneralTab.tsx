@@ -39,7 +39,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
-  }, [])
+  }, [dispatch])
 
   const onCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     dispatch({ type: ActionType.SET_COUNTRY_CODE, payload: e.currentTarget.value })

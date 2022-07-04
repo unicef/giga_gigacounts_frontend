@@ -58,7 +58,7 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
       <ISPContainer>
         <ISPHeader>
           <ISPIcon>
-            <img src={icons.internetService} />
+            <img src={icons.internetService} alt="ISP" />
           </ISPIcon>
           <ISPHeaderTextContainer>
             <ISPHeaderTitle>Internet Service Provider</ISPHeaderTitle>
