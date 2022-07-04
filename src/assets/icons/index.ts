@@ -48,6 +48,7 @@ import search from '../icons/search.svg'
 import sentActive from '../icons/sent-active.svg'
 import sent from '../icons/sent.svg'
 import trash from '../icons/trash.svg'
+import internetService from '../icons/internet-service.svg'
 
 export default {
   arrowDown,
@@ -94,5 +95,6 @@ export default {
   search,
   sentActive,
   sent,
-  trash
+  trash,
+  internetService,
 }

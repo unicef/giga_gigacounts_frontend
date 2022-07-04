@@ -5,6 +5,8 @@ export const ContractGuideContainer = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
+    align-items: start;
+    justify-content: start;
     gap: 16px;
   }
 

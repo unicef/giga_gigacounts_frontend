@@ -3,51 +3,36 @@ import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
 import { ActionType, ActiveTab, ITabItems, reducer, state, TabState } from './store/redux'
-import {
-  CreateContractContainer,
-  Header,
-  FormHeaderActions,
-  FormHeaderTabs,
-  GeneralContainer,
-  FormHeaderMessage
-} from './styles'
+import { CreateContractContainer, Header, FormHeaderActions, FormHeaderTabs, FormHeaderMessage } from './styles'
 
 interface ICreateContractsProps {
-  label?: string;
+  label?: string
 }
 
 const tabs = {
   [ActiveTab.GeneralTab]: GeneralTab,
   [ActiveTab.ConnectionTab]: ConnectionTab,
-  [ActiveTab.SchoolsTab]: SchoolsTab
+  [ActiveTab.SchoolsTab]: SchoolsTab,
 }
 
-const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Element => {
+const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)
 
-  const {
-    contractNumber,
-    activeTab,
-    invalidData,
-    missingData,
-    tabGeneralStatus,
-    tabConnectionStatus,
-    tabSchoolStatus
-  } = localState
+  const { generalTabForm, activeTab, invalidData, missingData } = localState
 
   const tabsItems: ITabItems[] = [
     {
       id: 'generalTab',
-      name: 'General'
+      name: 'General',
     },
     {
       id: 'connectionTab',
-      name: 'Connection'
+      name: 'Connection',
     },
     {
       id: 'schoolsTab',
-      name: 'Schools'
-    }
+      name: 'Schools',
+    },
   ]
 
   const handleActiveTab = (e: MouseEvent<HTMLButtonElement>) =>
@@ -57,41 +42,22 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
         activeTab: e.currentTarget.id,
         tabGeneralStatus: TabState.DefaultError,
         tabConnectionStatus: TabState.Selected,
-        tabSchoolStatus: TabState.Default
-      }
+        tabSchoolStatus: TabState.Default,
+      },
     })
 
   const TabContent = tabs[activeTab]
-
-  const tabIconState = (status: string) => {
-    switch (status) {
-      case TabState.Default:
-        return <span className={`icon icon-16 circle`} />
-      case TabState.DefaultCompleted:
-        return <span className={`icon icon-16 icon-checkmark icon-light-blue circle`} />
-      case TabState.DefaultError:
-        return <span className={`icon icon-16 icon-pointer circle`} />
-      case TabState.Selected:
-        return <span className={`icon icon-16 circle selected`} />
-      case TabState.SelectedCompleted:
-        return <span className={`icon icon-16 circle selected`} />
-      case TabState.SelectedError:
-        return <span className={`icon icon-16 circle selected`} />
-      default:
-        break
-    }
-  }
 
   return (
     <CreateContractContainer>
       <Header>
         <FormHeaderActions>
           <div>
-            <h5>New Contract {contractNumber}</h5>
+            <h5>New Contract {generalTabForm.contractNumber}</h5>
           </div>
           <div>
             <button className="btn-transparent-grey active">Discard</button>
-            {contractNumber && <button className="btn-blue">Save Draft</button>}
+            {generalTabForm.contractNumber && <button className="btn-blue">Save Draft</button>}
           </div>
           {true && <button className="btn-green">Publish</button>}
         </FormHeaderActions>
@@ -133,9 +99,7 @@ const CreateContract: React.FC<ICreateContractsProps> = ({ ...props }): JSX.Elem
           </FormHeaderMessage>
         </FormHeaderTabs>
       </Header>
-      <GeneralContainer>
-        <TabContent state={state} dispatch={dispatch} />
-      </GeneralContainer>
+      <TabContent state={localState} dispatch={dispatch} />
     </CreateContractContainer>
   )
 }
