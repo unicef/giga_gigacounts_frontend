@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 import { IMetric } from 'src/api/metrics'
 import { IIsp } from 'src/api/isp'
-import _ from 'lodash'
-=======
 import { ICountries, ICurrency, ILtas } from 'src/api/createContract'
->>>>>>> ac6bb17e21e960c4198784a020204dfff4f05736
 
 export enum ActiveTab {
   GeneralTab = 'generalTab',
@@ -202,20 +198,16 @@ export const state: State = {
   tabGeneralStatus: TabState.Selected,
   tabConnectionStatus: TabState.Default,
   tabSchoolStatus: TabState.Default,
-<<<<<<< HEAD
   expectedMetrics: { metrics: [] },
   metrics: [],
   isps: [],
-=======
   countries: [],
   currencies: [],
   ltas: [],
-
   generalTabForm: {
     contractNumber: '',
     countryCode: '',
     behalfOfGovernment: false,
   },
   flag: 'BW',
->>>>>>> ac6bb17e21e960c4198784a020204dfff4f05736
 }

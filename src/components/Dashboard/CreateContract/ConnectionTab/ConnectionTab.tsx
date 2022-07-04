@@ -1,5 +1,5 @@
 import { Dispatch, useEffect, useCallback } from 'react'
-import { Action, State, ActionType, ExpectedMetric } from '../store/redux'
+import { Action, State, ActionType } from '../store/redux'
 import {
   ConnectionContainer,
   ISPContainer,
@@ -52,10 +52,6 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
   const handleMetricValue = (value: number, metricId: number) => {
     dispatch({ type: ActionType.SET_EXPECTED_METRIC, payload: { metricId, value } })
   }
-
-  useEffect(() => {
-    console.log(state.expectedMetrics)
-  }, [state])
 
   return (
     <ConnectionContainer>

@@ -1,20 +1,9 @@
-import { MouseEvent, useReducer, useEffect } from 'react'
+import { MouseEvent, useReducer } from 'react'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
 import { ActionType, ActiveTab, ITabItems, reducer, state, TabState } from './store/redux'
-<<<<<<< HEAD
-import {
-  CreateContractContainer,
-  Header,
-  FormHeaderActions,
-  FormHeaderTabs,
-  GeneralContainer,
-  FormHeaderMessage,
-} from './styles'
-=======
 import { CreateContractContainer, Header, FormHeaderActions, FormHeaderTabs, FormHeaderMessage } from './styles'
->>>>>>> ac6bb17e21e960c4198784a020204dfff4f05736
 
 interface ICreateContractsProps {
   label?: string
