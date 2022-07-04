@@ -5,29 +5,26 @@ import { ToggleButtonOption } from './@types/ToggleTypes'
 
 const ToggleButtonGroup = ({
   options,
-  selectedValue,
   label,
   measure,
   onSelect,
 }: {
   options: ToggleButtonOption[]
-  selectedValue: number
   label: string
   measure: string
   onSelect: (value: number, metricId: number) => void
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const [activeIndex, setActiveIndex] = useState<number>(() => {
-    const index = options.findIndex(({ value }) => value === selectedValue)
-    return index
-  })
+  const [activeIndex, setActiveIndex] = useState<number>()
+
+  const [selectedValue, setSelectedValue] = useState<string>('0')
 
   const onButtonSelect = useCallback(
     (index: number, value: number, metricId: number) => {
       setActiveIndex(index)
       onSelect(value, metricId)
-      if (inputRef.current) inputRef.current.value = value.toString()
+      setSelectedValue(value.toString())
     },
     [onSelect],
   )
@@ -68,6 +65,7 @@ const ToggleButtonGroup = ({
             step="1"
             onChange={inputListener(options[0].metricId)}
             ref={inputRef}
+            value={selectedValue}
           />
           <span>{measure}</span>
         </InputContainer>

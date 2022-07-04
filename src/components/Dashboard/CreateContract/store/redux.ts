@@ -106,18 +106,20 @@ export const reducer = (state: State, action: Action): State => {
       }
 
     case ActionType.SET_EXPECTED_METRIC: {
-      const newExpectedMetrics = _.cloneDeep(state.expectedMetrics)
-      const index = newExpectedMetrics.metrics.findIndex((m) => m.metricId === payload.metricId)
+      const metricIndex = state.expectedMetrics.metrics.findIndex((m) => m.metricId === payload.metricId)
 
-      if (index >= 0) {
-        newExpectedMetrics.metrics[index].value = payload.value
-      } else {
-        newExpectedMetrics.metrics.unshift(payload)
-      }
+      const newExpectedMetrics =
+        metricIndex >= 0
+          ? [
+              ...state.expectedMetrics.metrics.slice(0, metricIndex),
+              { ...state.expectedMetrics.metrics[metricIndex], value: payload.value, metricId: payload.metricId },
+              ...state.expectedMetrics.metrics.slice(metricIndex + 1),
+            ]
+          : [{ value: payload.value, metricId: payload.metricId }, ...state.expectedMetrics.metrics]
 
       return {
         ...state,
-        expectedMetrics: newExpectedMetrics,
+        expectedMetrics: { metrics: newExpectedMetrics },
       }
     }
 

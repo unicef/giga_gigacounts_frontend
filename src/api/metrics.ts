@@ -1,4 +1,4 @@
-import axios from 'axios'
+import instance from './init'
 
 interface ISuggestedMetrics {
   id: number
@@ -13,33 +13,11 @@ export interface IMetric {
   suggestedMetrics: ISuggestedMetrics[]
 }
 
-const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/metric`
-
-axios.interceptors.request.use(
-  function (config) {
-    const AUTH_TOKEN = localStorage.getItem('session')
-    if (config !== undefined && config.headers !== undefined) {
-      config.headers.Authorization = AUTH_TOKEN ? `Bearer ${AUTH_TOKEN}` : ''
-    }
-    return config
-  },
-  function (error) {
-    return Promise.reject(error)
-  },
-)
-
-axios.interceptors.response.use(
-  function (response) {
-    return response
-  },
-  function (error) {
-    return Promise.reject(error)
-  },
-)
+const BASE_URL = `/metric`
 
 export const getSuggestedMetrics = async (): Promise<IMetric[] | Error> => {
   try {
-    const response = await axios.get(`${BASE_URL}/suggested-values`)
+    const response = await instance.get(`${BASE_URL}/suggested-values`)
     if (response.status === 200) {
       return response.data
     }

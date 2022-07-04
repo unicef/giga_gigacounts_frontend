@@ -1,4 +1,4 @@
-import { Dispatch, useState, useEffect } from 'react'
+import { Dispatch, useEffect, useCallback } from 'react'
 import { Action, State, ActionType, ExpectedMetric } from '../store/redux'
 import {
   ConnectionContainer,
@@ -15,8 +15,8 @@ import {
   QualityHeaderTitle,
   OptionsContainer,
 } from './styles'
-import icons from '../../../../assets/icons'
-import ToggleButtonGroup from '../../../common/ToggleButton'
+import icons from 'src/assets/icons'
+import ToggleButtonGroup from 'src/components/common/ToggleButton'
 import { getSuggestedMetrics } from 'src/api/metrics'
 import { getIsp } from 'src/api/isp'
 
@@ -26,32 +26,36 @@ interface IConnectionProps {
 }
 
 const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Element => {
-  const fetchSuggestedMetrics = async () => {
+  const fetchSuggestedMetrics = useCallback(async () => {
     try {
       const response = await getSuggestedMetrics()
       dispatch({ type: ActionType.RESPONSE_METRICS, payload: response })
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
-  }
+  }, [])
 
-  const fetchIsps = async () => {
+  const fetchIsps = useCallback(async () => {
     try {
       const response = await getIsp()
       dispatch({ type: ActionType.RESPONSE_ISPS, payload: response })
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
-  }
+  }, [])
 
   useEffect(() => {
     fetchSuggestedMetrics()
     fetchIsps()
-  }, [])
+  }, [fetchSuggestedMetrics, fetchIsps])
 
   const handleMetricValue = (value: number, metricId: number) => {
     dispatch({ type: ActionType.SET_EXPECTED_METRIC, payload: { metricId, value } })
   }
+
+  useEffect(() => {
+    console.log(state.expectedMetrics)
+  }, [state])
 
   return (
     <ConnectionContainer>
@@ -97,7 +101,6 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
                   metricId: suggested.metric_id,
                 }
               })}
-              selectedValue={0}
               label={`${metric.name}:`}
               measure={metric.suggestedMetrics.length ? metric.suggestedMetrics[0].unit : ''}
               onSelect={handleMetricValue}
