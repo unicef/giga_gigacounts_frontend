@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 import { IMetric } from 'src/api/metrics'
 import { IIsp } from 'src/api/isp'
 import _ from 'lodash'
+=======
+import { ICountries, ICurrency, ILtas } from 'src/api/createContract'
+>>>>>>> ac6bb17e21e960c4198784a020204dfff4f05736
 
 export enum ActiveTab {
   GeneralTab = 'generalTab',
@@ -24,6 +28,8 @@ export interface ITabItems {
 }
 
 export enum ActionType {
+  GET_FORM_DATA = 'GET_FORM_DATA',
+  SET_COUNTRIES = 'SET_COUNTRIES',
   SET_CONTRACT_NAME = 'SET_CONTRACT_NAME',
   SET_ACTIVE_TAB = 'SET_ACTIVE_TAB',
   SET_LOADING = 'SET_LOADING',
@@ -31,10 +37,13 @@ export enum ActionType {
   SET_EXPECTED_METRIC = 'SET_EXPECTED_METRIC',
   RESPONSE_METRICS = 'RESPONSE_METRICS',
   RESPONSE_ISPS = 'RESPONSE_ISPS',
+  SET_COUNTRY_CODE = 'SET_COUNTRY_CODE',
+  SET_BEHALF_GOVERNMENT = 'SET_BEHALF_GOVERNMENT',
 }
 
 export interface Action {
   type: ActionType
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any
 }
 
@@ -44,7 +53,6 @@ export interface ExpectedMetric {
 }
 
 export interface State {
-  contractNumber: string
   activeTab: ActiveTab
   error?: Error
   loading?: boolean
@@ -56,13 +64,19 @@ export interface State {
   expectedMetrics: { metrics: ExpectedMetric[] }
   metrics: IMetric[]
   isps: IIsp[]
+  countries: ICountries[]
+  currencies: ICurrency[]
+  ltas: ILtas[]
+  generalTabForm: {
+    contractNumber: string
+    countryCode: string
+    behalfOfGovernment: boolean
+  }
+  flag: string
 }
 
 export const reducer = (state: State, action: Action): State => {
   const { type, payload } = action
-
-  // console.log(type, payload)
-
   switch (type) {
     case ActionType.SET_ACTIVE_TAB: {
       let missing = false
@@ -88,11 +102,46 @@ export const reducer = (state: State, action: Action): State => {
       }
     }
 
+    case ActionType.GET_FORM_DATA: {
+      const { countries, currencies, ltas } = payload
+      return {
+        ...state,
+        countries,
+        currencies,
+        ltas,
+        loading: false,
+      }
+    }
+
+    case ActionType.SET_COUNTRY_CODE:
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          countryCode: payload,
+        },
+        flag: payload,
+      }
+
     case ActionType.SET_CONTRACT_NAME:
       return {
         ...state,
-        contractNumber: payload,
+        generalTabForm: {
+          ...state.generalTabForm,
+          contractNumber: payload,
+        },
       }
+
+    case ActionType.SET_BEHALF_GOVERNMENT: {
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          behalfOfGovernment: !state.generalTabForm.behalfOfGovernment,
+        },
+      }
+    }
+
     case ActionType.SET_ERROR:
       return {
         ...state,
@@ -145,7 +194,6 @@ export const reducer = (state: State, action: Action): State => {
 }
 
 export const state: State = {
-  contractNumber: '',
   activeTab: ActiveTab.GeneralTab,
   error: undefined,
   loading: true,
@@ -154,7 +202,20 @@ export const state: State = {
   tabGeneralStatus: TabState.Selected,
   tabConnectionStatus: TabState.Default,
   tabSchoolStatus: TabState.Default,
+<<<<<<< HEAD
   expectedMetrics: { metrics: [] },
   metrics: [],
   isps: [],
+=======
+  countries: [],
+  currencies: [],
+  ltas: [],
+
+  generalTabForm: {
+    contractNumber: '',
+    countryCode: '',
+    behalfOfGovernment: false,
+  },
+  flag: 'BW',
+>>>>>>> ac6bb17e21e960c4198784a020204dfff4f05736
 }

@@ -5,7 +5,8 @@
 ## _Getting started_
 
 Clone the project from this url: https://github.com/protofire/Unicef-Giga-App-FE.git
-(please check if you have rights to clone the project if you have already set a ssh key can use the second command)
+
+(please check if you have rights to clone the project. If you have already set an ssh key you can use the second command)
 
 ```sh
 git clone https://github.com/protofire/Unicef-Giga-App-FE.git
