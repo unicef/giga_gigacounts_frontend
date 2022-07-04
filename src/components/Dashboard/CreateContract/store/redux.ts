@@ -1,3 +1,5 @@
+import { IMetric } from 'src/api/metrics'
+import { IIsp } from 'src/api/isp'
 import { ICountries, ICurrency, ILtas } from 'src/api/createContract'
 
 export enum ActiveTab {
@@ -28,6 +30,9 @@ export enum ActionType {
   SET_ACTIVE_TAB = 'SET_ACTIVE_TAB',
   SET_LOADING = 'SET_LOADING',
   SET_ERROR = 'SET_ERROR',
+  SET_EXPECTED_METRIC = 'SET_EXPECTED_METRIC',
+  RESPONSE_METRICS = 'RESPONSE_METRICS',
+  RESPONSE_ISPS = 'RESPONSE_ISPS',
   SET_COUNTRY_CODE = 'SET_COUNTRY_CODE',
   SET_BEHALF_GOVERNMENT = 'SET_BEHALF_GOVERNMENT',
 }
@@ -36,6 +41,11 @@ export interface Action {
   type: ActionType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any
+}
+
+export interface ExpectedMetric {
+  metricId: number
+  value: number
 }
 
 export interface State {
@@ -47,11 +57,12 @@ export interface State {
   tabGeneralStatus: string
   tabConnectionStatus: string
   tabSchoolStatus: string
-
+  expectedMetrics: { metrics: ExpectedMetric[] }
+  metrics: IMetric[]
+  isps: IIsp[]
   countries: ICountries[]
   currencies: ICurrency[]
   ltas: ILtas[]
-
   generalTabForm: {
     contractNumber: string
     countryCode: string
@@ -139,6 +150,38 @@ export const reducer = (state: State, action: Action): State => {
         loading: !state.loading,
       }
 
+    case ActionType.SET_EXPECTED_METRIC: {
+      const metricIndex = state.expectedMetrics.metrics.findIndex((m) => m.metricId === payload.metricId)
+
+      const newExpectedMetrics =
+        metricIndex >= 0
+          ? [
+              ...state.expectedMetrics.metrics.slice(0, metricIndex),
+              { ...state.expectedMetrics.metrics[metricIndex], value: payload.value, metricId: payload.metricId },
+              ...state.expectedMetrics.metrics.slice(metricIndex + 1),
+            ]
+          : [{ value: payload.value, metricId: payload.metricId }, ...state.expectedMetrics.metrics]
+
+      return {
+        ...state,
+        expectedMetrics: { metrics: newExpectedMetrics },
+      }
+    }
+
+    case ActionType.RESPONSE_METRICS: {
+      return {
+        ...state,
+        metrics: payload,
+      }
+    }
+
+    case ActionType.RESPONSE_ISPS: {
+      return {
+        ...state,
+        isps: payload,
+      }
+    }
+
     default:
       return {
         ...state,
@@ -155,10 +198,12 @@ export const state: State = {
   tabGeneralStatus: TabState.Selected,
   tabConnectionStatus: TabState.Default,
   tabSchoolStatus: TabState.Default,
+  expectedMetrics: { metrics: [] },
+  metrics: [],
+  isps: [],
   countries: [],
   currencies: [],
   ltas: [],
-
   generalTabForm: {
     contractNumber: '',
     countryCode: '',
