@@ -63,7 +63,7 @@ export const SchoolNameContainer = styled.div`
   font-weight: 400;
   font-size: 14px;
   letter-spacing: 0.003em;
-  color: #222222;
+  color: var(--color-black);
 `
 
 export const SchoolIDContainer = styled.div`
@@ -72,6 +72,6 @@ export const SchoolIDContainer = styled.div`
   font-weight: 400;
   font-size: 14px;
   letter-spacing: 0.003em;
-  color: #5f5f5f;
+  color: var(--color-darker-grey);
   align-self: center;
 `

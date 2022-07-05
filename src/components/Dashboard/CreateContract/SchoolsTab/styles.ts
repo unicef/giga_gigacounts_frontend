@@ -47,36 +47,81 @@ export const UploadHeaderText = styled.p`
   color: var(--color-darkest-grey);
 `
 
-export const SampleTable = styled.img`
-  // width: 90%;
-  // height: 50%;
-`
+export const SampleTable = styled.img``
 
 export const UploadButtonContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
   align-items: flex-start;
+  gap: 10px;
 `
 
-export const UploadButton = styled.button`
+export const UploadButton = styled.label`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   padding: 9px 16px;
-  width: 122px;
+  width: 132px;
   height: 32px;
   background: var(--color-blue);
   border-radius: 2px;
+  span {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 100%;
+    text-align: center;
+    letter-spacing: 0.012em;
+    text-transform: uppercase;
+    color: var(--color-white);
+  }
+`
+
+export const UploadError = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 4px 12px 16px;
+  gap: 4px;
+  width: 100%;
+  height: 78px;
+  background: var(--color-red);
+  border-radius: 2px;
+`
+
+export const UploadErrorHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: baseline;
+  justify-content: space-between;
+`
+
+export const UploadCloseBtn = styled.img`
+  align-self: flex-end;
+  cursor: pointer;
+`
+
+export const UploadErrorTitle = styled.p`
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 600;
   font-size: 14px;
-  line-height: 100%;
-  text-align: center;
-  letter-spacing: 0.012em;
-  text-transform: uppercase;
+  line-height: 156%;
+  letter-spacing: 0.003em;
+  color: var(--color-white);
+`
+
+export const UploadErrorText = styled.p`
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 148%;
+  letter-spacing: 0.018em;
   color: var(--color-white);
 `
 

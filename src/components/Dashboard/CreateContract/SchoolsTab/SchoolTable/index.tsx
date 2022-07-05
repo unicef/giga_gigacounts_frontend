@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import {
   SchoolsTableHeader,
   NameHeaderLabel,
@@ -23,7 +23,7 @@ const SchoolTable = ({
   const inputRef = useRef<HTMLInputElement>(null)
 
   const onButtonSelect = useCallback(
-    (id: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    (id: number) => () => {
       onSelect(id)
     },
     [onSelect],

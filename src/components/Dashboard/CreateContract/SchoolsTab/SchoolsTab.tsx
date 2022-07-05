@@ -1,4 +1,5 @@
 import { Dispatch, useEffect, useCallback, useState, useRef } from 'react'
+import CSVReader, { IFileInfo } from 'react-csv-reader'
 import { Action, State, ActionType } from '../store/redux'
 import {
   SchoolsContainer,
@@ -15,9 +16,15 @@ import {
   SearchIcon,
   SearchButton,
   SchoolsTableContainer,
+  UploadError,
+  UploadErrorTitle,
+  UploadErrorText,
+  UploadErrorHeader,
+  UploadCloseBtn,
 } from './styles'
 import SchoolTable from './SchoolTable'
 import { getSchools, ISchool } from 'src/api/school'
+import icons from 'src/assets/icons'
 
 interface ISchoolsProps {
   state: State
@@ -26,9 +33,12 @@ interface ISchoolsProps {
 
 const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null)
+  const csvReaderRef = useRef<HTMLInputElement>(null)
 
   const [schools, setSchools] = useState<ISchool[]>()
   const [searchText, setSearchText] = useState<string>()
+  const [schoolsNotFound, setSchoolsNotFound] = useState<number>(0)
+  const [fileName, setFileName] = useState<string>()
 
   const fetchSchools = useCallback(async () => {
     try {
@@ -64,12 +74,31 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
     if (searchText?.length === 0) {
       setSchools(state.schools)
     } else if (searchText) {
-      const filteredSchool = state.schools.filter((school) =>
-        school.name.toLowerCase().includes(searchText.toLowerCase()),
+      const filteredSchool = state.schools.filter(
+        (school) =>
+          school.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          school.external_id.includes(searchText.toLowerCase()),
       )
       setSchools(filteredSchool)
     }
   }
+
+  const handleUpload = useCallback(
+    (data: string[], fileInfo: IFileInfo) => {
+      setSchoolsNotFound(0)
+      data.forEach((id) => {
+        const index = state.schools.findIndex((school) => school.external_id === id[0])
+        if (index >= 0) {
+          handleSchoolSelection(state.schools[index].id)
+        } else {
+          setFileName(fileInfo.name)
+          setSchoolsNotFound((current) => current + 1)
+        }
+      })
+      if (csvReaderRef.current) csvReaderRef.current.value = ''
+    },
+    [handleSchoolSelection, setSchoolsNotFound],
+  )
 
   return (
     <SchoolsContainer>
@@ -83,7 +112,26 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
         </UploadHeader>
         <SampleTable src="img/sample-table.svg" alt="sample-table" />
         <UploadButtonContainer>
-          <UploadButton onClick={() => console.log('here')}>Upload file</UploadButton>
+          {schoolsNotFound > 0 ? (
+            <UploadError>
+              <UploadErrorHeader>
+                <UploadErrorTitle>
+                  {schoolsNotFound} errors found in {fileName}.
+                </UploadErrorTitle>
+                <UploadCloseBtn src={icons.cross} onClick={() => setSchoolsNotFound(0)} />
+              </UploadErrorHeader>
+              <UploadErrorText>Please add missing schools manually or re-upload a correct CSV file</UploadErrorText>
+            </UploadError>
+          ) : null}
+          <UploadButton>
+            <span>Upload file</span>
+            <CSVReader
+              parserOptions={{ header: false, skipEmptyLines: true }}
+              onFileLoaded={(data, fileInfo) => handleUpload(data, fileInfo)}
+              inputStyle={{ display: 'none' }}
+              inputRef={csvReaderRef}
+            />
+          </UploadButton>
         </UploadButtonContainer>
       </UploadContainer>
       <SchoolSearchContainer>
@@ -95,7 +143,6 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
             placeholder="Search School Name / ID"
             onChange={inputListener}
             ref={inputRef}
-            value={searchText}
           />
           <SearchButton onClick={handleSearch}>Search</SearchButton>
         </SchoolSearchHeader>
