@@ -1,4 +1,6 @@
+import axios from 'axios'
 import { ChangeEvent, Dispatch, useEffect, useRef, useCallback } from 'react'
+import { createContract } from 'src/api/contracts'
 import { getCountries, getCurrency, getLtas } from 'src/api/createContract'
 import { Action, ActionType, State } from '../store/redux'
 import {
@@ -13,6 +15,8 @@ import {
   UploadFiles,
 } from './styles'
 
+import { useContractsContext } from '../../context/useContractsContext'
+
 interface IGeneralProps {
   state: State
   dispatch: Dispatch<Action>
@@ -22,20 +26,31 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
   const { countries, currencies, ltas, flag } = state
   const inputFileRef = useRef<HTMLInputElement>(null)
 
+  const { setLoadContracts } = useContractsContext()
+
   const fetchData = useCallback(async () => {
     try {
-      const allCountries = await getCountries()
-      const allCurrencies = await getCurrency()
-      const allLtas = await getLtas()
+      axios
+        .all([getCountries(), getCurrency(), getLtas()])
+        .then(
+          axios.spread((...responses) => {
+            const countries = responses[0]
+            const currencies = responses[1]
+            const ltas = responses[2]
 
-      dispatch({
-        type: ActionType.GET_FORM_DATA,
-        payload: {
-          countries: allCountries,
-          currencies: allCurrencies,
-          ltas: allLtas,
-        },
-      })
+            dispatch({
+              type: ActionType.GET_FORM_DATA,
+              payload: {
+                countries,
+                currencies,
+                ltas,
+              },
+            })
+          }),
+        )
+        .catch((errors) => {
+          throw new Error(errors)
+        })
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
@@ -51,6 +66,15 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
 
   const onContractNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: ActionType.SET_CONTRACT_NAME, payload: e.currentTarget.value })
+  }
+
+  const onContractNameBlur = async (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      await createContract(e.currentTarget.value)
+      setLoadContracts?.(true)
+    } catch (error) {
+      dispatch({ type: ActionType.SET_ERROR, payload: error })
+    }
   }
 
   const handleFileEvent = (e: ChangeEvent<HTMLInputElement>) => {
@@ -88,7 +112,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
             name="contactName"
             placeholder="Contract Name"
             onChange={onContractNameChange}
-            onBlur={onContractNameChange}
+            onBlur={onContractNameBlur}
           />
           <div className="input-container dropdown">
             <select defaultValue="default">

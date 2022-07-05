@@ -1,33 +1,9 @@
-import axios from 'axios'
-import { IContractsData } from '../components/Dashboard/Contracts/@types/ContractType'
-
-const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/contract`
-
-axios.interceptors.request.use(
-  function (config) {
-    const AUTH_TOKEN = localStorage.getItem('session')
-    if (config !== undefined && config.headers !== undefined) {
-      config.headers.Authorization = AUTH_TOKEN ? `Bearer ${AUTH_TOKEN}` : ''
-    }
-    return config
-  },
-  function (error) {
-    return Promise.reject(error)
-  },
-)
-
-axios.interceptors.response.use(
-  function (response) {
-    return response
-  },
-  function (error) {
-    return Promise.reject(error)
-  },
-)
+import instance from './init'
+import { IContractDraft, IContractsData } from '../components/Dashboard/Contracts/@types/ContractType'
 
 export const getContracts = async (): Promise<IContractsData | Error> => {
   try {
-    const response = await axios.get(`${BASE_URL}`)
+    const response = await instance.get('/contract')
     if (response.status === 200) {
       return response.data
     }
@@ -37,10 +13,10 @@ export const getContracts = async (): Promise<IContractsData | Error> => {
   }
 }
 
-export const createContract = async (body: Record<string, unknown>): Promise<unknown> => {
+export const createContract = async (name: string): Promise<unknown> => {
   try {
-    return await axios.post(`${BASE_URL}`, {
-      body,
+    return await instance.post<IContractDraft>('/contract/draft', {
+      name,
     })
   } catch (error) {
     return error
@@ -49,7 +25,7 @@ export const createContract = async (body: Record<string, unknown>): Promise<unk
 
 export const updateContract = async (body: Record<string, unknown>): Promise<unknown> => {
   try {
-    return await axios.put(`${BASE_URL}/draft`, {
+    return await instance.put('/contract/draft', {
       body,
     })
   } catch (error) {
@@ -59,7 +35,7 @@ export const updateContract = async (body: Record<string, unknown>): Promise<unk
 
 export const getContractByStatus = async (): Promise<unknown> => {
   try {
-    return await axios.get(`${BASE_URL}/count/status`)
+    return await instance.get('/contract/count/status')
   } catch (error) {
     return error
   }

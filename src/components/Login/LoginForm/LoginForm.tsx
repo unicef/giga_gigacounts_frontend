@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import axios from 'axios'
 import web3 from 'web3'
+import instance from 'src/api/init'
 
 import {
   LoginFormContainer,
@@ -44,7 +44,7 @@ export const LoginForm: React.FC = (): JSX.Element => {
       try {
         const encryptedPassword = await web3.utils.sha3(password)
 
-        const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+        const res = await instance.post('/login', {
           email,
           password: encryptedPassword,
         })

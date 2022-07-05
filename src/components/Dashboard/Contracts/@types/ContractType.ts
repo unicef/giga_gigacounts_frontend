@@ -37,6 +37,12 @@ export interface IContractsData {
   ltas: ILtas
   contracts: IContracts
 }
+export interface IContractDraft {
+  id: string
+  name: string
+  created_at: string
+  updated_at: string
+}
 
 export enum ContractStatus {
   Draft = 'Draft',
