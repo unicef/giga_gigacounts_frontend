@@ -59,9 +59,12 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
     }
   }, [state.schools])
 
-  const handleSchoolSelection = (id: number) => {
-    dispatch({ type: ActionType.SELECT_SCHOOL, payload: { id } })
-  }
+  const handleSchoolSelection = useCallback(
+    (id: number) => {
+      dispatch({ type: ActionType.SELECT_SCHOOL, payload: { id } })
+    },
+    [dispatch],
+  )
 
   const inputListener = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,7 +73,7 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
     [setSearchText],
   )
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     if (searchText?.length === 0) {
       setSchools(state.schools)
     } else if (searchText) {
@@ -81,7 +84,7 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
       )
       setSchools(filteredSchool)
     }
-  }
+  }, [setSchools, searchText, state.schools])
 
   const handleUpload = useCallback(
     (data: string[], fileInfo: IFileInfo) => {
