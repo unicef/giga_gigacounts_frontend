@@ -147,37 +147,3 @@ export const SchoolsTableContainer = styled.div`
   height: 95%;
   width: 100%;
 `
-
-export const SchoolsTableHeader = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  width: 100%;
-  justify-content: space-between;
-  padding: 8px 16px;
-  gap: 8px;
-  border-bottom: 1px solid;
-  border-bottom-color: rgba(0, 0, 0, 0.1);
-`
-
-export const NameHeaderLabel = styled.p`
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 156%;
-  letter-spacing: 0.003em;
-  align-self: flex-start;
-  color: var(--color-dark-grey);
-`
-
-export const IdHeaderLabel = styled.p`
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 156%;
-  letter-spacing: 0.003em;
-  align-self: flex-end;
-  color: var(--color-dark-grey);
-`

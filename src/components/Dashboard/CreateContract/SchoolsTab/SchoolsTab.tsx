@@ -1,5 +1,5 @@
-import { Dispatch } from 'react'
-import { Action, State } from '../store/redux'
+import { Dispatch, useEffect, useCallback, useState, useRef } from 'react'
+import { Action, State, ActionType } from '../store/redux'
 import {
   SchoolsContainer,
   UploadContainer,
@@ -15,10 +15,9 @@ import {
   SearchIcon,
   SearchButton,
   SchoolsTableContainer,
-  SchoolsTableHeader,
-  NameHeaderLabel,
-  IdHeaderLabel,
 } from './styles'
+import SchoolTable from './SchoolTable'
+import { getSchools, ISchool } from 'src/api/school'
 
 interface ISchoolsProps {
   state: State
@@ -26,6 +25,52 @@ interface ISchoolsProps {
 }
 
 const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element => {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const [schools, setSchools] = useState<ISchool[]>()
+  const [searchText, setSearchText] = useState<string>()
+
+  const fetchSchools = useCallback(async () => {
+    try {
+      const response = await getSchools()
+      dispatch({ type: ActionType.RESPONSE_SCHOOLS, payload: response })
+    } catch (error) {
+      dispatch({ type: ActionType.SET_ERROR, payload: error })
+    }
+  }, [dispatch])
+
+  useEffect(() => {
+    fetchSchools()
+  }, [fetchSchools])
+
+  useEffect(() => {
+    if (state.schools.length) {
+      setSchools(state.schools)
+    }
+  }, [state.schools])
+
+  const handleSchoolSelection = (id: number) => {
+    dispatch({ type: ActionType.SELECT_SCHOOL, payload: { id } })
+  }
+
+  const inputListener = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value)
+    },
+    [setSearchText],
+  )
+
+  const handleSearch = () => {
+    if (searchText?.length === 0) {
+      setSchools(state.schools)
+    } else if (searchText) {
+      const filteredSchool = state.schools.filter((school) =>
+        school.name.toLowerCase().includes(searchText.toLowerCase()),
+      )
+      setSchools(filteredSchool)
+    }
+  }
+
   return (
     <SchoolsContainer>
       <UploadContainer>
@@ -44,14 +89,20 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
       <SchoolSearchContainer>
         <SchoolSearchHeader>
           <SearchIcon src="icons/search.svg" />
-          <SchoolSearchInput type="text" name="selectedValue" placeholder="Search School Name / ID" />
-          <SearchButton>Search</SearchButton>
+          <SchoolSearchInput
+            type="text"
+            name="search-input"
+            placeholder="Search School Name / ID"
+            onChange={inputListener}
+            ref={inputRef}
+            value={searchText}
+          />
+          <SearchButton onClick={handleSearch}>Search</SearchButton>
         </SchoolSearchHeader>
         <SchoolsTableContainer>
-          <SchoolsTableHeader>
-            <NameHeaderLabel>School Name</NameHeaderLabel>
-            <IdHeaderLabel>ID</IdHeaderLabel>
-          </SchoolsTableHeader>
+          {schools?.length ? (
+            <SchoolTable onSelect={handleSchoolSelection} schools={schools} selectedSchools={state.selectedSchools} />
+          ) : null}
         </SchoolsTableContainer>
       </SchoolSearchContainer>
     </SchoolsContainer>
