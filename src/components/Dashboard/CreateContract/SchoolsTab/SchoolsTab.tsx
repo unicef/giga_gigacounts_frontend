@@ -97,7 +97,7 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
       })
       if (csvReaderRef.current) csvReaderRef.current.value = ''
     },
-    [handleSchoolSelection, setSchoolsNotFound],
+    [handleSchoolSelection, setSchoolsNotFound, state.schools],
   )
 
   return (
