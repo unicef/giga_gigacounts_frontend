@@ -20,17 +20,14 @@ export interface ISchool {
 }
 
 export const getSchools = async (countryId?: number): Promise<ISchool[] | Error> => {
-  try {
-    const response = await instance.get(`${ENDPOINT_URL}`, {
-      params: {
-        countryId
-      }
-    })
-    if (response.status === 200) {
-      return response.data
-    }
-    throw new Error('Failed to get the suggested metrics')
-  } catch (error: unknown) {
-    return error as Error
+  const response = await instance.get(`${ENDPOINT_URL}`, {
+    params: {
+      countryId,
+    },
+  })
+  if (response.status === 200) {
+    return response.data
   }
+
+  throw new Error('Failed to get the schools')
 }

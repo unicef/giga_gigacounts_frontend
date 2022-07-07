@@ -2,6 +2,7 @@ import { IMetric } from 'src/api/metrics'
 import { IIsp } from 'src/api/isp'
 import { ISchool } from 'src/api/school'
 import { ICountries, ICurrency, ILtas } from 'src/api/createContract'
+import _ from 'lodash'
 
 export enum ActiveTab {
   GeneralTab = 'generalTab',
@@ -38,6 +39,7 @@ export enum ActionType {
   SET_BEHALF_GOVERNMENT = 'SET_BEHALF_GOVERNMENT',
   RESPONSE_SCHOOLS = 'RESPONSE_SCHOOLS',
   SELECT_SCHOOL = 'SELECT_SCHOOL',
+  SELECT_SCHOOL_BULK = 'SELECT_SCHOOL_BULK',
 }
 
 export interface Action {
@@ -205,6 +207,16 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         selectedSchools: newSchools,
+      }
+    }
+
+    case ActionType.SELECT_SCHOOL_BULK: {
+      const cloneSchools = _.cloneDeep(state.selectedSchools)
+      cloneSchools.unshift(...payload)
+
+      return {
+        ...state,
+        selectedSchools: cloneSchools,
       }
     }
 

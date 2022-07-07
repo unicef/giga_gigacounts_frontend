@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useCallback, useState, useRef } from 'react'
+import { Dispatch, useEffect, useCallback, useState, useRef, useMemo } from 'react'
 import CSVReader, { IFileInfo } from 'react-csv-reader'
 import { Action, State, ActionType } from '../store/redux'
 import {
@@ -23,7 +23,7 @@ import {
   UploadCloseBtn,
 } from './styles'
 import SchoolTable from './SchoolTable'
-import { getSchools, ISchool } from 'src/api/school'
+import { getSchools } from 'src/api/school'
 import icons from 'src/assets/icons'
 
 interface ISchoolsProps {
@@ -35,7 +35,6 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
   const inputRef = useRef<HTMLInputElement>(null)
   const csvReaderRef = useRef<HTMLInputElement>(null)
 
-  const [schools, setSchools] = useState<ISchool[]>()
   const [searchText, setSearchText] = useState<string>()
   const [schoolsNotFound, setSchoolsNotFound] = useState<number>(0)
   const [fileName, setFileName] = useState<string>()
@@ -53,12 +52,6 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
     fetchSchools()
   }, [fetchSchools])
 
-  useEffect(() => {
-    if (state.schools.length) {
-      setSchools(state.schools)
-    }
-  }, [state.schools])
-
   const handleSchoolSelection = useCallback(
     (id: number) => {
       dispatch({ type: ActionType.SELECT_SCHOOL, payload: { id } })
@@ -66,41 +59,38 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
     [dispatch],
   )
 
-  const inputListener = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchText(e.target.value)
-    },
-    [setSearchText],
-  )
-
-  const handleSearch = useCallback(() => {
-    if (searchText?.length === 0) {
-      setSchools(state.schools)
-    } else if (searchText) {
-      const filteredSchool = state.schools.filter(
+  const filteredSchools = useMemo(() => {
+    if (searchText) {
+      return state.schools.filter(
         (school) =>
           school.name.toLowerCase().includes(searchText.toLowerCase()) ||
           school.external_id.includes(searchText.toLowerCase()),
       )
-      setSchools(filteredSchool)
     }
-  }, [setSchools, searchText, state.schools])
+    return state.schools
+  }, [state.schools, searchText])
+
+  const handleSearch = useCallback(() => {
+    setSearchText(inputRef.current?.value)
+  }, [])
 
   const handleUpload = useCallback(
     (data: string[], fileInfo: IFileInfo) => {
       setSchoolsNotFound(0)
+      const listOfSchools: { id: number }[] = []
       data.forEach((id) => {
         const index = state.schools.findIndex((school) => school.external_id === id[0])
         if (index >= 0) {
-          handleSchoolSelection(state.schools[index].id)
+          listOfSchools.push({ id: state.schools[index].id })
         } else {
           setFileName(fileInfo.name)
           setSchoolsNotFound((current) => current + 1)
         }
       })
       if (csvReaderRef.current) csvReaderRef.current.value = ''
+      dispatch({ type: ActionType.SELECT_SCHOOL_BULK, payload: listOfSchools })
     },
-    [handleSchoolSelection, setSchoolsNotFound, state.schools],
+    [dispatch, setSchoolsNotFound, state.schools],
   )
 
   return (
@@ -140,18 +130,16 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
       <SchoolSearchContainer>
         <SchoolSearchHeader>
           <SearchIcon src="icons/search.svg" />
-          <SchoolSearchInput
-            type="text"
-            name="search-input"
-            placeholder="Search School Name / ID"
-            onChange={inputListener}
-            ref={inputRef}
-          />
+          <SchoolSearchInput type="text" name="search-input" placeholder="Search School Name / ID" ref={inputRef} />
           <SearchButton onClick={handleSearch}>Search</SearchButton>
         </SchoolSearchHeader>
         <SchoolsTableContainer>
-          {schools?.length ? (
-            <SchoolTable onSelect={handleSchoolSelection} schools={schools} selectedSchools={state.selectedSchools} />
+          {filteredSchools?.length ? (
+            <SchoolTable
+              onSelect={handleSchoolSelection}
+              schools={filteredSchools}
+              selectedSchools={state.selectedSchools}
+            />
           ) : null}
         </SchoolsTableContainer>
       </SchoolSearchContainer>
