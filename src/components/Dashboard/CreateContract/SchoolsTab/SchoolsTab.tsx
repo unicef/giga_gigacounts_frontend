@@ -78,15 +78,17 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
     (data: string[], fileInfo: IFileInfo) => {
       setSchoolsNotFound(0)
       const listOfSchools: { id: number }[] = []
+      let notFoundCount = 0
       data.forEach((id) => {
         const index = state.schools.findIndex((school) => school.external_id === id[0])
         if (index >= 0) {
           listOfSchools.push({ id: state.schools[index].id })
         } else {
-          setFileName(fileInfo.name)
-          setSchoolsNotFound((current) => current + 1)
+          notFoundCount++
         }
       })
+      setFileName(fileInfo.name)
+      setSchoolsNotFound(notFoundCount)
       if (csvReaderRef.current) csvReaderRef.current.value = ''
       dispatch({ type: ActionType.SELECT_SCHOOL_BULK, payload: listOfSchools })
     },
