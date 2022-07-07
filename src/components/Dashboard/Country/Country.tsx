@@ -1,16 +1,16 @@
 import React from 'react'
 import { StyledBlock, StyledImg, StyledLabel } from './Country.css'
 
-type CountryBlockProps = {
-  countryPath?: string;
-  countryName?: string;
-  collapsed: boolean;
+export type CountryBlockProps = {
+  countryPath?: string
+  countryName?: string
+  collapsed: boolean
 }
 
 const Country: React.FC<CountryBlockProps> = ({
   countryPath,
   countryName,
-  collapsed = false
+  collapsed = false,
 }: CountryBlockProps): JSX.Element => {
   return (
     <StyledBlock

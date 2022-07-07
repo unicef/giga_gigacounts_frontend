@@ -5,8 +5,8 @@ const instance = axios.create({ baseURL: process.env.REACT_APP_BACKEND_URL })
 instance.interceptors.request.use(
   function (config) {
     const AUTH_TOKEN = localStorage.getItem('session')
-    if (config !== undefined && config.headers !== undefined) {
-      config.headers.Authorization = AUTH_TOKEN ? `Bearer ${AUTH_TOKEN}` : ''
+    if (config !== undefined && config.headers !== undefined && AUTH_TOKEN !== null) {
+      config.headers.Authorization = `Bearer ${AUTH_TOKEN}`
     }
     return config
   },

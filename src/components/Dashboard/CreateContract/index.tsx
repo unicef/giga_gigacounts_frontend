@@ -1,4 +1,6 @@
 import { MouseEvent, useReducer } from 'react'
+import { updateContractDraft } from 'src/api/contracts'
+import { useContractsContext } from '../context/useContractsContext'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -17,8 +19,9 @@ const tabs = {
 
 const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)
+  const { setLoadContracts } = useContractsContext()
 
-  const { generalTabForm, activeTab, invalidData, missingData } = localState
+  const { generalTabForm, activeTab, error } = localState
 
   const tabsItems: ITabItems[] = [
     {
@@ -27,7 +30,7 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
     },
     {
       id: 'connectionTab',
-      name: 'Connection',
+      name: 'Connection and Qos',
     },
     {
       id: 'schoolsTab',
@@ -35,7 +38,7 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
     },
   ]
 
-  const handleActiveTab = (e: MouseEvent<HTMLButtonElement>) =>
+  const handleActiveTab = (e: MouseEvent<HTMLButtonElement>) => {
     dispatch({
       type: ActionType.SET_ACTIVE_TAB,
       payload: {
@@ -45,6 +48,44 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
         tabSchoolStatus: TabState.Default,
       },
     })
+    onSaveDraft()
+  }
+
+  const onSaveDraft = async () => {
+    try {
+      if (generalTabForm.name && generalTabForm.name.length > 0 && generalTabForm.id) {
+        const { name, ...rest } = generalTabForm
+        const response = await updateContractDraft(rest)
+
+        let formatStartDate: string = ''
+        let formatEndDate: string = ''
+
+        if (response?.start_date?.length > 0) {
+          formatStartDate = response.start_date.slice(0, 10)
+        }
+
+        if (response?.end_date?.length > 0) {
+          formatEndDate = response.end_date.slice(0, 10)
+        }
+
+        const formattedResponse = {
+          id: +response.id,
+          name: response.name,
+          countryId: response.country_id,
+          currencyId: response.currency_id,
+          ltaId: response.lta_id,
+          governmentBehalf: response.government_behalf,
+          startDate: formatStartDate,
+          endDate: formatEndDate,
+        }
+
+        dispatch({ type: ActionType.UPDATE_CONTRACT_DRAFT, payload: formattedResponse })
+        setLoadContracts?.(true)
+      }
+    } catch (error) {
+      dispatch({ type: ActionType.SET_ERROR, payload: error })
+    }
+  }
 
   const TabContent = tabs[activeTab]
 
@@ -53,13 +94,17 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
       <Header>
         <FormHeaderActions>
           <div>
-            <h5>New Contract {generalTabForm.contractNumber}</h5>
+            <h5>New Contract {generalTabForm.name}</h5>
           </div>
           <div>
             <button className="btn-transparent-grey active">Discard</button>
-            {generalTabForm.contractNumber && <button className="btn-blue">Save Draft</button>}
+            {generalTabForm.id && (
+              <button className="btn-blue" onClick={onSaveDraft}>
+                Save Draft
+              </button>
+            )}
           </div>
-          {true && <button className="btn-green">Publish</button>}
+          {/* <button className="btn-green">Publish</button> */}
         </FormHeaderActions>
         <FormHeaderTabs>
           {tabsItems.map((tab, i) => {
@@ -72,34 +117,21 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
                 className={`${activeTab === tab.id ? 'active' : ''}`}
               >
                 <span className={`icon icon-16 circle ${activeTab === tab.id ? 'selected' : ''}`} />
-                {/* {tab.name === ActiveTab.GeneralTab && tabIconState(tabGeneralStatus)}
-                {tab.name === ActiveTab.ConnectionTab && tabIconState(tabConnectionStatus)}
-                {tab.name === ActiveTab.SchoolsTab && tabIconState(tabSchoolStatus)} */}
                 <p>{tab.name}</p>
               </button>
             )
           })}
           <FormHeaderMessage>
-            {activeTab === ActiveTab.GeneralTab && (
-              <>
-                <span className="icon icon-24 icon-expired icon-blue" />
-                <p>Please enter the contract name to be able to save the draft</p>
-              </>
-            )}
-            {(missingData || invalidData) && (
+            {error && (
               <>
                 <span className="icon icon-24 icon-error icon-red" />
-                <p className="error">
-                  {missingData
-                    ? `Some of the tabs are missing information`
-                    : `There's invalid data in the indicated tabs. Please correct it before publishing`}
-                </p>
+                <p className="error">{error}</p>
               </>
             )}
           </FormHeaderMessage>
         </FormHeaderTabs>
       </Header>
-      <TabContent state={localState} dispatch={dispatch} />
+      <TabContent state={localState} dispatch={dispatch} onSaveDraft={onSaveDraft} />
     </CreateContractContainer>
   )
 }

@@ -14,13 +14,13 @@ export const routes: Array<RouteProps> = [
     exact: false,
     isPrivate: false,
     component: Dashboard,
-    title: 'Dashboard'
+    title: 'Dashboard',
   },
   {
     path: NOT_FOUND_ROUTE,
     exact: false,
     isPrivate: false,
     component: NotFound,
-    title: 'Not Found'
-  }
+    title: 'Not Found',
+  },
 ]

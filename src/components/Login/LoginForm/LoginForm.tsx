@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import axios from 'axios'
 import web3 from 'web3'
+import instance from 'src/api/init'
 
 import {
   LoginFormContainer,
@@ -14,7 +14,7 @@ import {
   ErrorContainer,
   ErrorMessage,
   ErrorTitle,
-  ErrorDescription
+  ErrorDescription,
 } from './LoginForm.css'
 
 const EMPTY_EMAIL_MESSAGE = 'The field can not be empty'
@@ -31,8 +31,8 @@ export const LoginForm: React.FC = (): JSX.Element => {
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     const target = e.target as typeof e.target & {
-      email: { value: string };
-      password: { value: string };
+      email: { value: string }
+      password: { value: string }
     }
 
     const email = target.email.value
@@ -44,9 +44,9 @@ export const LoginForm: React.FC = (): JSX.Element => {
       try {
         const encryptedPassword = await web3.utils.sha3(password)
 
-        const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+        const res = await instance.post('/login', {
           email,
-          password: encryptedPassword
+          password: encryptedPassword,
         })
 
         localStorage.setItem('session', res.data.token)
@@ -104,7 +104,9 @@ export const LoginForm: React.FC = (): JSX.Element => {
             </InputFrame>
           )}
         </InputContainer>
-        <button type="submit" className='btn-blue'>Sign In</button>
+        <button type="submit" className="btn-blue">
+          Sign In
+        </button>
       </Form>
     </LoginFormContainer>
   )

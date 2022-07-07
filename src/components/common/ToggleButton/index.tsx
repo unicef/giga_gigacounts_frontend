@@ -31,13 +31,13 @@ const ToggleButtonGroup = ({
 
   const bindSelectListener = useCallback(
     (index: number) => (value: number, metricId: number) => onButtonSelect(index, value, metricId),
-    [onSelect],
+    [onButtonSelect],
   )
 
   const inputListener = useCallback(
     (metricId: number) => (e: React.ChangeEvent<HTMLInputElement>) =>
       onButtonSelect(-1, parseInt(e.target.value), metricId),
-    [onSelect],
+    [onButtonSelect],
   )
 
   return (

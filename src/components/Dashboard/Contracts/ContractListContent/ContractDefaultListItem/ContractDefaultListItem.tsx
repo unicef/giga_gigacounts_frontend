@@ -1,6 +1,6 @@
 import { Icons, IconsName, SchoolInfo, SchoolNumberCtr } from './styles'
 interface IContractListProps {
-  label?: string;
+  label?: string
 }
 
 const ContractDefaultListItem: React.FC<IContractListProps> = (): JSX.Element => {

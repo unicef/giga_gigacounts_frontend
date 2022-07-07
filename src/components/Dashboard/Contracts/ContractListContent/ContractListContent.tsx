@@ -24,17 +24,17 @@ const ContractListContent: React.FC<ContractListProps> = ({ state, dispatch }: C
     setSelected(id)
   }
 
-  const getLtaNumber = () => {
-    const arr: string[] = []
-    if (state.ltas !== undefined) {
-      for (const lta in state.ltas) {
-        arr.push(lta)
-      }
-      setLtaNumber(arr)
-    }
-  }
-
   useEffect(() => {
+    const getLtaNumber = () => {
+      const arr: string[] = []
+      if (state.ltas !== undefined) {
+        for (const lta in state.ltas) {
+          arr.push(lta)
+        }
+        setLtaNumber(arr)
+      }
+    }
+
     getLtaNumber()
   }, [state])
 

@@ -40,7 +40,8 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook -s public",
     "lint": "eslint --max-warnings 0 src --ext .js,.ts,.tsx",
-    "lint:fix": "eslint --max-warnings 0 src --ext .js,.ts,.tsx --fix"
+    "lint:fix": "eslint --max-warnings 0 src --ext .js,.ts,.tsx --fix",
+    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
   },
   "eslintConfig": {
     "extends": "react-app",
@@ -84,8 +85,9 @@
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "^2.6.2",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1",
     "sass": "^1.45.2"
   },
   "resolutions": {

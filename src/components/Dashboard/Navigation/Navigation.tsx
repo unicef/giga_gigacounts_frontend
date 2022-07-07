@@ -5,13 +5,13 @@ import { NavItem } from './NavItem/NavItem'
 import { ProfileIcon } from './ProfileIcon/ProfileIcon'
 import { useHistory } from 'react-router-dom'
 
-interface CountryProps {
-  admin: boolean;
-  countryPath?: string;
-  countryName?: string;
-  name?: string;
-  role?: string;
-  contractCounts: { status: string; count: string }[];
+export interface CountryProps {
+  admin: boolean
+  countryPath?: string
+  countryName?: string
+  name?: string
+  role?: string
+  contractCounts: { status: string; count: string }[]
 }
 
 const Navigation: React.FC<CountryProps> = ({
@@ -20,7 +20,7 @@ const Navigation: React.FC<CountryProps> = ({
   countryName,
   name,
   role,
-  contractCounts
+  contractCounts,
 }: CountryProps): JSX.Element => {
   const history = useHistory()
 
@@ -95,16 +95,11 @@ const Navigation: React.FC<CountryProps> = ({
           number={allContractsCount.toString()}
           icon="icon-list"
         />
-
         <NavItem collapsed={!hovered} label="Drafts" number={draftCount.toString()} icon="icon-draft" />
-
         <NavItem collapsed={!hovered} label="Sent" number={sentCount.toString()} icon="icon-sent" />
-
         <NavItem collapsed={!hovered} label="Confirmed" number={confirmedCount.toString()} icon="icon-confirmed" />
         <NavItem collapsed={!hovered} label="Ongoing" number={ongoingCount.toString()} icon="icon-ongoing" />
-
         <NavItem collapsed={!hovered} label="Expired" number={expiredCount.toString()} icon="icon-expired" />
-
         <NavItem collapsed={!hovered} label="Completed" number={completedCount.toString()} icon="icon-completed" />
       </MenuContainer>
       <ProfileIcon collapsed={!hovered} name={name} role={role} />

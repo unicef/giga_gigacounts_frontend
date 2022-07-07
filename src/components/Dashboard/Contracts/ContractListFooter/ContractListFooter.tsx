@@ -3,14 +3,14 @@ import { Action, ActionType } from '../store/redux'
 import { ContractListFooterContainer } from './styles'
 
 interface IFooterProps {
-  dispatch: Dispatch<Action>;
+  dispatch: Dispatch<Action>
 }
 
 const ContractListFooter: React.FC<IFooterProps> = ({ dispatch }): JSX.Element => {
   const newContract = {
     name: 'New Contract',
     status: 'Draft',
-    added: true
+    added: true,
   }
 
   const handleAddContract = () => dispatch({ type: ActionType.CREATE_CONTRACT, payload: newContract })

@@ -1,4 +1,6 @@
+import axios from 'axios'
 import { ChangeEvent, Dispatch, useEffect, useRef, useCallback } from 'react'
+import { createContractDraft } from 'src/api/contracts'
 import { getCountries, getCurrency, getLtas } from 'src/api/createContract'
 import { Action, ActionType, State } from '../store/redux'
 import {
@@ -13,33 +15,47 @@ import {
   UploadFiles,
 } from './styles'
 
+import { useContractsContext } from '../../context/useContractsContext'
+
 interface IGeneralProps {
   state: State
   dispatch: Dispatch<Action>
+  onSaveDraft: () => void
 }
 
-const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {
-  const { countries, currencies, ltas, flag } = state
+const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): JSX.Element => {
+  const { countries, currencies, ltas, flag, generalTabForm } = state
   const inputFileRef = useRef<HTMLInputElement>(null)
+
+  const { setLoadContracts } = useContractsContext()
 
   const fetchData = useCallback(async () => {
     try {
-      const allCountries = await getCountries()
-      const allCurrencies = await getCurrency()
-      const allLtas = await getLtas()
+      axios
+        .all([getCountries(), getCurrency(), getLtas()])
+        .then(
+          axios.spread((...responses) => {
+            const countries = responses[0]
+            const currencies = responses[1]
+            const ltas = responses[2]
 
-      dispatch({
-        type: ActionType.GET_FORM_DATA,
-        payload: {
-          countries: allCountries,
-          currencies: allCurrencies,
-          ltas: allLtas,
-        },
-      })
+            dispatch({
+              type: ActionType.GET_FORM_DATA,
+              payload: {
+                countries,
+                currencies,
+                ltas,
+              },
+            })
+          }),
+        )
+        .catch((errors) => {
+          throw new Error(errors)
+        })
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
-  }, [])
+  }, [dispatch])
 
   const onCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     dispatch({ type: ActionType.SET_COUNTRY_CODE, payload: e.currentTarget.value })
@@ -51,6 +67,38 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
 
   const onContractNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: ActionType.SET_CONTRACT_NAME, payload: e.currentTarget.value })
+  }
+
+  const onContractNameBlur = async () => {
+    try {
+      if (generalTabForm.name && generalTabForm.name.length > 0 && !generalTabForm.id) {
+        const response = await createContractDraft(generalTabForm.name)
+        dispatch({ type: ActionType.CREATE_CONTRACT_DRAFT, payload: response })
+        setLoadContracts?.(true)
+      }
+    } catch (error) {
+      dispatch({ type: ActionType.SET_ERROR, payload: error })
+    }
+  }
+
+  const onCurrencyChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    dispatch({ type: ActionType.SET_CURRENCY_CODE, payload: e.target.value })
+  }
+
+  const onLtaChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    dispatch({ type: ActionType.SET_LTA, payload: e.target.value })
+  }
+
+  const onBudgetChange = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: ActionType.SET_BUDGET, payload: e.target.value })
+  }
+
+  const onStartDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: ActionType.SET_START_DATE, payload: e.target.value })
+  }
+
+  const onEndDateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: ActionType.SET_END_DATE, payload: e.target.value })
   }
 
   const handleFileEvent = (e: ChangeEvent<HTMLInputElement>) => {
@@ -70,33 +118,34 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
           <Country>
             <div className="input-container dropdown">
               <img src={`flags/${flag}.svg`} alt={flag} />
-              <select onChange={onCountryChange}>
+              <select onChange={onCountryChange} value={generalTabForm.countryId}>
                 {countries?.map((country) => (
-                  <option key={country.id} value={country.code}>
+                  <option key={country.id} value={country.id}>
                     {country.name}
                   </option>
                 ))}
               </select>
             </div>
             <label>
-              <input type="checkbox" onChange={onBehalfGovernmentChange} />
+              <input type="checkbox" checked={generalTabForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
               On behalf of the government
             </label>
           </Country>
           <input
             type="text"
-            name="contactName"
+            // name="contactName"
+            value={generalTabForm.name}
             placeholder="Contract Name"
             onChange={onContractNameChange}
-            onBlur={onContractNameChange}
+            onBlur={onContractNameBlur}
           />
           <div className="input-container dropdown">
-            <select defaultValue="default">
-              <option value="default" disabled hidden>
+            <select onChange={onLtaChange} value={generalTabForm.ltaId}>
+              <option value={undefined} hidden>
                 Part of Long Term Agreement
               </option>
               {ltas.map((lta) => (
-                <option key={lta.id} value={lta.name}>
+                <option key={lta.id} value={lta.id}>
                   {lta.name}
                 </option>
               ))}
@@ -105,18 +154,15 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
 
           <div className="input-container">
             <div className="dropdown currency">
-              <select defaultValue="default">
-                <option value="default" disabled hidden>
-                  BTW
-                </option>
+              <select onChange={onCurrencyChange} value={generalTabForm.currencyId}>
                 {currencies.map((currency) => (
-                  <option key={currency.id} value={currency.name}>
+                  <option key={currency.id} value={currency.id}>
                     {currency.name}
                   </option>
                 ))}
               </select>
             </div>
-            <input type="text" name="budget" placeholder="Budget" />
+            <input type="number" value={generalTabForm.budget} min="0" placeholder="Budget" onChange={onBudgetChange} />
           </div>
           <DateContainer>
             <DateStart>
@@ -124,14 +170,24 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
                 <span className="icon icon-24 icon-date icon-blue" />
                 <p>Start Date</p>
               </div>
-              <input type="date" />
+              <input
+                type="date"
+                max={generalTabForm.endDate}
+                onChange={onStartDateChange}
+                value={generalTabForm.startDate}
+              />
             </DateStart>
             <DateEnd>
               <div>
                 <span className="icon icon-24 icon-date icon-blue" />
                 <p>Valid through</p>
               </div>
-              <input type="date" />
+              <input
+                type="date"
+                min={generalTabForm.startDate}
+                onChange={onEndDateChange}
+                value={generalTabForm.endDate}
+              />
             </DateEnd>
           </DateContainer>
         </form>
@@ -150,7 +206,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
             id="fileUpload"
             type="file"
             multiple
-            accept="application/pdf, image/png"
+            accept="application/pdf"
             onChange={handleFileEvent}
           />
           <button className="btn btn-blue" onClick={onInputFiles}>

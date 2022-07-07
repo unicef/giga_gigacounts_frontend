@@ -1,66 +1,31 @@
-import axios from 'axios'
-import { IContractsData } from '../components/Dashboard/Contracts/@types/ContractType'
-
-const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/contract`
-
-axios.interceptors.request.use(
-  function (config) {
-    const AUTH_TOKEN = localStorage.getItem('session')
-    if (config !== undefined && config.headers !== undefined) {
-      config.headers.Authorization = AUTH_TOKEN ? `Bearer ${AUTH_TOKEN}` : ''
-    }
-    return config
-  },
-  function (error) {
-    return Promise.reject(error)
-  },
-)
-
-axios.interceptors.response.use(
-  function (response) {
-    return response
-  },
-  function (error) {
-    return Promise.reject(error)
-  },
-)
+import instance from './init'
+import { IContractDraft, IContractsData } from '../components/Dashboard/Contracts/@types/ContractType'
+import { GeneralTabForm } from 'src/components/Dashboard/CreateContract/store/redux'
 
 export const getContracts = async (): Promise<IContractsData | Error> => {
-  try {
-    const response = await axios.get(`${BASE_URL}`)
-    if (response.status === 200) {
-      return response.data
-    }
-    throw new Error('Failed to get the contracts')
-  } catch (error: unknown) {
-    return error as Error
-  }
+  const response = await instance.get('/contract')
+  if (response.status === 200) return response.data
+  throw new Error('Failed to get the contracts')
 }
 
-export const createContract = async (body: Record<string, unknown>): Promise<unknown> => {
-  try {
-    return await axios.post(`${BASE_URL}`, {
-      body,
-    })
-  } catch (error) {
-    return error
-  }
+export const createContractDraft = async (name: string): Promise<IContractDraft | Error> => {
+  const response = await instance.post('/contract/draft', {
+    name,
+  })
+  if (response.status === 200) return response.data
+  throw new Error('Failed to save the contract draft')
 }
 
-export const updateContract = async (body: Record<string, unknown>): Promise<unknown> => {
-  try {
-    return await axios.put(`${BASE_URL}/draft`, {
-      body,
-    })
-  } catch (error) {
-    return error
-  }
+export const updateContractDraft = async (contract: GeneralTabForm) => {
+  const response = await instance.put('/contract/draft', {
+    ...contract,
+  })
+  if (response.status === 200) return response.data
+  throw new Error('Failed to update the contract draft')
 }
 
 export const getContractByStatus = async (): Promise<unknown> => {
-  try {
-    return await axios.get(`${BASE_URL}/count/status`)
-  } catch (error) {
-    return error
-  }
+  const response = await instance.get('/contract/count/status')
+  if (response.status === 200) return response.data
+  throw new Error('Failed to update the contract draft')
 }

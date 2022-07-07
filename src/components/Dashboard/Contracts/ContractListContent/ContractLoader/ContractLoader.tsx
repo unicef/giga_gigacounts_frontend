@@ -1,7 +1,7 @@
 import { ContractLoaderContainer, ContractLoaderItem } from './styles'
 
 interface IContractListProps {
-  label?: string;
+  label?: string
 }
 
 const ContractLoader: React.FC<IContractListProps> = (): JSX.Element => {
@@ -48,7 +48,6 @@ const ContractLoader: React.FC<IContractListProps> = (): JSX.Element => {
         <small className="dummy">1. Schools 2. Vivo</small>
         <div className="icon icon-28 icon-confirmed"></div>
       </ContractLoaderItem>
-
     </ContractLoaderContainer>
   )
 }

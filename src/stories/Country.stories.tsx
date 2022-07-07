@@ -1,19 +1,19 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react'
-import Country from '../components/Dashboard/Country/Country'
+import Country, { CountryBlockProps } from '../components/Dashboard/Country/Country'
 
 export default {
   title: 'Example/Country',
-  component: Country
+  component: Country,
 } as ComponentMeta<typeof Country>
 
-const Template: ComponentStory<typeof Country> = (args) => <Country {...args} />
+const Template: ComponentStory<typeof Country> = (args: CountryBlockProps) => <Country {...args} />
 
 export const Default = Template.bind({})
 
 Default.args = {
   countryName: 'Argentina',
   countryPath: './flags/AR.svg',
-  collapsed: false
+  collapsed: false,
 }
 
 export const Collapsed = Template.bind({})
@@ -21,5 +21,5 @@ export const Collapsed = Template.bind({})
 Collapsed.args = {
   countryName: 'Argentina',
   countryPath: './flags/AR.svg',
-  collapsed: true
+  collapsed: true,
 }
