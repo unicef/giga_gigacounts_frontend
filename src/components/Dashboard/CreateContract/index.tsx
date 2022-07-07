@@ -21,7 +21,7 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)
   const { setLoadContracts } = useContractsContext()
 
-  const { generalTabForm, activeTab, invalidData, missingData } = localState
+  const { generalTabForm, activeTab, error } = localState
 
   const tabsItems: ITabItems[] = [
     {
@@ -53,8 +53,9 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
 
   const onSaveDraft = async () => {
     try {
-      if (generalTabForm.name.length > 0 && generalTabForm.id) {
-        const response = await updateContractDraft(generalTabForm)
+      if (generalTabForm.name && generalTabForm.name.length > 0 && generalTabForm.id) {
+        const { name, ...rest } = generalTabForm
+        const response = await updateContractDraft(rest)
 
         let formatStartDate: string = ''
         let formatEndDate: string = ''
@@ -88,6 +89,8 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
 
   const TabContent = tabs[activeTab]
 
+  console.log(localState)
+
   return (
     <CreateContractContainer>
       <Header>
@@ -116,28 +119,15 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
                 className={`${activeTab === tab.id ? 'active' : ''}`}
               >
                 <span className={`icon icon-16 circle ${activeTab === tab.id ? 'selected' : ''}`} />
-                {/* {tab.name === ActiveTab.GeneralTab && tabIconState(tabGeneralStatus)}
-                {tab.name === ActiveTab.ConnectionTab && tabIconState(tabConnectionStatus)}
-                {tab.name === ActiveTab.SchoolsTab && tabIconState(tabSchoolStatus)} */}
                 <p>{tab.name}</p>
               </button>
             )
           })}
           <FormHeaderMessage>
-            {activeTab === ActiveTab.GeneralTab && (
-              <>
-                <span className="icon icon-24 icon-expired icon-blue" />
-                <p>Please enter the contract name to be able to save the draft</p>
-              </>
-            )}
-            {(missingData || invalidData) && (
+            {error && (
               <>
                 <span className="icon icon-24 icon-error icon-red" />
-                <p className="error">
-                  {missingData
-                    ? `Some of the tabs are missing information`
-                    : `There's invalid data in the indicated tabs. Please correct it before publishing`}
-                </p>
+                <p className="error">{error}</p>
               </>
             )}
           </FormHeaderMessage>

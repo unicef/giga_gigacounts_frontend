@@ -71,12 +71,10 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
 
   const onContractNameBlur = async () => {
     try {
-      if (generalTabForm.name.length > 0 && !generalTabForm.id) {
+      if (generalTabForm.name && generalTabForm.name.length > 0 && !generalTabForm.id) {
         const response = await createContractDraft(generalTabForm.name)
         dispatch({ type: ActionType.CREATE_CONTRACT_DRAFT, payload: response })
         setLoadContracts?.(true)
-      } else if (generalTabForm.name.length > 0 && generalTabForm.id) {
-        onSaveDraft()
       }
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
@@ -143,7 +141,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
           />
           <div className="input-container dropdown">
             <select onChange={onLtaChange} value={generalTabForm.ltaId}>
-              <option value="0" disabled hidden>
+              <option value={undefined} hidden>
                 Part of Long Term Agreement
               </option>
               {ltas.map((lta) => (

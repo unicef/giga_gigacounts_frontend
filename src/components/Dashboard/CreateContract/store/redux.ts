@@ -55,9 +55,21 @@ export interface ExpectedMetric {
   value: number
 }
 
+export interface GeneralTabForm {
+  id: number | null
+  name?: string
+  countryId: number | undefined
+  currencyId: number | undefined
+  ltaId: number | undefined
+  governmentBehalf: boolean
+  budget: string
+  startDate: string
+  endDate: string
+}
+
 export interface State {
   activeTab: ActiveTab
-  error?: Error
+  error: string
   loading?: boolean
   missingData: boolean
   invalidData: boolean
@@ -70,23 +82,13 @@ export interface State {
   countries: ICountries[]
   currencies: ICurrency[]
   ltas: ILtas[]
-  generalTabForm: {
-    id: number | null
-    name: string
-    countryId: number
-    currencyId: number
-    ltaId: number
-    governmentBehalf: boolean
-    budget: string
-    startDate: string
-    endDate: string
-  }
+  generalTabForm: GeneralTabForm
   flag: string
 }
 
 export const reducer = (state: State, action: Action): State => {
   const { type, payload } = action
-  // console.log(type, payload)
+  console.log(type, payload)
 
   switch (type) {
     case ActionType.SET_ACTIVE_TAB: {
@@ -111,14 +113,7 @@ export const reducer = (state: State, action: Action): State => {
     }
 
     case ActionType.SET_COUNTRY_CODE: {
-      let getCountryById: ICountries | undefined
-      let flag: string = 'BW'
-
-      if (state.countries.length > 0) {
-        getCountryById = state.countries.find((country) => country.id === payload)
-      }
-
-      if (getCountryById !== undefined) flag = getCountryById.code
+      let flag = state.countries.find((country) => country.id === payload)?.code ?? 'BW'
 
       return {
         ...state,
@@ -137,6 +132,7 @@ export const reducer = (state: State, action: Action): State => {
           ...state.generalTabForm,
           name: payload,
         },
+        error: '',
       }
 
     case ActionType.SET_BUDGET:
@@ -219,11 +215,12 @@ export const reducer = (state: State, action: Action): State => {
       }
     }
 
-    case ActionType.SET_ERROR:
+    case ActionType.SET_ERROR: {
       return {
         ...state,
-        error: payload,
+        error: payload?.response?.data?.errors[0]?.message,
       }
+    }
 
     case ActionType.SET_LOADING:
       return {
@@ -272,7 +269,7 @@ export const reducer = (state: State, action: Action): State => {
 
 export const state: State = {
   activeTab: ActiveTab.GeneralTab,
-  error: undefined,
+  error: '',
   loading: true,
   missingData: false,
   invalidData: false,
@@ -288,9 +285,9 @@ export const state: State = {
   generalTabForm: {
     id: null,
     name: '',
-    countryId: 0,
-    currencyId: 0,
-    ltaId: 0,
+    countryId: undefined,
+    currencyId: undefined,
+    ltaId: undefined,
     governmentBehalf: false,
     budget: '',
     startDate: '',
