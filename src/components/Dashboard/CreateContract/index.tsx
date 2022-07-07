@@ -89,8 +89,6 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
 
   const TabContent = tabs[activeTab]
 
-  console.log(localState)
-
   return (
     <CreateContractContainer>
       <Header>
