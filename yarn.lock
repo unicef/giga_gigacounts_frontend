@@ -13111,6 +13111,11 @@ pako@~1.0.5:
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.11.tgz#6c9599d340d54dfd3946380252a35705a6b992bf"
   integrity sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==
 
+papaparse@^5.3.0:
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.3.2.tgz#d1abed498a0ee299f103130a6109720404fbd467"
+  integrity sha512-6dNZu0Ki+gyV0eBsFKJhYr+MdQYAzFUGlBMNj3GNrmHxmz1lfRa24CjFObPXtjcetlOv5Ad299MhIK0znp3afw==
+
 parallel-transform@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/parallel-transform/-/parallel-transform-1.2.0.tgz#9049ca37d6cb2182c3b1d2c720be94d14a5814fc"
@@ -14576,6 +14581,13 @@ react-bootstrap@^1.0.1:
     react-transition-group "^4.4.1"
     uncontrollable "^7.2.1"
     warning "^4.0.3"
+
+react-csv-reader@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/react-csv-reader/-/react-csv-reader-3.5.0.tgz#8121622b20111b41849a1de7eb4abe9a353d9dd5"
+  integrity sha512-wh4qsjPWnXI6DFbrh2uaKpGW7E2ZxzwKI3juK35/zcCqLLAnpI6jfspDwut9Q66MSXqEFXQ+nnMGMHJKIesH3g==
+  dependencies:
+    papaparse "^5.3.0"
 
 react-dev-utils@^11.0.3:
   version "11.0.4"

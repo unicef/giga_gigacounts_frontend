@@ -1,5 +1,6 @@
 import { IMetric } from 'src/api/metrics'
 import { IIsp } from 'src/api/isp'
+import { ISchool } from 'src/api/school'
 import { ICountries, ICurrency, ILtas } from 'src/api/createContract'
 
 export enum ActiveTab {
@@ -35,6 +36,9 @@ export enum ActionType {
   RESPONSE_ISPS = 'RESPONSE_ISPS',
   SET_COUNTRY_CODE = 'SET_COUNTRY_CODE',
   SET_BEHALF_GOVERNMENT = 'SET_BEHALF_GOVERNMENT',
+  RESPONSE_SCHOOLS = 'RESPONSE_SCHOOLS',
+  SELECT_SCHOOL = 'SELECT_SCHOOL',
+  SELECT_SCHOOL_BULK = 'SELECT_SCHOOL_BULK',
   SET_START_DATE = 'SET_START_DATE',
   SET_END_DATE = 'SET_END_DATE',
   CREATE_CONTRACT_DRAFT = 'CREATE_CONTRACT_DRAFT',
@@ -84,6 +88,8 @@ export interface State {
   ltas: ILtas[]
   generalTabForm: GeneralTabForm
   flag: string
+  schools: ISchool[]
+  selectedSchools: { id: number }[]
 }
 
 export const reducer = (state: State, action: Action): State => {
@@ -260,6 +266,34 @@ export const reducer = (state: State, action: Action): State => {
       }
     }
 
+    case ActionType.RESPONSE_SCHOOLS: {
+      return {
+        ...state,
+        schools: payload,
+      }
+    }
+
+    case ActionType.SELECT_SCHOOL: {
+      const index = state.selectedSchools.findIndex((s) => s.id === payload.id)
+
+      const newSchools =
+        index >= 0
+          ? [...state.selectedSchools.slice(0, index), ...state.selectedSchools.slice(index + 1)]
+          : [{ id: payload.id }, ...state.selectedSchools]
+
+      return {
+        ...state,
+        selectedSchools: newSchools,
+      }
+    }
+
+    case ActionType.SELECT_SCHOOL_BULK: {
+      return {
+        ...state,
+        selectedSchools: [...payload, ...state.selectedSchools],
+      }
+    }
+
     default:
       return {
         ...state,
@@ -294,4 +328,6 @@ export const state: State = {
     endDate: '',
   },
   flag: 'BW',
+  schools: [],
+  selectedSchools: [],
 }
