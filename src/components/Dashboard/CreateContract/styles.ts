@@ -96,6 +96,7 @@ export const FormHeaderTabs = styled.div`
     z-index: 1;
 
     p {
+      width: max-content;
       height: 24px;
       font-family: 'Open Sans';
       font-style: normal;
@@ -111,6 +112,7 @@ export const FormHeaderTabs = styled.div`
       background: var(--color-white);
 
       p {
+        width: max-content;
         height: 24px;
         font-family: 'Open Sans';
         font-style: normal;
