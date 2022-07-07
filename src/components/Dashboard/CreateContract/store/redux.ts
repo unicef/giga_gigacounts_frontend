@@ -35,6 +35,13 @@ export enum ActionType {
   RESPONSE_ISPS = 'RESPONSE_ISPS',
   SET_COUNTRY_CODE = 'SET_COUNTRY_CODE',
   SET_BEHALF_GOVERNMENT = 'SET_BEHALF_GOVERNMENT',
+  SET_START_DATE = 'SET_START_DATE',
+  SET_END_DATE = 'SET_END_DATE',
+  CREATE_CONTRACT_DRAFT = 'CREATE_CONTRACT_DRAFT',
+  UPDATE_CONTRACT_DRAFT = 'UPDATE_CONTRACT_DRAFT',
+  SET_CURRENCY_CODE = 'SET_CURRENCY_CODE',
+  SET_LTA = 'SET_LTA',
+  SET_BUDGET = 'SET_BUDGET',
 }
 
 export interface Action {
@@ -64,37 +71,31 @@ export interface State {
   currencies: ICurrency[]
   ltas: ILtas[]
   generalTabForm: {
-    contractNumber: string
-    countryCode: string
-    behalfOfGovernment: boolean
+    id: number | null
+    name: string
+    countryId: number
+    currencyId: number
+    ltaId: number
+    governmentBehalf: boolean
+    budget: string
+    startDate: string
+    endDate: string
   }
   flag: string
 }
 
 export const reducer = (state: State, action: Action): State => {
   const { type, payload } = action
+  // console.log(type, payload)
+
   switch (type) {
     case ActionType.SET_ACTIVE_TAB: {
-      let missing = false
-      let invalid = false
-
-      if (payload.activeTab === ActiveTab.ConnectionTab) {
-        // TODO - to be removed - just test message
-        missing = true
-      }
-      if (payload.activeTab === ActiveTab.SchoolsTab) {
-        // TODO - to be removed - just test message
-        invalid = true
-      }
-
       return {
         ...state,
         activeTab: payload.activeTab,
         tabGeneralStatus: payload.tabGeneralStatus,
         tabConnectionStatus: payload.tabConnectionStatus,
         tabSchoolStatus: payload.tabSchoolStatus,
-        missingData: missing,
-        invalidData: invalid,
       }
     }
 
@@ -109,22 +110,41 @@ export const reducer = (state: State, action: Action): State => {
       }
     }
 
-    case ActionType.SET_COUNTRY_CODE:
+    case ActionType.SET_COUNTRY_CODE: {
+      let getCountryById: ICountries | undefined
+      let flag: string = 'BW'
+
+      if (state.countries.length > 0) {
+        getCountryById = state.countries.find((country) => country.id === payload)
+      }
+
+      if (getCountryById !== undefined) flag = getCountryById.code
+
       return {
         ...state,
         generalTabForm: {
           ...state.generalTabForm,
-          countryCode: payload,
+          countryId: payload,
         },
-        flag: payload,
+        flag,
       }
+    }
 
     case ActionType.SET_CONTRACT_NAME:
       return {
         ...state,
         generalTabForm: {
           ...state.generalTabForm,
-          contractNumber: payload,
+          name: payload,
+        },
+      }
+
+    case ActionType.SET_BUDGET:
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          budget: payload,
         },
       }
 
@@ -133,7 +153,68 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         generalTabForm: {
           ...state.generalTabForm,
-          behalfOfGovernment: !state.generalTabForm.behalfOfGovernment,
+          governmentBehalf: !state.generalTabForm.governmentBehalf,
+        },
+      }
+    }
+
+    case ActionType.CREATE_CONTRACT_DRAFT: {
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          id: +payload.id,
+          name: payload.name,
+        },
+      }
+    }
+
+    case ActionType.UPDATE_CONTRACT_DRAFT: {
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          ...payload,
+        },
+      }
+    }
+
+    case ActionType.SET_CURRENCY_CODE: {
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          currencyId: payload,
+        },
+      }
+    }
+
+    case ActionType.SET_LTA: {
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          ltaId: payload,
+        },
+      }
+    }
+
+    case ActionType.SET_START_DATE: {
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          startDate: payload,
+        },
+      }
+    }
+
+    case ActionType.SET_END_DATE: {
+      return {
+        ...state,
+        generalTabForm: {
+          ...state.generalTabForm,
+          endDate: payload,
         },
       }
     }
@@ -205,9 +286,15 @@ export const state: State = {
   currencies: [],
   ltas: [],
   generalTabForm: {
-    contractNumber: '',
-    countryCode: '',
-    behalfOfGovernment: false,
+    id: null,
+    name: '',
+    countryId: 0,
+    currencyId: 0,
+    ltaId: 0,
+    governmentBehalf: false,
+    budget: '',
+    startDate: '',
+    endDate: '',
   },
   flag: 'BW',
 }

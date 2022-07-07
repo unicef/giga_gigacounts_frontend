@@ -1,4 +1,6 @@
 import { MouseEvent, useReducer } from 'react'
+import { updateContractDraft } from 'src/api/contracts'
+import { useContractsContext } from '../context/useContractsContext'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -17,6 +19,7 @@ const tabs = {
 
 const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)
+  const { setLoadContracts } = useContractsContext()
 
   const { generalTabForm, activeTab, invalidData, missingData } = localState
 
@@ -27,7 +30,7 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
     },
     {
       id: 'connectionTab',
-      name: 'Connection',
+      name: 'Connection and Qos',
     },
     {
       id: 'schoolsTab',
@@ -35,7 +38,7 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
     },
   ]
 
-  const handleActiveTab = (e: MouseEvent<HTMLButtonElement>) =>
+  const handleActiveTab = (e: MouseEvent<HTMLButtonElement>) => {
     dispatch({
       type: ActionType.SET_ACTIVE_TAB,
       payload: {
@@ -45,6 +48,43 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
         tabSchoolStatus: TabState.Default,
       },
     })
+    onSaveDraft()
+  }
+
+  const onSaveDraft = async () => {
+    try {
+      if (generalTabForm.name.length > 0 && generalTabForm.id) {
+        const response = await updateContractDraft(generalTabForm)
+
+        let formatStartDate: string = ''
+        let formatEndDate: string = ''
+
+        if (response?.start_date?.length > 0) {
+          formatStartDate = response.start_date.slice(0, 10)
+        }
+
+        if (response?.end_date?.length > 0) {
+          formatEndDate = response.end_date.slice(0, 10)
+        }
+
+        const formattedResponse = {
+          id: +response.id,
+          name: response.name,
+          countryId: response.country_id,
+          currencyId: response.currency_id,
+          ltaId: response.lta_id,
+          governmentBehalf: response.government_behalf,
+          startDate: formatStartDate,
+          endDate: formatEndDate,
+        }
+
+        dispatch({ type: ActionType.UPDATE_CONTRACT_DRAFT, payload: formattedResponse })
+        setLoadContracts?.(true)
+      }
+    } catch (error) {
+      dispatch({ type: ActionType.SET_ERROR, payload: error })
+    }
+  }
 
   const TabContent = tabs[activeTab]
 
@@ -53,13 +93,17 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
       <Header>
         <FormHeaderActions>
           <div>
-            <h5>New Contract {generalTabForm.contractNumber}</h5>
+            <h5>New Contract {generalTabForm.name}</h5>
           </div>
           <div>
             <button className="btn-transparent-grey active">Discard</button>
-            {generalTabForm.contractNumber && <button className="btn-blue">Save Draft</button>}
+            {generalTabForm.id && (
+              <button className="btn-blue" onClick={onSaveDraft}>
+                Save Draft
+              </button>
+            )}
           </div>
-          {true && <button className="btn-green">Publish</button>}
+          {/* <button className="btn-green">Publish</button> */}
         </FormHeaderActions>
         <FormHeaderTabs>
           {tabsItems.map((tab, i) => {
@@ -99,7 +143,7 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
           </FormHeaderMessage>
         </FormHeaderTabs>
       </Header>
-      <TabContent state={localState} dispatch={dispatch} />
+      <TabContent state={localState} dispatch={dispatch} onSaveDraft={onSaveDraft} />
     </CreateContractContainer>
   )
 }

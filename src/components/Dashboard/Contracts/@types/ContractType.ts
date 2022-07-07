@@ -40,7 +40,13 @@ export interface IContractsData {
 export interface IContractDraft {
   id: string
   name: string
+  country_id: number
   created_at: string
+  currency_id: number
+  end_date: string
+  government_behalf: boolean
+  lta_id: number
+  start_date: string
   updated_at: string
 }
 
