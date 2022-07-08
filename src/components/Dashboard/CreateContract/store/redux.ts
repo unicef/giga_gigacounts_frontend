@@ -65,6 +65,13 @@ export interface ExpectedMetric {
   value: number
 }
 
+export interface FileUpload {
+  name: string
+  typeId: number | null
+  type: string
+  file: string | ArrayBuffer | null
+}
+
 export interface ContractForm {
   id: number | null
   name?: string
