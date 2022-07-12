@@ -1,5 +1,5 @@
 import { Dispatch, useEffect, useCallback, useState, useRef, useMemo } from 'react'
-import CSVReader, { IFileInfo } from 'react-csv-reader'
+import * as XLSX from 'xlsx'
 import { Action, State, ActionType } from '../store/redux'
 import {
   SchoolsContainer,
@@ -21,6 +21,7 @@ import {
   UploadErrorText,
   UploadErrorHeader,
   UploadCloseBtn,
+  UploadFormatError,
 } from './styles'
 import SchoolTable from './SchoolTable'
 import { getSchools } from 'src/api/school'
@@ -34,10 +35,12 @@ interface ISchoolsProps {
 const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null)
   const csvReaderRef = useRef<HTMLInputElement>(null)
+  const acceptFiles = useMemo(() => ['.csv', '.xls', '.xlsx'], [])
 
   const [searchText, setSearchText] = useState<string>()
   const [schoolsNotFound, setSchoolsNotFound] = useState<number>(0)
   const [fileName, setFileName] = useState<string>()
+  const [invalidFormat, setInvalidFormat] = useState<boolean>()
 
   const fetchSchools = useCallback(async () => {
     try {
@@ -74,25 +77,47 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
     setSearchText(inputRef.current?.value)
   }, [])
 
-  const handleUpload = useCallback(
-    (data: string[], fileInfo: IFileInfo) => {
-      setSchoolsNotFound(0)
+  const handleFileData = useCallback(
+    (data: number[], fileInfo?: string) => {
       const listOfSchools: { id: number }[] = []
       let notFoundCount = 0
       data.forEach((id) => {
-        const index = state.schools.findIndex((school) => school.external_id === id[0])
+        const index = state.schools.findIndex((school) => school.external_id === id.toString())
         if (index >= 0) {
           listOfSchools.push({ id: state.schools[index].id })
         } else {
           notFoundCount++
         }
       })
-      setFileName(fileInfo.name)
+      setFileName(fileInfo)
       setSchoolsNotFound(notFoundCount)
       if (csvReaderRef.current) csvReaderRef.current.value = ''
       dispatch({ type: ActionType.SELECT_SCHOOL_BULK, payload: listOfSchools })
     },
     [dispatch, setSchoolsNotFound, state.schools],
+  )
+
+  const onChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setInvalidFormat(false)
+      setSchoolsNotFound(0)
+      if (e.target.files) {
+        if (!acceptFiles.includes(`.${e.target.files[0].name.split('.').pop()}`)) return setInvalidFormat(true)
+        const [file] = Array.prototype.slice.call(e.target.files)
+        const fileName = e.target.files[0].name
+        const reader = new FileReader()
+        reader.onload = (evt) => {
+          const bstr = evt.target?.result
+          const wb = XLSX.read(bstr, { type: 'binary' })
+          const wsname = wb.SheetNames[0]
+          const ws = wb.Sheets[wsname]
+          const data = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false, skipHidden: true }) as number[]
+          handleFileData(data, fileName)
+        }
+        reader.readAsBinaryString(file)
+      }
+    },
+    [handleFileData, acceptFiles, setInvalidFormat, setSchoolsNotFound],
   )
 
   return (
@@ -118,13 +143,19 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
               <UploadErrorText>Please add missing schools manually or re-upload a correct CSV file</UploadErrorText>
             </UploadError>
           ) : null}
+          {invalidFormat ? (
+            <UploadFormatError>
+              <UploadErrorTitle>Invalid format</UploadErrorTitle>
+            </UploadFormatError>
+          ) : null}
           <UploadButton>
             <span>Upload file</span>
-            <CSVReader
-              parserOptions={{ header: false, skipEmptyLines: true }}
-              onFileLoaded={(data, fileInfo) => handleUpload(data, fileInfo)}
-              inputStyle={{ display: 'none' }}
-              inputRef={csvReaderRef}
+            <input
+              type="file"
+              onChange={onChange}
+              style={{ display: 'none' }}
+              ref={csvReaderRef}
+              accept={acceptFiles.join(',')}
             />
           </UploadButton>
         </UploadButtonContainer>

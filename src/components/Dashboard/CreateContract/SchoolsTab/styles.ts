@@ -192,3 +192,14 @@ export const SchoolsTableContainer = styled.div`
   height: 95%;
   width: 100%;
 `
+export const UploadFormatError = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 78px;
+  background: var(--color-red);
+  border-radius: 2px;
+  border-radius: 6px;
+`
