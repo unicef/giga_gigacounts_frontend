@@ -171,7 +171,7 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
             <SchoolTable
               onSelect={handleSchoolSelection}
               schools={filteredSchools}
-              selectedSchools={state.selectedSchools}
+              selectedSchools={state.contractForm.schools.schools}
             />
           ) : null}
         </SchoolsTableContainer>
