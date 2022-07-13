@@ -1,13 +1,11 @@
-import { Dispatch, useEffect, useState } from 'react'
-import { Action, State } from '../store/redux'
+import { Dispatch, useCallback, useEffect } from 'react'
+import { Action, ActionType, State } from '../store/redux'
 
-import ContractDefaultListItem from '../ContractListContent/ContractDefaultListItem/ContractDefaultListItem'
 import ContractLtaListItems from './ContractLtaListItems/ContractLtaListItems'
-import ContractSchoolStatus from './ContactSchoolStatus/ContractSchoolStatus'
 import ContractLoader from './ContractLoader/ContractLoader'
 
 import { ContractListContainer } from './styles'
-import { IContracts } from '../@types/ContractType'
+import ContractItem from './ContractLtaListItems/ContractItem/ContractItem'
 
 interface ContractListProps {
   state: State
@@ -15,45 +13,21 @@ interface ContractListProps {
 }
 
 const ContractListContent: React.FC<ContractListProps> = ({ state, dispatch }: ContractListProps): JSX.Element => {
-  const [ltaNumber, setLtaNumber] = useState<string[]>()
-  const [selected, setSelected] = useState<string>('')
+  const { contracts, ltaNumbers, ltas, loading } = state
 
-  const { contracts, loading } = state
-
-  const handleSelected = (id: string) => {
-    setSelected(id)
-  }
+  const getLtaNumber = useCallback(() => {
+    const arr: string[] = []
+    if (ltas !== undefined) {
+      for (const lta in ltas) {
+        arr.push(lta)
+      }
+      dispatch({ type: ActionType.SET_LTA_NUMBERS, payload: arr })
+    }
+  }, [ltas, dispatch])
 
   useEffect(() => {
-    const getLtaNumber = () => {
-      const arr: string[] = []
-      if (state.ltas !== undefined) {
-        for (const lta in state.ltas) {
-          arr.push(lta)
-        }
-        setLtaNumber(arr)
-      }
-    }
-
     getLtaNumber()
-  }, [state])
-
-  const contractItem = (school: IContracts, i: number) => {
-    if (school?.added) {
-      return <ContractDefaultListItem key={i} />
-    } else {
-      return (
-        <ContractSchoolStatus
-          key={i}
-          school={school}
-          state={state}
-          dispatch={dispatch}
-          onToggle={handleSelected}
-          selected={selected === school.id}
-        />
-      )
-    }
-  }
+  }, [ltas, getLtaNumber])
 
   return (
     <ContractListContainer>
@@ -61,10 +35,15 @@ const ContractListContent: React.FC<ContractListProps> = ({ state, dispatch }: C
         <ContractLoader />
       ) : (
         <>
-          {ltaNumber?.map((item, i) => {
-            return <ContractLtaListItems key={i} state={state} dispatch={dispatch} ltaNumber={item} />
-          })}
-          <>{contracts !== undefined && contracts.map((school, i) => contractItem(school, i))}</>
+          {ltaNumbers?.map((item, i) => (
+            <ContractLtaListItems key={i} state={state} dispatch={dispatch} ltaNumber={item} />
+          ))}
+          <>
+            {contracts !== undefined &&
+              contracts.map((contract, i) => (
+                <ContractItem key={i} contract={contract} state={state} dispatch={dispatch} />
+              ))}
+          </>
         </>
       )}
     </ContractListContainer>

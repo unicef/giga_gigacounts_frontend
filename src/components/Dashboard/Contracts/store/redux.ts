@@ -5,6 +5,8 @@ export enum ActionType {
   CREATE_CONTRACT = 'CREATE_CONTRACT',
   SET_LOADING = 'SET_LOADING',
   SET_ERROR = 'SET_ERROR',
+  SET_LTA_NUMBERS = 'SET_LTA_NUMBER',
+  SET_SELECTED_CONTRACT = 'SET_SELECTED_CONTRACT',
 }
 
 export interface Action {
@@ -14,17 +16,18 @@ export interface Action {
 }
 
 export interface State {
-  contract?: IContracts
+  selectedContract?: IContracts
   contracts?: IContracts[]
   ltas?: ILtas
   error?: Error
   loading?: boolean
-  controller?: AbortController
+  ltaNumbers: string[]
   isSelected?: boolean
 }
 
 export const reducer = (state: State, action: Action): State => {
   const { type, payload } = action
+  // console.log(type, payload)
 
   switch (type) {
     case ActionType.RESPONSE:
@@ -39,6 +42,21 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         contracts: [payload, ...(state.contracts || [])],
+      }
+    }
+
+    case ActionType.SET_SELECTED_CONTRACT: {
+      return {
+        ...state,
+        selectedContract: payload,
+        isSelected: true,
+      }
+    }
+
+    case ActionType.SET_LTA_NUMBERS: {
+      return {
+        ...state,
+        ltaNumbers: payload,
       }
     }
 
@@ -66,9 +84,10 @@ export const state: State = {
   ltas: {},
   error: undefined,
   loading: true,
-  controller: undefined,
+  ltaNumbers: [],
+  isSelected: false,
 
-  contract: {
+  selectedContract: {
     added: false,
     budget: {
       budget: '',

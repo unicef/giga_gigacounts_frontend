@@ -5,19 +5,19 @@ import { Action, State } from 'src/components/Dashboard/Contracts/store/redux'
 import { Icons, SchoolInfo, IconsName, IconCompleted, SchoolNumberCtr, Schools, Isp } from './styles'
 
 interface ISchoolStatusProps {
-  school: IContracts
+  contract: IContracts
   selected?: boolean
   state: State
-  onToggle?: (id: string) => void
+  onToggle?: (contract: IContracts) => void
   dispatch: Dispatch<Action>
 }
 
 const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
-  school,
+  contract,
   selected,
   onToggle,
 }: ISchoolStatusProps): JSX.Element => {
-  const { isp, numberOfSchools, status, name, country, totalSpent, schoolsConnection } = school
+  const { isp, numberOfSchools, status, name, country, totalSpent, schoolsConnection } = contract
 
   const pieChart = () => {
     switch (status) {
@@ -60,8 +60,8 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
   }
 
   const handleSelected = () => {
-    if (school !== undefined && school.id !== undefined) {
-      onToggle?.(school.id)
+    if (contract) {
+      onToggle?.(contract)
     }
   }
 
