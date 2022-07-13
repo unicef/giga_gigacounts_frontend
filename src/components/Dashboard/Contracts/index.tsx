@@ -8,9 +8,7 @@ import { ContractsMenu } from './styles'
 import { ActionType, reducer, state } from './store/redux'
 import { useContractsContext } from '../context/useContractsContext'
 
-interface ContractsProps {
-  label?: string
-}
+interface ContractsProps {}
 
 const Contracts: React.FC<ContractsProps> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)

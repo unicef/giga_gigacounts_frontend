@@ -1,8 +1,7 @@
-import { Dispatch, useEffect, useState } from 'react'
+import { Dispatch, useCallback, useEffect, useState } from 'react'
 import { IContracts } from 'src/components/Dashboard/Contracts/@types/ContractType'
 import { Action, State } from 'src/components/Dashboard/Contracts/store/redux'
-import ContractSchoolStatus from '../ContactSchoolStatus/ContractSchoolStatus'
-import ContractDefaultListItem from '../ContractDefaultListItem/ContractDefaultListItem'
+import ContractItem from './ContractItem/ContractItem'
 import {
   ContractLtaFooter,
   ContractLtaSubHeader,
@@ -22,11 +21,8 @@ interface IContractListProps {
 const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, dispatch }): JSX.Element => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [ltaData, setLtaData] = useState<IContracts[]>([])
-  const [selected, setSelected] = useState<string>('')
 
-  const handleSelected = (id: string) => {
-    setSelected(id)
-  }
+  const { ltas } = state
 
   const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState)
 
@@ -39,33 +35,15 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, 
   const handleAddLtaContract = () => {
     setLtaData((prevState) => [newContract, ...prevState])
   }
-
-  const contractItem = (school: IContracts, i: number) => {
-    if (school?.added) {
-      return <ContractDefaultListItem key={i} />
-    } else {
-      return (
-        <ContractSchoolStatus
-          key={i}
-          school={school}
-          state={state}
-          dispatch={dispatch}
-          onToggle={handleSelected}
-          selected={selected === school.id}
-        />
-      )
+  const getLtaData = useCallback(() => {
+    if (ltaNumber !== undefined && ltas !== undefined) {
+      setLtaData(Object.values(ltas[ltaNumber]))
     }
-  }
+  }, [ltaNumber, ltas])
 
   useEffect(() => {
-    const getLtaData = () => {
-      if (ltaNumber !== undefined && state.ltas !== undefined) {
-        setLtaData(Object.values(state.ltas[ltaNumber]))
-      }
-    }
-
     getLtaData()
-  }, [ltaNumber, state])
+  }, [getLtaData])
 
   return (
     <ContractLtaListItemsContainer isExpanded={isExpanded}>
@@ -79,7 +57,9 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, 
       </Header>
       {isExpanded ? (
         <>
-          {ltaData.map((school, i) => contractItem(school, i))}
+          {ltaData.map((contract, i) => (
+            <ContractItem key={i} contract={contract} state={state} dispatch={dispatch} />
+          ))}
           <ContractLtaFooter onClick={handleAddLtaContract}>Create Contract Here</ContractLtaFooter>
         </>
       ) : (

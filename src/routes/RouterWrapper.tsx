@@ -15,10 +15,6 @@ export interface RouteProps {
   url?: string
 }
 
-export interface RouteParams {
-  id: string
-}
-
 export const RouterWrapper: React.FC<{ routes: Array<RouteProps> }> = (): JSX.Element => {
   return (
     <Switch>
