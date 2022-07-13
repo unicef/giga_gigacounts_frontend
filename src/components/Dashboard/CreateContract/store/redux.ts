@@ -290,7 +290,7 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.SELECT_SCHOOL_BULK: {
       return {
         ...state,
-        selectedSchools: [...payload, ...state.selectedSchools],
+        selectedSchools: payload,
       }
     }
 
