@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { IContracts, ILtas } from '../@types/ContractType'
 
 export enum ActionType {
@@ -37,12 +36,9 @@ export const reducer = (state: State, action: Action): State => {
       }
 
     case ActionType.CREATE_CONTRACT: {
-      const newContracts = _.cloneDeep(state.contracts)
-      newContracts?.unshift(payload)
-
       return {
         ...state,
-        contracts: newContracts,
+        contracts: [payload, ...(state.contracts || [])],
       }
     }
 
