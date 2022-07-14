@@ -8,12 +8,12 @@ import ContractListContent from './ContractListContent/ContractListContent'
 import ContractListHeader from './ContractListHeader/ContractListHeader'
 import ContractListFooter from './ContractListFooter/ContractListFooter'
 
-import ContractDetails from './ContractDetails/ContractDetails'
 import ContractGuide from '../ContractGuide/ContractGuide'
 import CreateContract from '../CreateContract'
 
 import { ContractsMenu } from './styles'
 import { ActionType, reducer, state } from './store/redux'
+import ContractStaged from './ContractStaged/ContractStaged'
 
 interface ContractsProps {}
 
@@ -57,7 +57,7 @@ const Contracts: React.FC<ContractsProps> = (): JSX.Element => {
           <CreateContract />
         </Route>
         <Route path={`${path}/contract/:id`} exact>
-          <ContractDetails state={localState} dispatch={dispatch} />
+          <ContractStaged state={localState} dispatch={dispatch} />
         </Route>
       </Switch>
     </>
