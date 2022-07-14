@@ -1,4 +1,4 @@
-import { IContracts, ILtas } from '../@types/ContractType'
+import { IContractDetails, IContracts, ILtas } from '../@types/ContractType'
 
 export enum ActionType {
   RESPONSE = 'RESPONSE',
@@ -7,6 +7,7 @@ export enum ActionType {
   SET_ERROR = 'SET_ERROR',
   SET_LTA_NUMBERS = 'SET_LTA_NUMBER',
   SET_SELECTED_CONTRACT = 'SET_SELECTED_CONTRACT',
+  SET_CONTRACT_DETAILS = 'SET_CONTRACT_DETAILS',
 }
 
 export interface Action {
@@ -23,6 +24,7 @@ export interface State {
   loading?: boolean
   ltaNumbers: string[]
   isSelected?: boolean
+  contractDetails: IContractDetails
 }
 
 export const reducer = (state: State, action: Action): State => {
@@ -57,6 +59,13 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         ltaNumbers: payload,
+      }
+    }
+
+    case ActionType.SET_CONTRACT_DETAILS: {
+      return {
+        ...state,
+        contractDetails: { ...payload },
       }
     }
 
@@ -110,5 +119,30 @@ export const state: State = {
     },
     status: '',
     totalSpent: 0,
+  },
+
+  contractDetails: {
+    id: '',
+    name: '',
+    isp: '',
+    lta: '',
+    attachments: [],
+    startDate: '',
+    endDate: '',
+    numberOfSchools: '',
+    schoolsConnection: {
+      withoutConnection: 0,
+      atLeastOneBellowAvg: 0,
+      allEqualOrAboveAvg: 0,
+    },
+    connectionsMedian: [
+      {
+        contract_id: '',
+        metric_id: 0,
+        metric_name: '',
+        unit: '',
+        median_value: 0,
+      },
+    ],
   },
 }

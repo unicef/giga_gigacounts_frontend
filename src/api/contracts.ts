@@ -24,8 +24,14 @@ export const updateContractDraft = async (contract: GeneralTabForm) => {
   throw new Error('Failed to update the contract draft')
 }
 
-export const getContractByStatus = async (): Promise<unknown> => {
+export const getContractByStatus = async () => {
   const response = await instance.get('/contract/count/status')
   if (response.status === 200) return response.data
-  throw new Error('Failed to update the contract draft')
+  throw new Error('Failed to get the contract by status')
+}
+
+export const getContractDetails = async (contractId: string) => {
+  const response = await instance.get(`/contract/details/${contractId}`)
+  if (response.status === 200) return response.data
+  throw new Error('Failed to get the contract details')
 }
