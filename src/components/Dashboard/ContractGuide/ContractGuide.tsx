@@ -2,9 +2,7 @@ import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } fro
 import ContractStatusWidget from '../../common/ContractStatusWidget/index'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 
-interface IContractsProps {}
-
-const ContractGuide: React.FC<IContractsProps> = (): JSX.Element => {
+const ContractGuide: React.FC = (): JSX.Element => {
   const history = useHistory()
   let { url } = useRouteMatch()
 

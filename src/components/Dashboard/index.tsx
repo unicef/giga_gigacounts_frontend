@@ -1,34 +1,16 @@
 import React, { useCallback, useEffect, useReducer } from 'react'
+import { ContractsProvider } from './context/ContractsContext'
+import { ActionType, reducer, state } from './store/redux'
+import { getContractsCounts, getUserProfile } from 'src/api/dashboard'
+
 import Navigation from './Navigation/Navigation'
 import Contracts from './Contracts'
 
 import { DashboardContainer } from './styles'
-import ContractGuide from './ContractGuide/ContractGuide'
-import CreateContract from '../Dashboard/CreateContract/index'
-import { ContractsProvider } from './context/ContractsContext'
-import { getContractsCounts, getUserProfile } from 'src/api/dashboard'
-import { ActionType, reducer, state } from './store/redux'
-import { Route, Switch, useHistory, useParams, useRouteMatch } from 'react-router-dom'
 
 const ADMIN_ROLE = 'Giga Admin'
 
-const ContractDetails = () => {
-  let { id } = useParams<{ id: string }>()
-  const history = useHistory()
-  // console.log(history)
-
-  return (
-    <div>
-      <p> URL ID {id}</p>
-      <button type="button" onClick={history.goBack}>
-        Go Back
-      </button>
-    </div>
-  )
-}
-
-const Dashboard: React.FC = () => {
-  let { path } = useRouteMatch()
+const Dashboard: React.FC = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)
 
   const {
@@ -65,17 +47,6 @@ const Dashboard: React.FC = () => {
       />
       <ContractsProvider>
         <Contracts />
-        <Switch>
-          <Route path={`${path}`} exact>
-            <ContractGuide />
-          </Route>
-          <Route path={`${path}/create`} exact>
-            <CreateContract />
-          </Route>
-          <Route path={`${path}/contract/:id`} exact>
-            <ContractDetails />
-          </Route>
-        </Switch>
       </ContractsProvider>
     </DashboardContainer>
   )
