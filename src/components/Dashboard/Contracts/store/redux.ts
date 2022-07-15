@@ -8,6 +8,7 @@ export enum ActionType {
   SET_LTA_NUMBERS = 'SET_LTA_NUMBER',
   SET_SELECTED_CONTRACT = 'SET_SELECTED_CONTRACT',
   SET_CONTRACT_DETAILS = 'SET_CONTRACT_DETAILS',
+  SET_ATTACHMENT_SELECTED = 'SET_ATTACHMENT_SELECTED',
 }
 
 export interface Action {
@@ -25,6 +26,7 @@ export interface State {
   ltaNumbers: string[]
   isSelected?: boolean
   contractDetails: IContractDetails
+  isAttachmentSelected: boolean
 }
 
 export const reducer = (state: State, action: Action): State => {
@@ -66,6 +68,13 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         contractDetails: { ...payload },
+      }
+    }
+
+    case ActionType.SET_ATTACHMENT_SELECTED: {
+      return {
+        ...state,
+        isAttachmentSelected: !state.isAttachmentSelected,
       }
     }
 
@@ -145,4 +154,5 @@ export const state: State = {
       },
     ],
   },
+  isAttachmentSelected: false,
 }

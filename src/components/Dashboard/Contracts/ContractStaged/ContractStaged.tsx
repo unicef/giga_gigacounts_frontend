@@ -47,6 +47,8 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
     return icon
   }
 
+  const onAttachmentSelect = () => dispatch({ type: ActionType.SET_ATTACHMENT_SELECTED })
+
   useEffect(() => {
     fetchData()
   }, [fetchData])
@@ -69,10 +71,17 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
               )}
             </div>
 
-            <span className="title-item">
+            <button className="title-item attachments-button" onClick={onAttachmentSelect}>
               <span className="icon icon-24 icon-files icon-mid-grey"></span>
-              <p>Attachments</p>
-            </span>
+              <p className="attachments">Attachments</p>
+            </button>
+            {state.isAttachmentSelected && (
+              <div
+                style={{ position: 'absolute', right: 100, top: 80, backgroundColor: 'white', width: 300, height: 300 }}
+              >
+                <p>Atattachments</p>
+              </div>
+            )}
 
             <span className="title-item">
               <span className="icon icon-24 icon-network icon-mid-grey"></span>

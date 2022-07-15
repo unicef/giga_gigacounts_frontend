@@ -53,6 +53,16 @@ export const ContractStagedHeader = styled.div`
     color: var(--color-darkest-grey);
     white-space: nowrap;
     text-decoration: none;
+
+    &.attachments-button {
+      border: none;
+      cursor: pointer;
+    }
+
+    .attachments {
+      text-decoration: underline;
+      text-transform: capitalize;
+    }
   }
 
   .info {
