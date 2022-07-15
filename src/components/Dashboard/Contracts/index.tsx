@@ -8,8 +8,8 @@ import ContractListContent from './ContractListContent/ContractListContent'
 import ContractListHeader from './ContractListHeader/ContractListHeader'
 import ContractListFooter from './ContractListFooter/ContractListFooter'
 
-import ContractGuide from '../ContractGuide/ContractGuide'
-import CreateContract from '../CreateContract'
+import ContractGuide from './ContractGuide/ContractGuide'
+import CreateContract from './CreateContract'
 
 import { ContractsMenu } from './styles'
 import { ActionType, reducer, state } from './store/redux'

@@ -1,5 +1,5 @@
 import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } from './styles'
-import ContractStatusWidget from '../../common/ContractStatusWidget/index'
+import ContractStatusWidget from '../../../common/ContractStatusWidget/index'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 
 const ContractGuide: React.FC = (): JSX.Element => {

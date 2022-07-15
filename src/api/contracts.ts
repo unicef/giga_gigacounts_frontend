@@ -1,6 +1,6 @@
 import instance from './init'
 import { IContractDraft, IContractsData } from '../components/Dashboard/Contracts/@types/ContractType'
-import { ContractForm } from 'src/components/Dashboard/CreateContract/store/redux'
+import { ContractForm } from 'src/components/Dashboard/Contracts/CreateContract/store/redux'
 
 export const getContracts = async (): Promise<IContractsData | Error> => {
   const response = await instance.get('/contract')

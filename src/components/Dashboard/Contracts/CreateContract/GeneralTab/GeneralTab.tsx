@@ -15,16 +15,15 @@ import {
   UploadFiles,
 } from './styles'
 
-import { useContractsContext } from '../../context/useContractsContext'
+import { useContractsContext } from '../../../context/useContractsContext'
 import { uploadContractFile } from 'src/api/attachments'
 
 interface IGeneralProps {
   state: State
   dispatch: Dispatch<Action>
-  onSaveDraft: () => void
 }
 
-const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): JSX.Element => {
+const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {
   const { countries, currencies, ltas, flag, contractForm } = state
   const inputFileRef = useRef<HTMLInputElement>(null)
 

@@ -2,7 +2,7 @@ import { useCallback, useRef, useMemo } from 'react'
 import ToggleButton from './ToggleButton'
 import { MainContainer, LabelContainer, Label, InputContainer, ToggleGroupContainer, ButtonsGroup } from './styles'
 import { ToggleButtonOption } from './@types/ToggleTypes'
-import { State } from 'src/components/Dashboard/CreateContract/store/redux'
+import { State } from 'src/components/Dashboard/Contracts/CreateContract/store/redux'
 
 const ToggleButtonGroup = ({
   options,

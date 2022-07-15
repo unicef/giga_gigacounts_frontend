@@ -1,4 +1,4 @@
-import { FileUpload } from 'src/components/Dashboard/CreateContract/store/redux'
+import { FileUpload } from 'src/components/Dashboard/Contracts/CreateContract/store/redux'
 import instance from './init'
 
 export const uploadContractFile = async (file: FileUpload) => {
