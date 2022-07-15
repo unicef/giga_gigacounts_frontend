@@ -30,14 +30,14 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
 
   const fetchData = useCallback(async () => {
     try {
-      const getMetrics = await getSuggestedMetrics()
-      const getIsps = await getIsp()
+      const metrics = await getSuggestedMetrics()
+      const isps = await getIsp()
 
       dispatch({
         type: ActionType.SET_METRICS_ISPS,
         payload: {
-          metrics: getMetrics,
-          isps: getIsps,
+          metrics,
+          isps,
         },
       })
     } catch (error) {
@@ -49,7 +49,7 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
     fetchData()
   }, [fetchData])
 
-  const handleMetricValue = (value: string, metricId: string) => {
+  const onMetricValueChange = (value: string, metricId: string) => {
     dispatch({ type: ActionType.SET_EXPECTED_METRIC, payload: { metricId: +metricId, value: +value } })
   }
 
@@ -74,7 +74,7 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
         <ISPDropdownContainer>
           <ISPDropdown className="input-container dropdown">
             <select onChange={onServiceProviderChange} value={contractForm.ispId}>
-              <option value={undefined} hidden>
+              <option value="" hidden>
                 Service Provider
               </option>
               {(state.isps || []).map((isp) => (
@@ -103,7 +103,7 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
               })}
               label={`${metric.name}:`}
               measure={metric.suggestedMetrics.length ? metric.suggestedMetrics[0].unit : ''}
-              onSelect={handleMetricValue}
+              onSelect={onMetricValueChange}
               state={state}
               metricId={metric.id.toString()}
             />
