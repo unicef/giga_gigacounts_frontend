@@ -32,8 +32,7 @@ export enum ActionType {
   SET_LOADING = 'SET_LOADING',
   SET_ERROR = 'SET_ERROR',
   SET_EXPECTED_METRIC = 'SET_EXPECTED_METRIC',
-  RESPONSE_METRICS = 'RESPONSE_METRICS',
-  RESPONSE_ISPS = 'RESPONSE_ISPS',
+  SET_METRICS_ISPS = 'SET_METRICS_ISPS',
   SET_COUNTRY_CODE = 'SET_COUNTRY_CODE',
   SET_BEHALF_GOVERNMENT = 'SET_BEHALF_GOVERNMENT',
   RESPONSE_SCHOOLS = 'RESPONSE_SCHOOLS',
@@ -46,6 +45,8 @@ export enum ActionType {
   SET_CURRENCY_CODE = 'SET_CURRENCY_CODE',
   SET_LTA = 'SET_LTA',
   SET_BUDGET = 'SET_BUDGET',
+  SET_SERVICE_PROVIDER = 'SET_SERVICE_PROVIDER',
+  SET_QUALITY_OF_SERVICE = 'SET_QUALITY_OF_SERVICE',
 }
 
 export interface Action {
@@ -54,21 +55,29 @@ export interface Action {
   payload?: any
 }
 
+export interface IQualityService {
+  selectedValue: string
+  metricId: number
+}
+
 export interface ExpectedMetric {
   metricId: number
   value: number
 }
 
-export interface GeneralTabForm {
+export interface ContractForm {
   id: number | null
   name?: string
   countryId: number | undefined
   currencyId: number | undefined
   ltaId: number | undefined
+  ispId: number | undefined
+  expectedMetrics: { metrics: ExpectedMetric[] }
   governmentBehalf: boolean
   budget: string
   startDate: string
   endDate: string
+  schools: { schools: { id: number }[] }
 }
 
 export interface State {
@@ -80,16 +89,17 @@ export interface State {
   tabGeneralStatus: string
   tabConnectionStatus: string
   tabSchoolStatus: string
-  expectedMetrics: { metrics: ExpectedMetric[] }
+  expectedMetrics: {
+    metrics: ExpectedMetric[]
+  }
   metrics: IMetric[]
   isps: IIsp[]
   countries: ICountries[]
   currencies: ICurrency[]
   ltas: ILtas[]
-  generalTabForm: GeneralTabForm
+  contractForm: ContractForm
   flag: string
   schools: ISchool[]
-  selectedSchools: { id: number }[]
 }
 
 export const reducer = (state: State, action: Action): State => {
@@ -123,8 +133,8 @@ export const reducer = (state: State, action: Action): State => {
 
       return {
         ...state,
-        generalTabForm: {
-          ...state.generalTabForm,
+        contractForm: {
+          ...state.contractForm,
           countryId: payload,
         },
         flag,
@@ -134,8 +144,8 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.SET_CONTRACT_NAME:
       return {
         ...state,
-        generalTabForm: {
-          ...state.generalTabForm,
+        contractForm: {
+          ...state.contractForm,
           name: payload,
         },
         error: '',
@@ -144,8 +154,8 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.SET_BUDGET:
       return {
         ...state,
-        generalTabForm: {
-          ...state.generalTabForm,
+        contractForm: {
+          ...state.contractForm,
           budget: payload,
         },
       }
@@ -153,9 +163,9 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.SET_BEHALF_GOVERNMENT: {
       return {
         ...state,
-        generalTabForm: {
-          ...state.generalTabForm,
-          governmentBehalf: !state.generalTabForm.governmentBehalf,
+        contractForm: {
+          ...state.contractForm,
+          governmentBehalf: !state.contractForm.governmentBehalf,
         },
       }
     }
@@ -163,8 +173,8 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.CREATE_CONTRACT_DRAFT: {
       return {
         ...state,
-        generalTabForm: {
-          ...state.generalTabForm,
+        contractForm: {
+          ...state.contractForm,
           id: +payload.id,
           name: payload.name,
         },
@@ -174,8 +184,8 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.UPDATE_CONTRACT_DRAFT: {
       return {
         ...state,
-        generalTabForm: {
-          ...state.generalTabForm,
+        contractForm: {
+          ...state.contractForm,
           ...payload,
         },
       }
@@ -184,8 +194,8 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.SET_CURRENCY_CODE: {
       return {
         ...state,
-        generalTabForm: {
-          ...state.generalTabForm,
+        contractForm: {
+          ...state.contractForm,
           currencyId: payload,
         },
       }
@@ -194,8 +204,8 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.SET_LTA: {
       return {
         ...state,
-        generalTabForm: {
-          ...state.generalTabForm,
+        contractForm: {
+          ...state.contractForm,
           ltaId: payload,
         },
       }
@@ -204,8 +214,8 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.SET_START_DATE: {
       return {
         ...state,
-        generalTabForm: {
-          ...state.generalTabForm,
+        contractForm: {
+          ...state.contractForm,
           startDate: payload,
         },
       }
@@ -214,8 +224,8 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.SET_END_DATE: {
       return {
         ...state,
-        generalTabForm: {
-          ...state.generalTabForm,
+        contractForm: {
+          ...state.contractForm,
           endDate: payload,
         },
       }
@@ -240,29 +250,45 @@ export const reducer = (state: State, action: Action): State => {
       const newExpectedMetrics =
         metricIndex >= 0
           ? [
-              ...state.expectedMetrics.metrics.slice(0, metricIndex),
-              { ...state.expectedMetrics.metrics[metricIndex], value: payload.value, metricId: payload.metricId },
-              ...state.expectedMetrics.metrics.slice(metricIndex + 1),
+              ...state.contractForm.expectedMetrics.metrics.slice(0, metricIndex),
+              {
+                ...state.contractForm.expectedMetrics.metrics[metricIndex],
+                value: payload.value,
+                metricId: payload.metricId,
+              },
+              ...state.contractForm.expectedMetrics.metrics.slice(metricIndex + 1),
             ]
-          : [{ value: payload.value, metricId: payload.metricId }, ...state.expectedMetrics.metrics]
+          : [{ value: payload.value, metricId: payload.metricId }, ...state.contractForm.expectedMetrics.metrics]
 
       return {
         ...state,
-        expectedMetrics: { metrics: newExpectedMetrics },
+        contractForm: {
+          ...state.contractForm,
+          expectedMetrics: {
+            ...state.contractForm.expectedMetrics,
+            metrics: newExpectedMetrics,
+          },
+        },
       }
     }
 
-    case ActionType.RESPONSE_METRICS: {
+    case ActionType.SET_METRICS_ISPS: {
+      const { metrics, isps } = payload
+
       return {
         ...state,
-        metrics: payload,
+        metrics,
+        isps,
       }
     }
 
-    case ActionType.RESPONSE_ISPS: {
+    case ActionType.SET_SERVICE_PROVIDER: {
       return {
         ...state,
-        isps: payload,
+        contractForm: {
+          ...state.contractForm,
+          ispId: +payload,
+        },
       }
     }
 
@@ -274,23 +300,38 @@ export const reducer = (state: State, action: Action): State => {
     }
 
     case ActionType.SELECT_SCHOOL: {
-      const index = state.selectedSchools.findIndex((s) => s.id === payload.id)
+      const index = state.contractForm.schools.schools.findIndex((s) => s.id === payload.id)
 
       const newSchools =
         index >= 0
-          ? [...state.selectedSchools.slice(0, index), ...state.selectedSchools.slice(index + 1)]
-          : [{ id: payload.id }, ...state.selectedSchools]
+          ? [
+              ...state.contractForm.schools.schools.slice(0, index),
+              ...state.contractForm.schools.schools.slice(index + 1),
+            ]
+          : [{ id: payload.id }, ...state.contractForm.schools.schools]
 
       return {
         ...state,
-        selectedSchools: newSchools,
+        contractForm: {
+          ...state.contractForm,
+          schools: {
+            ...state.contractForm.schools,
+            schools: newSchools,
+          },
+        },
       }
     }
 
     case ActionType.SELECT_SCHOOL_BULK: {
       return {
         ...state,
-        selectedSchools: payload,
+        contractForm: {
+          ...state.contractForm,
+          schools: {
+            ...state.contractForm.schools,
+            schools: [...payload, ...state.contractForm.schools.schools],
+          },
+        },
       }
     }
 
@@ -316,18 +357,22 @@ export const state: State = {
   countries: [],
   currencies: [],
   ltas: [],
-  generalTabForm: {
+  contractForm: {
     id: null,
     name: '',
     countryId: undefined,
     currencyId: undefined,
     ltaId: undefined,
+    ispId: undefined,
+    expectedMetrics: { metrics: [] },
     governmentBehalf: false,
     budget: '',
     startDate: '',
     endDate: '',
+    schools: {
+      schools: [],
+    },
   },
   flag: 'BW',
   schools: [],
-  selectedSchools: [],
 }

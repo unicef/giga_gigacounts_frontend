@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useCallback } from 'react'
+import { Dispatch, useEffect, useCallback, ChangeEvent } from 'react'
 import { Action, State, ActionType } from '../store/redux'
 import {
   ConnectionContainer,
@@ -26,31 +26,35 @@ interface IConnectionProps {
 }
 
 const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Element => {
-  const fetchSuggestedMetrics = useCallback(async () => {
-    try {
-      const response = await getSuggestedMetrics()
-      dispatch({ type: ActionType.RESPONSE_METRICS, payload: response })
-    } catch (error) {
-      dispatch({ type: ActionType.SET_ERROR, payload: error })
-    }
-  }, [dispatch])
+  const { contractForm } = state
 
-  const fetchIsps = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
-      const response = await getIsp()
-      dispatch({ type: ActionType.RESPONSE_ISPS, payload: response })
+      const metrics = await getSuggestedMetrics()
+      const isps = await getIsp()
+
+      dispatch({
+        type: ActionType.SET_METRICS_ISPS,
+        payload: {
+          metrics,
+          isps,
+        },
+      })
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
   }, [dispatch])
 
   useEffect(() => {
-    fetchSuggestedMetrics()
-    fetchIsps()
-  }, [fetchSuggestedMetrics, fetchIsps])
+    fetchData()
+  }, [fetchData])
 
-  const handleMetricValue = (value: number, metricId: number) => {
-    dispatch({ type: ActionType.SET_EXPECTED_METRIC, payload: { metricId, value } })
+  const onMetricValueChange = (value: string, metricId: string) => {
+    dispatch({ type: ActionType.SET_EXPECTED_METRIC, payload: { metricId: +metricId, value: +value } })
+  }
+
+  const onServiceProviderChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    dispatch({ type: ActionType.SET_SERVICE_PROVIDER, payload: e.target.value })
   }
 
   return (
@@ -69,7 +73,7 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
         </ISPHeader>
         <ISPDropdownContainer>
           <ISPDropdown className="input-container dropdown">
-            <select defaultValue="Service Provider">
+            <select onChange={onServiceProviderChange} value={contractForm.ispId}>
               <option value="" hidden>
                 Service Provider
               </option>
@@ -99,7 +103,9 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Ele
               })}
               label={`${metric.name}:`}
               measure={metric.suggestedMetrics.length ? metric.suggestedMetrics[0].unit : ''}
-              onSelect={handleMetricValue}
+              onSelect={onMetricValueChange}
+              state={state}
+              metricId={metric.id.toString()}
             />
           ))}
         </OptionsContainer>

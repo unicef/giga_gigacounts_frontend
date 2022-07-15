@@ -4,6 +4,6 @@ export interface SelectedProps {
 
 export interface ToggleButtonOption {
   label: string
-  value: number
-  metricId: number
+  value: string
+  metricId: string
 }

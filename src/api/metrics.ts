@@ -2,8 +2,8 @@ import instance from './init'
 
 interface ISuggestedMetrics {
   id: number
-  metric_id: number
-  value: number
+  metric_id: string
+  value: string
   unit: string
 }
 

@@ -24,7 +24,7 @@ interface IGeneralProps {
 }
 
 const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): JSX.Element => {
-  const { countries, currencies, ltas, flag, generalTabForm } = state
+  const { countries, currencies, ltas, flag, contractForm } = state
   const inputFileRef = useRef<HTMLInputElement>(null)
 
   const { setLoadContracts } = useContractsContext()
@@ -71,8 +71,8 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
 
   const onContractNameBlur = async () => {
     try {
-      if (generalTabForm.name && generalTabForm.name.length > 0 && !generalTabForm.id) {
-        const response = await createContractDraft(generalTabForm.name)
+      if (contractForm.name && contractForm.name.length > 0 && !contractForm.id) {
+        const response = await createContractDraft(contractForm.name)
         dispatch({ type: ActionType.CREATE_CONTRACT_DRAFT, payload: response })
         setLoadContracts?.(true)
       }
@@ -118,7 +118,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
           <Country>
             <div className="input-container dropdown">
               <img src={`flags/${flag}.svg`} alt={flag} />
-              <select onChange={onCountryChange} value={generalTabForm.countryId}>
+              <select onChange={onCountryChange} value={contractForm.countryId}>
                 {countries?.map((country) => (
                   <option key={country.id} value={country.id}>
                     {country.name}
@@ -127,20 +127,20 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
               </select>
             </div>
             <label>
-              <input type="checkbox" checked={generalTabForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
+              <input type="checkbox" checked={contractForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
               On behalf of the government
             </label>
           </Country>
           <input
             type="text"
             // name="contactName"
-            value={generalTabForm.name}
+            value={contractForm.name}
             placeholder="Contract Name"
             onChange={onContractNameChange}
             onBlur={onContractNameBlur}
           />
           <div className="input-container dropdown">
-            <select onChange={onLtaChange} value={generalTabForm.ltaId}>
+            <select onChange={onLtaChange} value={contractForm.ltaId}>
               <option value={undefined} hidden>
                 Part of Long Term Agreement
               </option>
@@ -154,7 +154,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
 
           <div className="input-container">
             <div className="dropdown currency">
-              <select onChange={onCurrencyChange} value={generalTabForm.currencyId}>
+              <select onChange={onCurrencyChange} value={contractForm.currencyId}>
                 {currencies.map((currency) => (
                   <option key={currency.id} value={currency.id}>
                     {currency.name}
@@ -162,7 +162,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
                 ))}
               </select>
             </div>
-            <input type="number" value={generalTabForm.budget} min="0" placeholder="Budget" onChange={onBudgetChange} />
+            <input type="number" value={contractForm.budget} min="0" placeholder="Budget" onChange={onBudgetChange} />
           </div>
           <DateContainer>
             <DateStart>
@@ -172,9 +172,9 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
               </div>
               <input
                 type="date"
-                max={generalTabForm.endDate}
+                max={contractForm.endDate}
                 onChange={onStartDateChange}
-                value={generalTabForm.startDate}
+                value={contractForm.startDate}
               />
             </DateStart>
             <DateEnd>
@@ -182,12 +182,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
                 <span className="icon icon-24 icon-date icon-blue" />
                 <p>Valid through</p>
               </div>
-              <input
-                type="date"
-                min={generalTabForm.startDate}
-                onChange={onEndDateChange}
-                value={generalTabForm.endDate}
-              />
+              <input type="date" min={contractForm.startDate} onChange={onEndDateChange} value={contractForm.endDate} />
             </DateEnd>
           </DateContainer>
         </form>
