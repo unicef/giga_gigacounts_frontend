@@ -5,6 +5,8 @@ import { NavItem } from './NavItem/NavItem'
 import { ProfileIcon } from './ProfileIcon/ProfileIcon'
 import { useHistory } from 'react-router-dom'
 
+import logos from 'src/assets/logos'
+
 export interface CountryProps {
   admin: boolean
   countryPath?: string
@@ -77,7 +79,7 @@ const Navigation: React.FC<CountryProps> = ({
       }
     >
       <StyledLogo
-        src={hovered ? './logos/giga-logo-inline.svg' : './logos/giga-logo.svg'}
+        src={hovered ? logos.gigaLogoInLine : logos.gigaLogo}
         onClick={() => {
           history.push('/dashboard')
         }}

@@ -141,7 +141,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
         <form>
           <Country>
             <div className="input-container dropdown">
-              <img src={`flags/${flag}.svg`} alt={flag} />
+              <img src={`../flags/${flag}.svg`} alt={flag} />
               <select onChange={onCountryChange} value={contractForm.countryId}>
                 {countries?.map((country) => (
                   <option key={country.id} value={country.id}>
