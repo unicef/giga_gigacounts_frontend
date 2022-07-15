@@ -15,6 +15,8 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
 
   const { contractDetails } = state
 
+  console.log( contractDetails )
+
   const fetchData = useCallback(async () => {
     try {
       const response = await getContractDetails(id)
@@ -112,6 +114,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
 
               <div className="button-chart">
                 <ContractStatusWidget
+                  showOnly='schools'
                   average={contractDetails.schoolsConnection.atLeastOneBellowAvg}
                   good={contractDetails.schoolsConnection.allEqualOrAboveAvg}
                   payments={60}
@@ -143,7 +146,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
               </div>
 
               <div className="button-chart">
-                <ContractStatusWidget average={10} good={80} payments={60} />
+                <ContractStatusWidget showOnly='payments' average={10} good={80} payments={60} />
               </div>
             </button>
 

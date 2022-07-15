@@ -17,7 +17,7 @@ interface DialOptions {
 
 const dial = (canvas: HTMLCanvasElement, { diameter, stroke, color, percent, start = 0 }: DialOptions) => {
   const ctx = canvas.getContext('2d')
-  if (ctx === null) {
+  if (ctx === null || stroke === 0) {
     return
   }
 
@@ -37,6 +37,7 @@ const dial = (canvas: HTMLCanvasElement, { diameter, stroke, color, percent, sta
 interface DrawChartOptions {
   selected?: boolean
   expired?: boolean
+  showOnly?: string
   average?: number
   good?: number
   payments?: number
@@ -44,7 +45,7 @@ interface DrawChartOptions {
 
 const drawChart = (
   canvas: HTMLCanvasElement,
-  { selected = false, expired = false, average = 0, good = 0, payments = 0 }: DrawChartOptions,
+  { selected = false, expired = false, showOnly="", average = 0, good = 0, payments = 0 }: DrawChartOptions,
 ) => {
   const ctx = canvas.getContext('2d')
   if (ctx === null) {
@@ -62,9 +63,26 @@ const drawChart = (
   const orangeColor = selected ? '#F9BF68' : '#FF9F40'
   const greenColor = selected ? '#6FE883' : '#46C66D'
 
-  const budgetStroke = 3
-  const chartSpacing = 3
-  const innerChartWidth = Math.min(canvas.clientWidth, canvas.clientHeight) - budgetStroke * 2 - chartSpacing * 2
+  let budgetStroke, chartSpacing, innerChartWidth
+
+  switch (showOnly) {
+    case 'schools':
+      budgetStroke = 0
+      chartSpacing = 0
+      innerChartWidth = Math.min(canvas.clientWidth, canvas.clientHeight)
+      break
+    case 'payments':
+      budgetStroke = 4
+      chartSpacing = 0
+      innerChartWidth = 0
+      break
+    default:
+      budgetStroke = 3
+      chartSpacing = 3
+      innerChartWidth = Math.min(canvas.clientWidth, canvas.clientHeight) - budgetStroke * 2 - chartSpacing * 2
+      break
+  }
+
 
   if (expired) {
     // Schools Dial
@@ -148,6 +166,7 @@ const drawChart = (
 interface ContractStatusWidgetProps {
   selected?: boolean
   expired?: boolean
+  showOnly?: string
   average?: number
   good?: number
   payments?: number
@@ -156,6 +175,7 @@ interface ContractStatusWidgetProps {
 const ContractStatusWidget = ({
   selected = false,
   expired = false,
+  showOnly = '',
   average = 0,
   good = 1,
   payments = 2,
@@ -169,10 +189,10 @@ const ContractStatusWidget = ({
       if (ctx) {
         ctx.fillStyle = '#fff'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
-        drawChart(canvas, { selected, expired, average, good, payments })
+        drawChart(canvas, { selected, expired, showOnly, average, good, payments })
       }
     }
-  }, [selected, expired, average, good, payments])
+  }, [selected, expired, showOnly, average, good, payments])
 
   return <canvas width="42" height="42" ref={canvasRef} />
 }
