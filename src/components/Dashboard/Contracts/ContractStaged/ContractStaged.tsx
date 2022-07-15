@@ -25,6 +25,28 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
     }
   }, [id, dispatch])
 
+  const renderIcons = (i: number) => {
+    let icon: string
+    switch (i) {
+      case 1:
+        icon = `icon-plug`
+        break
+      case 2:
+        icon = `icon-meter`
+        break
+      case 3:
+        icon = `icon-down-speed`
+        break
+      case 4:
+        icon = `icon-up-speed`
+        break
+      default:
+        icon = ``
+        break
+    }
+    return icon
+  }
+
   useEffect(() => {
     fetchData()
   }, [fetchData])
@@ -39,14 +61,11 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
             <div className="contract-number">
               <span className="icon icon-32 icon-ongoing icon-lighter-blue"></span>
               <h5>{contractDetails.name}</h5>
-
-              {contractDetails.lta ? (
+              {contractDetails.lta && (
                 <div className="lta-number">
                   <span className="icon icon-24 icon-contract icon-light-grey"></span>
                   <h5>{contractDetails.lta}</h5>
                 </div>
-              ) : (
-                ''
               )}
             </div>
 
@@ -72,35 +91,14 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
 
               <div className="button-info">
                 {contractDetails.connectionsMedian &&
-                  contractDetails.connectionsMedian.map((item, i) => {
-                    let icon
-                    switch (item.metric_id) {
-                      case 1:
-                        icon = <span className={`icon icon-20 icon-plug icon-mid-grey`}></span>
-                        break
-                      case 2:
-                        icon = <span className={`icon icon-20 icon-meter icon-mid-grey`}></span>
-                        break
-                      case 3:
-                        icon = <span className={`icon icon-20 icon-down-speed icon-mid-grey`}></span>
-                        break
-                      case 4:
-                        icon = <span className={`icon icon-20 icon-up-speed icon-mid-grey`}></span>
-                        break
-
-                      default:
-                        break
-                    }
-
-                    return (
-                      <div key={i} className="button-metric">
-                        {icon}
-                        <small>
-                          <b style={{ textTransform: 'none' }}>{item.median_value + item.unit}</b>
-                        </small>
-                      </div>
-                    )
-                  })}
+                  contractDetails.connectionsMedian.map((item, i) => (
+                    <div key={i} className="button-metric">
+                      <span className={`icon icon-20 ${renderIcons(item.metric_id)} icon-mid-grey`}></span>
+                      <small>
+                        <b style={{ textTransform: 'none' }}>{item.median_value + item.unit}</b>
+                      </small>
+                    </div>
+                  ))}
               </div>
 
               <div className="button-chart">
