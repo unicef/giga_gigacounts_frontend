@@ -6,7 +6,7 @@ const ContractGuide: React.FC = (): JSX.Element => {
   const history = useHistory()
   let { url } = useRouteMatch()
 
-  const createDraft = () => history.push(`${url}/create`)
+  const createDraft = () => history.push(`${url}/contract`)
 
   return (
     <ContractGuideContainer>

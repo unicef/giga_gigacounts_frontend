@@ -25,7 +25,7 @@ const ContractItem: React.FC<ContractItemProps> = ({ contract, state, dispatch }
     if (ctr && ctr.status !== ContractStatus.Draft) {
       history.push(`${path}/contract/${ctr?.id}`)
     } else {
-      history.push(`${path}/create`)
+      history.push(`${path}/contract`)
     }
   }
 
