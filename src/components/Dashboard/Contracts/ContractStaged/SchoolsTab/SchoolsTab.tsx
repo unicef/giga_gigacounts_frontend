@@ -17,7 +17,7 @@ const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }): JSX.El
             </small>
             <small className="school-id">{school.id}</small>
             <small className="school-city">La Ceiba</small>
-            <small className="school-region">{school.locations}</small>
+            <small className="school-region ellipsis">{school.locations}</small>
             <span className="icon icon-18 icon-plug icon-green"></span>
           </div>
         ))}

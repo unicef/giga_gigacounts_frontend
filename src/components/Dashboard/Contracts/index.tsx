@@ -13,7 +13,9 @@ import CreateContract from './CreateContract'
 
 import { ContractsMenu } from './styles'
 import { ActionType, reducer, state } from './store/redux'
-import ContractStaged from './ContractStaged/ContractStaged'
+import ContractStaged from './ContractStaged'
+import { ContractStatus } from './@types/ContractType'
+import ContractPending from './ContractPending/ContractPending'
 
 interface ContractsProps {}
 
@@ -53,11 +55,17 @@ const Contracts: React.FC<ContractsProps> = (): JSX.Element => {
         <Route path={`${path}`} exact>
           <ContractGuide />
         </Route>
-        <Route path={`${path}/create`} exact>
+        <Route path={`${path}/contract`} exact>
           <CreateContract />
         </Route>
         <Route path={`${path}/contract/:id`} exact>
-          <ContractStaged state={localState} dispatch={dispatch} />
+          {localState.selectedContract &&
+          (localState.selectedContract.status === ContractStatus.Sent ||
+            localState.selectedContract.status === ContractStatus.Confirmed) ? (
+            <ContractPending />
+          ) : (
+            <ContractStaged state={localState} dispatch={dispatch} />
+          )}
         </Route>
       </Switch>
     </>
