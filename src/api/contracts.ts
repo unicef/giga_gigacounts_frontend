@@ -35,3 +35,9 @@ export const getContractDetails = async (contractId: string) => {
   if (response.status === 200) return response.data
   throw new Error('Failed to get the contract details')
 }
+
+export const getContractSchools = async (contractId: string) => {
+  const response = await instance.get(`/contract/schools/${contractId}`)
+  if (response.status === 200) return response.data
+  throw new Error('Failed to get the contract schools')
+}

@@ -71,6 +71,21 @@ export interface IContractDetails {
   connectionsMedian: IConnectionMedian[]
 }
 
+export interface IContractSchoolsConnection {
+  value: number
+  downloadSpeed: number
+  uploadSpeed: number
+  uptime: number
+  latency: number
+}
+
+export interface IContractSchools {
+  id: string
+  name: string
+  locations: string
+  connection: IContractSchoolsConnection
+}
+
 export enum ContractStatus {
   Draft = 'Draft',
   Sent = 'Sent',
