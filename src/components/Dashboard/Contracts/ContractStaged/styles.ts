@@ -18,6 +18,7 @@ export const ContractStagedHeader = styled.div`
   border-bottom: 1px solid var(--color-light-grey);
 
   .title {
+    position: relative;
     width: 100%;
     display: flex;
     align-items: center;
@@ -53,17 +54,37 @@ export const ContractStagedHeader = styled.div`
     color: var(--color-darkest-grey);
     white-space: nowrap;
     text-decoration: none;
-
-    &.attachments-button {
-      border: none;
-      cursor: pointer;
-    }
-
-    .attachments {
-      text-decoration: underline;
-      text-transform: capitalize;
-    }
   }
+
+  .attachments-dropdown {
+    position: absolute;
+    right: 100px;
+    top: 40px;
+    min-width: 290px;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 16px;
+    background-color: var(--color-white);
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 14px 20px rgba(0, 0, 0, 0.1);
+    }
+
+  .attachments-dropdown > a {
+    display: grid;
+    grid-template-columns: min-content max-content auto;
+    align-items: center;
+    gap: 16px;
+
+  }
+
+  .attachments-button {
+    border: none;
+    cursor: pointer;
+    height: 32px;
+    padding: 4px 8px 4px 4px;
+  }
+
 
   .info {
     width: 100%;

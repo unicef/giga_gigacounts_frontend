@@ -4,6 +4,7 @@ import { getContractDetails } from 'src/api/contracts'
 import ContractStatusWidget from 'src/components/common/ContractStatusWidget'
 import { ActionType, State, Action } from '../store/redux'
 import { ContractStagedContainer, ContractStagedHeader } from './styles'
+import SchoolsTab from './SchoolsTab/SchoolsTab'
 
 interface IContractDetailsProps {
   state: State
@@ -77,11 +78,14 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
               <span className="icon icon-24 icon-files icon-mid-grey"></span>
               <p className="attachments">Attachments</p>
             </button>
+
             {state.isAttachmentSelected && (
-              <div
-                style={{ position: 'absolute', right: 100, top: 80, backgroundColor: 'white', width: 300, height: 300 }}
-              >
-                <p>Atattachments</p>
+              <div className='attachments-dropdown'>
+                <a download>
+                  <span className='icon icon-24 icon-file icon-light-blue'></span>
+                  <small><b>PDF</b></small>
+                  <p className='.ellipsis'>Document title</p>
+                </a>
               </div>
             )}
 
@@ -165,6 +169,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
           </div>
         </ContractStagedHeader>
       )}
+      <SchoolsTab />
     </ContractStagedContainer>
   )
 }
