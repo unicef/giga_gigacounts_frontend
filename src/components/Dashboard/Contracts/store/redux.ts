@@ -1,4 +1,4 @@
-import { IContractDetails, IContracts, ILtas } from '../@types/ContractType'
+import { IContractDetails, IContracts, IContractSchools, ILtas } from '../@types/ContractType'
 
 export enum ActionType {
   RESPONSE = 'RESPONSE',
@@ -7,6 +7,7 @@ export enum ActionType {
   SET_ERROR = 'SET_ERROR',
   SET_LTA_NUMBERS = 'SET_LTA_NUMBER',
   SET_SELECTED_CONTRACT = 'SET_SELECTED_CONTRACT',
+  SET_CONTRACT_DETAILS_SCHOOLS = 'SET_CONTRACT_DETAILS_SCHOOLS',
   SET_CONTRACT_DETAILS = 'SET_CONTRACT_DETAILS',
   SET_ATTACHMENT_SELECTED = 'SET_ATTACHMENT_SELECTED',
 }
@@ -26,6 +27,7 @@ export interface State {
   ltaNumbers: string[]
   isSelected?: boolean
   contractDetails: IContractDetails
+  contractSchools: IContractSchools[]
   isAttachmentSelected: boolean
 }
 
@@ -61,6 +63,15 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         ltaNumbers: payload,
+      }
+    }
+
+    case ActionType.SET_CONTRACT_DETAILS_SCHOOLS: {
+      const { contractDetails, contractSchools } = payload
+      return {
+        ...state,
+        contractDetails,
+        contractSchools,
       }
     }
 
@@ -154,5 +165,20 @@ export const state: State = {
       },
     ],
   },
+
+  contractSchools: [
+    {
+      id: '0',
+      name: '',
+      locations: '',
+      connection: {
+        value: 0,
+        downloadSpeed: 0,
+        uploadSpeed: 0,
+        uptime: 0,
+        latency: 0,
+      },
+    },
+  ],
   isAttachmentSelected: false,
 }

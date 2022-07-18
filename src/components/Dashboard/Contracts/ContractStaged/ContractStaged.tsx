@@ -1,6 +1,6 @@
 import { useEffect, useCallback, Dispatch } from 'react'
 import { useParams } from 'react-router-dom'
-import { getContractDetails } from 'src/api/contracts'
+import { getContractDetails, getContractSchools } from 'src/api/contracts'
 import ContractStatusWidget from 'src/components/common/ContractStatusWidget'
 import { ActionType, State, Action } from '../store/redux'
 import { ContractStagedContainer, ContractStagedHeader } from './styles'
@@ -14,15 +14,20 @@ interface IContractDetailsProps {
 const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IContractDetailsProps): JSX.Element => {
   let { id } = useParams<{ id: string }>()
 
-  const { contractDetails } = state
-
-  console.log( contractDetails )
+  const { contractDetails, contractSchools, isAttachmentSelected } = state
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await getContractDetails(id)
+      const contractDetails = await getContractDetails(id)
+      const contractSchools = await getContractSchools(id)
 
-      dispatch({ type: ActionType.SET_CONTRACT_DETAILS, payload: response })
+      dispatch({
+        type: ActionType.SET_CONTRACT_DETAILS_SCHOOLS,
+        payload: {
+          contractDetails,
+          contractSchools,
+        },
+      })
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
@@ -79,12 +84,14 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
               <p className="attachments">Attachments</p>
             </button>
 
-            {state.isAttachmentSelected && (
-              <div className='attachments-dropdown'>
-                <a download>
-                  <span className='icon icon-24 icon-file icon-light-blue'></span>
-                  <small><b>PDF</b></small>
-                  <p className='.ellipsis'>Document title</p>
+            {isAttachmentSelected && (
+              <div className="attachments-dropdown">
+                <a href="/" download>
+                  <span className="icon icon-24 icon-file icon-light-blue"></span>
+                  <small>
+                    <b>PDF</b>
+                  </small>
+                  <p className=".ellipsis">Document title</p>
                 </a>
               </div>
             )}
@@ -118,7 +125,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
 
               <div className="button-chart">
                 <ContractStatusWidget
-                  showOnly='schools'
+                  showOnly="schools"
                   average={contractDetails.schoolsConnection.atLeastOneBellowAvg}
                   good={contractDetails.schoolsConnection.allEqualOrAboveAvg}
                   payments={60}
@@ -150,7 +157,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
               </div>
 
               <div className="button-chart">
-                <ContractStatusWidget showOnly='payments' average={10} good={80} payments={60} />
+                <ContractStatusWidget showOnly="payments" average={10} good={80} payments={60} />
               </div>
             </button>
 
@@ -169,7 +176,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
           </div>
         </ContractStagedHeader>
       )}
-      <SchoolsTab />
+      <SchoolsTab contractSchools={contractSchools} />
     </ContractStagedContainer>
   )
 }
