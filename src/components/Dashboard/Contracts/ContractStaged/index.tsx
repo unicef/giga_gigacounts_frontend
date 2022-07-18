@@ -2,6 +2,7 @@ import { useEffect, useCallback, Dispatch } from 'react'
 import { useParams } from 'react-router-dom'
 import { getContractDetails, getContractSchools } from 'src/api/contracts'
 import ContractStatusWidget from 'src/components/common/ContractStatusWidget'
+import File from '../../../common/File/File'
 import { ActionType, State, Action } from '../store/redux'
 import { ContractStagedContainer, ContractStagedHeader } from './styles'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -86,13 +87,9 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
 
             {isAttachmentSelected && (
               <div className="attachments-dropdown">
-                <a href="/" download>
-                  <span className="icon icon-24 icon-file icon-light-blue"></span>
-                  <small>
-                    <b>PDF</b>
-                  </small>
-                  <p className=".ellipsis">Document title</p>
-                </a>
+                <File fileType='Doc' fileName='Document 1' allowDelete={false} />
+                <File fileType='Pdf' fileName='Document 2' allowDelete={false} />
+                <File fileType='xls' fileName='Long Long Long Long Title Document' allowDelete={false} />
               </div>
             )}
 
@@ -158,6 +155,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
 
               <div className="button-chart">
                 <ContractStatusWidget showOnly="payments" average={10} good={80} payments={60} />
+                <span>90%</span>
               </div>
             </button>
 

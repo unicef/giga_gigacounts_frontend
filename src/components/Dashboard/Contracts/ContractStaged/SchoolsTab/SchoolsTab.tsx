@@ -1,4 +1,5 @@
 import { IContractSchools } from '../../@types/ContractType'
+import School from '../../../../common/School/School'
 import { SchoolsTabContainer } from './styles'
 
 interface IContractSchoolProps {
@@ -10,17 +11,15 @@ const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }): JSX.El
     <SchoolsTabContainer>
       {contractSchools &&
         contractSchools.map((school, i) => (
-          <div key={i} className="school">
-            <span className="icon icon-20 icon-school icon-light-grey"></span>
-            <small className="school-name">
-              <b>{school.name}</b>
-            </small>
-            <small className="school-id">{school.id}</small>
-            <small className="school-city">La Ceiba</small>
-            <small className="school-region ellipsis">{school.locations}</small>
-            <span className="icon icon-18 icon-plug icon-green"></span>
-          </div>
+          <School 
+            showIcon = {true}
+            showStatus = {true}
+            schoolName = {school.name}
+            schoolID = {school.id}
+            schoolLocation = {school.locations}
+          />
         ))}
+
     </SchoolsTabContainer>
   )
 }

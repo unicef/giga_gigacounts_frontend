@@ -61,6 +61,7 @@ export const ContractStagedHeader = styled.div`
     right: 100px;
     top: 40px;
     min-width: 290px;
+    max-width: 320px;
     display: flex;
     flex-direction: column;
     padding: 8px 16px;
@@ -130,6 +131,13 @@ export const ContractStagedHeader = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+
+    & > span {
+      width: 100%
+      height: 100%;
+      margin: auto;
+      position: absolute
+    }
   }
 
   .button-metric {

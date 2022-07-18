@@ -5,7 +5,7 @@ import { getContracts } from 'src/api/contracts'
 import { useContractsContext } from '../context/useContractsContext'
 
 import ContractListContent from './ContractListContent/ContractListContent'
-import ContractListHeader from './ContractListHeader/ContractListHeader'
+// import ContractListHeader from './ContractListHeader/ContractListHeader'
 import ContractListFooter from './ContractListFooter/ContractListFooter'
 
 import ContractGuide from './ContractGuide/ContractGuide'
@@ -47,7 +47,7 @@ const Contracts: React.FC<ContractsProps> = (): JSX.Element => {
   return (
     <>
       <ContractsMenu>
-        <ContractListHeader />
+        {/* <ContractListHeader /> */}
         <ContractListContent state={localState} dispatch={dispatch} />
         <ContractListFooter dispatch={dispatch} />
       </ContractsMenu>

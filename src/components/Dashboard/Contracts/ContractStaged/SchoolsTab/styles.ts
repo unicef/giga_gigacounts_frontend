@@ -11,7 +11,6 @@ export const SchoolsTabContainer = styled.div`
         background-color: var(--color-lightest-grey);
     }
 
-
     .school {
         width: 100%;
         display: grid;
