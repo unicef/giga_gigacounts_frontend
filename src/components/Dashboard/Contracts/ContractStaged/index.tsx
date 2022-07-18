@@ -147,7 +147,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
                   <small>
                     <b>/</b>
                   </small>
-                  <small>
+                  <small className='icon-light-blue'>
                     <b>6000000</b>
                   </small>
                 </div>
@@ -155,7 +155,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
 
               <div className="button-chart">
                 <ContractStatusWidget showOnly="payments" average={10} good={80} payments={60} />
-                <span>90%</span>
+                <small><b>60%</b></small>
               </div>
             </button>
 

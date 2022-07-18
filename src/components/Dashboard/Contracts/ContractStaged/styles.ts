@@ -76,7 +76,6 @@ export const ContractStagedHeader = styled.div`
     grid-template-columns: min-content max-content auto;
     align-items: center;
     gap: 16px;
-
   }
 
   .attachments-button {
@@ -86,6 +85,17 @@ export const ContractStagedHeader = styled.div`
     padding: 4px 8px 4px 4px;
   }
 
+  .attachments-button-selected {
+    background-color: var(--color-lighter-blue);
+    color: var(--color-white);
+  }
+
+  .attachments {
+      text-transform: capitalize;
+      color: var(--color-darkest-grey);
+      white-space: nowrap;
+      text-decoration: underline;
+  }
 
   .info {
     width: 100%;
@@ -132,11 +142,12 @@ export const ContractStagedHeader = styled.div`
     align-items: center;
     justify-content: center;
 
-    & > span {
+    & > small {
       width: 100%
       height: 100%;
       margin: auto;
-      position: absolute
+      position: absolute;
+      color: var(--color-blue);
     }
   }
 
