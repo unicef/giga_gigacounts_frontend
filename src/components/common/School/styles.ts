@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 
 export const SchoolContainer = styled.div`
     width: 100%;
-    height: 36px;
+    height: 38px;
     display: flex;
     align-items: center;
     padding: 9px 14px;
