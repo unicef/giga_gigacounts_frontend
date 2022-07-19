@@ -45,7 +45,7 @@ interface DrawChartOptions {
 
 const drawChart = (
   canvas: HTMLCanvasElement,
-  { selected = false, expired = false, showOnly="", average = 0, good = 0, payments = 0 }: DrawChartOptions,
+  { selected = false, expired = false, showOnly = undefined, average = 0, good = 0, payments = 0 }: DrawChartOptions,
 ) => {
   const ctx = canvas.getContext('2d')
   if (ctx === null) {
@@ -80,9 +80,7 @@ const drawChart = (
       budgetStroke = 3
       chartSpacing = 3
       innerChartWidth = Math.min(canvas.clientWidth, canvas.clientHeight) - budgetStroke * 2 - chartSpacing * 2
-      break
   }
-
 
   if (expired) {
     // Schools Dial
@@ -175,7 +173,7 @@ interface ContractStatusWidgetProps {
 const ContractStatusWidget = ({
   selected = false,
   expired = false,
-  showOnly = '',
+  showOnly,
   average = 0,
   good = 1,
   payments = 2,

@@ -2,7 +2,7 @@ import { useEffect, useCallback, Dispatch } from 'react'
 import { useParams } from 'react-router-dom'
 import { getContractDetails, getContractSchools } from 'src/api/contracts'
 import ContractStatusWidget from 'src/components/common/ContractStatusWidget'
-import File from '../../../common/File/File'
+import File from 'src/components/common/File/File'
 import { ActionType, State, Action } from '../store/redux'
 import { ContractStagedContainer, ContractStagedHeader } from './styles'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -87,9 +87,9 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
 
             {isAttachmentSelected && (
               <div className="attachments-dropdown">
-                <File fileType='Doc' fileName='Document 1' allowDelete={false} />
-                <File fileType='Pdf' fileName='Document 2' allowDelete={false} />
-                <File fileType='xls' fileName='Long Long Long Long Title Document' allowDelete={false} />
+                <File fileType="Doc" fileName="Document 1" allowDelete={false} />
+                <File fileType="Pdf" fileName="Document 2" allowDelete={false} />
+                <File fileType="xls" fileName="Long Long Long Long Title Document" allowDelete={false} />
               </div>
             )}
 
@@ -147,7 +147,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
                   <small>
                     <b>/</b>
                   </small>
-                  <small className='icon-light-blue'>
+                  <small className="icon-light-blue">
                     <b>6000000</b>
                   </small>
                 </div>
@@ -155,7 +155,9 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
 
               <div className="button-chart">
                 <ContractStatusWidget showOnly="payments" average={10} good={80} payments={60} />
-                <small><b>60%</b></small>
+                <small>
+                  <b>60%</b>
+                </small>
               </div>
             </button>
 

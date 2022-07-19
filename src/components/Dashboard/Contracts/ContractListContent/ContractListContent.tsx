@@ -15,19 +15,19 @@ interface ContractListProps {
 const ContractListContent: React.FC<ContractListProps> = ({ state, dispatch }: ContractListProps): JSX.Element => {
   const { contracts, ltaNumbers, ltas, loading } = state
 
-  const getLtaNumber = useCallback(() => {
+  const loadLtaNumber = useCallback(() => {
     const arr: string[] = []
     if (ltas !== undefined) {
       for (const lta in ltas) {
         arr.push(lta)
       }
-      dispatch({ type: ActionType.SET_LTA_NUMBERS, payload: arr })
     }
+    dispatch({ type: ActionType.SET_LTA_NUMBERS, payload: arr })
   }, [ltas, dispatch])
 
   useEffect(() => {
-    getLtaNumber()
-  }, [ltas, getLtaNumber])
+    loadLtaNumber()
+  }, [ltas, loadLtaNumber])
 
   return (
     <ContractListContainer>

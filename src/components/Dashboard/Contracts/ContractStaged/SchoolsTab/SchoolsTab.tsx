@@ -1,5 +1,5 @@
+import School from 'src/components/common/School/School'
 import { IContractSchools } from '../../@types/ContractType'
-import School from '../../../../common/School/School'
 import { SchoolsTabContainer } from './styles'
 
 interface IContractSchoolProps {
@@ -11,15 +11,15 @@ const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }): JSX.El
     <SchoolsTabContainer>
       {contractSchools &&
         contractSchools.map((school, i) => (
-          <School 
-            showIcon = {true}
-            showStatus = {true}
-            schoolName = {school.name}
-            schoolID = {school.id}
-            schoolLocation = {school.locations}
+          <School
+            key={i}
+            showIcon
+            showStatus
+            schoolName={school.name}
+            schoolId={school.id}
+            schoolLocation={school.locations}
           />
         ))}
-
     </SchoolsTabContainer>
   )
 }

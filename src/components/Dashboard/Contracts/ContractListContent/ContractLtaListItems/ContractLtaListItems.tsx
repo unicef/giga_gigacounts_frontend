@@ -35,15 +35,15 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, 
   const handleAddLtaContract = () => {
     setLtaData((prevState) => [newContract, ...prevState])
   }
-  const getLtaData = useCallback(() => {
+  const loadLtaData = useCallback(() => {
     if (ltaNumber !== undefined && ltas !== undefined) {
       setLtaData(Object.values(ltas[ltaNumber]))
     }
   }, [ltaNumber, ltas])
 
   useEffect(() => {
-    getLtaData()
-  }, [getLtaData])
+    loadLtaData()
+  }, [loadLtaData])
 
   return (
     <ContractLtaListItemsContainer isExpanded={isExpanded}>

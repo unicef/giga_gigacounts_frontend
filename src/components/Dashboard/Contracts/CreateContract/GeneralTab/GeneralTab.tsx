@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { ChangeEvent, Dispatch, useEffect, useRef, useCallback } from 'react'
 import { createContractDraft } from 'src/api/contracts'
-import File from '../../../../common/File/File'
+import File from 'src/components/common/File/File'
 import { getCountries, getCurrency, getLtas } from 'src/api/createContract'
 import { Action, ActionType, FileUpload, State } from '../store/redux'
 import {
@@ -16,7 +16,7 @@ import {
   UploadFiles,
 } from './styles'
 
-import { useContractsContext } from '../../../context/useContractsContext'
+import { useContractsContext } from 'src/components/Dashboard/context/useContractsContext'
 import { uploadContractFile } from 'src/api/attachments'
 
 interface IGeneralProps {
@@ -221,7 +221,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
           </p>
         </Attachments>
         <UploadFiles>
-          <File/>
+          <File />
           <input ref={inputFileRef} id="fileUpload" type="file" accept="application/pdf" onChange={handleFileEvent} />
           <button className="btn btn-blue" onClick={onInputFiles}>
             Upload Files

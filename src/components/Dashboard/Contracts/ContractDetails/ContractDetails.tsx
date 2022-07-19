@@ -45,8 +45,6 @@ const ContractDetails: React.FC<IContractDetailsProps> = ({ state, dispatch }: I
     fetchData()
   }, [fetchData])
 
-  // console.log(state)
-
   return (
     <ContractDetailsContainer>
       {!contractDetails ? (

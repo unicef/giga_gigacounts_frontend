@@ -1,10 +1,10 @@
 import { Dispatch } from 'react'
+import { useHistory, useRouteMatch } from 'react-router-dom'
+
 import { ContractStatus, IContracts } from '../../../@types/ContractType'
 import { Action, ActionType, State } from '../../../store/redux'
 import ContractSchoolStatus from '../../ContactSchoolStatus/ContractSchoolStatus'
 import ContractDefaultListItem from '../../ContractDefaultListItem/ContractDefaultListItem'
-
-import { useHistory, useRouteMatch } from 'react-router-dom'
 
 interface ContractItemProps {
   state: State
