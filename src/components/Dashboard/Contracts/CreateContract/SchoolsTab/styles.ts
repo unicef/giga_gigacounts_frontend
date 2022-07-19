@@ -155,14 +155,6 @@ export const SchoolSearchInput = styled.input`
   height: 100%;
 `
 
-export const SearchIcon = styled.img`
-  background-image: url(./search.svg);
-  background-repeat: no-repeat;
-  width: 100%;
-  height: 100%;
-  filter: invert(11%) sepia(11%) saturate(0%) hue-rotate(199deg) brightness(95%) contrast(93%);
-`
-
 export const SearchButton = styled.button`
   display: flex;
   flex-direction: row;

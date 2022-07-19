@@ -5,7 +5,6 @@ export enum ActionType {
   GET_USER_PROFILE = 'GET_USER_PROFILE',
   SET_LOADING = 'SET_LOADING',
   SET_ERROR = 'SET_ERROR',
-  DISPLAY_CONTRACT_FORM = 'DISPLAY_CONTRACT_FORM',
 }
 
 export interface Action {
@@ -16,7 +15,6 @@ export interface Action {
 
 export interface State {
   user: IUser
-  displayContractForm: boolean
   contractCounts: IContractCounts
   error?: Error
   loading?: boolean
@@ -66,13 +64,6 @@ export const reducer = (state: State, action: Action): State => {
       }
     }
 
-    case ActionType.DISPLAY_CONTRACT_FORM: {
-      return {
-        ...state,
-        displayContractForm: !state.displayContractForm,
-      }
-    }
-
     case ActionType.SET_ERROR:
       return {
         ...state,
@@ -104,7 +95,7 @@ export const state: State = {
       flagUrl: '',
     },
   },
-  displayContractForm: false,
+
   contractCounts: {
     counts: [],
     totalCount: 0,

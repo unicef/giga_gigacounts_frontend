@@ -1,6 +1,6 @@
 import { MouseEvent, useReducer } from 'react'
 import { updateContractDraft } from 'src/api/contracts'
-import { useContractsContext } from '../context/useContractsContext'
+import { useContractsContext } from 'src/components/Dashboard/context/useContractsContext'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -131,7 +131,7 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
           </FormHeaderMessage>
         </FormHeaderTabs>
       </Header>
-      <TabContent state={localState} dispatch={dispatch} onSaveDraft={onSaveDraft} />
+      <TabContent state={localState} dispatch={dispatch} />
     </CreateContractContainer>
   )
 }

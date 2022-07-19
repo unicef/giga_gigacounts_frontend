@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { ChangeEvent, Dispatch, useEffect, useRef, useCallback } from 'react'
 import { createContractDraft } from 'src/api/contracts'
+import File from 'src/components/common/File/File'
 import { getCountries, getCurrency, getLtas } from 'src/api/createContract'
-import { Action, ActionType, State } from '../store/redux'
+import { Action, ActionType, FileUpload, State } from '../store/redux'
 import {
   AttachmentContainer,
   Attachments,
@@ -15,15 +16,15 @@ import {
   UploadFiles,
 } from './styles'
 
-import { useContractsContext } from '../../context/useContractsContext'
+import { useContractsContext } from 'src/components/Dashboard/context/useContractsContext'
+import { uploadContractFile } from 'src/api/attachments'
 
 interface IGeneralProps {
   state: State
   dispatch: Dispatch<Action>
-  onSaveDraft: () => void
 }
 
-const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): JSX.Element => {
+const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {
   const { countries, currencies, ltas, flag, contractForm } = state
   const inputFileRef = useRef<HTMLInputElement>(null)
 
@@ -101,11 +102,35 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
     dispatch({ type: ActionType.SET_END_DATE, payload: e.target.value })
   }
 
-  const handleFileEvent = (e: ChangeEvent<HTMLInputElement>) => {
-    Array.prototype.slice.call(e.target.files)
-  }
-
   const onInputFiles = () => inputFileRef.current?.click()
+
+  const handleFileEvent = (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const files = e.currentTarget.files
+
+      if (files) {
+        const reader = new FileReader()
+        reader.readAsDataURL(files[0])
+
+        reader.onload = async () => {
+          const fileUpload: FileUpload = {
+            name: files[0].name,
+            typeId: contractForm.id,
+            type: 'draft',
+            file: reader.result,
+          }
+
+          await uploadContractFile(fileUpload)
+        }
+
+        reader.onerror = () => {
+          throw Error("can't read the file")
+        }
+      }
+    } catch (error) {
+      dispatch({ type: ActionType.SET_ERROR, payload: error })
+    }
+  }
 
   useEffect(() => {
     fetchData()
@@ -117,7 +142,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
         <form>
           <Country>
             <div className="input-container dropdown">
-              <img src={`flags/${flag}.svg`} alt={flag} />
+              <img src={`../flags/${flag}.svg`} alt={flag} />
               <select onChange={onCountryChange} value={contractForm.countryId}>
                 {countries?.map((country) => (
                   <option key={country.id} value={country.id}>
@@ -196,14 +221,8 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
           </p>
         </Attachments>
         <UploadFiles>
-          <input
-            ref={inputFileRef}
-            id="fileUpload"
-            type="file"
-            multiple
-            accept="application/pdf"
-            onChange={handleFileEvent}
-          />
+          <File />
+          <input ref={inputFileRef} id="fileUpload" type="file" accept="application/pdf" onChange={handleFileEvent} />
           <button className="btn btn-blue" onClick={onInputFiles}>
             Upload Files
           </button>
