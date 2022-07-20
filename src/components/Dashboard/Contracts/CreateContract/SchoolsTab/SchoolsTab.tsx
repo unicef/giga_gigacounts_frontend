@@ -78,11 +78,11 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
   }, [])
 
   const handleFileData = useCallback(
-    (data: number[], fileInfo?: string) => {
+    (data: string[], fileInfo?: string) => {
       const listOfSchools: { id: number }[] = []
       let notFoundCount = 0
       data.forEach((id) => {
-        const index = state.schools.findIndex((school) => school.external_id === id.toString())
+        const index = state.schools.findIndex((school) => school.external_id === id)
         if (index >= 0) {
           listOfSchools.push({ id: state.schools[index].id })
         } else {
@@ -111,7 +111,14 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
           const wb = XLSX.read(bstr, { type: 'binary' })
           const wsname = wb.SheetNames[0]
           const ws = wb.Sheets[wsname]
-          const data = XLSX.utils.sheet_to_json(ws, { header: 1, blankrows: false, skipHidden: true }) as number[]
+          const data = Object.keys(ws)
+            // eslint-disable-next-line array-callback-return
+            .map((key) => {
+              if (key.includes('A')) {
+                return ws[key].w
+              }
+            })
+            .filter((v) => v) as string[]
           handleFileData(data, fileName)
         }
         reader.readAsBinaryString(file)
