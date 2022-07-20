@@ -50,6 +50,42 @@ export interface IContractDraft {
   updated_at: string
 }
 
+export interface IConnectionMedian {
+  contract_id: string
+  metric_id: number
+  metric_name: string
+  unit: string
+  median_value: number
+}
+
+export interface IContractDetails {
+  id: string
+  name: string
+  isp: string
+  lta: string
+  attachments: []
+  startDate: string
+  endDate: string
+  numberOfSchools: string
+  schoolsConnection: ISchoolsConnections
+  connectionsMedian: IConnectionMedian[]
+}
+
+export interface IContractSchoolsConnection {
+  value: number
+  downloadSpeed: number
+  uploadSpeed: number
+  uptime: number
+  latency: number
+}
+
+export interface IContractSchools {
+  id: string
+  name: string
+  locations: string
+  connection: IContractSchoolsConnection
+}
+
 export enum ContractStatus {
   Draft = 'Draft',
   Sent = 'Sent',

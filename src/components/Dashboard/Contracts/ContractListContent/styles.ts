@@ -5,7 +5,8 @@ export const ContractListContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 58px 14px 58px;
+  padding: 16px 14px 58px;
+  // padding: 58px 14px 58px;
   gap: 8px;
   isolation: isolate;
   height: 100vh;

@@ -1,20 +1,25 @@
 import { useCallback, useEffect, useReducer } from 'react'
+import { Switch, Route, useRouteMatch } from 'react-router-dom'
+
 import { getContracts } from 'src/api/contracts'
+import { useContractsContext } from '../context/useContractsContext'
+
 import ContractListContent from './ContractListContent/ContractListContent'
-import ContractListHeader from './ContractListHeader/ContractListHeader'
 import ContractListFooter from './ContractListFooter/ContractListFooter'
+
+import ContractGuide from './ContractGuide/ContractGuide'
+import CreateContract from './CreateContract'
 
 import { ContractsMenu } from './styles'
 import { ActionType, reducer, state } from './store/redux'
-import { useContractsContext } from '../context/useContractsContext'
+import ContractStaged from './ContractStaged'
+import { ContractStatus } from './@types/ContractType'
+import ContractPending from './ContractPending/ContractPending'
 
-interface ContractsProps {
-  label?: string
-}
-
-const Contracts: React.FC<ContractsProps> = (): JSX.Element => {
+const Contracts: React.FC<{}> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)
   const { loadContracts, setLoadContracts } = useContractsContext()
+  const { path } = useRouteMatch()
 
   const fetchContracts = useCallback(async () => {
     try {
@@ -39,10 +44,26 @@ const Contracts: React.FC<ContractsProps> = (): JSX.Element => {
   return (
     <>
       <ContractsMenu>
-        <ContractListHeader />
         <ContractListContent state={localState} dispatch={dispatch} />
         <ContractListFooter dispatch={dispatch} />
       </ContractsMenu>
+      <Switch>
+        <Route path={`${path}`} exact>
+          <ContractGuide />
+        </Route>
+        <Route path={`${path}/contract`} exact>
+          <CreateContract />
+        </Route>
+        <Route path={`${path}/contract/:id`} exact>
+          {localState.selectedContract &&
+          (localState.selectedContract.status === ContractStatus.Sent ||
+            localState.selectedContract.status === ContractStatus.Confirmed) ? (
+            <ContractPending />
+          ) : (
+            <ContractStaged state={localState} dispatch={dispatch} />
+          )}
+        </Route>
+      </Switch>
     </>
   )
 }

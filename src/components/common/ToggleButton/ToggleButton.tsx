@@ -33,7 +33,7 @@ const ToggleButton = ({
 }: {
   selected: boolean
   option: ToggleButtonOption
-  onSelect: (value: number, metricId: number) => void
+  onSelect: (value: string, metricId: string) => void
 }) => {
   const select = useCallback(() => {
     const newValue = option.value

@@ -1,6 +1,6 @@
 import { MouseEvent, useReducer } from 'react'
 import { updateContractDraft } from 'src/api/contracts'
-import { useContractsContext } from '../context/useContractsContext'
+import { useContractsContext } from 'src/components/Dashboard/context/useContractsContext'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -21,7 +21,7 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)
   const { setLoadContracts } = useContractsContext()
 
-  const { generalTabForm, activeTab, error } = localState
+  const { contractForm, activeTab, error } = localState
 
   const tabsItems: ITabItems[] = [
     {
@@ -53,8 +53,8 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
 
   const onSaveDraft = async () => {
     try {
-      if (generalTabForm.name && generalTabForm.name.length > 0 && generalTabForm.id) {
-        const { name, ...rest } = generalTabForm
+      if (contractForm.name && contractForm.name.length > 0 && contractForm.id) {
+        const { name, ...rest } = contractForm
         const response = await updateContractDraft(rest)
 
         let formatStartDate: string = ''
@@ -94,11 +94,11 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
       <Header>
         <FormHeaderActions>
           <div>
-            <h5>New Contract {generalTabForm.name}</h5>
+            <h5>New Contract {contractForm.name}</h5>
           </div>
           <div>
             <button className="btn-transparent-grey active">Discard</button>
-            {generalTabForm.id && (
+            {contractForm.id && (
               <button className="btn-blue" onClick={onSaveDraft}>
                 Save Draft
               </button>
@@ -131,7 +131,7 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
           </FormHeaderMessage>
         </FormHeaderTabs>
       </Header>
-      <TabContent state={localState} dispatch={dispatch} onSaveDraft={onSaveDraft} />
+      <TabContent state={localState} dispatch={dispatch} />
     </CreateContractContainer>
   )
 }

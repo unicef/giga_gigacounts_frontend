@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { ChangeEvent, Dispatch, useEffect, useRef, useCallback } from 'react'
 import { createContractDraft } from 'src/api/contracts'
+import File from 'src/components/common/File/File'
 import { getCountries, getCurrency, getLtas } from 'src/api/createContract'
-import { Action, ActionType, State } from '../store/redux'
+import { Action, ActionType, FileUpload, State } from '../store/redux'
 import {
   AttachmentContainer,
   Attachments,
@@ -15,16 +16,16 @@ import {
   UploadFiles,
 } from './styles'
 
-import { useContractsContext } from '../../context/useContractsContext'
+import { useContractsContext } from 'src/components/Dashboard/context/useContractsContext'
+import { uploadContractFile } from 'src/api/attachments'
 
 interface IGeneralProps {
   state: State
   dispatch: Dispatch<Action>
-  onSaveDraft: () => void
 }
 
-const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): JSX.Element => {
-  const { countries, currencies, ltas, flag, generalTabForm } = state
+const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {
+  const { countries, currencies, ltas, flag, contractForm } = state
   const inputFileRef = useRef<HTMLInputElement>(null)
 
   const { setLoadContracts } = useContractsContext()
@@ -71,8 +72,8 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
 
   const onContractNameBlur = async () => {
     try {
-      if (generalTabForm.name && generalTabForm.name.length > 0 && !generalTabForm.id) {
-        const response = await createContractDraft(generalTabForm.name)
+      if (contractForm.name && contractForm.name.length > 0 && !contractForm.id) {
+        const response = await createContractDraft(contractForm.name)
         dispatch({ type: ActionType.CREATE_CONTRACT_DRAFT, payload: response })
         setLoadContracts?.(true)
       }
@@ -101,11 +102,35 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
     dispatch({ type: ActionType.SET_END_DATE, payload: e.target.value })
   }
 
-  const handleFileEvent = (e: ChangeEvent<HTMLInputElement>) => {
-    Array.prototype.slice.call(e.target.files)
-  }
-
   const onInputFiles = () => inputFileRef.current?.click()
+
+  const handleFileEvent = (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const files = e.currentTarget.files
+
+      if (files) {
+        const reader = new FileReader()
+        reader.readAsDataURL(files[0])
+
+        reader.onload = async () => {
+          const fileUpload: FileUpload = {
+            name: files[0].name,
+            typeId: contractForm.id,
+            type: 'draft',
+            file: reader.result,
+          }
+
+          await uploadContractFile(fileUpload)
+        }
+
+        reader.onerror = () => {
+          throw Error("can't read the file")
+        }
+      }
+    } catch (error) {
+      dispatch({ type: ActionType.SET_ERROR, payload: error })
+    }
+  }
 
   useEffect(() => {
     fetchData()
@@ -117,8 +142,8 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
         <form>
           <Country>
             <div className="input-container dropdown">
-              <img src={`flags/${flag}.svg`} alt={flag} />
-              <select onChange={onCountryChange} value={generalTabForm.countryId}>
+              <img src={`../flags/${flag}.svg`} alt={flag} />
+              <select onChange={onCountryChange} value={contractForm.countryId}>
                 {countries?.map((country) => (
                   <option key={country.id} value={country.id}>
                     {country.name}
@@ -127,20 +152,20 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
               </select>
             </div>
             <label>
-              <input type="checkbox" checked={generalTabForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
+              <input type="checkbox" checked={contractForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
               On behalf of the government
             </label>
           </Country>
           <input
             type="text"
             // name="contactName"
-            value={generalTabForm.name}
+            value={contractForm.name}
             placeholder="Contract Name"
             onChange={onContractNameChange}
             onBlur={onContractNameBlur}
           />
           <div className="input-container dropdown">
-            <select onChange={onLtaChange} value={generalTabForm.ltaId}>
+            <select onChange={onLtaChange} value={contractForm.ltaId}>
               <option value={undefined} hidden>
                 Part of Long Term Agreement
               </option>
@@ -154,7 +179,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
 
           <div className="input-container">
             <div className="dropdown currency">
-              <select onChange={onCurrencyChange} value={generalTabForm.currencyId}>
+              <select onChange={onCurrencyChange} value={contractForm.currencyId}>
                 {currencies.map((currency) => (
                   <option key={currency.id} value={currency.id}>
                     {currency.name}
@@ -162,7 +187,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
                 ))}
               </select>
             </div>
-            <input type="number" value={generalTabForm.budget} min="0" placeholder="Budget" onChange={onBudgetChange} />
+            <input type="number" value={contractForm.budget} min="0" placeholder="Budget" onChange={onBudgetChange} />
           </div>
           <DateContainer>
             <DateStart>
@@ -172,9 +197,9 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
               </div>
               <input
                 type="date"
-                max={generalTabForm.endDate}
+                max={contractForm.endDate}
                 onChange={onStartDateChange}
-                value={generalTabForm.startDate}
+                value={contractForm.startDate}
               />
             </DateStart>
             <DateEnd>
@@ -182,12 +207,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
                 <span className="icon icon-24 icon-date icon-blue" />
                 <p>Valid through</p>
               </div>
-              <input
-                type="date"
-                min={generalTabForm.startDate}
-                onChange={onEndDateChange}
-                value={generalTabForm.endDate}
-              />
+              <input type="date" min={contractForm.startDate} onChange={onEndDateChange} value={contractForm.endDate} />
             </DateEnd>
           </DateContainer>
         </form>
@@ -201,14 +221,8 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch, onSaveDraft }): 
           </p>
         </Attachments>
         <UploadFiles>
-          <input
-            ref={inputFileRef}
-            id="fileUpload"
-            type="file"
-            multiple
-            accept="application/pdf"
-            onChange={handleFileEvent}
-          />
+          <File />
+          <input ref={inputFileRef} id="fileUpload" type="file" accept="application/pdf" onChange={handleFileEvent} />
           <button className="btn btn-blue" onClick={onInputFiles}>
             Upload Files
           </button>

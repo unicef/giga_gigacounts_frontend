@@ -13,7 +13,6 @@ import {
   SchoolSearchContainer,
   SchoolSearchHeader,
   SchoolSearchInput,
-  SearchIcon,
   SearchButton,
   SchoolsTableContainer,
   UploadError,
@@ -26,6 +25,7 @@ import {
 import SchoolTable from './SchoolTable'
 import { getSchools } from 'src/api/school'
 import icons from 'src/assets/icons'
+import images from 'src/assets/images'
 
 interface ISchoolsProps {
   state: State
@@ -137,7 +137,7 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
             following format:
           </UploadHeaderText>
         </UploadHeader>
-        <SampleTable src="img/sample-table.svg" alt="sample-table" />
+        <SampleTable src={images.sampleTable} alt="sample-table" />
         <UploadButtonContainer>
           {schoolsNotFound > 0 ? (
             <UploadError>
@@ -169,7 +169,7 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
       </UploadContainer>
       <SchoolSearchContainer>
         <SchoolSearchHeader>
-          <SearchIcon src="icons/search.svg" />
+          <span className="icon icon-24 icon-search icon-mid-grey"></span>
           <SchoolSearchInput type="text" name="search-input" placeholder="Search School Name / ID" ref={inputRef} />
           <SearchButton onClick={handleSearch}>Search</SearchButton>
         </SchoolSearchHeader>
@@ -178,7 +178,7 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
             <SchoolTable
               onSelect={handleSchoolSelection}
               schools={filteredSchools}
-              selectedSchools={state.selectedSchools}
+              selectedSchools={state.contractForm.schools.schools}
             />
           ) : null}
         </SchoolsTableContainer>
