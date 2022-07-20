@@ -18,6 +18,7 @@ const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }): JSX.El
             schoolName={school.name}
             schoolId={school.id}
             schoolLocation={school.locations}
+            schoolStatus={school.connection.value}
           />
         ))}
     </SchoolsTabContainer>
