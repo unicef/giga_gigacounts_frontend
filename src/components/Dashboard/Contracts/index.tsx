@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer } from 'react'
-import { Switch, Route, useRouteMatch } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 
 import { getContracts } from 'src/api/contracts'
 import { useContractsContext } from '../context/useContractsContext'
@@ -19,7 +19,6 @@ import ContractPending from './ContractPending/ContractPending'
 const Contracts: React.FC<{}> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)
   const { loadContracts, setLoadContracts } = useContractsContext()
-  const { path } = useRouteMatch()
 
   const fetchContracts = useCallback(async () => {
     try {
@@ -47,14 +46,14 @@ const Contracts: React.FC<{}> = (): JSX.Element => {
         <ContractListContent state={localState} dispatch={dispatch} />
         <ContractListFooter dispatch={dispatch} />
       </ContractsMenu>
-      <Switch>
-        <Route path={`${path}`} exact>
+      <Routes>
+        <Route path="/dashboard">
           <ContractGuide />
         </Route>
-        <Route path={`${path}/contract`} exact>
+        <Route path="/dashboard/contract">
           <CreateContract />
         </Route>
-        <Route path={`${path}/contract/:id`} exact>
+        <Route path="dashboard/contract/:id">
           {localState.selectedContract &&
           (localState.selectedContract.status === ContractStatus.Sent ||
             localState.selectedContract.status === ContractStatus.Confirmed) ? (
@@ -63,7 +62,7 @@ const Contracts: React.FC<{}> = (): JSX.Element => {
             <ContractStaged state={localState} dispatch={dispatch} />
           )}
         </Route>
-      </Switch>
+      </Routes>
     </>
   )
 }

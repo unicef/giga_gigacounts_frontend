@@ -1,5 +1,5 @@
 import { Dispatch } from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { ContractStatus, IContracts } from '../../../@types/ContractType'
 import { Action, ActionType, State } from '../../../store/redux'
@@ -14,8 +14,7 @@ interface ContractItemProps {
 }
 
 const ContractItem: React.FC<ContractItemProps> = ({ contract, state, dispatch }: ContractItemProps): JSX.Element => {
-  const { path } = useRouteMatch()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const { selectedContract } = state
 
@@ -23,9 +22,9 @@ const ContractItem: React.FC<ContractItemProps> = ({ contract, state, dispatch }
     dispatch({ type: ActionType.SET_SELECTED_CONTRACT, payload: ctr })
 
     if (ctr && ctr.status !== ContractStatus.Draft) {
-      history.push(`${path}/contract/${ctr?.id}`)
+      navigate(`/dashboard/contract/${ctr?.id}`)
     } else {
-      history.push(`${path}/contract`)
+      navigate(`/dashboard/contract`)
     }
   }
 

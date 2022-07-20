@@ -3,7 +3,7 @@ import Country from '../Country/Country'
 import { StyledNav, StyledLogo, MenuContainer, StyledDivider } from './styles'
 import { NavItem } from './NavItem/NavItem'
 import { ProfileIcon } from './ProfileIcon/ProfileIcon'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import logos from 'src/assets/logos'
 
@@ -24,7 +24,7 @@ const Navigation: React.FC<CountryProps> = ({
   role,
   contractCounts,
 }: CountryProps): JSX.Element => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const [hovered, setHovered] = useState(true)
   const [allContractsCount, setAllContractCount] = useState(0)
@@ -81,7 +81,7 @@ const Navigation: React.FC<CountryProps> = ({
       <StyledLogo
         src={hovered ? logos.gigaLogoInLine : logos.gigaLogo}
         onClick={() => {
-          history.push('/dashboard')
+          navigate('/dashboard')
         }}
       />
 

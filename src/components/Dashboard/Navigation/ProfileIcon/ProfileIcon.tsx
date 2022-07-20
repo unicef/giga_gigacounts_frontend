@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { UserBlock } from './ProfileIcon.css'
 
 export interface NavItemProps {
@@ -14,11 +14,11 @@ export const ProfileIcon: React.FC<NavItemProps> = ({
   role,
   ...props
 }: NavItemProps): JSX.Element => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const logout = () => {
     localStorage.removeItem('session')
-    history.push('/')
+    navigate('/')
   }
 
   return (

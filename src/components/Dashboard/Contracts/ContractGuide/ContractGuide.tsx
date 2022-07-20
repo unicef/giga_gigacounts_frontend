@@ -1,12 +1,11 @@
 import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } from './styles'
 import ContractStatusWidget from '../../../common/ContractStatusWidget/index'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const ContractGuide: React.FC = (): JSX.Element => {
-  const history = useHistory()
-  let { url } = useRouteMatch()
+  const navigate = useNavigate()
 
-  const createDraft = () => history.push(`${url}/contract`)
+  const createDraft = () => navigate('/dashboard/contract')
 
   return (
     <ContractGuideContainer>
