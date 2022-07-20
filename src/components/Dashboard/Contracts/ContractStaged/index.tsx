@@ -125,7 +125,6 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
                   showOnly="schools"
                   average={contractDetails.schoolsConnection.atLeastOneBellowAvg}
                   good={contractDetails.schoolsConnection.allEqualOrAboveAvg}
-                  payments={60}
                 />
               </div>
             </button>
@@ -133,30 +132,28 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
             <button>
               <div className="button-title">
                 <h5>Payments</h5>
-                <small>
-                  <b>6</b>
-                </small>
+                {/* <small><b>0</b></small> */}
               </div>
 
               <div className="button-info">
                 <div className="button-metric">
                   <span className="icon icon-20 icon-coins icon-mid-grey"></span>
                   <small>
-                    <b>9000000</b>
+                    <b>0</b>
                   </small>
                   <small>
                     <b>/</b>
                   </small>
                   <small className="icon-light-blue">
-                    <b>6000000</b>
+                    <b>0</b>
                   </small>
                 </div>
               </div>
 
               <div className="button-chart">
-                <ContractStatusWidget showOnly="payments" average={10} good={80} payments={60} />
+                <ContractStatusWidget showOnly="payments" payments={0} />
                 <small>
-                  <b>60%</b>
+                  <b>0%</b>
                 </small>
               </div>
             </button>
