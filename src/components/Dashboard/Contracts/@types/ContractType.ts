@@ -82,6 +82,7 @@ export interface IContractSchoolsConnection {
 export interface IContractSchools {
   id: string
   name: string
+  externalId: string
   locations: string
   connection: IContractSchoolsConnection
 }

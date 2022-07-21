@@ -169,6 +169,7 @@ export const state: State = {
     {
       id: '0',
       name: '',
+      externalId: '',
       locations: '',
       connection: {
         value: 0,
