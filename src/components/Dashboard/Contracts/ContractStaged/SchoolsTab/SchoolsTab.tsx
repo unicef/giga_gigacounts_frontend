@@ -16,7 +16,7 @@ const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }): JSX.El
             showIcon
             showStatus
             schoolName={school.name}
-            schoolId={school.id}
+            schoolId={school.externalId}
             schoolLocation={school.locations}
             schoolStatus={school.connection.value}
           />
