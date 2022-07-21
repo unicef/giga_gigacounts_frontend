@@ -18,6 +18,10 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
   const { contractDetails, contractSchools, isAttachmentSelected } = state
 
   const fetchData = useCallback(async () => {
+    if (id === undefined) {
+      return
+    }
+
     try {
       const contractDetails = await getContractDetails(id)
       const contractSchools = await getContractSchools(id)

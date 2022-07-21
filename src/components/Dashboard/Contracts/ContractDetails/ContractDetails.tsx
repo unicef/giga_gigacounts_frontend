@@ -1,5 +1,5 @@
 import { useEffect, useCallback, Dispatch } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { getContractDetails } from 'src/api/contracts'
 import { ActionType, State, Action } from '../store/redux'
 import { ContractDetailsContainer } from './styles'
@@ -11,10 +11,14 @@ interface IContractDetailsProps {
 
 const ContractDetails: React.FC<IContractDetailsProps> = ({ state, dispatch }: IContractDetailsProps): JSX.Element => {
   let { id } = useParams<{ id: string }>()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { contractDetails } = state
 
   const fetchData = useCallback(async () => {
+    if (id === undefined) {
+      return
+    }
+
     try {
       const response = await getContractDetails(id)
 
@@ -54,7 +58,7 @@ const ContractDetails: React.FC<IContractDetailsProps> = ({ state, dispatch }: I
           <h5>Contract Number: {contractDetails.name}</h5>
           <h5>Contract IPS {contractDetails.isp}</h5>
           <h5>Contract Start Date {contractDetails.startDate}</h5>
-          <button type="button" onClick={history.goBack}>
+          <button type="button" onClick={() => navigate(-1)}>
             Go Back
           </button>
         </div>

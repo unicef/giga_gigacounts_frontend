@@ -11,14 +11,12 @@ const NotFound = lazy(() => import('../components/common/NotFound/NotFound'))
 export const routes: Array<RouteProps> = [
   {
     path: DASHBOARD_ROUTE,
-    exact: false,
     isPrivate: false,
     component: Dashboard,
     title: 'Dashboard',
   },
   {
     path: NOT_FOUND_ROUTE,
-    exact: false,
     isPrivate: false,
     component: NotFound,
     title: 'Not Found',
