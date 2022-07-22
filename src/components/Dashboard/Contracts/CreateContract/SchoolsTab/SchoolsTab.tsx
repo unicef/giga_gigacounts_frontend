@@ -7,7 +7,6 @@ import {
   UploadHeader,
   UploadHeaderTitle,
   UploadHeaderText,
-  SampleTable,
   UploadButtonContainer,
   UploadButton,
   SchoolSearchContainer,
@@ -32,7 +31,7 @@ interface ISchoolsProps {
   dispatch: Dispatch<Action>
 }
 
-const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element => {
+const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }: ISchoolsProps): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null)
   const csvReaderRef = useRef<HTMLInputElement>(null)
   const acceptFiles = useMemo(() => ['.csv', '.xls', '.xlsx'], [])
@@ -133,11 +132,11 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }): JSX.Element =
         <UploadHeader>
           <UploadHeaderTitle>Upload Reference File</UploadHeaderTitle>
           <UploadHeaderText>
-            To link schools to the contract faster, you may upload a list of school id's through a file with the
+            To link schools to the contract faster, you may upload a list of school id&apos;s through a file with the
             following format:
           </UploadHeaderText>
         </UploadHeader>
-        <SampleTable src={images.sampleTable} alt="sample-table" />
+        <img src={images.sampleTable} alt="sample-table" />
         <UploadButtonContainer>
           {schoolsNotFound > 0 ? (
             <UploadError>

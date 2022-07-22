@@ -18,7 +18,6 @@ export const ContractGuideContainer = styled.div`
   gap: 54px;
   background: var(--color-white);
   margin: auto;
-  height: 100%;
   width: 60%;
 `
 

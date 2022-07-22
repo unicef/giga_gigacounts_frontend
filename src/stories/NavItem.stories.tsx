@@ -13,7 +13,7 @@ export const Selected = Template.bind({})
 
 Selected.args = {
   label: 'Selected',
-  number: '5',
+  number: 5,
   selected: true,
   collapsed: false,
   icon: 'icon-list',
@@ -24,7 +24,7 @@ export const Default = Template.bind({})
 Default.args = {
   label: 'Unselected',
   collapsed: false,
-  number: '5',
+  number: 5,
   icon: 'icon-list',
 }
 

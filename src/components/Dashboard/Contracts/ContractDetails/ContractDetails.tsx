@@ -1,16 +1,16 @@
 import { useEffect, useCallback, Dispatch } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getContractDetails } from 'src/api/contracts'
-import { ActionType, State, Action } from '../store/redux'
+import { ContractsActionType, ContractsState, ContractsAction } from '../store/redux'
 import { ContractDetailsContainer } from './styles'
 
 interface IContractDetailsProps {
-  state: State
-  dispatch: Dispatch<Action>
+  state: ContractsState
+  dispatch: Dispatch<ContractsAction>
 }
 
 const ContractDetails: React.FC<IContractDetailsProps> = ({ state, dispatch }: IContractDetailsProps): JSX.Element => {
-  let { id } = useParams<{ id: string }>()
+  const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { contractDetails } = state
 
@@ -22,8 +22,8 @@ const ContractDetails: React.FC<IContractDetailsProps> = ({ state, dispatch }: I
     try {
       const response = await getContractDetails(id)
 
-      let formatStartDate: string = ''
-      let formatEndDate: string = ''
+      let formatStartDate = ''
+      let formatEndDate = ''
 
       if (response.startDate.length > 0) {
         formatStartDate = response.startDate.slice(0, 10)
@@ -39,9 +39,9 @@ const ContractDetails: React.FC<IContractDetailsProps> = ({ state, dispatch }: I
         endDate: formatEndDate,
       }
 
-      dispatch({ type: ActionType.SET_CONTRACT_DETAILS, payload: formattedResponse })
+      dispatch({ type: ContractsActionType.SET_CONTRACT_DETAILS, payload: formattedResponse })
     } catch (error) {
-      dispatch({ type: ActionType.SET_ERROR, payload: error })
+      dispatch({ type: ContractsActionType.SET_ERROR, payload: error })
     }
   }, [id, dispatch])
 

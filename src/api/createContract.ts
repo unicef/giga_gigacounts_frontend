@@ -22,37 +22,31 @@ export interface ILtas {
 }
 
 export const getCountries = async (): Promise<ICountries | Error> => {
-  try {
-    const response = await instance.get('/country')
-    if (response.status === 200) {
-      return response.data
-    }
-    throw new Error('Failed to get the contracts')
-  } catch (error: unknown) {
-    throw error
+  const response = await instance.get('/country')
+
+  if (response.status === 200) {
+    return response.data
   }
+
+  throw new Error('Failed to get the contracts')
 }
 
 export const getCurrency = async (): Promise<ICurrency | Error> => {
-  try {
-    const response = await instance.get('/currency')
-    if (response.status === 200) {
-      return response.data
-    }
-    throw new Error('Failed to get the currencies')
-  } catch (error: unknown) {
-    throw error
+  const response = await instance.get('/currency')
+
+  if (response.status === 200) {
+    return response.data
   }
+
+  throw new Error('Failed to get the currencies')
 }
 
 export const getLtas = async (): Promise<ILtas | Error> => {
-  try {
-    const response = await instance.get('/lta')
-    if (response.status === 200) {
-      return response.data
-    }
-    throw new Error('Failed to get the currencies')
-  } catch (error: unknown) {
-    throw error
+  const response = await instance.get('/lta')
+
+  if (response.status === 200) {
+    return response.data
   }
+
+  throw new Error('Failed to get the currencies')
 }

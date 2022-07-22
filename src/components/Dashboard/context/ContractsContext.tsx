@@ -1,22 +1,46 @@
-import React, { useState, createContext, FC } from 'react'
-
-interface ContractsProviderProps {
-  children: React.ReactNode
-}
+import { createContext, FC, useReducer, useCallback, useEffect, useMemo, Dispatch } from 'react'
+import { getContracts } from 'src/api/contracts'
+import { ChildrenProps } from 'src/types/utils'
+import {
+  ContractsActionType,
+  reducer,
+  ContractsState,
+  INITIAL_CONTRACTS_STATE,
+  ContractsAction,
+} from '../Contracts/store/redux'
 
 export interface IContractContext {
-  loadContracts: boolean
-  setLoadContracts?: (val: boolean) => void
+  state: ContractsState
+  dispatch: Dispatch<ContractsAction>
 }
 
-const defaultState = {
-  loadContracts: false,
-}
+export const ContractsContext = createContext<IContractContext>({
+  state: INITIAL_CONTRACTS_STATE,
+  dispatch: () => {
+    throw new Error('Not implemented')
+  },
+})
 
-export const ContractsContext = createContext<IContractContext>(defaultState)
+export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
+  const [localState, dispatch] = useReducer(reducer, INITIAL_CONTRACTS_STATE)
 
-export const ContractsProvider: FC<ContractsProviderProps> = ({ children }: ContractsProviderProps) => {
-  const [loadContracts, setLoadContracts] = useState<boolean>(false)
+  const fetchContracts = useCallback(() => {
+    getContracts()
+      .then((response) => dispatch({ type: ContractsActionType.RESPONSE, payload: response }))
+      .catch((error) => dispatch({ type: ContractsActionType.SET_ERROR, payload: error }))
+  }, [dispatch])
 
-  return <ContractsContext.Provider value={{ loadContracts, setLoadContracts }}>{children}</ContractsContext.Provider>
+  useEffect(() => {
+    fetchContracts()
+  }, [fetchContracts])
+
+  const value = useMemo(
+    () => ({
+      state: localState,
+      dispatch,
+    }),
+    [localState, dispatch],
+  )
+
+  return <ContractsContext.Provider value={value}>{children}</ContractsContext.Provider>
 }

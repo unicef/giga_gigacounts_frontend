@@ -1,6 +1,7 @@
 import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } from './styles'
 import ContractStatusWidget from '../../../common/ContractStatusWidget/index'
 import { useNavigate } from 'react-router-dom'
+import images from 'src/assets/images'
 
 const ContractGuide: React.FC = (): JSX.Element => {
   const navigate = useNavigate()
@@ -75,17 +76,17 @@ const ContractGuide: React.FC = (): JSX.Element => {
       </div>
 
       <div>
-        <img src="img/chart-example.svg" style={{ height: '125px' }} alt="Chart" />
+        <img src={images.chartExample} style={{ height: '125px' }} alt="Chart" />
 
         <h5 style={{ marginTop: '21px' }}>Schools connectivity dial</h5>
 
         <ContractGuideChartItem>
-          <img src="img/schools-green.svg" alt="Connected" />
+          <img src={images.schoolsGreen} alt="Connected" />
           <div className="super-small">Schools that have been connected and meet the expected quality of service.</div>
         </ContractGuideChartItem>
 
         <ContractGuideChartItem>
-          <img src="img/schools-orange.svg" alt="Average" />
+          <img src={images.schoolsOrange} alt="Average" />
           <div className="super-small">
             Schools that have been connected but do not meet the minimum connectivity standards agreed with the
             providers.
@@ -93,14 +94,14 @@ const ContractGuide: React.FC = (): JSX.Element => {
         </ContractGuideChartItem>
 
         <ContractGuideChartItem>
-          <img src="img/schools-red.svg" alt="Poor" />
-          <div className="super-small">Schools that haven't been connected by service provider's yet.</div>
+          <img src={images.schoolsRed} alt="Poor" />
+          <div className="super-small">Schools that haven&apos;t been connected by service provider&apos;s yet.</div>
         </ContractGuideChartItem>
 
         <h5 style={{ marginTop: '21px' }}>Payments Dial</h5>
 
         <ContractGuideChartItem>
-          <img src="img/payments.svg" alt="Payments" />
+          <img src={images.payments} alt="Payments" />
           <div className="super-small">
             Represents the part of the budget that has already been consumed by the payments done to the provider.
           </div>

@@ -1,4 +1,4 @@
-import { IContractCounts, IUser } from 'src/api/dashboard'
+import { ContractCountsResponse, IUser } from 'src/api/dashboard'
 
 export enum ActionType {
   GET_ADMIN_PROFILE = 'GET_ADMIN_PROFILE',
@@ -15,7 +15,7 @@ export interface Action {
 
 export interface State {
   user: IUser
-  contractCounts: IContractCounts
+  contractCounts: ContractCountsResponse
   error?: Error
   loading?: boolean
 }

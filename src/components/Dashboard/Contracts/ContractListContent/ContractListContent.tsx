@@ -1,18 +1,15 @@
-import { Dispatch, useCallback, useEffect } from 'react'
-import { Action, ActionType, State } from '../store/redux'
+import { useCallback, useEffect } from 'react'
+import { ContractsActionType } from '../store/redux'
 
 import ContractLtaListItems from './ContractLtaListItems/ContractLtaListItems'
 import ContractLoader from './ContractLoader/ContractLoader'
 
 import { ContractListContainer } from './styles'
 import ContractItem from './ContractLtaListItems/ContractItem/ContractItem'
+import { useContractsContext } from '../../context/useContractsContext'
 
-interface ContractListProps {
-  state: State
-  dispatch: Dispatch<Action>
-}
-
-const ContractListContent: React.FC<ContractListProps> = ({ state, dispatch }: ContractListProps): JSX.Element => {
+const ContractListContent: React.FC = (): JSX.Element => {
+  const { state, dispatch } = useContractsContext()
   const { contracts, ltaNumbers, ltas, loading } = state
 
   const loadLtaNumber = useCallback(() => {
@@ -22,7 +19,7 @@ const ContractListContent: React.FC<ContractListProps> = ({ state, dispatch }: C
         arr.push(lta)
       }
     }
-    dispatch({ type: ActionType.SET_LTA_NUMBERS, payload: arr })
+    dispatch({ type: ContractsActionType.SET_LTA_NUMBERS, payload: arr })
   }, [ltas, dispatch])
 
   useEffect(() => {

@@ -6,7 +6,7 @@ interface IContractSchoolProps {
   contractSchools: IContractSchools[]
 }
 
-const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }): JSX.Element => {
+const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }: IContractSchoolProps): JSX.Element => {
   return (
     <SchoolsTabContainer>
       {contractSchools &&

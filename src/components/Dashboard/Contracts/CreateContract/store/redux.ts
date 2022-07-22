@@ -136,7 +136,7 @@ export const reducer = (state: State, action: Action): State => {
     }
 
     case ActionType.SET_COUNTRY_CODE: {
-      let flag = state.countries.find((country) => country.id === payload)?.code ?? 'BW'
+      const flag = state.countries.find((country) => country.id === payload)?.code ?? 'BW'
 
       return {
         ...state,
@@ -180,6 +180,7 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.CREATE_CONTRACT_DRAFT: {
       return {
         ...state,
+        loading: true,
         contractForm: {
           ...state.contractForm,
           id: +payload.id,
@@ -191,6 +192,7 @@ export const reducer = (state: State, action: Action): State => {
     case ActionType.UPDATE_CONTRACT_DRAFT: {
       return {
         ...state,
+        loading: true,
         contractForm: {
           ...state.contractForm,
           ...payload,

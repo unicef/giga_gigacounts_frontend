@@ -47,8 +47,6 @@ export const UploadHeaderText = styled.p`
   color: var(--color-darkest-grey);
 `
 
-export const SampleTable = styled.img``
-
 export const UploadButtonContainer = styled.div`
   display: flex;
   flex-direction: column;

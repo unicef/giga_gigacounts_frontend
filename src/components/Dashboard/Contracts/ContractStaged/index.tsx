@@ -3,17 +3,17 @@ import { useParams } from 'react-router-dom'
 import { getContractDetails, getContractSchools } from 'src/api/contracts'
 import ContractStatusWidget from 'src/components/common/ContractStatusWidget'
 import File from 'src/components/common/File/File'
-import { ActionType, State, Action } from '../store/redux'
+import { ContractsActionType, ContractsState, ContractsAction } from '../store/redux'
 import { ContractStagedContainer, ContractStagedHeader } from './styles'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
 
 interface IContractDetailsProps {
-  state: State
-  dispatch: Dispatch<Action>
+  state: ContractsState
+  dispatch: Dispatch<ContractsAction>
 }
 
 const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IContractDetailsProps): JSX.Element => {
-  let { id } = useParams<{ id: string }>()
+  const { id } = useParams<{ id: string }>()
 
   const { contractDetails, contractSchools, isAttachmentSelected } = state
 
@@ -27,14 +27,14 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
       const contractSchools = await getContractSchools(id)
 
       dispatch({
-        type: ActionType.SET_CONTRACT_DETAILS_SCHOOLS,
+        type: ContractsActionType.SET_CONTRACT_DETAILS_SCHOOLS,
         payload: {
           contractDetails,
           contractSchools,
         },
       })
     } catch (error) {
-      dispatch({ type: ActionType.SET_ERROR, payload: error })
+      dispatch({ type: ContractsActionType.SET_ERROR, payload: error })
     }
   }, [id, dispatch])
 
@@ -60,7 +60,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ state, dispatch }: IC
     return icon
   }
 
-  const onAttachmentSelect = () => dispatch({ type: ActionType.SET_ATTACHMENT_SELECTED })
+  const onAttachmentSelect = () => dispatch({ type: ContractsActionType.SET_ATTACHMENT_SELECTED })
 
   useEffect(() => {
     fetchData()

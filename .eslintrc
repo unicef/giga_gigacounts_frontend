@@ -1,12 +1,17 @@
 {
   "root": true,
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["prettier"],
   "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
     "prettier",
-    "react-app"
+    "react-app",
+    "plugin:import/errors",
+    "plugin:import/warnings"
   ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["react", "react-hooks", "prettier", "eslint-plugin-import"],
   "rules": {
+    "react/react-in-jsx-scope": "off",
     "no-console": 1, // Remember, this means warning!
     "semi": ["warn", "never"],
     "@typescript-eslint/semi": ["warn", "never"],
@@ -20,6 +25,15 @@
           }
         ]
       }
-    ]
+    ],
+    "react/jsx-pascal-case": "off",
+    "react/require-default-props": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {} 
+    }
   }
 }

@@ -9,7 +9,7 @@ interface SchoolProps {
   showStatus?: boolean
 }
 
-const colorIcons = ( value: number) => {
+const colorIcons = (value: number) => {
   let style: string
   switch (true) {
     case value >= 90:
@@ -34,8 +34,8 @@ const School: React.FC<SchoolProps> = ({
   schoolLocation = 'Location',
   showIcon = false,
   showStatus = false,
-  schoolStatus = 0
-}): JSX.Element => {
+  schoolStatus = 0,
+}: SchoolProps): JSX.Element => {
   return (
     <SchoolContainer>
       <div className="school-name">

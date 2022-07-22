@@ -5,7 +5,7 @@ export interface NavItemProps {
   label: string
   onClick?: () => void
   icon?: string
-  number?: string
+  number?: number
   selected?: boolean
 }
 

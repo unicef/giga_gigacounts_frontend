@@ -1,12 +1,12 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react'
-import Navigation, { CountryProps } from '../components/Dashboard/Navigation/Navigation'
+import Navigation from '../components/Dashboard/Navigation/Navigation'
 
 export default {
   title: 'Example/Navigation',
   component: Navigation,
 } as ComponentMeta<typeof Navigation>
 
-const Template: ComponentStory<typeof Navigation> = (args: CountryProps) => <Navigation {...args} />
+const Template: ComponentStory<typeof Navigation> = () => <Navigation />
 
 export const Default = Template.bind({})
 

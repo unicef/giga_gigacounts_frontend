@@ -16,7 +16,6 @@ import {
   UploadFiles,
 } from './styles'
 
-import { useContractsContext } from 'src/components/Dashboard/context/useContractsContext'
 import { uploadContractFile } from 'src/api/attachments'
 
 interface IGeneralProps {
@@ -24,11 +23,9 @@ interface IGeneralProps {
   dispatch: Dispatch<Action>
 }
 
-const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element => {
+const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps): JSX.Element => {
   const { countries, currencies, ltas, flag, contractForm } = state
   const inputFileRef = useRef<HTMLInputElement>(null)
-
-  const { setLoadContracts } = useContractsContext()
 
   const fetchData = useCallback(async () => {
     try {
@@ -75,7 +72,6 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }): JSX.Element =
       if (contractForm.name && contractForm.name.length > 0 && !contractForm.id) {
         const response = await createContractDraft(contractForm.name)
         dispatch({ type: ActionType.CREATE_CONTRACT_DRAFT, payload: response })
-        setLoadContracts?.(true)
       }
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })

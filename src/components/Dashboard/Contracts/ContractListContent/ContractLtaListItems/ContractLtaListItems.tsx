@@ -1,6 +1,6 @@
 import { Dispatch, useCallback, useEffect, useState } from 'react'
 import { IContracts } from 'src/components/Dashboard/Contracts/@types/ContractType'
-import { Action, State } from 'src/components/Dashboard/Contracts/store/redux'
+import { ContractsAction, ContractsState } from 'src/components/Dashboard/Contracts/store/redux'
 import ContractItem from './ContractItem/ContractItem'
 import {
   ContractLtaFooter,
@@ -14,11 +14,15 @@ import {
 
 interface IContractListProps {
   ltaNumber: string
-  state: State
-  dispatch: Dispatch<Action>
+  state: ContractsState
+  dispatch: Dispatch<ContractsAction>
 }
 
-const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, state, dispatch }): JSX.Element => {
+const ContractLtaListItems: React.FC<IContractListProps> = ({
+  ltaNumber,
+  state,
+  dispatch,
+}: IContractListProps): JSX.Element => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [ltaData, setLtaData] = useState<IContracts[]>([])
 

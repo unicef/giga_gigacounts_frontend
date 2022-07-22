@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import web3 from 'web3'
 import instance from 'src/api/init'
 
@@ -16,13 +15,16 @@ import {
   ErrorTitle,
   ErrorDescription,
 } from './LoginForm.css'
+import { useGeneralContext } from 'src/state/GeneralContext'
 
 const EMPTY_EMAIL_MESSAGE = 'The field can not be empty'
 const WRONG_CREDENTIALS_TITLE = 'Invalid Credentials'
 const WRONG_CREDENTIALS_DESCRIPTION = 'Please contact giga administrator for assistance'
 
 export const LoginForm: React.FC = (): JSX.Element => {
-  const navigate = useNavigate()
+  const {
+    actions: { reload },
+  } = useGeneralContext()
 
   const [emailError, setEmailError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
@@ -50,7 +52,8 @@ export const LoginForm: React.FC = (): JSX.Element => {
         })
 
         localStorage.setItem('session', res.data.token)
-        navigate('/dashboard')
+
+        await reload()
       } catch (err) {
         setWrongCredentialsError(true)
       }

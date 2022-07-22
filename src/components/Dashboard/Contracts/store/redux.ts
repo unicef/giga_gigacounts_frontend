@@ -1,6 +1,6 @@
 import { IContractDetails, IContracts, IContractSchools, ILtas } from '../@types/ContractType'
 
-export enum ActionType {
+export enum ContractsActionType {
   RESPONSE = 'RESPONSE',
   CREATE_CONTRACT = 'CREATE_CONTRACT',
   SET_LOADING = 'SET_LOADING',
@@ -12,13 +12,13 @@ export enum ActionType {
   SET_ATTACHMENT_SELECTED = 'SET_ATTACHMENT_SELECTED',
 }
 
-export interface Action {
-  type: ActionType
+export interface ContractsAction {
+  type: ContractsActionType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any
 }
 
-export interface State {
+export interface ContractsState {
   selectedContract?: IContracts
   contracts?: IContracts[]
   ltas?: ILtas
@@ -31,11 +31,11 @@ export interface State {
   isAttachmentSelected: boolean
 }
 
-export const reducer = (state: State, action: Action): State => {
+export const reducer = (state: ContractsState, action: ContractsAction): ContractsState => {
   const { type, payload } = action
 
   switch (type) {
-    case ActionType.RESPONSE:
+    case ContractsActionType.RESPONSE:
       return {
         ...state,
         contracts: payload.contracts,
@@ -43,14 +43,14 @@ export const reducer = (state: State, action: Action): State => {
         loading: false,
       }
 
-    case ActionType.CREATE_CONTRACT: {
+    case ContractsActionType.CREATE_CONTRACT: {
       return {
         ...state,
         contracts: [payload, ...(state.contracts || [])],
       }
     }
 
-    case ActionType.SET_SELECTED_CONTRACT: {
+    case ContractsActionType.SET_SELECTED_CONTRACT: {
       return {
         ...state,
         selectedContract: payload,
@@ -58,14 +58,14 @@ export const reducer = (state: State, action: Action): State => {
       }
     }
 
-    case ActionType.SET_LTA_NUMBERS: {
+    case ContractsActionType.SET_LTA_NUMBERS: {
       return {
         ...state,
         ltaNumbers: payload,
       }
     }
 
-    case ActionType.SET_CONTRACT_DETAILS_SCHOOLS: {
+    case ContractsActionType.SET_CONTRACT_DETAILS_SCHOOLS: {
       const { contractDetails, contractSchools } = payload
       return {
         ...state,
@@ -74,27 +74,27 @@ export const reducer = (state: State, action: Action): State => {
       }
     }
 
-    case ActionType.SET_CONTRACT_DETAILS: {
+    case ContractsActionType.SET_CONTRACT_DETAILS: {
       return {
         ...state,
         contractDetails: { ...payload },
       }
     }
 
-    case ActionType.SET_ATTACHMENT_SELECTED: {
+    case ContractsActionType.SET_ATTACHMENT_SELECTED: {
       return {
         ...state,
         isAttachmentSelected: !state.isAttachmentSelected,
       }
     }
 
-    case ActionType.SET_ERROR:
+    case ContractsActionType.SET_ERROR:
       return {
         ...state,
         error: payload,
       }
 
-    case ActionType.SET_LOADING:
+    case ContractsActionType.SET_LOADING:
       return {
         ...state,
         loading: !state.loading,
@@ -107,7 +107,7 @@ export const reducer = (state: State, action: Action): State => {
   }
 }
 
-export const state: State = {
+export const INITIAL_CONTRACTS_STATE: ContractsState = {
   contracts: [],
   ltas: {},
   error: undefined,

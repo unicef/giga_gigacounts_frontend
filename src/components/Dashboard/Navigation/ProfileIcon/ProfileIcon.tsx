@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router-dom'
+import { useCallback } from 'react'
+import { useGeneralContext } from 'src/state/GeneralContext'
 import { UserBlock } from './ProfileIcon.css'
 
 export interface NavItemProps {
@@ -14,12 +15,14 @@ export const ProfileIcon: React.FC<NavItemProps> = ({
   role,
   ...props
 }: NavItemProps): JSX.Element => {
-  const navigate = useNavigate()
+  const {
+    actions: { reset },
+  } = useGeneralContext()
 
-  const logout = () => {
+  const logout = useCallback(async () => {
     localStorage.removeItem('session')
-    navigate('/')
-  }
+    await reset()
+  }, [reset])
 
   return (
     <UserBlock className="noselect" style={collapsed ? { paddingLeft: '10px' } : {}} {...props}>

@@ -1,19 +1,17 @@
-import { Dispatch } from 'react'
-import { Action, ActionType } from '../store/redux'
+import { useContractsContext } from '../../context/useContractsContext'
+import { ContractsActionType } from '../store/redux'
 import { ContractListFooterContainer } from './styles'
 
-interface IFooterProps {
-  dispatch: Dispatch<Action>
-}
+const ContractListFooter: React.FC = (): JSX.Element => {
+  const { dispatch } = useContractsContext()
 
-const ContractListFooter: React.FC<IFooterProps> = ({ dispatch }): JSX.Element => {
   const newContract = {
     name: 'New Contract',
     status: 'Draft',
     added: true,
   }
 
-  const handleAddContract = () => dispatch({ type: ActionType.CREATE_CONTRACT, payload: newContract })
+  const handleAddContract = () => dispatch({ type: ContractsActionType.CREATE_CONTRACT, payload: newContract })
 
   return (
     <ContractListFooterContainer>

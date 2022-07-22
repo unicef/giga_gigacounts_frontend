@@ -2,15 +2,15 @@ import { Dispatch } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { ContractStatus, IContracts } from '../../../@types/ContractType'
-import { Action, ActionType, State } from '../../../store/redux'
+import { ContractsAction, ContractsActionType, ContractsState } from '../../../store/redux'
 import ContractSchoolStatus from '../../ContactSchoolStatus/ContractSchoolStatus'
 import ContractDefaultListItem from '../../ContractDefaultListItem/ContractDefaultListItem'
 
 interface ContractItemProps {
-  state: State
+  state: ContractsState
   contract: IContracts
 
-  dispatch: Dispatch<Action>
+  dispatch: Dispatch<ContractsAction>
 }
 
 const ContractItem: React.FC<ContractItemProps> = ({ contract, state, dispatch }: ContractItemProps): JSX.Element => {
@@ -19,7 +19,7 @@ const ContractItem: React.FC<ContractItemProps> = ({ contract, state, dispatch }
   const { selectedContract } = state
 
   const handleSelected = (ctr: IContracts) => {
-    dispatch({ type: ActionType.SET_SELECTED_CONTRACT, payload: ctr })
+    dispatch({ type: ContractsActionType.SET_SELECTED_CONTRACT, payload: ctr })
 
     if (ctr && ctr.status !== ContractStatus.Draft) {
       navigate(`/dashboard/contract/${ctr?.id}`)

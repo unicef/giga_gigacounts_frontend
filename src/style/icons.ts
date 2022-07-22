@@ -1,4 +1,4 @@
-import iconsCore from '../assets/icons'
+import iconsCore from 'src/assets/icons'
 
 const icons = { ...iconsCore }
 

@@ -1,6 +1,5 @@
 import { MouseEvent, useReducer } from 'react'
 import { updateContractDraft } from 'src/api/contracts'
-import { useContractsContext } from 'src/components/Dashboard/context/useContractsContext'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -19,7 +18,6 @@ const tabs = {
 
 const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
   const [localState, dispatch] = useReducer(reducer, state)
-  const { setLoadContracts } = useContractsContext()
 
   const { contractForm, activeTab, error } = localState
 
@@ -54,11 +52,10 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
   const onSaveDraft = async () => {
     try {
       if (contractForm.name && contractForm.name.length > 0 && contractForm.id) {
-        const { name, ...rest } = contractForm
-        const response = await updateContractDraft(rest)
+        const response = await updateContractDraft(contractForm)
 
-        let formatStartDate: string = ''
-        let formatEndDate: string = ''
+        let formatStartDate = ''
+        let formatEndDate = ''
 
         if (response?.start_date?.length > 0) {
           formatStartDate = response.start_date.slice(0, 10)
@@ -80,7 +77,6 @@ const CreateContract: React.FC<ICreateContractsProps> = (): JSX.Element => {
         }
 
         dispatch({ type: ActionType.UPDATE_CONTRACT_DRAFT, payload: formattedResponse })
-        setLoadContracts?.(true)
       }
     } catch (error) {
       dispatch({ type: ActionType.SET_ERROR, payload: error })

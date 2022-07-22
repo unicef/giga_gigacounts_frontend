@@ -25,7 +25,7 @@ interface IConnectionProps {
   dispatch: Dispatch<Action>
 }
 
-const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }): JSX.Element => {
+const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }: IConnectionProps): JSX.Element => {
   const { contractForm } = state
 
   const fetchData = useCallback(async () => {
