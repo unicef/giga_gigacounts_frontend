@@ -73,6 +73,22 @@
   font-size: 42px;
 }
 
+.icon-44 {
+  font-size: 44px;
+}
+
+.icon-48 {
+  font-size: 48px;
+}
+
+.icon-50 {
+  font-size: 50px;
+}
+
+.icon-60 {
+  font-size: 60px;
+}
+
 /*  Icon Colors ------------------- */
 
 .icon-darkest-blue {
@@ -351,10 +367,6 @@
 
 .icon-arrow-down::before {
   content: '\ea28';
-}
-
-.icon-28 {
-  font-size: 28px;
 }
 
 /*  Icon Colors  */

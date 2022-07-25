@@ -294,6 +294,7 @@ button {
   padding: 0 16px;
   border: none;
   border-radius: 2px;
+  cursor: pointer;
 }
 
 input[type='submit']:disabled button:disabled {
