@@ -64,7 +64,7 @@ const ContractGuide: React.FC = (): JSX.Element => {
 
         <ContractGuideItem>
           <span>
-            <ContractStatusWidget average={10} good={80} expired payments={60} />
+            <ContractStatusWidget average={10} good={80} payments={60} />
           </span>
           <p>
             <b>Expired</b>

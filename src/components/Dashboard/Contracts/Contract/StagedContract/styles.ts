@@ -51,7 +51,6 @@ export const ContractStagedHeader = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--color-darkest-grey);
     white-space: nowrap;
     text-decoration: none;
   }
@@ -83,6 +82,7 @@ export const ContractStagedHeader = styled.div`
     cursor: pointer;
     height: 32px;
     padding: 4px 8px 4px 4px;
+    background-color: var(--color-white);
   }
 
   .attachments-button-selected {
@@ -105,7 +105,7 @@ export const ContractStagedHeader = styled.div`
     gap: 16px;
   }
 
-  button {
+  .widget {
     height: auto;
     display: grid;
     grid-template-columns: auto min-content;
@@ -121,7 +121,7 @@ export const ContractStagedHeader = styled.div`
     cursor: pointer;
   }
 
-  .button-title {
+  .widget-title {
     grid-area: title;
     display: flex;
     align-items: center;
@@ -129,14 +129,14 @@ export const ContractStagedHeader = styled.div`
     color: var(--color-mid-grey);
   }
 
-  .button-info {
+  .widget-info {
     grid-area: info;
     display: flex;
     align-items: center;
     gap: 12px;
   }
 
-  .button-chart {
+  .widget-chart {
     grid-area: chart;
     display: flex;
     align-items: center;
@@ -151,7 +151,7 @@ export const ContractStagedHeader = styled.div`
     }
   }
 
-  .button-metric {
+  .widget-metric {
     display: flex;
     align-items: center;
     gap: 4px;
