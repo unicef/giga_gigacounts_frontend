@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 
-export const StyledBlock = styled.div`
+export const StyledBlock = styled.div<{ collapsed: boolean }>`
   h5 {
     color: var(--color-white);
   }
@@ -13,6 +13,8 @@ export const StyledBlock = styled.div`
   order: 0;
   align-self: stretch;
   flex-grow: 0;
+  ${(props) =>
+    props.collapsed ? { justifyContent: 'center', width: '58px', height: '24px' } : { width: '174px', height: '24px' }}
 `
 
 export const StyledImg = styled.img`

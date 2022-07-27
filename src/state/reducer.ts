@@ -20,7 +20,7 @@ export const reducer = (state: GeneralState, action: Action): GeneralState => {
     }
 
     case UPDATE_CONTRACT_COUNTS: {
-      const { contractCounts, error } = payload
+      const { contractCounts, contractCountsTotal, error } = payload
 
       const counts =
         contractCounts === undefined
@@ -41,10 +41,15 @@ export const reducer = (state: GeneralState, action: Action): GeneralState => {
               } as ContractCounts,
             ) ?? state.contractCounts.data
 
+      const countsAndTotal = {
+        ...counts,
+        total: contractCountsTotal,
+      }
+
       return {
         ...state,
         contractCounts: {
-          data: counts,
+          data: countsAndTotal,
           error,
           loading: false,
         },

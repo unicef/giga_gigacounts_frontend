@@ -6,9 +6,14 @@ import {
   IContractSchools,
 } from '../components/Dashboard/Contracts/@types/ContractType'
 import { ContractForm } from 'src/components/Dashboard/Contracts/CreateContract/store/redux'
+import { contractStatusToId } from 'src/utils/contractStatusToId'
 
-export const getContracts = async (): Promise<IContractsData | Error> => {
-  const response = await instance.get('/contract')
+export const getContracts = async (status?: string | (string | null)[] | null): Promise<IContractsData | Error> => {
+  const response = await instance.get('/contract', {
+    params: {
+      status: contractStatusToId(status),
+    },
+  })
   if (response.status === 200) return response.data
   throw new Error('Failed to get the contracts')
 }

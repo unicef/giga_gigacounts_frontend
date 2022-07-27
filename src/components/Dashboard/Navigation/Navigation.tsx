@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Country from '../Country/Country'
-import { StyledNav, StyledLogo, MenuContainer, StyledDivider } from './styles'
 import { NavItem } from './NavItem/NavItem'
 import { ProfileIcon } from './ProfileIcon/ProfileIcon'
 import { useNavigate } from 'react-router-dom'
@@ -8,37 +7,47 @@ import { useNavigate } from 'react-router-dom'
 import logos from 'src/assets/logos'
 import { useUser, useContractCounts } from 'src/state/hooks'
 import { ADMIN_ROLE } from 'src/consts/roles'
+import { StyledNav, StyledLogo, MenuContainer, StyledDivider } from './styles'
+import { useContractsContext } from '../Contracts/state/useContractsContext'
+import { ContractStatus } from '../Contracts/@types/ContractType'
 
 const Navigation: React.FC = (): JSX.Element => {
   const navigate = useNavigate()
   const user = useUser()
   const contractCounts = useContractCounts()
+  const {
+    state: { activeNavItem },
+    setActiveNavItem,
+  } = useContractsContext()
+  const mouseOver = useRef<boolean>(false)
 
   const { role, country, name } = user.data
   const isAdmin = role === ADMIN_ROLE
 
   const [hovered, setHovered] = useState(true)
 
-  const handleMouseEnter = () => setHovered(true)
-  const handleMouseLeave = () => setHovered(false)
+  const handleMouseEnter = () => {
+    mouseOver.current = true
+    setTimeout(() => {
+      if (mouseOver.current) {
+        setHovered(true)
+      }
+    }, 1000)
+  }
+
+  const handleMouseLeave = () => {
+    mouseOver.current = false
+    setHovered(false)
+  }
 
   return (
-    <StyledNav
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={
-        hovered
-          ? { width: '270px', padding: '8px 24px 16px 30px', transition: 'width .2s ease-out, padding .2s ease-out' }
-          : { width: '72px', padding: '8px 6px 16px 8px', transition: 'width .5s ease-out, padding .2s ease-out' }
-      }
-    >
+    <StyledNav onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} expanded={hovered}>
       <StyledLogo
         src={hovered ? logos.gigaLogoInLine : logos.gigaLogo}
         onClick={() => {
           navigate('/dashboard')
         }}
       />
-
       <MenuContainer>
         {!isAdmin && (
           <Country
@@ -49,21 +58,63 @@ const Navigation: React.FC = (): JSX.Element => {
         )}
 
         <StyledDivider />
-
         <NavItem
           collapsed={!hovered}
-          selected={true}
+          selected={activeNavItem === 'all contracts'}
           label="All Contracts"
           number={contractCounts.data.total}
           icon="icon-list"
+          onClick={setActiveNavItem}
         />
 
-        <NavItem collapsed={!hovered} label="Drafts" number={contractCounts.data.draft} icon="icon-draft" />
-        <NavItem collapsed={!hovered} label="Sent" number={contractCounts.data.sent} icon="icon-sent" />
-        <NavItem collapsed={!hovered} label="Confirmed" number={contractCounts.data.confirmed} icon="icon-confirmed" />
-        <NavItem collapsed={!hovered} label="Ongoing" number={contractCounts.data.ongoing} icon="icon-ongoing" />
-        <NavItem collapsed={!hovered} label="Expired" number={contractCounts.data.expired} icon="icon-expired" />
-        <NavItem collapsed={!hovered} label="Completed" number={contractCounts.data.completed} icon="icon-completed" />
+        <NavItem
+          collapsed={!hovered}
+          label={ContractStatus.Draft}
+          selected={activeNavItem === ContractStatus.Draft.toLowerCase()}
+          number={contractCounts.data.draft}
+          icon="icon-draft"
+          onClick={setActiveNavItem}
+        />
+        <NavItem
+          collapsed={!hovered}
+          label={ContractStatus.Sent}
+          selected={activeNavItem === ContractStatus.Sent.toLowerCase()}
+          number={contractCounts.data.sent}
+          icon="icon-sent"
+          onClick={setActiveNavItem}
+        />
+        <NavItem
+          collapsed={!hovered}
+          label={ContractStatus.Confirmed}
+          selected={activeNavItem === ContractStatus.Confirmed.toLowerCase()}
+          number={contractCounts.data.confirmed}
+          icon="icon-confirmed"
+          onClick={setActiveNavItem}
+        />
+        <NavItem
+          collapsed={!hovered}
+          label={ContractStatus.Ongoing}
+          selected={activeNavItem === ContractStatus.Ongoing.toLowerCase()}
+          number={contractCounts.data.ongoing}
+          icon="icon-ongoing"
+          onClick={setActiveNavItem}
+        />
+        <NavItem
+          collapsed={!hovered}
+          label={ContractStatus.Expired}
+          selected={activeNavItem === ContractStatus.Expired.toLowerCase()}
+          number={contractCounts.data.expired}
+          icon="icon-expired"
+          onClick={setActiveNavItem}
+        />
+        <NavItem
+          collapsed={!hovered}
+          label={ContractStatus.Completed}
+          selected={activeNavItem === ContractStatus.Completed.toLowerCase()}
+          number={contractCounts.data.completed}
+          icon="icon-completed"
+          onClick={setActiveNavItem}
+        />
       </MenuContainer>
       <ProfileIcon collapsed={!hovered} name={name} role={role} />
     </StyledNav>

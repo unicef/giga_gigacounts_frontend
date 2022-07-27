@@ -1,47 +1,33 @@
-import { Label } from './NavItem.css'
+import { NavItemContainer, StatusAndNumber } from './styles'
 
 export interface NavItemProps {
-  collapsed?: boolean
+  collapsed: boolean
   label: string
-  onClick?: () => void
   icon?: string
   number?: number
   selected?: boolean
+  onClick?: (label: string) => void
 }
 
 export const NavItem: React.FC<NavItemProps> = ({
-  collapsed = false,
+  collapsed,
   label,
   number,
-  selected,
+  selected = false,
   icon,
-  ...props
+  onClick,
 }: NavItemProps): JSX.Element => {
   return (
-    <Label style={collapsed ? { paddingLeft: '16px' } : {}} {...props}>
-      <div className={icon + ' icon icon-24 ' + (selected ? 'icon-white' : 'icon-light-blue')} />
+    <NavItemContainer collapsed={collapsed} onClick={() => onClick?.(label.toLowerCase())}>
+      <span className={`icon icon-24 ${icon} ${selected ? 'icon-white' : 'icon-light-blue'}`} />
       {!collapsed && (
         <>
-          <p
-            style={{
-              fontWeight: selected ? 'bold' : 'normal',
-              color: selected ? 'var(--color-white)' : 'var(--color-lightest-blue)',
-              width: '100%',
-            }}
-          >
-            {label}
-          </p>
-
-          <p
-            style={{
-              fontWeight: selected ? 'bold' : 'normal',
-              color: selected ? 'var(--color-white)' : 'var(--color-lightest-blue)',
-            }}
-          >
+          <StatusAndNumber selected={selected}>{label}</StatusAndNumber>
+          <StatusAndNumber selected={selected} isNumber>
             {number}
-          </p>
+          </StatusAndNumber>
         </>
       )}
-    </Label>
+    </NavItemContainer>
   )
 }

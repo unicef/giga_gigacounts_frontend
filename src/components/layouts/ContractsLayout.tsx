@@ -15,8 +15,8 @@ const Flex = styled.div`
 const ContractsLayout: React.FC<ChildrenProps> = ({ children }): JSX.Element => {
   return (
     <Flex>
-      <Navigation />
       <ContractsProvider>
+        <Navigation />
         <ContractsMenu>
           <ContractListContent />
           <ContractListFooter />

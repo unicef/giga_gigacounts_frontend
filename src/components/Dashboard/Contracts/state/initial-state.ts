@@ -4,6 +4,7 @@ import { IContract } from '../@types/ContractType'
 export const INITIAL_CONTRACTS_STATE: ContractsState = {
   contracts: undefined,
   ltasIds: undefined,
+  activeNavItem: 'all contracts',
   error: undefined,
   loading: false,
 }

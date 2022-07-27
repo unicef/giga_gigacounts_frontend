@@ -8,6 +8,7 @@ export enum ContractsActionType {
   SET_CONTRACT_DETAILS_SCHOOLS = 'SET_CONTRACT_DETAILS_SCHOOLS',
   SET_CONTRACT_DETAILS_LOADING = 'SET_CONTRACT_DETAILS_LOADING',
   SET_CONTRACT_DETAILS_ERROR = 'SET_CONTRACT_DETAILS_ERROR',
+  SET_ACTIVE_NAV_ITEM = 'SET_ACTIVE_NAV_ITEM',
 }
 
 export interface ContractsAction {
@@ -19,6 +20,7 @@ export interface ContractsAction {
 export interface ContractsState {
   contracts?: IContract[]
   ltasIds?: string[]
+  activeNavItem?: string
   error?: Error
   loading?: boolean
 }

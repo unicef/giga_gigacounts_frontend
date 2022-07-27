@@ -9,6 +9,7 @@ export interface IContractsContext {
   state: ContractsState
   dispatch: Dispatch<ContractsAction>
   fetchContract: (id: string) => void
+  setActiveNavItem: (item: string) => void
 }
 
 export const ContractsContext = createContext<IContractsContext>({
@@ -19,16 +20,17 @@ export const ContractsContext = createContext<IContractsContext>({
   fetchContract: () => {
     throw new Error('Not implemented')
   },
+  setActiveNavItem: () => null,
 })
 
 export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
   const [localState, dispatch] = useReducer(reducer, INITIAL_CONTRACTS_STATE)
 
-  const fetchContracts = useCallback(() => {
+  const fetchContracts = useCallback((navItem?: string) => {
     dispatch({
       type: ContractsActionType.SET_LOADING,
     })
-    getContracts()
+    getContracts(navItem)
       .then((response) => dispatch({ type: ContractsActionType.RESPONSE, payload: response }))
       .catch((error) => dispatch({ type: ContractsActionType.SET_ERROR, payload: error }))
   }, [])
@@ -63,13 +65,22 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [dispatch],
   )
 
+  const setActiveNavItem = useCallback(
+    (navItem: string) => {
+      dispatch({ type: ContractsActionType.SET_ACTIVE_NAV_ITEM, payload: navItem })
+      fetchContracts(navItem)
+    },
+    [dispatch, fetchContracts],
+  )
+
   const value = useMemo(
     () => ({
       state: localState,
       dispatch,
       fetchContract,
+      setActiveNavItem,
     }),
-    [localState, fetchContract],
+    [localState, fetchContract, setActiveNavItem],
   )
 
   return <ContractsContext.Provider value={value}>{children}</ContractsContext.Provider>

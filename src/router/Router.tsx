@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import Loading from 'src/pages/Laoding'
+import Loading from 'src/pages/Loading'
 import { useUser } from 'src/state/hooks'
 
 const NotFound = lazy(() => import('src/pages/NotFound'))

@@ -111,6 +111,12 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
       }
     }
 
+    case ContractsActionType.SET_ACTIVE_NAV_ITEM:
+      return {
+        ...state,
+        activeNavItem: payload,
+      }
+
     case ContractsActionType.SET_ERROR:
       return {
         ...state,

@@ -9,5 +9,10 @@ export const updateUser = (user?: IUser, error?: Error, loading?: boolean) => ({
 
 export const updateContractCounts = (contractCounts?: ContractCountsResponse, error?: Error, loading?: boolean) => ({
   type: UPDATE_CONTRACT_COUNTS as ActionType,
-  payload: { contractCounts: contractCounts?.counts, error, loading: loading ?? false },
+  payload: {
+    contractCounts: contractCounts?.counts,
+    contractCountsTotal: contractCounts?.totalCount,
+    error,
+    loading: loading ?? false,
+  },
 })
