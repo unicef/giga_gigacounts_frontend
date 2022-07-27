@@ -1,15 +1,11 @@
-import { Dispatch } from 'react'
 import ContractStatusWidget from 'src/components/common/ContractStatusWidget/index'
-import { ContractStatus, IContracts } from 'src/components/Dashboard/Contracts/@types/ContractType'
-import { ContractsAction, ContractsState } from 'src/components/Dashboard/Contracts/store/redux'
+import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
 import { Icons, SchoolInfo, IconsName, IconCompleted, SchoolNumberCtr, Schools, Isp } from './styles'
 
 interface ISchoolStatusProps {
-  contract: IContracts
+  contract: IContract
   selected?: boolean
-  state: ContractsState
-  onToggle?: (contract: IContracts) => void
-  dispatch: Dispatch<ContractsAction>
+  onToggle?: (contract: IContract) => void
 }
 
 const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({

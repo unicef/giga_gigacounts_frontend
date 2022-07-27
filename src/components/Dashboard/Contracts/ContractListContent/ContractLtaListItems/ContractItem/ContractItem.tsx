@@ -1,28 +1,20 @@
-import { Dispatch } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { ContractStatus, IContracts } from '../../../@types/ContractType'
-import { ContractsAction, ContractsActionType, ContractsState } from '../../../store/redux'
-import ContractSchoolStatus from '../../ContactSchoolStatus/ContractSchoolStatus'
-import ContractDefaultListItem from '../../ContractDefaultListItem/ContractDefaultListItem'
+import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import ContractSchoolStatus from 'src/components/Dashboard/Contracts/ContractListContent/ContactSchoolStatus/ContractSchoolStatus'
+import ContractDefaultListItem from 'src/components/Dashboard/Contracts/ContractListContent/ContractDefaultListItem/ContractDefaultListItem'
 
 interface ContractItemProps {
-  state: ContractsState
-  contract: IContracts
-
-  dispatch: Dispatch<ContractsAction>
+  contract: IContract
+  selected?: boolean
 }
 
-const ContractItem: React.FC<ContractItemProps> = ({ contract, state, dispatch }: ContractItemProps): JSX.Element => {
+const ContractItem: React.FC<ContractItemProps> = ({ contract, selected = false }: ContractItemProps): JSX.Element => {
   const navigate = useNavigate()
 
-  const { selectedContract } = state
-
-  const handleSelected = (ctr: IContracts) => {
-    dispatch({ type: ContractsActionType.SET_SELECTED_CONTRACT, payload: ctr })
-
-    if (ctr && ctr.status !== ContractStatus.Draft) {
-      navigate(`/dashboard/contract/${ctr?.id}`)
+  const handleSelected = (contract: IContract) => {
+    if (contract && contract.status !== ContractStatus.Draft) {
+      navigate(`/dashboard/contract/${contract?.id}`)
     } else {
       navigate(`/dashboard/contract`)
     }
@@ -33,13 +25,7 @@ const ContractItem: React.FC<ContractItemProps> = ({ contract, state, dispatch }
       {contract?.added ? (
         <ContractDefaultListItem />
       ) : (
-        <ContractSchoolStatus
-          contract={contract}
-          state={state}
-          dispatch={dispatch}
-          onToggle={handleSelected}
-          selected={selectedContract?.id === contract.id}
-        />
+        <ContractSchoolStatus contract={contract} onToggle={handleSelected} selected={selected} />
       )}
     </>
   )

@@ -1,18 +1,46 @@
-import { useContractsContext } from 'src/components/Dashboard/context/useContractsContext'
+import { useEffect } from 'react'
+import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import { ContractStatus } from 'src/components/Dashboard/Contracts/@types/ContractType'
-import ContractPending from 'src/components/Dashboard/Contracts/ContractPending/ContractPending'
-import ContractStaged from 'src/components/Dashboard/Contracts/ContractStaged'
 import { ChildrenProps } from 'src/types/utils'
+import { useContract } from '../state/hooks'
+import PendingContract from './PendingContract'
+import ContractStaged from './StagedContract'
 
-const Contract: React.FC<ChildrenProps> = (): JSX.Element => {
-  const { state, dispatch } = useContractsContext()
+interface ContractProps extends ChildrenProps {
+  id?: string
+}
 
-  return state.selectedContract &&
-    (state.selectedContract.status === ContractStatus.Sent ||
-      state.selectedContract.status === ContractStatus.Confirmed) ? (
-    <ContractPending />
+const Contract: React.FC<ContractProps> = ({ id }: ContractProps): JSX.Element => {
+  const {
+    state: { loading, contracts },
+    fetchContract,
+  } = useContractsContext()
+
+  const contract = useContract(id)
+
+  useEffect(() => {
+    if (
+      id !== undefined &&
+      contract?.details.data === undefined &&
+      contract?.details.loading === false &&
+      contract?.details.error === undefined
+    ) {
+      fetchContract(id)
+    }
+  }, [contract?.details.data, contract?.details.error, contract?.details.loading, fetchContract, id])
+
+  if (loading || contracts === undefined || contract?.details.loading) {
+    return <>loading</>
+  }
+
+  if (!contract) {
+    return <>Not found</>
+  }
+
+  return contract.status === ContractStatus.Sent || contract.status === ContractStatus.Confirmed ? (
+    <PendingContract contract={contract} />
   ) : (
-    <ContractStaged state={state} dispatch={dispatch} />
+    <ContractStaged contract={contract} />
   )
 }
 

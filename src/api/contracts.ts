@@ -1,5 +1,10 @@
 import instance from './init'
-import { IContractDraft, IContractsData } from '../components/Dashboard/Contracts/@types/ContractType'
+import {
+  IContractDraft,
+  IContractsData,
+  IContractDetails,
+  IContractSchools,
+} from '../components/Dashboard/Contracts/@types/ContractType'
 import { ContractForm } from 'src/components/Dashboard/Contracts/CreateContract/store/redux'
 
 export const getContracts = async (): Promise<IContractsData | Error> => {
@@ -30,13 +35,13 @@ export const getContractByStatus = async () => {
   throw new Error('Failed to get the contract by status')
 }
 
-export const getContractDetails = async (contractId: string) => {
+export const getContractDetails = async (contractId: string): Promise<IContractDetails> => {
   const response = await instance.get(`/contract/details/${contractId}`)
   if (response.status === 200) return response.data
   throw new Error('Failed to get the contract details')
 }
 
-export const getContractSchools = async (contractId: string) => {
+export const getContractSchools = async (contractId: string): Promise<IContractSchools[]> => {
   const response = await instance.get(`/contract/schools/${contractId}`)
   if (response.status === 200) return response.data
   throw new Error('Failed to get the contract schools')

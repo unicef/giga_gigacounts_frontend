@@ -1,5 +1,5 @@
 import School from 'src/components/common/School/School'
-import { IContractSchools } from '../../@types/ContractType'
+import { IContractSchools } from 'src/components/Dashboard/Contracts/@types/ContractType'
 import { SchoolsTabContainer } from './styles'
 
 interface IContractSchoolProps {
@@ -15,10 +15,10 @@ const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }: IContra
             key={i}
             showIcon
             showStatus
-            schoolName={school.name}
-            schoolId={school.externalId}
-            schoolLocation={school.locations}
-            schoolStatus={school.connection.value}
+            name={school.name}
+            id={school.externalId}
+            location={school.locations}
+            status={school.connection.value}
           />
         ))}
     </SchoolsTabContainer>

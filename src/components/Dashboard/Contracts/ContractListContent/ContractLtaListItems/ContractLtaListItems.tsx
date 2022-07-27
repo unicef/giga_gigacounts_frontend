@@ -1,6 +1,8 @@
-import { Dispatch, useCallback, useEffect, useState } from 'react'
-import { IContracts } from 'src/components/Dashboard/Contracts/@types/ContractType'
-import { ContractsAction, ContractsState } from 'src/components/Dashboard/Contracts/store/redux'
+import { useMemo, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { useLtaContracts } from 'src/components/Dashboard/Contracts/state/hooks'
+import { NEW_CONTRACT } from 'src/components/Dashboard/Contracts/state/initial-state'
 import ContractItem from './ContractItem/ContractItem'
 import {
   ContractLtaFooter,
@@ -14,40 +16,25 @@ import {
 
 interface IContractListProps {
   ltaNumber: string
-  state: ContractsState
-  dispatch: Dispatch<ContractsAction>
 }
 
-const ContractLtaListItems: React.FC<IContractListProps> = ({
-  ltaNumber,
-  state,
-  dispatch,
-}: IContractListProps): JSX.Element => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(false)
-  const [ltaData, setLtaData] = useState<IContracts[]>([])
+const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber }: IContractListProps): JSX.Element => {
+  const { id } = useParams<{ id: string }>()
+  const contracts = useLtaContracts(ltaNumber)
 
-  const { ltas } = state
+  const selectedContract = useMemo(() => contracts?.find((contract: IContract) => contract.id === id), [contracts, id])
+
+  const [isExpanded, setIsExpanded] = useState<boolean>(selectedContract !== undefined)
+
+  const [newContracts, setNewContracts] = useState<IContract[]>([])
+
+  const allContracts = useMemo(() => [...newContracts, ...(contracts ?? [])], [contracts, newContracts])
 
   const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState)
 
-  const newContract = {
-    name: 'New Contract',
-    status: 'Draft',
-    added: true,
-  }
-
   const handleAddLtaContract = () => {
-    setLtaData((prevState) => [newContract, ...prevState])
+    setNewContracts((prevState) => [NEW_CONTRACT, ...prevState])
   }
-  const loadLtaData = useCallback(() => {
-    if (ltaNumber !== undefined && ltas !== undefined) {
-      setLtaData(Object.values(ltas[ltaNumber]))
-    }
-  }, [ltaNumber, ltas])
-
-  useEffect(() => {
-    loadLtaData()
-  }, [loadLtaData])
 
   return (
     <ContractLtaListItemsContainer isExpanded={isExpanded}>
@@ -61,8 +48,8 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({
       </Header>
       {isExpanded ? (
         <>
-          {ltaData.map((contract, i) => (
-            <ContractItem key={i} contract={contract} state={state} dispatch={dispatch} />
+          {allContracts.map((contract, i) => (
+            <ContractItem key={i} contract={contract} selected={selectedContract?.id === contract.id} />
           ))}
           <ContractLtaFooter onClick={handleAddLtaContract}>Create Contract Here</ContractLtaFooter>
         </>

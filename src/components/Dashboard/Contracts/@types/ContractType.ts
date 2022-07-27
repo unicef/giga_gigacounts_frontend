@@ -1,3 +1,5 @@
+import { DataState } from 'src/state/types'
+
 export interface IBudget {
   budget: string
   totalSpend: null
@@ -15,27 +17,13 @@ export interface ISchoolsConnections {
   withoutConnection: number
 }
 
-export interface IContracts {
-  added?: boolean
-  budget?: IBudget
-  country?: ICountry
-  id?: string
-  isp?: string
-  ltaId?: null
-  name?: string
-  numberOfSchools?: string
-  schoolsConnection?: ISchoolsConnections
-  status: string
-  totalSpent?: number
-}
-
 export interface ILtas {
   [key: string]: []
 }
 
 export interface IContractsData {
   ltas: ILtas
-  contracts: IContracts
+  contracts: IContract
 }
 export interface IContractDraft {
   id: string
@@ -58,17 +46,43 @@ export interface IConnectionMedian {
   median_value: number
 }
 
+export interface IAttachment {
+  id: number
+  url: string
+  name: string
+  ipfsUrl: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface IContractDetails {
   id: string
   name: string
   isp: string
   lta: string
-  attachments: []
+  attachments: IAttachment[]
   startDate: string
   endDate: string
   numberOfSchools: string
   schoolsConnection: ISchoolsConnections
   connectionsMedian: IConnectionMedian[]
+  schools: IContractSchools[]
+}
+
+export interface IContract {
+  added?: boolean
+  budget?: IBudget
+  country?: ICountry
+  id?: string
+  isp?: string
+  ltaId?: string
+  name?: string
+  governmentBehalf?: boolean
+  numberOfSchools?: string
+  schoolsConnection?: ISchoolsConnections
+  status: string
+  totalSpent?: number
+  details: DataState<IContractDetails, true>
 }
 
 export interface IContractSchoolsConnection {

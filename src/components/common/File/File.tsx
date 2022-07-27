@@ -1,26 +1,21 @@
 import { FileContainer } from './styles'
 
 interface FileProps {
-  fileType?: string
-  fileLink?: string
-  fileName?: string
+  type?: string
+  url?: string
+  name?: string
   allowDelete?: boolean
 }
 
-const File: React.FC<FileProps> = ({
-  fileType = 'TYPE',
-  fileLink,
-  fileName,
-  allowDelete = true,
-}: FileProps): JSX.Element => {
+const File: React.FC<FileProps> = ({ type = 'TYPE', url, name, allowDelete = true }: FileProps): JSX.Element => {
   return (
     <FileContainer>
       <span className="icon icon-24 icon-file icon-light-blue"></span>
       <small className="file-type">
-        <b>{fileType}</b>
+        <b>{type}</b>
       </small>
-      <a href={fileLink} className="file-link ellipsis" download>
-        {fileName}
+      <a href={url} className="file-link ellipsis" download>
+        {name}
       </a>
 
       {allowDelete && <span className="icon icon-24 icon-trash icon-red"></span>}

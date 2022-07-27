@@ -1,52 +1,51 @@
-import { SchoolContainer } from './styles'
+import Text from '../Text'
+import { SchoolContainer, SchoolName } from './styles'
 
 interface SchoolProps {
-  schoolName?: string
-  schoolId?: string
-  schoolLocation?: string
-  schoolStatus?: number
+  name: string
+  id: string
+  location: string
+  status: number
   showIcon?: boolean
   showStatus?: boolean
 }
 
-const colorIcons = (value: number) => {
-  let style: string
+const getIconColorClassName = (value: number) => {
   switch (true) {
     case value >= 90:
-      style = `icon-green`
-      break
+      return `icon-green`
     case value < 90 && value >= 50:
-      style = `icon-orange`
-      break
+      return `icon-orange`
     case value < 50 && value >= 0:
-      style = `icon-red`
-      break
+      return `icon-red`
     default:
-      style = `icon-light-grey`
-      break
+      return `icon-light-grey`
   }
-  return style
 }
 
 const School: React.FC<SchoolProps> = ({
-  schoolName = 'School Name',
-  schoolId = '00000000',
-  schoolLocation = 'Location',
+  name,
+  id,
+  location,
+  status,
   showIcon = false,
   showStatus = false,
-  schoolStatus = 0,
 }: SchoolProps): JSX.Element => {
   return (
     <SchoolContainer>
-      <div className="school-name">
+      <SchoolName>
         {showIcon && <span className="icon icon-20 icon-school icon-light-grey"></span>}
-        <small className="ellipsis">
-          <b>{schoolName}</b>
-        </small>
-      </div>
-      <small className="school-id">{schoolId}</small>
-      <small className="school-region ellipsis">{schoolLocation}</small>
-      {showStatus && <span className={`icon icon-18 ${colorIcons(schoolStatus)} icon-plug`}></span>}
+        <Text textAlign="right" fontSize="12px">
+          <b>{name}</b>
+        </Text>
+      </SchoolName>
+      <Text textAlign="right" fontSize="12px">
+        {id}
+      </Text>
+      <Text textAlign="right" fontSize="12px">
+        {location}
+      </Text>
+      {showStatus && <span className={`icon icon-18 ${getIconColorClassName(status)} icon-plug`}></span>}
     </SchoolContainer>
   )
 }

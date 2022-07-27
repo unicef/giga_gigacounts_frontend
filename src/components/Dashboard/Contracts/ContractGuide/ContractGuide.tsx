@@ -1,7 +1,7 @@
-import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } from './styles'
-import ContractStatusWidget from '../../../common/ContractStatusWidget/index'
 import { useNavigate } from 'react-router-dom'
+import ContractStatusWidget from 'src/components/common/ContractStatusWidget/index'
 import images from 'src/assets/images'
+import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } from './styles'
 
 const ContractGuide: React.FC = (): JSX.Element => {
   const navigate = useNavigate()

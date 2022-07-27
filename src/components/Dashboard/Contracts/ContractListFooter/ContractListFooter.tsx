@@ -1,5 +1,5 @@
-import { useContractsContext } from '../../context/useContractsContext'
-import { ContractsActionType } from '../store/redux'
+import { useContractsContext } from '../state/useContractsContext'
+import { ContractsActionType } from '../state/types'
 import { ContractListFooterContainer } from './styles'
 
 const ContractListFooter: React.FC = (): JSX.Element => {
