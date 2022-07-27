@@ -3,11 +3,8 @@ import styled from 'styled-components/macro'
 export const LoginFormContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   padding: 360px 32px 32px 44px;
   gap: 16px;
-  isolation: isolate;
-  position: relative;
   width: 400px;
   height: 100%;
   background: #ffffff;
@@ -33,7 +30,6 @@ export const Form = styled.form<{ error: boolean }>`
   flex-direction: column;
   gap: ${(props) => (props.error ? '0px' : '20px')};
   width: 100%;
-  align-self: stretch;
 `
 
 export const InputContainer = styled.div<{ order?: string; error: boolean }>`

@@ -3,11 +3,8 @@ import {
   ConnectionContainer,
   ISPContainer,
   ISPHeader,
-  ISPHeaderTitle,
-  ISPHeaderTextContainer,
-  ISPHeaderText,
-  ISPDropdownContainer,
-  ISPDropdown,
+  // ISPDropdownContainer,
+  // ISPDropdown,
   QualityContainer,
   QualityHeader,
   QualityHeaderTitle,
@@ -59,17 +56,17 @@ const ConnectionTab: React.FC = (): JSX.Element => {
     <ConnectionContainer>
       <ISPContainer>
         <ISPHeader>
-          <span className='icon icon-isp icon-80 icon-light-blue'></span>
-          <ISPHeaderTextContainer>
-            <ISPHeaderTitle>Internet Service Provider</ISPHeaderTitle>
-            <ISPHeaderText>
+          <span className='icon icon-80 icon-network icon-lightest-blue'></span>
+          <div>
+            <h5>Internet Service Provider</h5>
+            <small>
               Complete the provider that is going to be connecting schools and the terms agreed for the contract
-            </ISPHeaderText>
-          </ISPHeaderTextContainer>
+            </small>
+          </div>
         </ISPHeader>
-        <ISPDropdownContainer>
-          <ISPDropdown className="input-container dropdown">
-            <select onChange={onServiceProviderChange} value={contractForm.ispId}>
+          <div className="input-container dropdown">
+            <select  
+              onChange={onServiceProviderChange} value={contractForm.ispId}>
               <option value="" hidden>
                 Service Provider
               </option>
@@ -79,8 +76,7 @@ const ConnectionTab: React.FC = (): JSX.Element => {
                 </option>
               ))}
             </select>
-          </ISPDropdown>
-        </ISPDropdownContainer>
+          </div>
       </ISPContainer>
       <QualityContainer>
         <QualityHeader>
