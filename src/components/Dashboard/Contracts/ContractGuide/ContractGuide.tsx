@@ -69,7 +69,7 @@ const ContractGuide: React.FC = (): JSX.Element => {
           <p>
             <b>Expired</b>
           </p>
-          <div className="super-small">When the end date passed the contract obtains expired status</div>
+          <div className="super-small">When the end date passed, the person responsible for the contract changes its status to complete if it considers that there are no pending actions</div>
         </ContractGuideItem>
 
         <ContractGuideItem>

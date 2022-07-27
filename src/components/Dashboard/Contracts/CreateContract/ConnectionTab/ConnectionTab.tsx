@@ -2,7 +2,6 @@ import { useEffect, useCallback, ChangeEvent } from 'react'
 import {
   ConnectionContainer,
   ISPContainer,
-  ISPIcon,
   ISPHeader,
   ISPHeaderTitle,
   ISPHeaderTextContainer,
@@ -14,7 +13,6 @@ import {
   QualityHeaderTitle,
   OptionsContainer,
 } from './styles'
-import icons from 'src/assets/icons'
 import ToggleButtonGroup from 'src/components/common/ToggleButton'
 import { getSuggestedMetrics } from 'src/api/metrics'
 import { getIsp } from 'src/api/isp'
@@ -61,9 +59,7 @@ const ConnectionTab: React.FC = (): JSX.Element => {
     <ConnectionContainer>
       <ISPContainer>
         <ISPHeader>
-          <ISPIcon>
-            <img src={icons.internetService} alt="ISP" />
-          </ISPIcon>
+          <span className='icon icon-isp icon-80 icon-light-blue'></span>
           <ISPHeaderTextContainer>
             <ISPHeaderTitle>Internet Service Provider</ISPHeaderTitle>
             <ISPHeaderText>

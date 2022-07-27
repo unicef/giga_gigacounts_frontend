@@ -54,11 +54,6 @@ export const ISPHeaderText = styled.p`
   color: var(--color-darkest-grey);
 `
 
-export const ISPIcon = styled.div`
-  width: 60px;
-  height: 66px;
-`
-
 export const ISPDropdownContainer = styled.div`
   display: flex;
   flex-direction: column;

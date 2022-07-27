@@ -1,8 +1,9 @@
 import React from 'react'
 import { useUser } from 'src/state/hooks'
-import { ImageContainer, LoginContainer } from './index.css'
+import { LoginContainer } from './styles'
 import { LoginForm } from './LoginForm/LoginForm'
 import { Navigate } from 'react-router-dom'
+import images from 'src/assets/images'
 
 const Login: React.FC = (): JSX.Element => {
   const user = useUser()
@@ -14,7 +15,7 @@ const Login: React.FC = (): JSX.Element => {
   return (
     <LoginContainer>
       <LoginForm />
-      <ImageContainer />
+      <img src={images.loginImage} alt='login-pattern' />
     </LoginContainer>
   )
 }

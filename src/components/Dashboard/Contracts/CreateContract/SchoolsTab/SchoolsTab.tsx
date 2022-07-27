@@ -1,6 +1,5 @@
 import { useEffect, useCallback, useState, useRef, useMemo } from 'react'
 import * as XLSX from 'xlsx'
-import icons from 'src/assets/icons'
 import images from 'src/assets/images'
 import {
   SchoolsContainer,
@@ -15,17 +14,14 @@ import {
   SchoolSearchInput,
   SearchButton,
   SchoolsTableContainer,
-  UploadError,
   UploadErrorTitle,
-  UploadErrorText,
-  UploadErrorHeader,
-  UploadCloseBtn,
   UploadFormatError,
 } from './styles'
 import SchoolTable from './SchoolTable'
 import { getSchools } from 'src/api/school'
 import { useCreateContractContext } from '../state/useCreateContractContext'
 import { CreateContractActionType } from '../state/types'
+import Message from 'src/components/common/Message/Message'
 
 const SchoolsTab: React.FC = (): JSX.Element => {
   const { dispatch, state } = useCreateContractContext()
@@ -136,22 +132,19 @@ const SchoolsTab: React.FC = (): JSX.Element => {
         </UploadHeader>
         <img src={images.sampleTable} alt="sample-table" />
         <UploadButtonContainer>
-          {schoolsNotFound > 0 ? (
-            <UploadError>
-              <UploadErrorHeader>
-                <UploadErrorTitle>
-                  {schoolsNotFound} errors found in {fileName}.
-                </UploadErrorTitle>
-                <UploadCloseBtn src={icons.cross} onClick={() => setSchoolsNotFound(0)} />
-              </UploadErrorHeader>
-              <UploadErrorText>Please add missing schools manually or re-upload a correct CSV file</UploadErrorText>
-            </UploadError>
-          ) : null}
-          {invalidFormat ? (
+          {schoolsNotFound > 0 && (
+            <Message
+              type="error"
+              title={schoolsNotFound + ' errors found in ' + fileName}
+              description="Please add missing schools manually or re-upload a correct CSV file"
+              onClose={() => setSchoolsNotFound(0)}
+            />
+          )}
+          {invalidFormat && (
             <UploadFormatError>
               <UploadErrorTitle>Invalid format</UploadErrorTitle>
             </UploadFormatError>
-          ) : null}
+          )}
           <UploadButton>
             <span>Upload file</span>
             <input

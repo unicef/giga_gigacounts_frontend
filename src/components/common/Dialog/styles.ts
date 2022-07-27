@@ -9,8 +9,8 @@ export const DialogContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-black-50);
-    backdrop-filter: blur(15px);
+    background-color: var(--color-black-10);
+    backdrop-filter: blur(20px);
     z-index: 1000;
     cursor: pointer;
 

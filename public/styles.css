@@ -228,6 +228,7 @@ input[type='date'],
 input[type='password'],
 input[type='number'],
 input[type='email'] {
+  position: relative;
   font-weight: 400;
   font-size: 14px;
   line-height: 156%;
@@ -235,7 +236,6 @@ input[type='email'] {
 
   width: 100%;
   padding: 6px 12px 4px;
-  /* margin-bottom: 18px; */
 
   color: var(--color-black);
   border: 1px solid var(--color-black-10);
@@ -265,6 +265,37 @@ input[type='password']:focus-visible,
 input[type='number']:focus-visible,
 input[type='email']:focus-visible {
   outline: none;
+}
+
+input[type='date'] {
+  margin: 0;
+  padding: 4px 6px 4px 12px;
+  height: 32px;
+  font-family: 'Open Sans';
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 156%;
+  letter-spacing: 0.003em;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  height: 100%;
+  width: 24px;
+  color: transparent;
+  background: transparent;
+  z-index: 3;
+}
+
+input[type='date']::after {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  color: var(--color-light-grey);
+  font: normal normal normal 1em/1 'Giga';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 24px;
+  content: '\ea03';
 }
 
 .input-error {
@@ -574,4 +605,9 @@ input[type='checkbox']:checked:before {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@keyframes roll {
+  from {height: 0;}
+  to {height: auto;}
 }

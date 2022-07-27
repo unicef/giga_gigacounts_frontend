@@ -15,8 +15,8 @@ export const LoginFormContainer = styled.div`
 
 export const Logo = styled.img`
   position: absolute;
-  width: 110px;
-  height: 110px;
+  width: 200px;
+  height: 70px;
   left: 44px;
   top: 40px;
   flex: none;
@@ -31,16 +31,9 @@ export const Form = styled.form<{ error: boolean }>`
   }
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 0px;
   gap: ${(props) => (props.error ? '0px' : '20px')};
-  width: 324px;
-  height: 156px;
-  flex: none;
-  order: 0;
+  width: 100%;
   align-self: stretch;
-  flex-grow: 0;
-  z-index: 0;
 `
 
 export const InputContainer = styled.div<{ order?: string; error: boolean }>`
@@ -103,50 +96,4 @@ export const EmailErrorMessage = styled.span`
   flex: none;
   order: 0;
   flex-grow: 1;
-`
-
-export const ErrorContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 8px 4px 12px 16px;
-  gap: 4px;
-  width: 324px;
-  height: 60px;
-  color: var(--color-white);
-  background: var(--color-red);
-  border-radius: 2px;
-  flex: none;
-  order: '0';
-  align-self: stretch;
-  flex-grow: 0;
-`
-
-export const ErrorMessage = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0px;
-  width: 304px;
-  height: 40px;
-  flex: none;
-  order: 0;
-  flex-grow: 1;
-`
-
-export const ErrorTitle = styled.p`
-  flex: none;
-  order: 0;
-  align-self: stretch;
-  flex-grow: 0;
-  margin: 0;
-`
-
-export const ErrorDescription = styled.p`
-  flex: none;
-  order: 1;
-  align-self: stretch;
-  flex-grow: 0;
-  margin: 0;
-  font-size: 12px;
 `

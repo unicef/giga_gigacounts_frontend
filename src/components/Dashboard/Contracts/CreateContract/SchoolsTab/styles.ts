@@ -78,26 +78,6 @@ export const UploadButton = styled.label`
   }
 `
 
-export const UploadError = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 8px 4px 12px 16px;
-  gap: 4px;
-  width: 100%;
-  height: 78px;
-  background: var(--color-red);
-  border-radius: 2px;
-`
-
-export const UploadErrorHeader = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  align-items: baseline;
-  justify-content: space-between;
-`
-
 export const UploadCloseBtn = styled.img`
   align-self: flex-end;
   cursor: pointer;
@@ -110,16 +90,6 @@ export const UploadErrorTitle = styled.p`
   font-size: 14px;
   line-height: 156%;
   letter-spacing: 0.003em;
-  color: var(--color-white);
-`
-
-export const UploadErrorText = styled.p`
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 148%;
-  letter-spacing: 0.018em;
   color: var(--color-white);
 `
 
