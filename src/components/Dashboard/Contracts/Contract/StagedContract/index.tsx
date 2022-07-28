@@ -82,6 +82,11 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
                 <span className="icon icon-24 icon-network icon-mid-grey"></span>
                 <p>{contract?.details.data?.isp}</p>
               </span>
+              {contract && contract.status === ContractStatus.Expired && (
+                <button className="title-item btn-blue" onClick={toggleShowDialog}>
+                  Finish
+                </button>
+              )}
             </div>
 
             <div className="info">
