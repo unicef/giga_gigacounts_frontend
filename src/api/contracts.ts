@@ -41,7 +41,7 @@ export const updateContractDraft = async (contract: ContractForm) => {
   }
 }
 
-export const deleteContractDraft = async (draft_id: string) => {
+export const deleteContractDraft = async (draft_id: number) => {
   const response = await instance.delete(`/contract/draft/${draft_id}`)
   if (response.status === 200) return response.data
   throw new Error('Failed to delete the contract draft')
