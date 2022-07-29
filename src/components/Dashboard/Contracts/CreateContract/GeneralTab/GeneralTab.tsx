@@ -15,6 +15,8 @@ import {
   GeneralContainer,
   UploadFiles,
 } from './styles'
+import { GOV_ROLE } from 'src/consts/roles'
+import { useRoleCheck } from 'src/state/hooks'
 
 import { uploadContractFile } from 'src/api/attachments'
 
@@ -147,10 +149,14 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps)
                 ))}
               </select>
             </div>
-            <label>
-              <input type="checkbox" checked={contractForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
-              On behalf of the government
-            </label>
+            {!useRoleCheck(GOV_ROLE) ? (
+              <label>
+                <input type="checkbox" checked={contractForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
+                On behalf of the government
+              </label>
+            ) : (
+              <></>
+            )}
           </Country>
           <input
             type="text"
