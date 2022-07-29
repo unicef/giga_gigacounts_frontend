@@ -13,6 +13,8 @@ import {
   ShowMore,
   Hand,
 } from './styles'
+import { ISP_ROLE } from 'src/consts/roles'
+import { useRoleCheck } from 'src/state/hooks'
 
 interface IContractListProps {
   ltaNumber: string
@@ -21,6 +23,8 @@ interface IContractListProps {
 const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber }: IContractListProps): JSX.Element => {
   const { id } = useParams<{ id: string }>()
   const contracts = useLtaContracts(ltaNumber)
+
+  const isISP = useRoleCheck(ISP_ROLE)
 
   const selectedContract = useMemo(() => contracts?.find((contract: IContract) => contract.id === id), [contracts, id])
 
@@ -51,7 +55,7 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber }: ICont
           {allContracts.map((contract, i) => (
             <ContractItem key={i} contract={contract} selected={selectedContract?.id === contract.id} />
           ))}
-          <ContractLtaFooter onClick={handleAddLtaContract}>Create Contract Here</ContractLtaFooter>
+          {!isISP ? <ContractLtaFooter onClick={handleAddLtaContract}>Create Contract Here</ContractLtaFooter> : <></>}
         </>
       ) : (
         <ContractLtaSubHeader />
