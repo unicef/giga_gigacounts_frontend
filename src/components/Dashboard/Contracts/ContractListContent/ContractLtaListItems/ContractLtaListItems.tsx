@@ -13,12 +13,15 @@ import {
   ShowMore,
   Hand,
 } from './styles'
+import { UserState } from 'src/state/types'
+import { ISP_ROLE } from 'src/consts/roles'
 
 interface IContractListProps {
   ltaNumber: string
+  user: UserState
 }
 
-const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber }: IContractListProps): JSX.Element => {
+const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber, user }: IContractListProps): JSX.Element => {
   const { id } = useParams<{ id: string }>()
   const contracts = useLtaContracts(ltaNumber)
 
@@ -51,7 +54,11 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber }: ICont
           {allContracts.map((contract, i) => (
             <ContractItem key={i} contract={contract} selected={selectedContract?.id === contract.id} />
           ))}
-          <ContractLtaFooter onClick={handleAddLtaContract}>Create Contract Here</ContractLtaFooter>
+          {user.data.role !== ISP_ROLE ? (
+            <ContractLtaFooter onClick={handleAddLtaContract}>Create Contract Here</ContractLtaFooter>
+          ) : (
+            <></>
+          )}
         </>
       ) : (
         <ContractLtaSubHeader />

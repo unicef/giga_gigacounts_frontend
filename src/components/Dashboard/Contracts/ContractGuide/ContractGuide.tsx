@@ -2,8 +2,14 @@ import { useNavigate } from 'react-router-dom'
 import ContractStatusWidget from 'src/components/common/ContractStatusWidget/index'
 import images from 'src/assets/images'
 import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } from './styles'
+import { UserState } from 'src/state/types'
+import { ISP_ROLE } from 'src/consts/roles'
 
-const ContractGuide: React.FC = (): JSX.Element => {
+interface Props {
+  user: UserState
+}
+
+const ContractGuide: React.FC<Props> = ({ user }: Props): JSX.Element => {
   const navigate = useNavigate()
 
   const createDraft = () => navigate('/dashboard/contract')
@@ -21,9 +27,13 @@ const ContractGuide: React.FC = (): JSX.Element => {
           <div className="super-small">
             The initial state of the contract where all the required information is completed.
           </div>
-          <button onClick={createDraft} className="btn-blue">
-            Create Draft
-          </button>
+          {user.data.role !== ISP_ROLE ? (
+            <button onClick={createDraft} className="btn-blue">
+              Create Draft
+            </button>
+          ) : (
+            <></>
+          )}
         </ContractGuideItem>
 
         <ContractGuideItem>
