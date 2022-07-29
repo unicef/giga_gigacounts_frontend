@@ -2,19 +2,19 @@ import React from 'react'
 import { StyledBlock, StyledImg, StyledLabel } from './styles'
 
 export type CountryBlockProps = {
-  countryPath?: string
+  countryFlag?: string
   countryName?: string
   collapsed: boolean
 }
 
 const Country: React.FC<CountryBlockProps> = ({
-  countryPath,
+  countryFlag,
   countryName,
   collapsed = false,
 }: CountryBlockProps): JSX.Element => {
   return (
     <StyledBlock collapsed={collapsed}>
-      <StyledImg alt="flag" src={countryPath} width="36px" height="24px" />
+      <StyledImg alt="flag" src={countryFlag} width="36px" height="24px" />
       {!collapsed && (
         <StyledLabel>
           <p>

@@ -12,7 +12,7 @@ export const Default = Template.bind({})
 
 Default.args = {
   countryName: 'Argentina',
-  countryPath: './flags/AR.svg',
+  countryFlag: './flags/AR.svg',
   collapsed: false,
 }
 
@@ -20,6 +20,6 @@ export const Collapsed = Template.bind({})
 
 Collapsed.args = {
   countryName: 'Argentina',
-  countryPath: './flags/AR.svg',
+  countryFlag: './flags/AR.svg',
   collapsed: true,
 }

@@ -49,12 +49,8 @@ const Navigation: React.FC = (): JSX.Element => {
         }}
       />
       <MenuContainer>
-        {!isAdmin && (
-          <Country
-            collapsed={!hovered}
-            countryName={country?.name}
-            countryPath={`./flags/${country?.code || ''}.svg`}
-          />
+        {role.length > 0 && !isAdmin && (
+          <Country collapsed={!hovered} countryName={country?.name} countryFlag={`${country?.flagUrl}`} />
         )}
 
         <StyledDivider />
