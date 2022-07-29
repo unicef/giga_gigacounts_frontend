@@ -6,7 +6,6 @@ import { ContractsMenu } from '../Dashboard/Contracts/styles'
 import ContractListContent from '../Dashboard/Contracts/ContractListContent/ContractListContent'
 import ContractListFooter from '../Dashboard/Contracts/ContractListFooter/ContractListFooter'
 import { ContractsProvider } from '../Dashboard/Contracts/state/ContractsContext'
-import { useUser } from 'src/state/hooks'
 
 const Flex = styled.div`
   display: flex;
@@ -14,14 +13,13 @@ const Flex = styled.div`
 `
 
 const ContractsLayout: React.FC<ChildrenProps> = ({ children }): JSX.Element => {
-  const user = useUser()
   return (
     <Flex>
       <ContractsProvider>
         <Navigation />
         <ContractsMenu>
-          <ContractListContent user={user} />
-          <ContractListFooter user={user} />
+          <ContractListContent />
+          <ContractListFooter />
         </ContractsMenu>
         {children}
       </ContractsProvider>
