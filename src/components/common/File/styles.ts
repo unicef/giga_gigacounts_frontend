@@ -17,11 +17,29 @@ export const FileContainer = styled.div`
         color: var(--color-dark-blue);
         text-transform: uppercase;
     }
-    .file-link {
-        width: 100%;
-        color: var(--color-black);
-        padding: 0 10px;
-        white-space: nowrap;
-    }
+  }
+`
+
+export const DownloadButton = styled.button`
+  background-color: transparent;
+  cursor: pointer;
+  display: inline;
+  color: var(--color-black);
+  padding: 0 10px;
+  white-space: nowrap;
+  font-weight: normal;
+  text-decoration: underline;
+  text-transform: none;
+  text-align: left;
+`
+
+export const DeleteButton = styled.button`
+  background-color: transparent;
+  padding: 0 8px;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: hourglass;
+    color: var(--color-light-gray);
   }
 `

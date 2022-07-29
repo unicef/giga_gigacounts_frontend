@@ -3,11 +3,12 @@ import styled from 'styled-components/macro'
 export const GeneralContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 54px;
   width: 100%;
 `
 export const FormContainer = styled.div`
-  width: 100%;
+  flex-basis: 50%;
+  flex-shrink: 0;
+  padding-right: 54px;
 
   & form {
     display: flex;
@@ -53,12 +54,16 @@ export const DateStart = styled.div`
 export const DateEnd = styled(DateStart)``
 
 export const AttachmentContainer = styled.div`
-  width: 100%;
+  flex-basis: 50%;
+  flex-shrink: 0;
+  flex-grow: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 32px;
 `
 export const Attachments = styled.section`
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -86,6 +91,8 @@ export const Attachments = styled.section`
 `
 
 export const UploadFiles = styled.div`
+  width: 100%;
+
   display: flex;
   flex-direction: column;
   align-items: flex-start;

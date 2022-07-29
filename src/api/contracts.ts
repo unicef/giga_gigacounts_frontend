@@ -4,9 +4,9 @@ import {
   IContractsData,
   IContractDetails,
   IContractSchools,
-} from '../components/Dashboard/Contracts/@types/ContractType'
-import { ContractForm } from 'src/components/Dashboard/Contracts/CreateContract/store/redux'
+} from 'src/components/Dashboard/Contracts/@types/ContractType'
 import { contractStatusToId } from 'src/utils/contractStatusToId'
+import { ContractForm } from 'src/components/Dashboard/Contracts/CreateContract/state/types'
 
 export const getContracts = async (status?: string | (string | null)[] | null): Promise<IContractsData | Error> => {
   const response = await instance.get('/contract', {

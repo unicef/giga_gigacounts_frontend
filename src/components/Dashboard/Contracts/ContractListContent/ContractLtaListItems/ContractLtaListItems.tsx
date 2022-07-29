@@ -53,7 +53,7 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ ltaNumber }: ICont
       {isExpanded ? (
         <>
           {allContracts.map((contract, i) => (
-            <ContractItem key={i} contract={contract} selected={selectedContract?.id === contract.id} />
+            <ContractItem key={i} contract={contract} selected={id === contract.id} />
           ))}
           {!isISP ? <ContractLtaFooter onClick={handleAddLtaContract}>Create Contract Here</ContractLtaFooter> : <></>}
         </>

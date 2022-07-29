@@ -2,56 +2,33 @@ import { useCallback, useRef, useMemo } from 'react'
 import ToggleButton from './ToggleButton'
 import { MainContainer, LabelContainer, Label, InputContainer, ToggleGroupContainer, ButtonsGroup } from './styles'
 import { ToggleButtonOption } from './@types/ToggleTypes'
-import { State } from 'src/components/Dashboard/Contracts/CreateContract/store/redux'
 
-const ToggleButtonGroup = ({
-  options,
-  label,
-  measure,
-  state,
-  metricId,
-
-  onSelect,
-}: {
-  options: ToggleButtonOption[]
+interface ToggleButtonProps {
   label: string
-  measure: string
-  metricId: string
-  state: State
-  onSelect: (value: string, metricId: string) => void
-}) => {
+  options: ToggleButtonOption[]
+  onChange: (value: string) => void
+  value?: string
+  unit?: string
+}
+
+const ToggleButtonGroup = ({ options, label, onChange, value, unit }: ToggleButtonProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
-  const onButtonSelect = useCallback(
-    (index: number, value: string, metricId: string) => {
-      onSelect(value, metricId)
+
+  const onButtonClick = useCallback(
+    (value: string) => {
+      onChange(value)
     },
-    [onSelect],
+    [onChange],
   )
 
-  const bindSelectListener = useCallback(
-    (index: number) => (value: string, metricId: string) => onButtonSelect(index, value, metricId),
-    [onButtonSelect],
-  )
-
-  const inputListener = useCallback(
-    (metricId: string) => (e: React.ChangeEvent<HTMLInputElement>) => onButtonSelect(-1, e.target.value, metricId),
-    [onButtonSelect],
-  )
-
-  const correspondingMetric = useMemo(
-    () =>
-      state.contractForm.expectedMetrics.metrics.find((metric) => {
-        return metric.metricId.toString() === metricId
-      }),
-    [state.contractForm.expectedMetrics, metricId],
-  )
+  const onInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value), [onChange])
 
   const activeIndex = useMemo(
     () =>
       options.findIndex((item) => {
-        return item.value === correspondingMetric?.value.toString()
+        return item.value === value
       }),
-    [options, correspondingMetric],
+    [options, value],
   )
 
   return (
@@ -66,7 +43,7 @@ const ToggleButtonGroup = ({
               key={`${option.label}-${index}`}
               selected={activeIndex === index}
               option={option}
-              onSelect={bindSelectListener(index)}
+              onSelect={onButtonClick}
             />
           ))}
         </ButtonsGroup>
@@ -77,11 +54,11 @@ const ToggleButtonGroup = ({
             placeholder="0"
             min="0"
             step="1"
-            onChange={inputListener(options[0].metricId)}
+            onChange={onInputChange}
             ref={inputRef}
-            value={correspondingMetric?.value || ''}
+            value={value || ''}
           />
-          <span>{measure}</span>
+          <span>{unit}</span>
         </InputContainer>
       </ToggleGroupContainer>
     </MainContainer>

@@ -16,7 +16,7 @@ const ContractItem: React.FC<ContractItemProps> = ({ contract, selected = false 
     if (contract && contract.status !== ContractStatus.Draft) {
       navigate(`/dashboard/contract/${contract?.id}`)
     } else {
-      navigate(`/dashboard/contract`)
+      navigate(`/dashboard/contract?draft=${contract?.id}`)
     }
   }
 

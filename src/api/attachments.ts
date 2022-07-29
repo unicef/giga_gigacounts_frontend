@@ -1,10 +1,22 @@
-import { FileUpload } from 'src/components/Dashboard/Contracts/CreateContract/store/redux'
+import { IFileUpload } from 'src/types/general'
 import instance from './init'
 
-export const uploadContractFile = async (file: FileUpload) => {
+export const uploadAttachment = async (file: IFileUpload) => {
   const response = await instance.post('/attachments/upload', {
     ...file,
   })
   if (response.status === 200) return response.data
-  throw new Error('Failed to update the contract draft')
+  throw new Error('Failed to upload attachment file')
+}
+
+export const getAttachment = async (attachmentId: string) => {
+  const response = await instance.get(`/attachments/${attachmentId}`)
+  if (response.status === 200) return response.data
+  throw new Error('Attachment not found')
+}
+
+export const deleteAttachment = async (attachmentId: string) => {
+  const response = await instance.delete(`/attachments/${attachmentId}`)
+  if (response.status === 200) return response.data
+  throw new Error('Failed to delete attachment file')
 }

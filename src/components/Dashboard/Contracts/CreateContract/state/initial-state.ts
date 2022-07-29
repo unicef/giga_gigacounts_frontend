@@ -1,0 +1,41 @@
+import { CreateContractActiveTab, CreateContractState, CreateContractTabState } from './types'
+
+export const CREATE_CONTRACT_INITIAL_STATE: CreateContractState = {
+  draft: {
+    data: undefined,
+    loading: false,
+    error: undefined,
+  },
+  activeTab: CreateContractActiveTab.GeneralTab,
+  error: '',
+  loading: true,
+  missingData: false,
+  invalidData: false,
+  tabGeneralStatus: CreateContractTabState.Selected,
+  tabConnectionStatus: CreateContractTabState.Default,
+  tabSchoolStatus: CreateContractTabState.Default,
+  expectedMetrics: { metrics: [] },
+  metrics: [],
+  isps: [],
+  countries: [],
+  currencies: [],
+  ltas: [],
+  contractForm: {
+    id: null,
+    name: '',
+    countryId: undefined,
+    currencyId: undefined,
+    ltaId: undefined,
+    ispId: undefined,
+    expectedMetrics: { metrics: [] },
+    governmentBehalf: false,
+    budget: '',
+    startDate: '',
+    endDate: '',
+    schools: {
+      schools: [],
+    },
+  },
+  flag: 'BW',
+  schools: [],
+}
