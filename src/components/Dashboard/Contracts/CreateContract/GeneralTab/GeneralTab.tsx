@@ -149,13 +149,11 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps)
                 ))}
               </select>
             </div>
-            {!useRoleCheck(GOV_ROLE) ? (
+            {!useRoleCheck(GOV_ROLE) && (
               <label>
                 <input type="checkbox" checked={contractForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
                 On behalf of the government
               </label>
-            ) : (
-              <></>
             )}
           </Country>
           <input
