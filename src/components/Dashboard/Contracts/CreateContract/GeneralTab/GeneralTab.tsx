@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react'
+import { ChangeEvent, useEffect } from 'react'
 import { uploadAttachment } from 'src/api/attachments'
 import { createContractDraft } from 'src/api/contracts'
 import File from 'src/components/common/File/File'
@@ -26,6 +26,10 @@ const GeneralTab: React.FC = (): JSX.Element => {
     actions: { reload },
     dispatch,
   } = useCreateContractContext()
+
+  useEffect(() => {
+    if (countries.length) dispatch({ type: CreateContractActionType.SET_COUNTRY_CODE, payload: countries[0]?.id })
+  }, [countries, dispatch])
 
   const onCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     dispatch({ type: CreateContractActionType.SET_COUNTRY_CODE, payload: e.currentTarget.value })
@@ -90,7 +94,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
           <Country>
             <div className="input-container dropdown">
               <img src={`../flags/${flag}.svg`} alt={flag} />
-              <select onChange={onCountryChange} value={contractForm.countryId ?? ''}>
+              <select onChange={onCountryChange} value={contractForm.countryId ?? ''} disabled={countries.length === 1}>
                 {countries?.map((country) => (
                   <option key={country.id} value={country.id}>
                     {country.name}
