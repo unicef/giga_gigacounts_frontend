@@ -5,6 +5,10 @@ export const INITIAL_CONTRACTS_STATE: ContractsState = {
   contracts: undefined,
   ltasIds: undefined,
   activeNavItem: 'all contracts',
+  selectedSchool: undefined,
+  schoolQosDate: undefined,
+  schoolQosMetricName: undefined,
+  schoolQosMedianValue: undefined,
   error: undefined,
   loading: false,
 }

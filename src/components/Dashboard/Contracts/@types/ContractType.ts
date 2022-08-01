@@ -101,6 +101,13 @@ export interface IContractSchools {
   connection: IContractSchoolsConnection
 }
 
+export interface ISchoolMeasures {
+  date: string
+  metric_name: string
+  uint: string
+  median_value: number
+}
+
 export enum ContractStatus {
   Draft = 'Draft',
   Sent = 'Sent',

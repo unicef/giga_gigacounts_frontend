@@ -24,7 +24,6 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
             selected={selected}
             average={schoolsConnection?.atLeastOneBellowAvg}
             good={schoolsConnection?.allEqualOrAboveAvg}
-            expired={status === ContractStatus.Expired}
             payments={totalSpent}
           />
         )

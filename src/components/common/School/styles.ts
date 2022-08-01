@@ -9,8 +9,8 @@ export const SchoolContainer = styled.div`
   height: 38px;
   padding: 9px 16px;
   white-space: nowrap;
-  background-color: var(--color-white);
-  color: var(--color-dark-grey);
+  background-color: inherit;
+  cursor: pointer;
 `
 
 export const SchoolName = styled.div`

@@ -1,6 +1,8 @@
 import { ContractsAction, ContractsActionType, ContractsState } from './types'
 import { IContract } from '../@types/ContractType'
 import { uniqBy } from 'src/utils/uniqBy'
+import { months } from 'src/consts/months'
+import { formatMetricValue } from 'src/utils/formatMetricValue'
 
 export const reducer = (state: ContractsState, action: ContractsAction): ContractsState => {
   const { type, payload } = action
@@ -111,11 +113,54 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
       }
     }
 
+    case ContractsActionType.SET_SCHOOL_MEASURES: {
+      let date, medianValue, metricName
+
+      const result = Object.keys(payload[0]).map((key: string) => ({
+        [key]: payload.map((obj: { [x: string]: any }) => obj[key]),
+      }))
+
+      result?.forEach((item) => {
+        if (item.date) {
+          const uniqueDate: Set<number> = new Set(item.date.map((date: string) => new Date(date).getMonth()))
+          date = Array.from(uniqueDate).map((monthNumber) => {
+            return months[monthNumber]
+          })
+        }
+        if (item.metric_name) {
+          const unique: Set<string> = new Set(item.metric_name)
+          metricName = Array.from(unique)
+        }
+        if (item.median_value) {
+          medianValue = item.median_value.map((value: string, i: number) => formatMetricValue(value, i))
+        }
+      })
+
+      return {
+        ...state,
+        schoolQosDate: date,
+        schoolQosMetricName: metricName,
+        schoolQosMedianValue: medianValue,
+        loading: false,
+      }
+    }
+
     case ContractsActionType.SET_ACTIVE_NAV_ITEM:
       return {
         ...state,
         activeNavItem: payload,
       }
+
+    case ContractsActionType.SET_SELECTED_SCHOOL: {
+      return {
+        ...state,
+        selectedSchool: {
+          ...state.selectedSchool,
+          schoolId: payload.schoolId,
+          contractId: payload.contractId,
+        },
+      }
+    }
 
     case ContractsActionType.SET_ERROR:
       return {
