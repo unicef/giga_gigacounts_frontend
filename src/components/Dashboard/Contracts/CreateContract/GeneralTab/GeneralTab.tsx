@@ -14,6 +14,8 @@ import {
   GeneralContainer,
   UploadFiles,
 } from './styles'
+import { GOV_ROLE } from 'src/consts/roles'
+import { useRoleCheck } from 'src/state/hooks'
 import UploadButton from './UploadButton'
 import { useCreateContractContext } from '../state/useCreateContractContext'
 import { CreateContractActionType } from '../state/types'
@@ -96,10 +98,12 @@ const GeneralTab: React.FC = (): JSX.Element => {
                 ))}
               </select>
             </div>
-            <label>
-              <input type="checkbox" checked={contractForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
-              On behalf of the government
-            </label>
+            {!useRoleCheck(GOV_ROLE) && (
+              <label>
+                <input type="checkbox" checked={contractForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
+                On behalf of the government
+              </label>
+            )}
           </Country>
           <input
             type="text"
