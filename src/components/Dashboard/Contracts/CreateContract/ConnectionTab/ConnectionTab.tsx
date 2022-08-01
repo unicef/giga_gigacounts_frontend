@@ -1,5 +1,4 @@
-import { Dispatch, useEffect, useCallback, ChangeEvent } from 'react'
-import { Action, State, ActionType } from '../store/redux'
+import { useEffect, useCallback, ChangeEvent } from 'react'
 import {
   ConnectionContainer,
   ISPContainer,
@@ -19,13 +18,11 @@ import icons from 'src/assets/icons'
 import ToggleButtonGroup from 'src/components/common/ToggleButton'
 import { getSuggestedMetrics } from 'src/api/metrics'
 import { getIsp } from 'src/api/isp'
+import { useCreateContractContext } from '../state/useCreateContractContext'
+import { CreateContractActionType } from '../state/types'
 
-interface IConnectionProps {
-  state: State
-  dispatch: Dispatch<Action>
-}
-
-const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }: IConnectionProps): JSX.Element => {
+const ConnectionTab: React.FC = (): JSX.Element => {
+  const { state, dispatch } = useCreateContractContext()
   const { contractForm } = state
 
   const fetchData = useCallback(async () => {
@@ -34,14 +31,14 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }: IConnect
       const isps = await getIsp()
 
       dispatch({
-        type: ActionType.SET_METRICS_ISPS,
+        type: CreateContractActionType.SET_METRICS_ISPS,
         payload: {
           metrics,
           isps,
         },
       })
     } catch (error) {
-      dispatch({ type: ActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
     }
   }, [dispatch])
 
@@ -49,12 +46,15 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }: IConnect
     fetchData()
   }, [fetchData])
 
-  const onMetricValueChange = (value: string, metricId: string) => {
-    dispatch({ type: ActionType.SET_EXPECTED_METRIC, payload: { metricId: +metricId, value: +value } })
-  }
+  const onMetricValueChange = useCallback(
+    (metricId: number) => (value: string) => {
+      dispatch({ type: CreateContractActionType.SET_EXPECTED_METRIC, payload: { metricId: +metricId, value: +value } })
+    },
+    [dispatch],
+  )
 
   const onServiceProviderChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    dispatch({ type: ActionType.SET_SERVICE_PROVIDER, payload: e.target.value })
+    dispatch({ type: CreateContractActionType.SET_SERVICE_PROVIDER, payload: e.target.value })
   }
 
   return (
@@ -98,14 +98,13 @@ const ConnectionTab: React.FC<IConnectionProps> = ({ state, dispatch }: IConnect
                 return {
                   label: `${suggested.value}${suggested.unit}`,
                   value: suggested.value,
-                  metricId: suggested.metric_id,
+                  id: suggested.metric_id,
                 }
               })}
               label={`${metric.name}:`}
-              measure={metric.suggestedMetrics.length ? metric.suggestedMetrics[0].unit : ''}
-              onSelect={onMetricValueChange}
-              state={state}
-              metricId={metric.id.toString()}
+              unit={metric.suggestedMetrics.length ? metric.suggestedMetrics[0].unit : ''}
+              onChange={onMetricValueChange(metric.id)}
+              value={contractForm.expectedMetrics.metrics.find((item) => item.metricId === metric.id)?.value.toString()}
             />
           ))}
         </OptionsContainer>

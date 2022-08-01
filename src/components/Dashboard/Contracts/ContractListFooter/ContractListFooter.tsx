@@ -1,6 +1,8 @@
 import { useContractsContext } from '../state/useContractsContext'
 import { ContractsActionType } from '../state/types'
 import { ContractListFooterContainer } from './styles'
+import { useRoleCheck } from 'src/state/hooks'
+import { ISP_ROLE } from 'src/consts/roles'
 
 const ContractListFooter: React.FC = (): JSX.Element => {
   const { dispatch } = useContractsContext()
@@ -15,10 +17,14 @@ const ContractListFooter: React.FC = (): JSX.Element => {
 
   return (
     <ContractListFooterContainer>
-      <button className="btn-frameless" onClick={handleAddContract} style={{ cursor: 'pointer' }}>
-        <div className="icon icon-24 icon-plus" />
-        New Contract
-      </button>
+      {!useRoleCheck(ISP_ROLE) ? (
+        <button className="btn-frameless" onClick={handleAddContract} style={{ cursor: 'pointer' }}>
+          <div className="icon icon-24 icon-plus" />
+          New Contract
+        </button>
+      ) : (
+        <></>
+      )}
     </ContractListFooterContainer>
   )
 }

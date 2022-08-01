@@ -3,7 +3,7 @@ export interface SelectedProps {
 }
 
 export interface ToggleButtonOption {
+  id: string
   label: string
   value: string
-  metricId: string
 }

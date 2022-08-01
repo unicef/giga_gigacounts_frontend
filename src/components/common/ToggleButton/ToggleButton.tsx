@@ -13,6 +13,7 @@ const Button = styled.div<SelectedProps>`
   border: 1px solid var(--color-green);
   border-radius: 8px;
   background-color: ${({ selected }) => (selected ? 'var(--color-green)' : 'var(--color-white)')};
+  cursor: pointer;
 `
 
 const Label = styled.span<SelectedProps>`
@@ -33,13 +34,13 @@ const ToggleButton = ({
 }: {
   selected: boolean
   option: ToggleButtonOption
-  onSelect: (value: string, metricId: string) => void
+  onSelect: (value: string, optionId: string) => void
 }) => {
   const select = useCallback(() => {
     const newValue = option.value
 
     if (newValue !== null) {
-      onSelect(newValue, option.metricId)
+      onSelect(newValue, option.id)
     }
   }, [onSelect, option])
 

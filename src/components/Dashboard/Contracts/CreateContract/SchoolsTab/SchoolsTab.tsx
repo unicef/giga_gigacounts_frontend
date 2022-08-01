@@ -1,6 +1,7 @@
-import { Dispatch, useEffect, useCallback, useState, useRef, useMemo } from 'react'
+import { useEffect, useCallback, useState, useRef, useMemo } from 'react'
 import * as XLSX from 'xlsx'
-import { Action, State, ActionType } from '../store/redux'
+import icons from 'src/assets/icons'
+import images from 'src/assets/images'
 import {
   SchoolsContainer,
   UploadContainer,
@@ -23,15 +24,12 @@ import {
 } from './styles'
 import SchoolTable from './SchoolTable'
 import { getSchools } from 'src/api/school'
-import icons from 'src/assets/icons'
-import images from 'src/assets/images'
+import { useCreateContractContext } from '../state/useCreateContractContext'
+import { CreateContractActionType } from '../state/types'
 
-interface ISchoolsProps {
-  state: State
-  dispatch: Dispatch<Action>
-}
+const SchoolsTab: React.FC = (): JSX.Element => {
+  const { dispatch, state } = useCreateContractContext()
 
-const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }: ISchoolsProps): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null)
   const csvReaderRef = useRef<HTMLInputElement>(null)
   const acceptFiles = useMemo(() => ['.csv', '.xls', '.xlsx'], [])
@@ -44,9 +42,9 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }: ISchoolsProps)
   const fetchSchools = useCallback(async () => {
     try {
       const response = await getSchools()
-      dispatch({ type: ActionType.RESPONSE_SCHOOLS, payload: response })
+      dispatch({ type: CreateContractActionType.RESPONSE_SCHOOLS, payload: response })
     } catch (error) {
-      dispatch({ type: ActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
     }
   }, [dispatch])
 
@@ -56,7 +54,7 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }: ISchoolsProps)
 
   const handleSchoolSelection = useCallback(
     (id: number) => {
-      dispatch({ type: ActionType.SELECT_SCHOOL, payload: { id } })
+      dispatch({ type: CreateContractActionType.SELECT_SCHOOL, payload: { id } })
     },
     [dispatch],
   )
@@ -91,7 +89,7 @@ const SchoolsTab: React.FC<ISchoolsProps> = ({ state, dispatch }: ISchoolsProps)
       setFileName(fileInfo)
       setSchoolsNotFound(notFoundCount)
       if (csvReaderRef.current) csvReaderRef.current.value = ''
-      dispatch({ type: ActionType.SELECT_SCHOOL_BULK, payload: listOfSchools })
+      dispatch({ type: CreateContractActionType.SELECT_SCHOOL_BULK, payload: listOfSchools })
     },
     [dispatch, setSchoolsNotFound, state.schools],
   )

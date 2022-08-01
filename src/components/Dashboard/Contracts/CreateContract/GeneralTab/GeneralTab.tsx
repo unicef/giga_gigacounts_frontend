@@ -1,9 +1,8 @@
-import axios from 'axios'
-import { ChangeEvent, Dispatch, useEffect, useRef, useCallback } from 'react'
+import { ChangeEvent } from 'react'
+import { uploadAttachment } from 'src/api/attachments'
 import { createContractDraft } from 'src/api/contracts'
 import File from 'src/components/common/File/File'
-import { getCountries, getCurrency, getLtas } from 'src/api/createContract'
-import { Action, ActionType, FileUpload, State } from '../store/redux'
+import { IFileUpload } from 'src/types/general'
 import {
   AttachmentContainer,
   Attachments,
@@ -17,122 +16,72 @@ import {
 } from './styles'
 import { GOV_ROLE } from 'src/consts/roles'
 import { useRoleCheck } from 'src/state/hooks'
+import UploadButton from './UploadButton'
+import { useCreateContractContext } from '../state/useCreateContractContext'
+import { CreateContractActionType } from '../state/types'
 
-import { uploadContractFile } from 'src/api/attachments'
-
-interface IGeneralProps {
-  state: State
-  dispatch: Dispatch<Action>
-}
-
-const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps): JSX.Element => {
-  const { countries, currencies, ltas, flag, contractForm } = state
-  const inputFileRef = useRef<HTMLInputElement>(null)
-
-  const fetchData = useCallback(async () => {
-    try {
-      axios
-        .all([getCountries(), getCurrency(), getLtas()])
-        .then(
-          axios.spread((...responses) => {
-            const countries = responses[0]
-            const currencies = responses[1]
-            const ltas = responses[2]
-
-            dispatch({
-              type: ActionType.GET_FORM_DATA,
-              payload: {
-                countries,
-                currencies,
-                ltas,
-              },
-            })
-          }),
-        )
-        .catch((errors) => {
-          throw new Error(errors)
-        })
-    } catch (error) {
-      dispatch({ type: ActionType.SET_ERROR, payload: error })
-    }
-  }, [dispatch])
+const GeneralTab: React.FC = (): JSX.Element => {
+  const {
+    state: { countries, currencies, ltas, flag, contractForm, draft },
+    actions: { reload },
+    dispatch,
+  } = useCreateContractContext()
 
   const onCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    dispatch({ type: ActionType.SET_COUNTRY_CODE, payload: e.currentTarget.value })
+    dispatch({ type: CreateContractActionType.SET_COUNTRY_CODE, payload: e.currentTarget.value })
   }
 
   const onBehalfGovernmentChange = () => {
-    dispatch({ type: ActionType.SET_BEHALF_GOVERNMENT })
+    dispatch({ type: CreateContractActionType.SET_BEHALF_GOVERNMENT })
   }
 
   const onContractNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: ActionType.SET_CONTRACT_NAME, payload: e.currentTarget.value })
+    dispatch({ type: CreateContractActionType.SET_CONTRACT_NAME, payload: e.currentTarget.value })
   }
 
   const onContractNameBlur = async () => {
     try {
       if (contractForm.name && contractForm.name.length > 0 && !contractForm.id) {
         const response = await createContractDraft(contractForm.name)
-        dispatch({ type: ActionType.CREATE_CONTRACT_DRAFT, payload: response })
+        dispatch({ type: CreateContractActionType.CREATE_CONTRACT_DRAFT, payload: response })
       }
     } catch (error) {
-      dispatch({ type: ActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
     }
   }
 
   const onCurrencyChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    dispatch({ type: ActionType.SET_CURRENCY_CODE, payload: e.target.value })
+    dispatch({ type: CreateContractActionType.SET_CURRENCY_CODE, payload: e.target.value })
   }
 
   const onLtaChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    dispatch({ type: ActionType.SET_LTA, payload: e.target.value })
+    dispatch({ type: CreateContractActionType.SET_LTA, payload: e.target.value })
   }
 
   const onBudgetChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: ActionType.SET_BUDGET, payload: e.target.value })
+    dispatch({ type: CreateContractActionType.SET_BUDGET, payload: e.target.value })
   }
 
   const onStartDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: ActionType.SET_START_DATE, payload: e.target.value })
+    dispatch({ type: CreateContractActionType.SET_START_DATE, payload: e.target.value })
   }
 
   const onEndDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: ActionType.SET_END_DATE, payload: e.target.value })
+    dispatch({ type: CreateContractActionType.SET_END_DATE, payload: e.target.value })
   }
 
-  const onInputFiles = () => inputFileRef.current?.click()
-
-  const handleFileEvent = (e: ChangeEvent<HTMLInputElement>) => {
-    try {
-      const files = e.currentTarget.files
-
-      if (files) {
-        const reader = new FileReader()
-        reader.readAsDataURL(files[0])
-
-        reader.onload = async () => {
-          const fileUpload: FileUpload = {
-            name: files[0].name,
-            typeId: contractForm.id,
-            type: 'draft',
-            file: reader.result,
-          }
-
-          await uploadContractFile(fileUpload)
-        }
-
-        reader.onerror = () => {
-          throw Error("can't read the file")
-        }
+  const onUpload = async (file: IFileUpload) => {
+    if (file) {
+      try {
+        await uploadAttachment(file)
+        await reload()
+      } catch (error) {
+        dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
       }
-    } catch (error) {
-      dispatch({ type: ActionType.SET_ERROR, payload: error })
     }
   }
 
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+  const onUploadError = (error: Error) => dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
 
   return (
     <GeneralContainer>
@@ -141,7 +90,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps)
           <Country>
             <div className="input-container dropdown">
               <img src={`../flags/${flag}.svg`} alt={flag} />
-              <select onChange={onCountryChange} value={contractForm.countryId}>
+              <select onChange={onCountryChange} value={contractForm.countryId ?? ''}>
                 {countries?.map((country) => (
                   <option key={country.id} value={country.id}>
                     {country.name}
@@ -159,13 +108,13 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps)
           <input
             type="text"
             // name="contactName"
-            value={contractForm.name}
+            value={contractForm.name ?? ''}
             placeholder="Contract Name"
             onChange={onContractNameChange}
             onBlur={onContractNameBlur}
           />
           <div className="input-container dropdown">
-            <select onChange={onLtaChange} value={contractForm.ltaId}>
+            <select onChange={onLtaChange} value={contractForm.ltaId ?? ''}>
               <option value={undefined} hidden>
                 Part of Long Term Agreement
               </option>
@@ -179,7 +128,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps)
 
           <div className="input-container">
             <div className="dropdown currency">
-              <select onChange={onCurrencyChange} value={contractForm.currencyId}>
+              <select onChange={onCurrencyChange} value={contractForm.currencyId ?? ''}>
                 {currencies.map((currency) => (
                   <option key={currency.id} value={currency.id}>
                     {currency.name}
@@ -187,7 +136,13 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps)
                 ))}
               </select>
             </div>
-            <input type="number" value={contractForm.budget} min="0" placeholder="Budget" onChange={onBudgetChange} />
+            <input
+              type="number"
+              value={contractForm.budget ?? ''}
+              min="0"
+              placeholder="Budget"
+              onChange={onBudgetChange}
+            />
           </div>
           <DateContainer>
             <DateStart>
@@ -199,7 +154,7 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps)
                 type="date"
                 max={contractForm.endDate}
                 onChange={onStartDateChange}
-                value={contractForm.startDate}
+                value={contractForm.startDate ?? ''}
               />
             </DateStart>
             <DateEnd>
@@ -207,7 +162,12 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps)
                 <span className="icon icon-24 icon-date icon-blue" />
                 <p>Valid through</p>
               </div>
-              <input type="date" min={contractForm.startDate} onChange={onEndDateChange} value={contractForm.endDate} />
+              <input
+                type="date"
+                min={contractForm.startDate}
+                onChange={onEndDateChange}
+                value={contractForm.endDate ?? ''}
+              />
             </DateEnd>
           </DateContainer>
         </form>
@@ -221,11 +181,22 @@ const GeneralTab: React.FC<IGeneralProps> = ({ state, dispatch }: IGeneralProps)
           </p>
         </Attachments>
         <UploadFiles>
-          <File />
-          <input ref={inputFileRef} id="fileUpload" type="file" accept="application/pdf" onChange={handleFileEvent} />
-          <button className="btn btn-blue" onClick={onInputFiles}>
-            Upload Files
-          </button>
+          {draft.data?.attachments.map((attachment) => (
+            <File
+              id={attachment.id}
+              name={attachment.name}
+              url={attachment.url}
+              key={attachment.url}
+              onDelete={reload}
+            />
+          ))}
+          <UploadButton
+            onUpload={onUpload}
+            onError={onUploadError}
+            type="draft"
+            typeId={contractForm.id}
+            disabled={contractForm.id === null}
+          />
         </UploadFiles>
       </AttachmentContainer>
     </GeneralContainer>
