@@ -10,7 +10,7 @@ export const ContractLtaListItemContainer = styled.div<{ isExpanded: boolean }>`
   background: ${(props) => (props.isExpanded ? 'var(--color-light-blue)' : 'var(--color-white)')};
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
   border-radius: 2px;
-  transition: background 0.1s ease-out;
+  transition: background-color 0.1s ease-out;
 
   &:hover {
     cursor: pointer;

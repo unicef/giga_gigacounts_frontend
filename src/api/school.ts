@@ -4,7 +4,7 @@ import instance from './init'
 const ENDPOINT_URL = `/school`
 
 export interface ISchool {
-  id: number
+  id: string
   external_id: string
   name: string
   address: string

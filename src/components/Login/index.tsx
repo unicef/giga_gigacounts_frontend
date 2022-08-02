@@ -15,7 +15,7 @@ const Login: React.FC = (): JSX.Element => {
   return (
     <LoginContainer>
       <LoginForm />
-      <img src={images.loginImage} alt='login-pattern' />
+      <img src={images.loginImage} alt="login-pattern" />
     </LoginContainer>
   )
 }

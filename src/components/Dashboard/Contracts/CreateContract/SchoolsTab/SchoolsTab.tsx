@@ -49,7 +49,7 @@ const SchoolsTab: React.FC = (): JSX.Element => {
   }, [fetchSchools])
 
   const handleSchoolSelection = useCallback(
-    (id: number) => {
+    (id: string) => {
       dispatch({ type: CreateContractActionType.SELECT_SCHOOL, payload: { id } })
     },
     [dispatch],
@@ -72,7 +72,7 @@ const SchoolsTab: React.FC = (): JSX.Element => {
 
   const handleFileData = useCallback(
     (data: string[], fileInfo?: string) => {
-      const listOfSchools: { id: number }[] = []
+      const listOfSchools: { id: string }[] = []
       let notFoundCount = 0
       data.forEach((id) => {
         const index = state.schools.findIndex((school) => school.external_id === id)

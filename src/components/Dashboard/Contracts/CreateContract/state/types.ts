@@ -64,7 +64,7 @@ export interface IQualityService {
 }
 
 export interface ExpectedMetric {
-  metricId: number
+  metricId: string
   value: number
 }
 
@@ -80,7 +80,7 @@ export interface ContractForm {
   budget: string
   startDate: string
   endDate: string
-  schools: { schools: { id: number }[] }
+  schools: { schools: { id: string }[] }
 }
 
 export interface CreateContractState {

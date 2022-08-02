@@ -13,21 +13,21 @@ import { ISchool } from 'src/api/school'
 
 interface SchoolTableProps {
   schools: ISchool[]
-  onSelect: (id: number) => void
-  selectedSchools: { id: number }[]
+  onSelect: (id: string) => void
+  selectedSchools: { id: string }[]
 }
 
 const SchoolTable = ({ schools, onSelect, selectedSchools }: SchoolTableProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const onButtonSelect = useCallback(
-    (id: number) => () => {
+    (id: string) => () => {
       onSelect(id)
     },
     [onSelect],
   )
 
-  const isSelected = (id: number) => {
+  const isSelected = (id: string) => {
     return selectedSchools.findIndex((school) => school.id === id) >= 0
   }
 

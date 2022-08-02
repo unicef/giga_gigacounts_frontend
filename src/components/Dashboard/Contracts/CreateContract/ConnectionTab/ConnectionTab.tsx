@@ -31,7 +31,7 @@ const ConnectionTab: React.FC = (): JSX.Element => {
         },
       })
     } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: {error} })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
   }, [dispatch])
 
@@ -40,8 +40,8 @@ const ConnectionTab: React.FC = (): JSX.Element => {
   }, [fetchData])
 
   const onMetricValueChange = useCallback(
-    (metricId: number) => (value: string) => {
-      dispatch({ type: CreateContractActionType.SET_EXPECTED_METRIC, payload: { metricId: +metricId, value: +value } })
+    (metricId: string) => (value: string) => {
+      dispatch({ type: CreateContractActionType.SET_EXPECTED_METRIC, payload: { metricId: metricId, value: +value } })
     },
     [dispatch],
   )

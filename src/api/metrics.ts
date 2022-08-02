@@ -1,14 +1,14 @@
 import instance from './init'
 
 interface ISuggestedMetrics {
-  id: number
+  id: string
   metric_id: string
   value: string
   unit: string
 }
 
 export interface IMetric {
-  id: number
+  id: string
   name: string
   suggestedMetrics: ISuggestedMetrics[]
 }

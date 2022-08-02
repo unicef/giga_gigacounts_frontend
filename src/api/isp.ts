@@ -3,7 +3,7 @@ import instance from './init'
 const ENDPOINT_URL = `/isp`
 
 export interface IIsp {
-  id: number
+  id: string
   name: string
   country_id: number
 }

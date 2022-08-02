@@ -49,7 +49,7 @@ export interface IConnectionMedian {
 }
 
 export interface IAttachment {
-  id: number
+  id: string
   url: string
   name: string
   ipfsUrl: string
