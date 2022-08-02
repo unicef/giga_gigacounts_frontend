@@ -35,10 +35,13 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   const draftId = useMemo(() => searchParams.get('draft') || '', [searchParams])
 
   const fetchDraft = useCallback(async (id: string) => {
+    dispatch({
+      type: CreateContractActionType.DRAFT_LOADING,
+    })
     try {
       const draft = await getDraft(id)
       dispatch({
-        type: CreateContractActionType.LOAD_DRAFT,
+        type: CreateContractActionType.DRAFT_LOADED,
         payload: {
           draft,
         },
@@ -92,12 +95,12 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   }, [fetchData])
 
   useEffect(() => {
-    if (draftId && draftId !== localState.contractForm.id) {
+    if (draftId && draftId !== localState.contractForm.id && !localState.draft.loading) {
       fetchDraft(draftId)
     } else if (!draftId && localState.contractForm.id !== null) {
       setSearchParams({ draft: localState.contractForm.id })
     }
-  }, [fetchDraft, draftId, localState.contractForm.id, setSearchParams])
+  }, [fetchDraft, draftId, localState.contractForm.id, setSearchParams, localState.draft.loading])
 
   const value = useMemo(
     () => ({

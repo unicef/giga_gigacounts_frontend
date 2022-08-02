@@ -101,7 +101,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
           <div>
             <button className="btn-transparent-grey active">Discard</button>
             {contractForm.id && (
-              <button className="btn-blue" onClick={onSaveDraft}>
+              <button className="btn-blue" onClick={onSaveDraft} disabled={state.loading || state.draft.loading}>
                 Save Draft
               </button>
             )}

@@ -1,4 +1,21 @@
-import { CreateContractActiveTab, CreateContractState, CreateContractTabState } from './types'
+import { ContractForm, CreateContractActiveTab, CreateContractState, CreateContractTabState } from './types'
+
+export const CONTRACT_FORM_INITIAL_STATE: ContractForm = {
+  id: null,
+  name: '',
+  countryId: undefined,
+  currencyId: undefined,
+  ltaId: undefined,
+  ispId: undefined,
+  expectedMetrics: { metrics: [] },
+  governmentBehalf: false,
+  budget: '',
+  startDate: '',
+  endDate: '',
+  schools: {
+    schools: [],
+  },
+}
 
 export const CREATE_CONTRACT_INITIAL_STATE: CreateContractState = {
   draft: {
@@ -20,22 +37,7 @@ export const CREATE_CONTRACT_INITIAL_STATE: CreateContractState = {
   countries: [],
   currencies: [],
   ltas: [],
-  contractForm: {
-    id: null,
-    name: '',
-    countryId: undefined,
-    currencyId: undefined,
-    ltaId: undefined,
-    ispId: undefined,
-    expectedMetrics: { metrics: [] },
-    governmentBehalf: false,
-    budget: '',
-    startDate: '',
-    endDate: '',
-    schools: {
-      schools: [],
-    },
-  },
+  contractForm: CONTRACT_FORM_INITIAL_STATE,
   flag: 'BW',
   schools: [],
 }
