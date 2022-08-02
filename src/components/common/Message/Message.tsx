@@ -1,46 +1,34 @@
 import { MessageContainer } from './styles'
 
+export enum MessageType {
+  NOTICE = 'notice',
+  WARNING = 'warning',
+  ERROR = 'error',
+}
+
 interface MessageProps {
-  type?: string // notice, warning, error
+  type?: MessageType
   title?: string
   description?: string
   onClose?: () => void
 }
 
-const bgColor = (value: string) => {
-    let color
-    switch (value) {
-        case 'notice':
-            color = 'var(--color-light-blue)'
-            break
-        case 'warning':
-            color = 'var(--color-orange)'
-            break
-        case 'error':
-            color = 'var(--color-red)'
-            break
-        default:
-            color = 'var(--color-light-blue)'
-    }
-    return color
-      
-  }
-
 const Message: React.FC<MessageProps> = ({
-  type = 'notice',
+  type = MessageType.NOTICE,
   title = 'Title',
   description = 'Description',
-  onClose
+  onClose,
 }: MessageProps): JSX.Element => {
   return (
-    <MessageContainer color={bgColor(type)}>
+    <MessageContainer color={type}>
       <div>
-        <p><b>{title}</b></p>
-        <span className='icon icon-24 icon-close icon-white-60' onClick={ onClose }></span>
+        <p>
+          <b>{title}</b>
+        </p>
+        <span className="icon icon-24 icon-close icon-white-60" onClick={onClose}></span>
       </div>
-        <small>{description}</small>
+      <small>{description}</small>
     </MessageContainer>
-
   )
 }
 

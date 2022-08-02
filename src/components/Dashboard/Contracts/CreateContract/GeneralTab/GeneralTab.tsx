@@ -78,7 +78,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
     if (file) {
       try {
         await uploadAttachment(file)
-        await reload()
+        reload()
       } catch (error) {
         dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
       }

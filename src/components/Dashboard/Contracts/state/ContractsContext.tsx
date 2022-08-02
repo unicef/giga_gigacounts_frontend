@@ -125,7 +125,6 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     },
     [dispatch],
   )
-  const reloadContracts = useCallback(() => fetchContracts(), [fetchContracts])
 
   const value = useMemo(
     () => ({
@@ -135,11 +134,10 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       setActiveNavItem,
       setSelectedSchool,
       fetchSchoolMeasures,
-      reloadContracts,
+      reloadContracts: fetchContracts,
     }),
-    [localState, fetchContract, setActiveNavItem, setSelectedSchool, fetchSchoolMeasures, reloadContracts],
+    [localState, fetchContract, fetchContracts, setActiveNavItem, setSelectedSchool, fetchSchoolMeasures],
   )
-
   useEffect(() => {
     fetchContracts()
   }, [fetchContracts])

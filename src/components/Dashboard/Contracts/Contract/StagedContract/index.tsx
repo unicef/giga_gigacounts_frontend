@@ -1,17 +1,15 @@
 import { useState } from 'react'
-import ContractStatusWidget from 'src/components/common/ContractStatusWidget'
-import File from 'src/components/common/File/File'
-import { ContractStagedContainer, ContractStagedHeader } from './styles'
-import SchoolsTab from './SchoolsTab/SchoolsTab'
-import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import { ContractsActionType } from 'src/components/Dashboard/Contracts/state/types'
-import { changeContractStatus } from 'src/api/contracts'
-
-import Dialog from 'src/components/common/Dialog/Dialog'
-
+import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import File from 'src/components/common/File/File'
+import Dialog, { DialogType } from 'src/components/common/Dialog/Dialog'
+import SchoolsTab from './SchoolsTab/SchoolsTab'
+import ContractStatusWidget from 'src/components/common/ContractStatusWidget'
+import { ContractStagedContainer, ContractStagedHeader } from './styles'
+import { publishContractToCompleted } from 'src/api/contracts'
 interface IContractDetailsProps {
-  contract: IContract<ContractStatus.Ongoing>
+  contract: IContract<ContractStatus.Ongoing | ContractStatus.Expired>
 }
 
 const getMetricIconClassName = (metricId: number) => {
@@ -33,14 +31,15 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
   const [attachmentsSelected, setAttachmentsSelected] = useState(false)
   const [showDialog, setShowDialog] = useState(false)
   const onAttachmentSelect = () => setAttachmentsSelected(true)
-  const { dispatch } = useContractsContext()
+  const { dispatch, reloadContracts } = useContractsContext()
 
   const toggleShowDialog = () => setShowDialog((prevState) => !prevState)
 
   const onContractStatusChange = async () => {
     try {
-      if (contract && contract.id) await changeContractStatus(contract.id)
+      if (contract && contract.id) await publishContractToCompleted(contract.id)
       toggleShowDialog()
+      reloadContracts()
     } catch (error) {
       dispatch({ type: ContractsActionType.SET_ERROR, payload: error })
     }
@@ -122,7 +121,6 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
               <button className="widget">
                 <div className="widget-title">
                   <h5>Payments</h5>
-                  {/* <small><b>0</b></small> */}
                 </div>
 
                 <div className="widget-info">
@@ -165,7 +163,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
           <SchoolsTab contractSchools={contract?.details.data?.schools ?? []} />
           {showDialog && (
             <Dialog
-              type="message"
+              type={DialogType.MESSAGE}
               message="Before finishing the contract, it is recommended reviewing the current 
         contract situation regarding payments and quality of service provided         
         since this action is not reversible."

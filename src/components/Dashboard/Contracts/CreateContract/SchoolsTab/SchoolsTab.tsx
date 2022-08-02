@@ -21,7 +21,7 @@ import SchoolTable from './SchoolTable'
 import { getSchools } from 'src/api/school'
 import { useCreateContractContext } from '../state/useCreateContractContext'
 import { CreateContractActionType } from '../state/types'
-import Message from 'src/components/common/Message/Message'
+import Message, { MessageType } from 'src/components/common/Message/Message'
 
 const SchoolsTab: React.FC = (): JSX.Element => {
   const { dispatch, state } = useCreateContractContext()
@@ -134,7 +134,7 @@ const SchoolsTab: React.FC = (): JSX.Element => {
         <UploadButtonContainer>
           {schoolsNotFound > 0 && (
             <Message
-              type="error"
+              type={MessageType.ERROR}
               title={schoolsNotFound + ' errors found in ' + fileName}
               description="Please add missing schools manually or re-upload a correct CSV file"
               onClose={() => setSchoolsNotFound(0)}

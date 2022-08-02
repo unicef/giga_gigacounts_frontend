@@ -2,18 +2,10 @@ import React, { useState } from 'react'
 import web3 from 'web3'
 import instance from 'src/api/init'
 
-import {
-  LoginFormContainer,
-  Logo,
-  Form,
-  InputContainer,
-  InputFrame,
-  Input,
-  EmailErrorMessage
-} from './styles'
+import { LoginFormContainer, Logo, Form, InputContainer, InputFrame, Input, EmailErrorMessage } from './styles'
 import { useGeneralContext } from 'src/state/GeneralContext'
 import logos from 'src/assets/logos'
-import Message from 'src/components/common/Message/Message'
+import Message, { MessageType } from 'src/components/common/Message/Message'
 
 const EMPTY_EMAIL_MESSAGE = 'The field can not be empty'
 
@@ -92,11 +84,11 @@ export const LoginForm: React.FC = (): JSX.Element => {
           </InputFrame>
           {wrongCredentialsError && (
             <InputFrame order="2">
-              <Message 
-              type='error'
-              title='Invalid Credentials'
-              description='Please contact giga administrator for assistance'
-              onClose={() => setWrongCredentialsError(false)}
+              <Message
+                type={MessageType.ERROR}
+                title="Invalid Credentials"
+                description="Please contact giga administrator for assistance"
+                onClose={() => setWrongCredentialsError(false)}
               />
             </InputFrame>
           )}

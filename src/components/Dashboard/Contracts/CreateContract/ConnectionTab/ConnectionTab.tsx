@@ -3,8 +3,6 @@ import {
   ConnectionContainer,
   ISPContainer,
   ISPHeader,
-  // ISPDropdownContainer,
-  // ISPDropdown,
   QualityContainer,
   QualityHeader,
   QualityHeaderTitle,
@@ -56,7 +54,7 @@ const ConnectionTab: React.FC = (): JSX.Element => {
     <ConnectionContainer>
       <ISPContainer>
         <ISPHeader>
-          <span className='icon icon-80 icon-network icon-lightest-blue'></span>
+          <span className="icon icon-80 icon-network icon-lightest-blue"></span>
           <div>
             <h5>Internet Service Provider</h5>
             <small>
@@ -64,19 +62,18 @@ const ConnectionTab: React.FC = (): JSX.Element => {
             </small>
           </div>
         </ISPHeader>
-          <div className="input-container dropdown">
-            <select  
-              onChange={onServiceProviderChange} value={contractForm.ispId}>
-              <option value="" hidden>
-                Service Provider
+        <div className="input-container dropdown">
+          <select onChange={onServiceProviderChange} value={contractForm.ispId}>
+            <option value="" hidden>
+              Service Provider
+            </option>
+            {(state.isps || []).map((isp) => (
+              <option key={isp.id} value={isp.id}>
+                {isp.name}
               </option>
-              {(state.isps || []).map((isp) => (
-                <option key={isp.id} value={isp.id}>
-                  {isp.name}
-                </option>
-              ))}
-            </select>
-          </div>
+            ))}
+          </select>
+        </div>
       </ISPContainer>
       <QualityContainer>
         <QualityHeader>

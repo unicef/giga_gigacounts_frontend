@@ -1,7 +1,11 @@
-import { DialogContainer } from './styles'
+import { DialogContainer, DialogBody, DialogCta } from './styles'
 
+export enum DialogType {
+  MESSAGE = 'message',
+  WARNING = 'warning',
+}
 interface DialogProps {
-  type?: string // message, warning
+  type?: DialogType
   message?: string
   acceptLabel?: string
   rejectLabel?: string
@@ -9,22 +13,8 @@ interface DialogProps {
   onRejected?: () => void
 }
 
-const styles = (value: string) => {
-  if (value === 'warning') {
-    return {
-      icon: 'icon icon-60 icon-error icon-red-on-blue',
-      button: 'btn-red',
-    }
-  } else {
-    return {
-      icon: 'icon icon-60 icon-expired icon-light-blue',
-      button: 'btn-blue',
-    }
-  }
-}
-
 const Dialog: React.FC<DialogProps> = ({
-  type = 'message',
+  type = DialogType.MESSAGE,
   message = 'Do you really want to perform this action',
   acceptLabel = 'Ok',
   rejectLabel = 'Cancel',
@@ -33,20 +23,22 @@ const Dialog: React.FC<DialogProps> = ({
 }: DialogProps): JSX.Element => {
   return (
     <DialogContainer>
-      <div className="dialog">
-        <span className={styles(type).icon}></span>
+      <DialogBody>
+        <span
+          className={`icon icon-60 ${
+            type === DialogType.MESSAGE ? 'icon-expired icon-light-blue' : 'icon-error icon-red-on-blue'
+          }`}
+        />
         <p>{message}</p>
-        <div className="cta">
-          <button className={styles(type).button} onClick={onAccepted}>
-            {' '}
-            {acceptLabel}{' '}
+        <DialogCta>
+          <button className={type === DialogType.MESSAGE ? 'btn-blue' : 'btn-red'} onClick={onAccepted}>
+            {acceptLabel}
           </button>
           <button className="btn-transparent-grey" onClick={onRejected}>
-            {' '}
-            {rejectLabel}{' '}
+            {rejectLabel}
           </button>
-        </div>
-      </div>
+        </DialogCta>
+      </DialogBody>
     </DialogContainer>
   )
 }

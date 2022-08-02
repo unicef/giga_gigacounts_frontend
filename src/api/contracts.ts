@@ -71,10 +71,10 @@ export const getContract = async (contractId: string): Promise<IPendingContractD
   throw new Error('Failed to get the contract')
 }
 
-export const changeContractStatus = async (contractId: string) => {
+export const publishContractToCompleted = async (contractId: string) => {
   const response = await instance.post('/contract/change-status', {
     contract_id: contractId,
-    status: 5,
+    completedStatus: 5,
   })
   if (response.status === 200) return response.data
   throw new Error('Failed to change the contract status')
