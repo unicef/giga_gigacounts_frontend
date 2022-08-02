@@ -138,6 +138,7 @@ export const ContractStagedHeader = styled.div`
 
   .widget-chart {
     grid-area: chart;
+    gap: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -146,7 +147,6 @@ export const ContractStagedHeader = styled.div`
       width: 100%;
       height: 100%;
       margin: auto;
-      position: absolute;
       color: var(--color-blue);
     }
   }

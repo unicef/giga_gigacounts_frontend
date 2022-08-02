@@ -164,9 +164,9 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
           {showDialog && (
             <Dialog
               type={DialogType.MESSAGE}
-              message="Before finishing the contract, it is recommended reviewing the current 
+              message={`Before finishing the contract, it is recommended reviewing the current 
         contract situation regarding payments and quality of service provided         
-        since this action is not reversible."
+        since this action is not reversible.`}
               acceptLabel="Proceed"
               onAccepted={onContractStatusChange}
               onRejected={toggleShowDialog}
