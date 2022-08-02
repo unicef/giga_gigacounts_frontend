@@ -1,33 +1,35 @@
 import { useMemo } from 'react'
 import School from 'src/components/common/School/School'
 import File from 'src/components/common/File/File'
-import { IContract } from 'src/components/Dashboard/Contracts//@types/ContractType'
+import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts//@types/ContractType'
 import FormattedDate from 'src/components/common/Date'
 import { ContractPendingContainer } from './styles'
+import PendingContractMessage from './PendingContractMessage'
+import PendingContractCountryBanner from './PendingContractCountryBanner'
 
 interface PendingContractProps {
-  contract: IContract
+  contract: IContract<ContractStatus.Sent | ContractStatus.Confirmed>
 }
 
 const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingContractProps): JSX.Element => {
   const uptime = useMemo(
-    () => contract.details.data?.connectionsMedian.find(({ metric_id }) => metric_id === 1),
-    [contract.details.data?.connectionsMedian],
+    () => contract.details.data?.expectedMetrics.find(({ metricId }) => metricId === 1),
+    [contract.details.data?.expectedMetrics],
   )
 
   const latency = useMemo(
-    () => contract.details.data?.connectionsMedian.find(({ metric_id }) => metric_id === 2),
-    [contract.details.data?.connectionsMedian],
+    () => contract.details.data?.expectedMetrics.find(({ metricId }) => metricId === 2),
+    [contract.details.data?.expectedMetrics],
   )
 
   const downloadSpeed = useMemo(
-    () => contract.details.data?.connectionsMedian.find(({ metric_id }) => metric_id === 3),
-    [contract.details.data?.connectionsMedian],
+    () => contract.details.data?.expectedMetrics.find(({ metricId }) => metricId === 3),
+    [contract.details.data?.expectedMetrics],
   )
 
   const uploadSpeed = useMemo(
-    () => contract.details.data?.connectionsMedian.find(({ metric_id }) => metric_id === 3),
-    [contract.details.data?.connectionsMedian],
+    () => contract.details.data?.expectedMetrics.find(({ metricId }) => metricId === 3),
+    [contract.details.data?.expectedMetrics],
   )
 
   return (
@@ -35,34 +37,31 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
       <div className="title">
         <div className="title-item contract-number">
           <h5>{contract.name}</h5>
-          <div className="lta-number">
-            <span className="icon icon-24 icon-contract icon-mid-grey"></span>
-            <p>
-              <b>{contract.ltaId}</b>
-            </p>
-          </div>
+          {contract.ltaId !== null && (
+            <div className="lta-number">
+              <span className="icon icon-24 icon-contract icon-mid-grey"></span>
+              <p>
+                <b>{contract.ltaId}</b>
+              </p>
+            </div>
+          )}
         </div>
-
-        <div className="title-item notice">
-          <span className="icon icon-24 icon-expired icon-light-blue"></span>
-          <small>
-            <b>Message</b>
-          </small>
-        </div>
+        <PendingContractMessage status={contract.status} />
       </div>
 
       <div className="content">
         <div className="info">
-          <div className="info-header">
-            <h5>{contract.country?.name}</h5>
-            {contract.governmentBehalf && <p>The contract is conducted by the government of Botswana</p>}
-          </div>
+          {!!contract.country && (
+            <PendingContractCountryBanner country={contract.country} governmentBehalf={contract.governmentBehalf} />
+          )}
 
           <div className="info-line">
             <span className="icon icon-24 icon-coins icon-mid-grey"></span>
             <p>Budget:</p>
             <p>
-              <b>{contract.budget?.budget}</b>
+              <b>
+                {contract.details.data?.currency?.id} {contract.details.data?.budget}
+              </b>
             </p>
           </div>
 
@@ -109,7 +108,7 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
                 <span className="icon icon-24 icon-plug icon-mid-grey"></span>
                 <p>Uptime:</p>
                 <p>
-                  <b>{uptime?.median_value ?? 0}</b>
+                  <b>{uptime?.value ?? 0}</b>
                 </p>
                 <p>%</p>
               </div>
@@ -118,7 +117,7 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
                 <span className="icon icon-24 icon-meter icon-mid-grey"></span>
                 <p>Latency:</p>
                 <p>
-                  <b>{latency?.median_value ?? 0}</b>
+                  <b>{latency?.value ?? 0}</b>
                 </p>
                 <p>ms</p>
               </div>
@@ -127,7 +126,7 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
                 <span className="icon icon-24 icon-down-speed icon-mid-grey"></span>
                 <p>Download Speed:</p>
                 <p>
-                  <b>{downloadSpeed?.median_value ?? 0}</b>
+                  <b>{downloadSpeed?.value ?? 0}</b>
                 </p>
                 <p>ms</p>
               </div>
@@ -136,7 +135,7 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
                 <span className="icon icon-24 icon-up-speed icon-mid-grey"></span>
                 <p>Upload Speed:</p>
                 <p>
-                  <b>{uploadSpeed?.median_value ?? 0}</b>
+                  <b>{uploadSpeed?.value ?? 0}</b>
                 </p>
                 <p>ms</p>
               </div>
@@ -147,13 +146,10 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
             <h5>Attachments</h5>
             <hr />
             <div className="info-attachments-files">
+              {contract.details.data?.attachments === undefined ||
+                (contract.details.data?.attachments.length === 0 && <p>No attachments.</p>)}
               {contract.details.data?.attachments?.map((attachment) => (
-                <File
-                  type={attachment.name.split('.').at(-1)}
-                  url={attachment.url}
-                  name={attachment.name}
-                  key={attachment.id}
-                />
+                <File url={attachment.url} name={attachment.name} key={attachment.id} />
               ))}
             </div>
           </div>
@@ -161,13 +157,7 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
 
         <div className="schools">
           {contract.details.data?.schools.map((school) => (
-            <School
-              key={school.id}
-              name={school.name}
-              id={school.id}
-              location={school.locations}
-              status={school.connection.value}
-            />
+            <School key={school.id} name={school.name} id={school.id} location={school.locations} />
           ))}
         </div>
       </div>

@@ -52,6 +52,7 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
 
     case ContractsActionType.SET_CONTRACT_DETAILS_LOADING: {
       const { id } = payload
+
       return {
         ...state,
         contracts: state.contracts?.map((contract) => {

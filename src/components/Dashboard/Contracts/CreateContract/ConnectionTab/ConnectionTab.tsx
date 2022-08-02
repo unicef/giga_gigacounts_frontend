@@ -38,7 +38,7 @@ const ConnectionTab: React.FC = (): JSX.Element => {
         },
       })
     } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: {error} })
     }
   }, [dispatch])
 

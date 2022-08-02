@@ -1,12 +1,12 @@
+import { useState } from 'react'
 import ContractStatusWidget from 'src/components/common/ContractStatusWidget'
 import File from 'src/components/common/File/File'
 import { ContractStagedContainer, ContractStagedHeader } from './styles'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
-import { useState } from 'react'
-import { IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
 
 interface IContractDetailsProps {
-  contract: IContract
+  contract: IContract<ContractStatus.Ongoing>
 }
 
 const getMetricIconClassName = (metricId: number) => {

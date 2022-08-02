@@ -50,7 +50,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
         dispatch({ type: CreateContractActionType.CREATE_CONTRACT_DRAFT, payload: response })
       }
     } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
   }
 
@@ -80,12 +80,12 @@ const GeneralTab: React.FC = (): JSX.Element => {
         await uploadAttachment(file)
         await reload()
       } catch (error) {
-        dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+        dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
       }
     }
   }
 
-  const onUploadError = (error: Error) => dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+  const onUploadError = (error: Error) => dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
 
   return (
     <GeneralContainer>
@@ -190,8 +190,9 @@ const GeneralTab: React.FC = (): JSX.Element => {
               id={attachment.id}
               name={attachment.name}
               url={attachment.url}
-              key={attachment.url}
+              key={attachment.id}
               onDelete={reload}
+              allowDelete
             />
           ))}
           <UploadButton

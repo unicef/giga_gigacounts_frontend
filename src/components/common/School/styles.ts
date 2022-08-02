@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 
 export const SchoolContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 10% 30% 20px;
+  grid-template-columns: 1fr 10% 30% min-content;
   grid-template-rows: 1fr;
   gap: 0px 16px;
   width: 100%;

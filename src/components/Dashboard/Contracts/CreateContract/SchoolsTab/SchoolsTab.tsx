@@ -44,7 +44,7 @@ const SchoolsTab: React.FC = (): JSX.Element => {
       const response = await getSchools()
       dispatch({ type: CreateContractActionType.RESPONSE_SCHOOLS, payload: response })
     } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
   }, [dispatch])
 

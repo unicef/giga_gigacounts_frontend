@@ -5,7 +5,7 @@ interface SchoolProps {
   id: string
   name: string
   location: string
-  status: number
+  status?: number
   showIcon?: boolean
   showStatus?: boolean
   schoolId?: string
@@ -13,7 +13,11 @@ interface SchoolProps {
   onSchoolSelected?: (schoolId: string) => void
 }
 
-const getIconColorClassName = (value: number) => {
+const getIconColorClassName = (value?: number) => {
+  if (value === undefined) {
+    return `icon-light-grey`
+  }
+
   switch (true) {
     case value >= 90:
       return `icon-green`

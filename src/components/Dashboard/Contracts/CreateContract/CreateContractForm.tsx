@@ -85,7 +85,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
         dispatch({ type: CreateContractActionType.UPDATE_CONTRACT_DRAFT, payload: formattedResponse })
       }
     } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
   }
 

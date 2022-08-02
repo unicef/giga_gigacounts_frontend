@@ -77,7 +77,7 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
           throw new Error(errors)
         })
     } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
   }, [])
 

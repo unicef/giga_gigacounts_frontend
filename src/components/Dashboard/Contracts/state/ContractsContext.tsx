@@ -1,10 +1,11 @@
 import { createContext, FC, useReducer, useCallback, useMemo, Dispatch, useEffect } from 'react'
-import { getContractDetails, getContracts, getContractSchools } from 'src/api/contracts'
 import { getSchoolMeasures } from 'src/api/school'
+import { getContract, getContractDetails, getContracts, getContractSchools } from 'src/api/contracts'
 import { ChildrenProps } from 'src/types/utils'
 import { INITIAL_CONTRACTS_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { ContractsAction, ContractsActionType, ContractsState } from './types'
+import { ContractStatus } from '../@types/ContractType'
 
 export interface IContractsContext {
   state: ContractsState
@@ -52,6 +53,12 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
 
   const fetchContract = useCallback(
     async (id: string) => {
+      const contract = localState.contracts?.find((contract) => contract.id === id)
+
+      if (contract === undefined) {
+        return
+      }
+
       try {
         dispatch({
           type: ContractsActionType.SET_CONTRACT_DETAILS_LOADING,
@@ -60,7 +67,9 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
           },
         })
 
-        const [details, schools] = await Promise.all([getContractDetails(id), getContractSchools(id)])
+        const [details, schools] = [ContractStatus.Sent, ContractStatus.Confirmed].includes(contract.status)
+          ? await getContract(id).then(async (details) => [details, details.schools])
+          : await Promise.all([getContractDetails(id), getContractSchools(id)])
 
         dispatch({
           type: ContractsActionType.SET_CONTRACT_DETAILS_SCHOOLS,
@@ -73,7 +82,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         dispatch({ type: ContractsActionType.SET_CONTRACT_DETAILS_ERROR, payload: error })
       }
     },
-    [dispatch],
+    [localState],
   )
 
   const fetchSchoolMeasures = useCallback(
@@ -101,7 +110,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       dispatch({ type: ContractsActionType.SET_ACTIVE_NAV_ITEM, payload: navItem })
       fetchContracts(navItem)
     },
-    [dispatch, fetchContracts],
+    [fetchContracts],
   )
 
   const setSelectedSchool = useCallback(

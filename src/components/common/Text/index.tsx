@@ -22,7 +22,7 @@ const StyledSpan = styled.span<TextProps>`
   font-weight: ${({ bold }) => (bold ? 'bold' : 'normal')};
   ${({ color }) => color && { color }}
   ${({ textAlign }) => textAlign && { textAlign }}
-  ${({ fontSize: textSize }) => textSize && { fontSize: textSize }}
+  ${({ fontSize }) => fontSize && { fontSize }}
 `
 
 const Text = ({ children, ...props }: TextProps) => {
