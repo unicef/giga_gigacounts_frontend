@@ -13,7 +13,7 @@ export const SchoolInfo = styled.div<{ status: string }>`
   padding: 10px 0 10px 12px;
   width: 100%;
   background: ${(props) =>
-    props.status === ContractStatus.Draft || props.status === ContractStatus.Completed
+    props.status === ContractStatus.Draft || props.status === ContractStatus.Expired || props.status === ContractStatus.Completed
       ? `var(--color-pale-blue)`
       : `var(--color-white)`};
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -32,7 +32,7 @@ export const SchoolInfo = styled.div<{ status: string }>`
 
   &.selected {
     background: ${(props) =>
-      props.status === ContractStatus.Draft || props.status === ContractStatus.Completed
+      props.status === ContractStatus.Draft || props.status === ContractStatus.Expired || props.status === ContractStatus.Completed
         ? `var(--color-light-blue)`
         : `var(--color-blue)`};
     p {

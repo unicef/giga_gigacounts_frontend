@@ -14,6 +14,7 @@ export interface IContractsContext {
   setActiveNavItem: (item: string) => void
   setSelectedSchool: (schoolId: string, contractId: string) => void
   fetchSchoolMeasures: (schoolId: string, id: string, month: string) => void
+  reloadContracts: () => void
 }
 
 export const ContractsContext = createContext<IContractsContext>({
@@ -33,6 +34,9 @@ export const ContractsContext = createContext<IContractsContext>({
   setSelectedSchool: () => {
     throw new Error('Not implemented')
   },
+  reloadContracts: () => {
+    throw new Error('Not implemented')
+  },
 })
 
 export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
@@ -46,10 +50,6 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       .then((response) => dispatch({ type: ContractsActionType.RESPONSE, payload: response }))
       .catch((error) => dispatch({ type: ContractsActionType.SET_ERROR, payload: error }))
   }, [])
-
-  useEffect(() => {
-    fetchContracts()
-  }, [fetchContracts])
 
   const fetchContract = useCallback(
     async (id: string) => {
@@ -134,9 +134,13 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       setActiveNavItem,
       setSelectedSchool,
       fetchSchoolMeasures,
+      reloadContracts: fetchContracts,
     }),
-    [localState, fetchContract, setActiveNavItem, setSelectedSchool, fetchSchoolMeasures],
+    [localState, fetchContract, fetchContracts, setActiveNavItem, setSelectedSchool, fetchSchoolMeasures],
   )
+  useEffect(() => {
+    fetchContracts()
+  }, [fetchContracts])
 
   return <ContractsContext.Provider value={value}>{children}</ContractsContext.Provider>
 }

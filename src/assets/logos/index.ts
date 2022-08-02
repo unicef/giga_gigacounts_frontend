@@ -3,9 +3,9 @@
  * Naming is important!
  */
 
-import gigaLogo from '../logos/giga-logo.svg'
-import gigaLogoInLine from '../logos/giga-logo-inline.svg'
-import gigaLogoColor from '../logos/giga-logo-color.svg'
+import gigaLogo from '../logos/gigacounts.svg'
+import gigaLogoInLine from '../logos/gigacounts-inline.svg'
+import gigaLogoColor from '../logos/gigacounts-color.svg'
 
 const logos = {
   gigaLogo,

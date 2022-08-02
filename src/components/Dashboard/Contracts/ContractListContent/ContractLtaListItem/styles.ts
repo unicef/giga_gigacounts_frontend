@@ -26,6 +26,7 @@ export const ContractLtaHeader = styled.div<{ isExpanded: boolean }>`
   gap: 8px;
   width: 100%;
   height: 32px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `
 
 export const ContractLtaIcon = styled.div`

@@ -41,6 +41,12 @@ export const updateContractDraft = async (contract: ContractForm) => {
   }
 }
 
+export const deleteContractDraft = async (draft_id: number) => {
+  const response = await instance.delete(`/contract/draft/${draft_id}`)
+  if (response.status === 200) return response.data
+  throw new Error('Failed to delete the contract draft')
+}
+
 export const getContractByStatus = async () => {
   const response = await instance.get('/contract/count/status')
   if (response.status === 200) return response.data
@@ -63,4 +69,13 @@ export const getContract = async (contractId: string): Promise<IPendingContractD
   const response = await instance.get(`/contract/${contractId}`)
   if (response.status === 200) return response.data
   throw new Error('Failed to get the contract')
+}
+
+export const publishContractToCompleted = async (contractId: string) => {
+  const response = await instance.post('/contract/change-status', {
+    contract_id: contractId,
+    completedStatus: 5,
+  })
+  if (response.status === 200) return response.data
+  throw new Error('Failed to change the contract status')
 }

@@ -18,7 +18,7 @@ export const Header = styled.div`
   gap: 24px;
   padding: 0px;
   width: 100%;
-  border-bottom: 2px solid var(--color-lighter-blue);
+  border-bottom: 2px solid var(--color-lightest-blue);
 `
 
 export const FormHeaderActions = styled.div`
