@@ -4,11 +4,17 @@ import images from 'src/assets/images'
 import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } from './styles'
 import { ISP_ROLE } from 'src/consts/roles'
 import { useRoleCheck } from 'src/state/hooks'
+import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 
 const ContractGuide: React.FC = (): JSX.Element => {
   const navigate = useNavigate()
 
-  const createDraft = () => navigate('/dashboard/contract')
+  const { setActiveNavItem } = useContractsContext()
+
+  const createDraft = () => {
+    navigate('/dashboard/contract')
+    setActiveNavItem('all contracts')
+  }
 
   return (
     <ContractGuideContainer>
@@ -23,12 +29,10 @@ const ContractGuide: React.FC = (): JSX.Element => {
           <div className="super-small">
             The initial state of the contract where all the required information is completed.
           </div>
-          {!useRoleCheck(ISP_ROLE) ? (
+          {!useRoleCheck(ISP_ROLE) && (
             <button onClick={createDraft} className="btn-blue">
               Create Draft
             </button>
-          ) : (
-            <></>
           )}
         </ContractGuideItem>
 
