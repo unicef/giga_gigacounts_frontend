@@ -1,6 +1,5 @@
 import { useEffect, useCallback, useState, useRef, useMemo } from 'react'
 import * as XLSX from 'xlsx'
-import icons from 'src/assets/icons'
 import images from 'src/assets/images'
 import {
   SchoolsContainer,
@@ -15,17 +14,14 @@ import {
   SchoolSearchInput,
   SearchButton,
   SchoolsTableContainer,
-  UploadError,
   UploadErrorTitle,
-  UploadErrorText,
-  UploadErrorHeader,
-  UploadCloseBtn,
   UploadFormatError,
 } from './styles'
 import SchoolTable from './SchoolTable'
 import { getSchools } from 'src/api/school'
 import { useCreateContractContext } from '../state/useCreateContractContext'
 import { CreateContractActionType } from '../state/types'
+import Message, { MessageType } from 'src/components/common/Message/Message'
 
 const SchoolsTab: React.FC = (): JSX.Element => {
   const { dispatch, state } = useCreateContractContext()
@@ -44,7 +40,7 @@ const SchoolsTab: React.FC = (): JSX.Element => {
       const response = await getSchools()
       dispatch({ type: CreateContractActionType.RESPONSE_SCHOOLS, payload: response })
     } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
   }, [dispatch])
 
@@ -53,7 +49,7 @@ const SchoolsTab: React.FC = (): JSX.Element => {
   }, [fetchSchools])
 
   const handleSchoolSelection = useCallback(
-    (id: number) => {
+    (id: string) => {
       dispatch({ type: CreateContractActionType.SELECT_SCHOOL, payload: { id } })
     },
     [dispatch],
@@ -76,7 +72,7 @@ const SchoolsTab: React.FC = (): JSX.Element => {
 
   const handleFileData = useCallback(
     (data: string[], fileInfo?: string) => {
-      const listOfSchools: { id: number }[] = []
+      const listOfSchools: { id: string }[] = []
       let notFoundCount = 0
       data.forEach((id) => {
         const index = state.schools.findIndex((school) => school.external_id === id)
@@ -136,22 +132,19 @@ const SchoolsTab: React.FC = (): JSX.Element => {
         </UploadHeader>
         <img src={images.sampleTable} alt="sample-table" />
         <UploadButtonContainer>
-          {schoolsNotFound > 0 ? (
-            <UploadError>
-              <UploadErrorHeader>
-                <UploadErrorTitle>
-                  {schoolsNotFound} errors found in {fileName}.
-                </UploadErrorTitle>
-                <UploadCloseBtn src={icons.cross} onClick={() => setSchoolsNotFound(0)} />
-              </UploadErrorHeader>
-              <UploadErrorText>Please add missing schools manually or re-upload a correct CSV file</UploadErrorText>
-            </UploadError>
-          ) : null}
-          {invalidFormat ? (
+          {schoolsNotFound > 0 && (
+            <Message
+              type={MessageType.ERROR}
+              title={schoolsNotFound + ' errors found in ' + fileName}
+              description="Please add missing schools manually or re-upload a correct CSV file"
+              onClose={() => setSchoolsNotFound(0)}
+            />
+          )}
+          {invalidFormat && (
             <UploadFormatError>
               <UploadErrorTitle>Invalid format</UploadErrorTitle>
             </UploadFormatError>
-          ) : null}
+          )}
           <UploadButton>
             <span>Upload file</span>
             <input

@@ -2,19 +2,12 @@ import { useEffect, useCallback, ChangeEvent } from 'react'
 import {
   ConnectionContainer,
   ISPContainer,
-  ISPIcon,
   ISPHeader,
-  ISPHeaderTitle,
-  ISPHeaderTextContainer,
-  ISPHeaderText,
-  ISPDropdownContainer,
-  ISPDropdown,
   QualityContainer,
   QualityHeader,
   QualityHeaderTitle,
   OptionsContainer,
 } from './styles'
-import icons from 'src/assets/icons'
 import ToggleButtonGroup from 'src/components/common/ToggleButton'
 import { getSuggestedMetrics } from 'src/api/metrics'
 import { getIsp } from 'src/api/isp'
@@ -38,7 +31,7 @@ const ConnectionTab: React.FC = (): JSX.Element => {
         },
       })
     } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
   }, [dispatch])
 
@@ -47,8 +40,8 @@ const ConnectionTab: React.FC = (): JSX.Element => {
   }, [fetchData])
 
   const onMetricValueChange = useCallback(
-    (metricId: number) => (value: string) => {
-      dispatch({ type: CreateContractActionType.SET_EXPECTED_METRIC, payload: { metricId: +metricId, value: +value } })
+    (metricId: string) => (value: string) => {
+      dispatch({ type: CreateContractActionType.SET_EXPECTED_METRIC, payload: { metricId: metricId, value: +value } })
     },
     [dispatch],
   )
@@ -61,30 +54,26 @@ const ConnectionTab: React.FC = (): JSX.Element => {
     <ConnectionContainer>
       <ISPContainer>
         <ISPHeader>
-          <ISPIcon>
-            <img src={icons.internetService} alt="ISP" />
-          </ISPIcon>
-          <ISPHeaderTextContainer>
-            <ISPHeaderTitle>Internet Service Provider</ISPHeaderTitle>
-            <ISPHeaderText>
+          <span className="icon icon-80 icon-network icon-lightest-blue"></span>
+          <div>
+            <h5>Internet Service Provider</h5>
+            <small>
               Complete the provider that is going to be connecting schools and the terms agreed for the contract
-            </ISPHeaderText>
-          </ISPHeaderTextContainer>
+            </small>
+          </div>
         </ISPHeader>
-        <ISPDropdownContainer>
-          <ISPDropdown className="input-container dropdown">
-            <select onChange={onServiceProviderChange} value={contractForm.ispId}>
-              <option value="" hidden>
-                Service Provider
+        <div className="input-container dropdown">
+          <select onChange={onServiceProviderChange} value={contractForm.ispId}>
+            <option value="" hidden>
+              Service Provider
+            </option>
+            {(state.isps || []).map((isp) => (
+              <option key={isp.id} value={isp.id}>
+                {isp.name}
               </option>
-              {(state.isps || []).map((isp) => (
-                <option key={isp.id} value={isp.id}>
-                  {isp.name}
-                </option>
-              ))}
-            </select>
-          </ISPDropdown>
-        </ISPDropdownContainer>
+            ))}
+          </select>
+        </div>
       </ISPContainer>
       <QualityContainer>
         <QualityHeader>

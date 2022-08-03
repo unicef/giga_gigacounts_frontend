@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useGeneralContext } from 'src/state/GeneralContext'
-import { UserBlock } from './ProfileIcon.css'
+import { UserBlock } from './styles'
 
 export interface NavItemProps {
   collapsed?: boolean
@@ -15,14 +16,16 @@ export const ProfileIcon: React.FC<NavItemProps> = ({
   role,
   ...props
 }: NavItemProps): JSX.Element => {
+  const navigate = useNavigate()
   const {
     actions: { reset },
   } = useGeneralContext()
 
-  const logout = useCallback(async () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('session')
-    await reset()
-  }, [reset])
+    reset()
+    navigate('/')
+  }, [reset, navigate])
 
   return (
     <UserBlock className="noselect" style={collapsed ? { paddingLeft: '10px' } : {}} {...props}>

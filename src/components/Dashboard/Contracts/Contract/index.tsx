@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
-import { ContractStatus } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
 import { ChildrenProps } from 'src/types/utils'
 import { useContract } from '../state/hooks'
 import PendingContract from './PendingContract'
@@ -29,8 +29,8 @@ const Contract: React.FC<ContractProps> = ({ id }: ContractProps): JSX.Element =
     }
   }, [contract?.details.data, contract?.details.error, contract?.details.loading, fetchContract, id])
 
-  if (loading || contracts === undefined || contract?.details.loading) {
-    return <>loading</>
+  if (loading || contracts === undefined || !contract?.details.data) {
+    return <>Loading...</>
   }
 
   if (!contract) {
@@ -38,9 +38,9 @@ const Contract: React.FC<ContractProps> = ({ id }: ContractProps): JSX.Element =
   }
 
   return contract.status === ContractStatus.Sent || contract.status === ContractStatus.Confirmed ? (
-    <PendingContract contract={contract} />
+    <PendingContract contract={contract as IContract<ContractStatus.Sent>} />
   ) : (
-    <ContractStaged contract={contract} />
+    <ContractStaged contract={contract as IContract<ContractStatus.Ongoing>} />
   )
 }
 

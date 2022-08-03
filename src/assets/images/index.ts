@@ -9,6 +9,7 @@ import sampleTable from '../images/sample-table.svg'
 import schoolsGreen from '../images/schools-green.svg'
 import schoolsOrange from '../images/schools-orange.svg'
 import schoolsRed from '../images/schools-red.svg'
+import loginImage from '../images/login-image.png'
 
 const images = {
   chartExample,
@@ -17,6 +18,7 @@ const images = {
   schoolsGreen,
   schoolsOrange,
   schoolsRed,
+  loginImage
 }
 
 export default images

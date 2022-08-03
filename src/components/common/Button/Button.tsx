@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react'
 import { syncedHistory } from 'src/config/syncedHistory'
-import { ButtonComponent } from './Button.css'
+import { ButtonComponent } from './styles'
 
 export type ButtonPropType = {
   link?: string

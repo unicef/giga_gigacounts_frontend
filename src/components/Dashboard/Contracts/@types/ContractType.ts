@@ -1,4 +1,6 @@
+import { ICurrency } from 'src/api/createContract'
 import { DataState } from 'src/state/types'
+import { ExpectedMetric } from '../CreateContract/state/types'
 
 export interface IBudget {
   budget: string
@@ -47,7 +49,7 @@ export interface IConnectionMedian {
 }
 
 export interface IAttachment {
-  id: number
+  id: string
   url: string
   name: string
   ipfsUrl: string
@@ -69,20 +71,41 @@ export interface IContractDetails {
   schools: IContractSchools[]
 }
 
-export interface IContract {
+export interface IPendingContractDetails {
+  id: string
+  name: string
+  isp: string
+  lta: string
+  budget?: string
+  currency?: ICurrency
+  attachments: IAttachment[]
+  startDate: string
+  endDate: string
+  numberOfSchools: string
+  schoolsConnection: ISchoolsConnections
+  expectedMetrics: ExpectedMetric[]
+  schools: IContractSchools[]
+}
+
+type DetailsTypeByStatus<Status extends ContractStatus = ContractStatus> = Status extends
+  | ContractStatus.Sent
+  | ContractStatus.Confirmed
+  ? IPendingContractDetails
+  : IContractDetails
+
+export interface IContract<Status extends ContractStatus = ContractStatus> {
   added?: boolean
-  budget?: IBudget
   country?: ICountry
   id?: string
   isp?: string
-  ltaId?: string
+  ltaId: string | null
   name?: string
   governmentBehalf?: boolean
   numberOfSchools?: string
   schoolsConnection?: ISchoolsConnections
-  status: string
+  status: Status
   totalSpent?: number
-  details: DataState<IContractDetails, true>
+  details: DataState<DetailsTypeByStatus<Status>, true>
 }
 
 export interface IContractSchoolsConnection {

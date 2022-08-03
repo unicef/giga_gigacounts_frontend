@@ -43,11 +43,14 @@ export const DateStart = styled.div`
 
   & div {
     display: flex;
+    gap: 4px;
     align-items: center;
   }
 
   & input[type='date'] {
-    width: 250px;
+    width: 40%;
+    max-width: 200px;
+    min-width: 130px
   }
 `
 

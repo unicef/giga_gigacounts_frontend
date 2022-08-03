@@ -1,3 +1,5 @@
+import { find } from 'src/utils/find'
+import { CONTRACT_FORM_INITIAL_STATE } from './initial-state'
 import { CreateContractAction, CreateContractActionType, CreateContractState } from './types'
 
 export const reducer = (state: CreateContractState, action: CreateContractAction): CreateContractState => {
@@ -14,8 +16,27 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       }
     }
 
-    case CreateContractActionType.LOAD_DRAFT: {
+    case CreateContractActionType.DRAFT_LOADING: {
+      return {
+        ...state,
+        draft: {
+          loading: true,
+          data: undefined,
+          error: undefined,
+        },
+        contractForm: {
+          ...CONTRACT_FORM_INITIAL_STATE,
+          countryId: state.countries.length > 0 ? state.countries[0].id : undefined,
+          currencyId: state.currencies.length > 0 ? state.currencies[0].id : undefined,
+        },
+      }
+    }
+
+    case CreateContractActionType.DRAFT_LOADED: {
       const { draft } = payload
+      const countryId = draft.country?.id ?? state.contractForm.countryId
+      const currencyId = draft.currency?.id ?? state.contractForm.currencyId
+
       return {
         ...state,
         draft: {
@@ -27,8 +48,8 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           ...state.contractForm,
           id: draft.id,
           name: draft.name,
-          countryId: draft.countryId,
-          currencyId: draft.currencyId,
+          countryId,
+          currencyId,
           ltaId: draft.ltaId,
           ispId: draft.ispId,
           expectedMetrics: { metrics: draft.expectedMetrics },
@@ -38,6 +59,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           endDate: draft.endDate,
           schools: { schools: draft.schools },
         },
+        flag: find(state?.countries || [], countryId)?.code,
       }
     }
 
@@ -55,17 +77,24 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
 
     case CreateContractActionType.GET_FORM_DATA: {
       const { countries, currencies, ltas } = payload
+
       return {
         ...state,
         countries,
         currencies,
         ltas,
         loading: false,
+        contractForm: {
+          ...state.contractForm,
+          countryId: state.contractForm.countryId ?? countries[0].id,
+          currencyId: state.contractForm.currencyId ?? currencies[0].id,
+        },
+        flag: state.flag ?? find(state?.countries || [], countries[0].id)?.code,
       }
     }
 
     case CreateContractActionType.SET_COUNTRY_CODE: {
-      const flag = state.countries.find((country) => country.id === payload)?.code ?? 'BW'
+      const flag = find(state?.countries || [], payload)?.code
 
       return {
         ...state,

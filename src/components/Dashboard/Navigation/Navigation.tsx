@@ -49,7 +49,7 @@ const Navigation: React.FC = (): JSX.Element => {
         }}
       />
       <MenuContainer>
-        {role.length > 0 && !isAdmin && (
+        {!!role && !isAdmin && (
           <Country collapsed={!hovered} countryName={country?.name} countryFlag={`${country?.flagUrl}`} />
         )}
 

@@ -85,7 +85,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
         dispatch({ type: CreateContractActionType.UPDATE_CONTRACT_DRAFT, payload: formattedResponse })
       }
     } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
   }
 
@@ -101,7 +101,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
           <div>
             <button className="btn-transparent-grey active">Discard</button>
             {contractForm.id && (
-              <button className="btn-blue" onClick={onSaveDraft}>
+              <button className="btn-blue" onClick={onSaveDraft} disabled={state.loading || state.draft.loading}>
                 Save Draft
               </button>
             )}

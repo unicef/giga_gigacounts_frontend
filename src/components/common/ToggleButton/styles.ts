@@ -10,7 +10,7 @@ export const MainContainer = styled.div`
 
 export const LabelContainer = styled.div`
   align-self: flex-start;
-  witdh: 20%;
+  width: 20%;
 `
 
 export const Label = styled.p`

@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect } from 'react'
+import { ChangeEvent } from 'react'
 import { uploadAttachment } from 'src/api/attachments'
 import { createContractDraft } from 'src/api/contracts'
 import File from 'src/components/common/File/File'
@@ -22,14 +22,10 @@ import { CreateContractActionType } from '../state/types'
 
 const GeneralTab: React.FC = (): JSX.Element => {
   const {
-    state: { countries, currencies, ltas, flag, contractForm, draft },
+    state: { loading, countries, currencies, ltas, flag, contractForm, draft },
     actions: { reload },
     dispatch,
   } = useCreateContractContext()
-
-  useEffect(() => {
-    if (countries.length) dispatch({ type: CreateContractActionType.SET_COUNTRY_CODE, payload: countries[0]?.id })
-  }, [countries, dispatch])
 
   const onCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     dispatch({ type: CreateContractActionType.SET_COUNTRY_CODE, payload: e.currentTarget.value })
@@ -50,7 +46,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
         dispatch({ type: CreateContractActionType.CREATE_CONTRACT_DRAFT, payload: response })
       }
     } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
   }
 
@@ -78,14 +74,14 @@ const GeneralTab: React.FC = (): JSX.Element => {
     if (file) {
       try {
         await uploadAttachment(file)
-        await reload()
+        reload()
       } catch (error) {
-        dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+        dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
       }
     }
   }
 
-  const onUploadError = (error: Error) => dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+  const onUploadError = (error: Error) => dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
 
   return (
     <GeneralContainer>
@@ -93,8 +89,12 @@ const GeneralTab: React.FC = (): JSX.Element => {
         <form>
           <Country>
             <div className="input-container dropdown">
-              <img src={`../flags/${flag}.svg`} alt={flag} />
-              <select onChange={onCountryChange} value={contractForm.countryId ?? ''} disabled={countries.length === 1}>
+              {flag && <img src={`../flags/${flag}.svg`} alt={flag} />}
+              <select
+                onChange={onCountryChange}
+                value={contractForm.countryId ?? ''}
+                disabled={loading || draft.loading}
+              >
                 {countries?.map((country) => (
                   <option key={country.id} value={country.id}>
                     {country.name}
@@ -104,21 +104,26 @@ const GeneralTab: React.FC = (): JSX.Element => {
             </div>
             {!useRoleCheck(GOV_ROLE) && (
               <label>
-                <input type="checkbox" checked={contractForm.governmentBehalf} onChange={onBehalfGovernmentChange} />
+                <input
+                  type="checkbox"
+                  checked={contractForm.governmentBehalf}
+                  onChange={onBehalfGovernmentChange}
+                  disabled={draft.loading}
+                />
                 On behalf of the government
               </label>
             )}
           </Country>
           <input
             type="text"
-            // name="contactName"
             value={contractForm.name ?? ''}
             placeholder="Contract Name"
             onChange={onContractNameChange}
             onBlur={onContractNameBlur}
+            disabled={draft.loading}
           />
           <div className="input-container dropdown">
-            <select onChange={onLtaChange} value={contractForm.ltaId ?? ''}>
+            <select onChange={onLtaChange} value={contractForm.ltaId ?? ''} disabled={draft.loading}>
               <option value={undefined} hidden>
                 Part of Long Term Agreement
               </option>
@@ -132,7 +137,11 @@ const GeneralTab: React.FC = (): JSX.Element => {
 
           <div className="input-container">
             <div className="dropdown currency">
-              <select onChange={onCurrencyChange} value={contractForm.currencyId ?? ''}>
+              <select
+                onChange={onCurrencyChange}
+                value={contractForm.currencyId ?? ''}
+                disabled={loading || draft.loading}
+              >
                 {currencies.map((currency) => (
                   <option key={currency.id} value={currency.id}>
                     {currency.name}
@@ -146,6 +155,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
               min="0"
               placeholder="Budget"
               onChange={onBudgetChange}
+              disabled={draft.loading}
             />
           </div>
           <DateContainer>
@@ -159,6 +169,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
                 max={contractForm.endDate}
                 onChange={onStartDateChange}
                 value={contractForm.startDate ?? ''}
+                disabled={draft.loading}
               />
             </DateStart>
             <DateEnd>
@@ -171,6 +182,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
                 min={contractForm.startDate}
                 onChange={onEndDateChange}
                 value={contractForm.endDate ?? ''}
+                disabled={draft.loading}
               />
             </DateEnd>
           </DateContainer>
@@ -190,8 +202,9 @@ const GeneralTab: React.FC = (): JSX.Element => {
               id={attachment.id}
               name={attachment.name}
               url={attachment.url}
-              key={attachment.url}
+              key={attachment.id}
               onDelete={reload}
+              allowDelete
             />
           ))}
           <UploadButton

@@ -1,5 +1,5 @@
 import { ContractsState } from './types'
-import { IContract } from '../@types/ContractType'
+import { IContract, ContractStatus } from '../@types/ContractType'
 
 export const INITIAL_CONTRACTS_STATE: ContractsState = {
   contracts: undefined,
@@ -10,16 +10,17 @@ export const INITIAL_CONTRACTS_STATE: ContractsState = {
   schoolQosMetricName: undefined,
   schoolQosMedianValue: undefined,
   error: undefined,
-  loading: false,
+  loading: true,
 }
 
 export const NEW_CONTRACT: IContract = {
+  ltaId: null,
   name: 'New Contract',
-  status: 'Draft',
+  status: ContractStatus.Draft,
   added: true,
   details: {
     data: undefined,
-    loading: false,
+    loading: true,
     error: undefined,
   },
 }

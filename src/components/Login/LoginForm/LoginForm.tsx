@@ -2,24 +2,12 @@ import React, { useState } from 'react'
 import web3 from 'web3'
 import instance from 'src/api/init'
 
-import {
-  LoginFormContainer,
-  Logo,
-  Form,
-  InputContainer,
-  InputFrame,
-  Input,
-  EmailErrorMessage,
-  ErrorContainer,
-  ErrorMessage,
-  ErrorTitle,
-  ErrorDescription,
-} from './LoginForm.css'
+import { LoginFormContainer, Logo, Form, InputContainer, InputFrame, Input, EmailErrorMessage } from './styles'
 import { useGeneralContext } from 'src/state/GeneralContext'
+import logos from 'src/assets/logos'
+import Message, { MessageType } from 'src/components/common/Message/Message'
 
 const EMPTY_EMAIL_MESSAGE = 'The field can not be empty'
-const WRONG_CREDENTIALS_TITLE = 'Invalid Credentials'
-const WRONG_CREDENTIALS_DESCRIPTION = 'Please contact giga administrator for assistance'
 
 export const LoginForm: React.FC = (): JSX.Element => {
   const {
@@ -71,7 +59,7 @@ export const LoginForm: React.FC = (): JSX.Element => {
 
   return (
     <LoginFormContainer>
-      <Logo alt="logo" src="./logos/giga-logo-color.svg"></Logo>
+      <Logo alt="logo" src={logos.gigaLogoColor}></Logo>
       <Form error={wrongCredentialsError} onSubmit={(e) => handleSubmit(e)}>
         <InputContainer order="0" error={wrongCredentialsError}>
           <InputFrame order="0">
@@ -96,14 +84,12 @@ export const LoginForm: React.FC = (): JSX.Element => {
           </InputFrame>
           {wrongCredentialsError && (
             <InputFrame order="2">
-              <ErrorContainer>
-                <ErrorMessage>
-                  <ErrorTitle>
-                    <b>{WRONG_CREDENTIALS_TITLE}</b>
-                  </ErrorTitle>
-                  <ErrorDescription>{WRONG_CREDENTIALS_DESCRIPTION}</ErrorDescription>
-                </ErrorMessage>
-              </ErrorContainer>
+              <Message
+                type={MessageType.ERROR}
+                title="Invalid Credentials"
+                description="Please contact giga administrator for assistance"
+                onClose={() => setWrongCredentialsError(false)}
+              />
             </InputFrame>
           )}
         </InputContainer>

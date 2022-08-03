@@ -66,7 +66,7 @@ export const ContractPendingContainer = styled.div`
     gap: 40px;
   }
 
-  .info-line{
+  .info-line {
     width: 100%;
     display: grid;
     grid-template-columns: min-content 133px max-content max-content;
@@ -84,14 +84,14 @@ export const ContractPendingContainer = styled.div`
     gap: 8px;
   }
 
-  .info-qos{
+  .info-qos {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
 
-  .info-qos-metrics{
+  .info-qos-metrics {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -115,7 +115,7 @@ export const ContractPendingContainer = styled.div`
     height: 100%;
     isolation: isolate;
     overflow: hidden;
-    padding-right: 14px
+    padding-right: 14px;
 
     & :hover {
       overflow-y: scroll;
@@ -126,8 +126,6 @@ export const ContractPendingContainer = styled.div`
       background-color: var(--color-lightest-grey);
     }
   }
-
-
 `
 export const ContractPendingBlock = styled.div`
   display: flex;

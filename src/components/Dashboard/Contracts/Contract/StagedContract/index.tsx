@@ -1,12 +1,15 @@
-import ContractStatusWidget from 'src/components/common/ContractStatusWidget'
-import File from 'src/components/common/File/File'
-import { ContractStagedContainer, ContractStagedHeader } from './styles'
-import SchoolsTab from './SchoolsTab/SchoolsTab'
 import { useState } from 'react'
-import { IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
-
+import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
+import { ContractsActionType } from 'src/components/Dashboard/Contracts/state/types'
+import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import File from 'src/components/common/File/File'
+import Dialog, { DialogType } from 'src/components/common/Dialog/Dialog'
+import SchoolsTab from './SchoolsTab/SchoolsTab'
+import ContractStatusWidget from 'src/components/common/ContractStatusWidget'
+import { ContractStagedContainer, ContractStagedHeader } from './styles'
+import { publishContractToCompleted } from 'src/api/contracts'
 interface IContractDetailsProps {
-  contract: IContract
+  contract: IContract<ContractStatus.Ongoing | ContractStatus.Expired>
 }
 
 const getMetricIconClassName = (metricId: number) => {
@@ -26,8 +29,21 @@ const getMetricIconClassName = (metricId: number) => {
 
 const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContractDetailsProps): JSX.Element => {
   const [attachmentsSelected, setAttachmentsSelected] = useState(false)
-
+  const [showDialog, setShowDialog] = useState(false)
   const onAttachmentSelect = () => setAttachmentsSelected(true)
+  const { dispatch, reloadContracts } = useContractsContext()
+
+  const toggleShowDialog = () => setShowDialog((prevState) => !prevState)
+
+  const onContractStatusChange = async () => {
+    try {
+      if (contract && contract.id) await publishContractToCompleted(contract.id)
+      toggleShowDialog()
+      reloadContracts()
+    } catch (error) {
+      dispatch({ type: ContractsActionType.SET_ERROR, payload: error })
+    }
+  }
 
   return (
     <ContractStagedContainer>
@@ -65,21 +81,26 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
                 <span className="icon icon-24 icon-network icon-mid-grey"></span>
                 <p>{contract?.details.data?.isp}</p>
               </span>
+              {contract && contract.status === ContractStatus.Expired && (
+                <button className="title-item btn-blue" onClick={toggleShowDialog}>
+                  Finish
+                </button>
+              )}
             </div>
 
             <div className="info">
-              <button>
-                <div className="button-title">
+              <button className="widget">
+                <div className="widget-title">
                   <h5>Schools</h5>
                   <small>
                     <b>{contract?.details.data?.numberOfSchools}</b>
                   </small>
                 </div>
 
-                <div className="button-info">
+                <div className="widget-info">
                   {contract?.details.data?.connectionsMedian &&
                     contract?.details.data?.connectionsMedian.map((item, i) => (
-                      <div key={i} className="button-metric">
+                      <div key={i} className="widget-metric">
                         <span className={`icon icon-20 ${getMetricIconClassName(item.metric_id)} icon-mid-grey`}></span>
                         <small>
                           <b style={{ textTransform: 'none' }}>{item.median_value + item.unit}</b>
@@ -88,7 +109,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
                     ))}
                 </div>
 
-                <div className="button-chart">
+                <div className="widget-chart">
                   <ContractStatusWidget
                     showOnly="schools"
                     average={contract?.details.data?.schoolsConnection.atLeastOneBellowAvg}
@@ -97,14 +118,13 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
                 </div>
               </button>
 
-              <button>
-                <div className="button-title">
+              <button className="widget">
+                <div className="widget-title">
                   <h5>Payments</h5>
-                  {/* <small><b>0</b></small> */}
                 </div>
 
-                <div className="button-info">
-                  <div className="button-metric">
+                <div className="widget-info">
+                  <div className="widget-metric">
                     <span className="icon icon-20 icon-coins icon-mid-grey"></span>
                     <small>
                       <b>0</b>
@@ -118,7 +138,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
                   </div>
                 </div>
 
-                <div className="button-chart">
+                <div className="widget-chart">
                   <ContractStatusWidget showOnly="payments" payments={0} />
                   <small>
                     <b>0%</b>
@@ -141,6 +161,17 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
             </div>
           </ContractStagedHeader>
           <SchoolsTab contractSchools={contract?.details.data?.schools ?? []} />
+          {showDialog && (
+            <Dialog
+              type={DialogType.MESSAGE}
+              message={`Before finishing the contract, it is recommended reviewing the current 
+        contract situation regarding payments and quality of service provided         
+        since this action is not reversible.`}
+              acceptLabel="Proceed"
+              onAccepted={onContractStatusChange}
+              onRejected={toggleShowDialog}
+            />
+          )}
         </>
       )}
     </ContractStagedContainer>
