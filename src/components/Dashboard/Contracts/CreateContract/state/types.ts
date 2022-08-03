@@ -26,7 +26,8 @@ export interface CreateContractTab {
 }
 
 export enum CreateContractActionType {
-  LOAD_DRAFT = 'LOAD_DRAFT',
+  DRAFT_LOADING = 'DRAFT_LOADING',
+  DRAFT_LOADED = 'DRAFT_LOADED',
   SET_LOADING_DRAFT_ERROR = 'SET_LOADING_DRAFT_ERROR',
   GET_FORM_DATA = 'GET_FORM_DATA',
   SET_COUNTRIES = 'SET_COUNTRIES',
@@ -71,8 +72,8 @@ export interface ExpectedMetric {
 export interface ContractForm {
   id: string | null
   name?: string
-  countryId: number | undefined
-  currencyId: number | undefined
+  countryId?: string
+  currencyId?: string
   ltaId: number | undefined
   ispId: number | undefined
   expectedMetrics: { metrics: ExpectedMetric[] }
@@ -102,6 +103,6 @@ export interface CreateContractState {
   currencies: ICurrency[]
   ltas: ILtas[]
   contractForm: ContractForm
-  flag: string
+  flag?: string
   schools: ISchool[]
 }
