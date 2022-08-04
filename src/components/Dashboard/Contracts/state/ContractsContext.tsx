@@ -154,15 +154,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         setNewContract,
       },
     }),
-    [
-      localState,
-      fetchContract,
-      setActiveNavItem,
-      setSelectedSchool,
-      fetchSchoolMeasures,
-      fetchContracts,
-      setNewContract,
-    ],
+    [localState, fetchContract, fetchContracts, setActiveNavItem, setSelectedSchool, fetchSchoolMeasures],
   )
   useEffect(() => {
     fetchContracts()

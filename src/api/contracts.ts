@@ -41,7 +41,20 @@ export const updateContractDraft = async (contract: ContractForm) => {
   }
 }
 
-export const deleteContractDraft = async (draft_id: number) => {
+export const publishContractDraft = async (contract: ContractForm, draftId?: string) => {
+  const { id, ...contractForm } = contract
+  const body = {
+    draftId,
+    ...contractForm,
+  }
+  const response = await instance.post(`/contract`, {
+    ...body,
+  })
+  if (response.status === 200) return response.data
+  throw new Error('Failed to publish the contract draft')
+}
+
+export const deleteContractDraft = async (draft_id: string) => {
   const response = await instance.delete(`/contract/draft/${draft_id}`)
   if (response.status === 200) return response.data
   throw new Error('Failed to delete the contract draft')

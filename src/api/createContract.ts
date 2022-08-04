@@ -9,6 +9,7 @@ export interface ICountries {
 
 export interface ICurrency {
   id: string
+  code?: string
   name: string
 }
 

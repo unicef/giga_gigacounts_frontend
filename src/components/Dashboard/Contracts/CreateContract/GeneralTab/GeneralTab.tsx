@@ -135,7 +135,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
               >
                 {currencies.map((currency) => (
                   <option key={currency.id} value={currency.id}>
-                    {currency.name}
+                    {currency.code}
                   </option>
                 ))}
               </select>

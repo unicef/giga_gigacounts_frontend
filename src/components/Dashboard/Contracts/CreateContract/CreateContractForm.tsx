@@ -1,4 +1,5 @@
 import { MouseEvent } from 'react'
+import { deleteContractDraft, publishContractDraft, updateContractDraft } from 'src/api/contracts'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -10,6 +11,9 @@ import {
   CreateContractTabState,
   CreateContractTab,
 } from './state/types'
+import { validateForm } from 'src/utils/validateForm'
+import { useNavigate } from 'react-router-dom'
+import Dialog, { DialogType } from 'src/components/common/Dialog/Dialog'
 
 interface ICreateContractFormProps {
   label?: string
@@ -27,8 +31,9 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
     dispatch,
     actions: { saveDraft },
   } = useCreateContractContext()
+  const navigate = useNavigate()
 
-  const { contractForm, activeTab, error } = state
+  const { draft, contractForm, activeTab, error, showDialog } = state
 
   const tabsItems: CreateContractTab[] = [
     {
@@ -58,7 +63,29 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
     saveDraft()
   }
 
+  const onPublishDraft = async () => {
+    try {
+      const response = await publishContractDraft(contractForm, draft.data?.id)
+      navigate(`/dashboard/contract/${response?.id}`)
+    } catch (error) {
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
+    }
+  }
+
+  const onDeleteDraft = async () => {
+    try {
+      draft && draft.data && (await deleteContractDraft(draft.data?.id))
+      toggleShowDialog()
+      navigate('/dashboard')
+    } catch (error) {
+      dispatch({ type: CreateContractActionType.SET_ERROR, payload: error })
+    }
+  }
+
+  const toggleShowDialog = () => dispatch({ type: CreateContractActionType.SET_SHOW_DIALOG })
+
   const TabContent = tabs[activeTab]
+  const isFormValid = validateForm(contractForm)
 
   return (
     <CreateContractContainer>
@@ -68,14 +95,20 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
             <h5>New Contract {contractForm.name}</h5>
           </div>
           <div>
-            <button className="btn-transparent-grey active">Discard</button>
+            <button className="btn-transparent-grey active" onClick={toggleShowDialog}>
+              Delete
+            </button>
             {contractForm.id && (
               <button className="btn-blue" onClick={saveDraft} disabled={state.loading || state.draft.loading}>
                 Save Draft
               </button>
             )}
           </div>
-          {/* <button className="btn-green">Publish</button> */}
+          {!isFormValid.length && (
+            <button className="btn-green" onClick={onPublishDraft}>
+              Publish
+            </button>
+          )}
         </FormHeaderActions>
         <FormHeaderTabs>
           {tabsItems.map((tab, i) => {
@@ -103,6 +136,15 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
         </FormHeaderTabs>
       </Header>
       <TabContent />
+      {showDialog && (
+        <Dialog
+          type={DialogType.WARNING}
+          message="By deleting a draft you will lose the progress you have done on the creation of the contract."
+          acceptLabel="Delete"
+          onAccepted={onDeleteDraft}
+          onRejected={toggleShowDialog}
+        />
+      )}
     </CreateContractContainer>
   )
 }
