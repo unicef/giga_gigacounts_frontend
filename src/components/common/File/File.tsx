@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { deleteAttachment, getAttachment } from 'src/api/attachments'
-import { download } from 'src/utils/download'
 import { DeleteButton, DownloadButton, FileContainer } from './styles'
 
 interface FileProps {
@@ -40,8 +39,8 @@ const File: React.FC<FileProps> = ({ id, type, url, name, onDelete, allowDelete 
     if (id) {
       setLoading(true)
       try {
-        const attachment = await getAttachment(id)
-        download(attachment.url, attachment.name)
+        const { url } = await getAttachment(id)
+        window.open(url, '_blank', 'noopener,noreferrer')
       } finally {
         setLoading(false)
       }

@@ -71,9 +71,9 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
 
               {attachmentsSelected && (
                 <div className="attachments-dropdown">
-                  <File type="Doc" name="Document 1" allowDelete={false} />
-                  <File type="Pdf" name="Document 2" allowDelete={false} />
-                  <File type="xls" name="Long Long Long Long Title Document" allowDelete={false} />
+                  {contract.details.data?.attachments.map(({ id, name }) => (
+                    <File key={id} name={name} id={id} allowDelete={false} />
+                  ))}
                 </div>
               )}
 
