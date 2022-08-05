@@ -212,7 +212,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       }
 
     case CreateContractActionType.SET_EXPECTED_METRIC: {
-      const metricIndex = state.expectedMetrics.metrics.findIndex((m) => m.metricId === payload.metricId)
+      const metricIndex = state.contractForm.expectedMetrics.metrics.findIndex((m) => m.metricId === payload.metricId)
 
       const newExpectedMetrics =
         metricIndex >= 0
