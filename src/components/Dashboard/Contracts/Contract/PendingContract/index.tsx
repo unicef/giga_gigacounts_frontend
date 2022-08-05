@@ -148,8 +148,8 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
             <div className="info-attachments-files">
               {contract.details.data?.attachments === undefined ||
                 (contract.details.data?.attachments.length === 0 && <p>No attachments.</p>)}
-              {contract.details.data?.attachments?.map((attachment) => (
-                <File url={attachment.url} name={attachment.name} key={attachment.id} />
+              {contract.details.data?.attachments?.map(({ url, name, id }) => (
+                <File url={url} name={name} key={id} id={id} />
               ))}
             </div>
           </div>
