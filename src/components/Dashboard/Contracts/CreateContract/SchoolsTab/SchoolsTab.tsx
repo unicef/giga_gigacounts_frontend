@@ -26,6 +26,8 @@ import Message, { MessageType } from 'src/components/common/Message/Message'
 const SchoolsTab: React.FC = (): JSX.Element => {
   const { dispatch, state } = useCreateContractContext()
 
+  const { contractForm } = state
+
   const inputRef = useRef<HTMLInputElement>(null)
   const csvReaderRef = useRef<HTMLInputElement>(null)
   const acceptFiles = useMemo(() => ['.csv', '.xls', '.xlsx'], [])
@@ -37,12 +39,12 @@ const SchoolsTab: React.FC = (): JSX.Element => {
 
   const fetchSchools = useCallback(async () => {
     try {
-      const response = await getSchools()
+      const response = await getSchools(contractForm.countryId)
       dispatch({ type: CreateContractActionType.RESPONSE_SCHOOLS, payload: response })
     } catch (error) {
       dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
-  }, [dispatch])
+  }, [dispatch, contractForm.countryId])
 
   useEffect(() => {
     fetchSchools()

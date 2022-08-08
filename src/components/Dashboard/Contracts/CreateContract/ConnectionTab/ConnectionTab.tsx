@@ -21,7 +21,7 @@ const ConnectionTab: React.FC = (): JSX.Element => {
   const fetchData = useCallback(async () => {
     try {
       const metrics = await getSuggestedMetrics()
-      const isps = await getIsp()
+      const isps = await getIsp(contractForm.countryId, contractForm.ltaId)
 
       dispatch({
         type: CreateContractActionType.SET_METRICS_ISPS,
@@ -33,7 +33,7 @@ const ConnectionTab: React.FC = (): JSX.Element => {
     } catch (error) {
       dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
-  }, [dispatch])
+  }, [dispatch, contractForm.countryId, contractForm.ltaId])
 
   useEffect(() => {
     fetchData()
@@ -49,7 +49,6 @@ const ConnectionTab: React.FC = (): JSX.Element => {
   const onServiceProviderChange = (e: ChangeEvent<HTMLSelectElement>) => {
     dispatch({ type: CreateContractActionType.SET_SERVICE_PROVIDER, payload: e.target.value })
   }
-
   return (
     <ConnectionContainer>
       <ISPContainer>

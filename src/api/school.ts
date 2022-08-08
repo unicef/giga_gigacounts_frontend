@@ -17,10 +17,10 @@ export interface ISchool {
   email: string
   phone_number: string
   contact_person: string
-  country_id: number
+  country_id: string
 }
 
-export const getSchools = async (countryId?: number): Promise<ISchool[] | Error> => {
+export const getSchools = async (countryId?: string): Promise<ISchool[] | Error> => {
   const response = await instance.get(`${ENDPOINT_URL}`, {
     params: {
       countryId,
