@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react'
+import { MouseEvent, useMemo } from 'react'
 import { deleteContractDraft, publishContractDraft, updateContractDraft } from 'src/api/contracts'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
@@ -85,7 +85,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
   const toggleShowDialog = () => dispatch({ type: CreateContractActionType.SET_SHOW_DIALOG })
 
   const TabContent = tabs[activeTab]
-  const isFormValid = validateForm(contractForm)
+  const isFormValid = useMemo(() => validateForm(contractForm), [contractForm])
 
   return (
     <CreateContractContainer>
