@@ -72,8 +72,8 @@ export interface ExpectedMetric {
 export interface ContractForm {
   id: string | null
   name?: string
-  countryId?: string
-  currencyId?: string
+  countryId: string | undefined
+  currencyId: string | undefined
   ltaId: number | undefined
   ispId: number | undefined
   expectedMetrics: { metrics: ExpectedMetric[] }
@@ -103,6 +103,5 @@ export interface CreateContractState {
   currencies: ICurrency[]
   ltas: ILtas[]
   contractForm: ContractForm
-  flag?: string
   schools: ISchool[]
 }

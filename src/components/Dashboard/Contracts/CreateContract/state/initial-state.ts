@@ -38,6 +38,5 @@ export const CREATE_CONTRACT_INITIAL_STATE: CreateContractState = {
   currencies: [],
   ltas: [],
   contractForm: CONTRACT_FORM_INITIAL_STATE,
-  flag: 'BW',
   schools: [],
 }

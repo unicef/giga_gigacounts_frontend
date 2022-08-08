@@ -1,4 +1,3 @@
-import { find } from 'src/utils/find'
 import { CONTRACT_FORM_INITIAL_STATE } from './initial-state'
 import { CreateContractAction, CreateContractActionType, CreateContractState } from './types'
 
@@ -59,7 +58,6 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           endDate: draft.endDate,
           schools: { schools: draft.schools },
         },
-        flag: find(state?.countries || [], countryId)?.code,
       }
     }
 
@@ -89,20 +87,16 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           countryId: state.contractForm.countryId ?? countries[0].id,
           currencyId: state.contractForm.currencyId ?? currencies[0].id,
         },
-        flag: state.flag ?? find(state?.countries || [], countries[0].id)?.code,
       }
     }
 
     case CreateContractActionType.SET_COUNTRY_CODE: {
-      const flag = find(state?.countries || [], payload)?.code
-
       return {
         ...state,
         contractForm: {
           ...state.contractForm,
           countryId: payload,
         },
-        flag,
       }
     }
 

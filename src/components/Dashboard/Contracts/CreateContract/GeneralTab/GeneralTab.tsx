@@ -19,13 +19,16 @@ import { useRoleCheck } from 'src/state/hooks'
 import UploadButton from './UploadButton'
 import { useCreateContractContext } from '../state/useCreateContractContext'
 import { CreateContractActionType } from '../state/types'
+import { useCountryCode } from '../state/hooks'
 
 const GeneralTab: React.FC = (): JSX.Element => {
   const {
-    state: { loading, countries, currencies, ltas, flag, contractForm, draft },
+    state: { loading, countries, currencies, ltas, contractForm, draft },
     actions: { reload },
     dispatch,
   } = useCreateContractContext()
+
+  const countryCode = useCountryCode(contractForm.countryId)
 
   const onCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     dispatch({ type: CreateContractActionType.SET_COUNTRY_CODE, payload: e.currentTarget.value })
@@ -89,7 +92,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
         <form>
           <Country>
             <div className="input-container dropdown">
-              {flag && <img src={`../flags/${flag}.svg`} alt={flag} />}
+              {countryCode && <img src={`../flags/${countryCode}.svg`} alt={countryCode} />}
               <select
                 onChange={onCountryChange}
                 value={contractForm.countryId ?? ''}
