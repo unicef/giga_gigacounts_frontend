@@ -1,6 +1,5 @@
 import { ChangeEvent } from 'react'
 import { uploadAttachment } from 'src/api/attachments'
-import { createContractDraft } from 'src/api/contracts'
 import File from 'src/components/common/File/File'
 import { IFileUpload } from 'src/types/general'
 import {
@@ -23,8 +22,8 @@ import { useCountryCode } from '../state/hooks'
 
 const GeneralTab: React.FC = (): JSX.Element => {
   const {
-    state: { loading, countries, currencies, ltas, contractForm, draft },
-    actions: { reload },
+    state: { loading, countries, currencies, ltas, flag, contractForm, draft },
+    actions: { reload, saveDraft },
     dispatch,
   } = useCreateContractContext()
 
@@ -40,17 +39,6 @@ const GeneralTab: React.FC = (): JSX.Element => {
 
   const onContractNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: CreateContractActionType.SET_CONTRACT_NAME, payload: e.currentTarget.value })
-  }
-
-  const onContractNameBlur = async () => {
-    try {
-      if (contractForm.name && contractForm.name.length > 0 && !contractForm.id) {
-        const response = await createContractDraft(contractForm.name)
-        dispatch({ type: CreateContractActionType.CREATE_CONTRACT_DRAFT, payload: response })
-      }
-    } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
-    }
   }
 
   const onCurrencyChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -122,7 +110,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
             value={contractForm.name ?? ''}
             placeholder="Contract Name"
             onChange={onContractNameChange}
-            onBlur={onContractNameBlur}
+            onBlur={saveDraft}
             disabled={draft.loading}
           />
           <div className="input-container dropdown">

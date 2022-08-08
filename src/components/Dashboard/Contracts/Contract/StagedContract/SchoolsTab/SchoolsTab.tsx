@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import School from 'src/components/common/School/School'
-import { IContractSchools } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { IContractSchools } from 'src/types/general'
 import { useContractsContext } from '../../../state/useContractsContext'
 import SchoolsQoS from './SchoolQoS/SchoolQoS'
 import { SchoolsTabRow, SchoolTabContainer } from './styles'
@@ -12,7 +12,7 @@ const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }: IContra
   let { id } = useParams()
   const {
     state: { selectedSchool },
-    setSelectedSchool,
+    actions: { setSelectedSchool },
   } = useContractsContext()
 
   const onSchoolSelected = (schoolId: string) => {

@@ -1,7 +1,17 @@
 import styled from 'styled-components/macro'
-import { ContractStatus } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { ContractStatus } from 'src/types/general'
 
-export const SchoolInfo = styled.div<{ status: string }>`
+const isNotOnGoing = (status: ContractStatus) =>
+  [ContractStatus.Draft, ContractStatus.Expired, ContractStatus.Completed].includes(status)
+
+const getStatusColor = (status: ContractStatus, selected?: boolean) => {
+  if (selected) {
+    return isNotOnGoing(status) ? 'var(--color-light-blue)' : 'var(--color-blue)'
+  }
+  return isNotOnGoing(status) ? 'var(--color-pale-blue)' : 'var(--color-white)'
+}
+
+export const SchoolInfo = styled.div<{ status: ContractStatus; selected?: boolean }>`
   display: grid;
   grid-template-columns: min-content 40px min-content auto 65px;
   grid-template-rows: 22px 18px;
@@ -12,10 +22,7 @@ export const SchoolInfo = styled.div<{ status: string }>`
   align-items: center;
   padding: 10px 0 10px 12px;
   width: 100%;
-  background: ${(props) =>
-    props.status === ContractStatus.Draft || props.status === ContractStatus.Expired || props.status === ContractStatus.Completed
-      ? `var(--color-pale-blue)`
-      : `var(--color-white)`};
+  background: ${({ status, selected }) => getStatusColor(status, selected)};
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
@@ -30,18 +37,15 @@ export const SchoolInfo = styled.div<{ status: string }>`
     gap: 8px;
   }
 
-  &.selected {
-    background: ${(props) =>
-      props.status === ContractStatus.Draft || props.status === ContractStatus.Expired || props.status === ContractStatus.Completed
-        ? `var(--color-light-blue)`
-        : `var(--color-blue)`};
-    p {
+  ${({ selected }) =>
+    selected &&
+    ` & p {
       color: var(--color-white);
     }
-    div > p {
+      div & p {
       color: var(--color-white);
-    }
-  }
+      }
+    `}
 `
 
 export const SchoolNumberCtr = styled.p`

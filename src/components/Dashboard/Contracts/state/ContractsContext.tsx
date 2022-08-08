@@ -1,20 +1,23 @@
 import { createContext, FC, useReducer, useCallback, useMemo, Dispatch, useEffect } from 'react'
+import { ContractStatus } from 'src/types/general'
 import { getSchoolMeasures } from 'src/api/school'
 import { getContract, getContractDetails, getContracts, getContractSchools } from 'src/api/contracts'
 import { ChildrenProps } from 'src/types/utils'
 import { INITIAL_CONTRACTS_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { ContractsAction, ContractsActionType, ContractsState } from './types'
-import { ContractStatus } from '../@types/ContractType'
 
 export interface IContractsContext {
   state: ContractsState
   dispatch: Dispatch<ContractsAction>
-  fetchContract: (id: string) => void
-  setActiveNavItem: (item: string) => void
-  setSelectedSchool: (schoolId: string, contractId: string) => void
-  fetchSchoolMeasures: (schoolId: string, id: string, month: string) => void
-  reloadContracts: () => void
+  actions: {
+    fetchContract: (id: string) => void
+    setActiveNavItem: (item: string) => void
+    setSelectedSchool: (schoolId: string, contractId: string) => void
+    fetchSchoolMeasures: (schoolId: string, id: string, month: string) => void
+    reloadContracts: () => void
+    setNewContract: (newContract?: { ltaId?: string }) => void
+  }
 }
 
 export const ContractsContext = createContext<IContractsContext>({
@@ -22,20 +25,25 @@ export const ContractsContext = createContext<IContractsContext>({
   dispatch: () => {
     throw new Error('Not implemented')
   },
-  fetchContract: () => {
-    throw new Error('Not implemented')
-  },
-  fetchSchoolMeasures: () => {
-    throw new Error('Not implemented')
-  },
-  setActiveNavItem: () => {
-    throw new Error('Not implemented')
-  },
-  setSelectedSchool: () => {
-    throw new Error('Not implemented')
-  },
-  reloadContracts: () => {
-    throw new Error('Not implemented')
+  actions: {
+    fetchContract: () => {
+      throw new Error('Not implemented')
+    },
+    fetchSchoolMeasures: () => {
+      throw new Error('Not implemented')
+    },
+    setActiveNavItem: () => {
+      throw new Error('Not implemented')
+    },
+    setSelectedSchool: () => {
+      throw new Error('Not implemented')
+    },
+    reloadContracts: () => {
+      throw new Error('Not implemented')
+    },
+    setNewContract: () => {
+      throw new Error('Not implemented')
+    },
   },
 })
 
@@ -126,17 +134,35 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [dispatch],
   )
 
+  const setNewContract = useCallback(
+    (newContract?: { ltaId?: string }) => {
+      dispatch({ type: ContractsActionType.SET_NEW_CONTRACT, payload: { newContract } })
+    },
+    [dispatch],
+  )
+
   const value = useMemo(
     () => ({
       state: localState,
       dispatch,
+      actions: {
+        fetchContract,
+        setActiveNavItem,
+        setSelectedSchool,
+        fetchSchoolMeasures,
+        reloadContracts: fetchContracts,
+        setNewContract,
+      },
+    }),
+    [
+      localState,
       fetchContract,
       setActiveNavItem,
       setSelectedSchool,
       fetchSchoolMeasures,
-      reloadContracts: fetchContracts,
-    }),
-    [localState, fetchContract, fetchContracts, setActiveNavItem, setSelectedSchool, fetchSchoolMeasures],
+      fetchContracts,
+      setNewContract,
+    ],
   )
   useEffect(() => {
     fetchContracts()

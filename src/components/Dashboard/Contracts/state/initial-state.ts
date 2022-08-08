@@ -1,9 +1,9 @@
+import { IContract, ContractStatus } from 'src/types/general'
 import { ContractsState } from './types'
-import { IContract, ContractStatus } from '../@types/ContractType'
 
 export const INITIAL_CONTRACTS_STATE: ContractsState = {
   contracts: undefined,
-  ltasIds: undefined,
+  ltas: undefined,
   activeNavItem: 'all contracts',
   selectedSchool: undefined,
   schoolQosDate: undefined,
@@ -11,6 +11,7 @@ export const INITIAL_CONTRACTS_STATE: ContractsState = {
   schoolQosMedianValue: undefined,
   error: undefined,
   loading: true,
+  newContract: undefined,
 }
 
 export const NEW_CONTRACT: IContract = {

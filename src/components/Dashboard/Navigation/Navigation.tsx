@@ -1,15 +1,14 @@
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ContractStatus } from 'src/types/general'
+import logos from 'src/assets/logos'
+import { ADMIN_ROLE } from 'src/consts/roles'
+import { useUser, useContractCounts } from 'src/state/hooks'
 import Country from '../Country/Country'
 import { NavItem } from './NavItem/NavItem'
 import { ProfileIcon } from './ProfileIcon/ProfileIcon'
-import { useNavigate } from 'react-router-dom'
-
-import logos from 'src/assets/logos'
-import { useUser, useContractCounts } from 'src/state/hooks'
-import { ADMIN_ROLE } from 'src/consts/roles'
 import { StyledNav, StyledLogo, MenuContainer, StyledDivider } from './styles'
 import { useContractsContext } from '../Contracts/state/useContractsContext'
-import { ContractStatus } from '../Contracts/@types/ContractType'
 
 const Navigation: React.FC = (): JSX.Element => {
   const navigate = useNavigate()
@@ -17,7 +16,7 @@ const Navigation: React.FC = (): JSX.Element => {
   const contractCounts = useContractCounts()
   const {
     state: { activeNavItem },
-    setActiveNavItem,
+    actions: { setActiveNavItem },
   } = useContractsContext()
   const mouseOver = useRef<boolean>(false)
 

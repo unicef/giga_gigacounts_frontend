@@ -1,5 +1,4 @@
 import { MouseEvent } from 'react'
-import { updateContractDraft } from 'src/api/contracts'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -23,7 +22,11 @@ const tabs = {
 }
 
 const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element => {
-  const { state, dispatch } = useCreateContractContext()
+  const {
+    state,
+    dispatch,
+    actions: { saveDraft },
+  } = useCreateContractContext()
 
   const { contractForm, activeTab, error } = state
 
@@ -52,41 +55,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
         tabSchoolStatus: CreateContractTabState.Default,
       },
     })
-    onSaveDraft()
-  }
-
-  const onSaveDraft = async () => {
-    try {
-      if (contractForm.name && contractForm.name.length > 0 && contractForm.id) {
-        const response = await updateContractDraft(contractForm)
-
-        let formatStartDate = ''
-        let formatEndDate = ''
-
-        if (response?.start_date?.length > 0) {
-          formatStartDate = response.start_date.slice(0, 10)
-        }
-
-        if (response?.end_date?.length > 0) {
-          formatEndDate = response.end_date.slice(0, 10)
-        }
-
-        const formattedResponse = {
-          id: +response.id,
-          name: response.name,
-          countryId: response.country_id,
-          currencyId: response.currency_id,
-          ltaId: response.lta_id,
-          governmentBehalf: response.government_behalf,
-          startDate: formatStartDate,
-          endDate: formatEndDate,
-        }
-
-        dispatch({ type: CreateContractActionType.UPDATE_CONTRACT_DRAFT, payload: formattedResponse })
-      }
-    } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
-    }
+    saveDraft()
   }
 
   const TabContent = tabs[activeTab]
@@ -101,7 +70,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
           <div>
             <button className="btn-transparent-grey active">Discard</button>
             {contractForm.id && (
-              <button className="btn-blue" onClick={onSaveDraft} disabled={state.loading || state.draft.loading}>
+              <button className="btn-blue" onClick={saveDraft} disabled={state.loading || state.draft.loading}>
                 Save Draft
               </button>
             )}

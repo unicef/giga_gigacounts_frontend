@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
-import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { ContractStatus, IContract } from 'src/types/general'
 import { ChildrenProps } from 'src/types/utils'
 import { useContract } from '../state/hooks'
 import PendingContract from './PendingContract'
@@ -13,7 +13,7 @@ interface ContractProps extends ChildrenProps {
 const Contract: React.FC<ContractProps> = ({ id }: ContractProps): JSX.Element => {
   const {
     state: { loading, contracts },
-    fetchContract,
+    actions: { fetchContract },
   } = useContractsContext()
 
   const contract = useContract(id)

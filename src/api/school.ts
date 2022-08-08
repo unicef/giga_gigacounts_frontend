@@ -1,4 +1,4 @@
-import { ISchoolMeasures } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { ISchoolMeasures } from 'src/types/general'
 import instance from './init'
 
 const ENDPOINT_URL = `/school`

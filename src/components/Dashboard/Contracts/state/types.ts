@@ -1,8 +1,8 @@
-import { IContract } from '../@types/ContractType'
+import { IContract, ILta } from 'src/types/general'
 
 export enum ContractsActionType {
+  SET_NEW_CONTRACT = 'SET_NEW_CONTRACT',
   RESPONSE = 'RESPONSE',
-  CREATE_CONTRACT = 'CREATE_CONTRACT',
   SET_LOADING = 'SET_LOADING',
   SET_ERROR = 'SET_ERROR',
   SET_CONTRACT_DETAILS_SCHOOLS = 'SET_CONTRACT_DETAILS_SCHOOLS',
@@ -21,7 +21,7 @@ export interface ContractsAction {
 
 export interface ContractsState {
   contracts?: IContract[]
-  ltasIds?: string[]
+  ltas?: ILta[]
   selectedSchool?: {
     schoolId?: string
     contractId?: string
@@ -32,4 +32,7 @@ export interface ContractsState {
   activeNavItem?: string
   error?: Error
   loading?: boolean
+  newContract?: {
+    ltaId?: string
+  }
 }

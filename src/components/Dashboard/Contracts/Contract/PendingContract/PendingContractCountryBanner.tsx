@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
+import { ICountry } from 'src/types/general'
 import Flag from './Flag'
-import { ICountry } from '../../@types/ContractType'
 
 const Country = styled.h5`
   display: flex;

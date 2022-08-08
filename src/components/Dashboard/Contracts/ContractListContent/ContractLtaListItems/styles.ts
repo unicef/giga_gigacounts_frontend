@@ -61,18 +61,23 @@ export const ContractLtaSubHeader = styled.div`
   border-radius: 0px 0px 2px 2px;
 `
 
-export const ContractLtaFooter = styled.a`
+export const ContractLtaFooter = styled.button`
+  display: inline;
   width: 100%;
+  height: auto;
   padding: 12px;
   margin: 0;
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
-  line-height: 156%;
+  line-height: 1;
   text-align: center;
   letter-spacing: 0.004em;
-  text-decoration-line: underline;
   color: var(--color-dark-blue);
   background: var(--color-white);
+
+  &:hover {
+    text-decoration-line: underline;
+  }
 `

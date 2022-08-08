@@ -1,4 +1,4 @@
-import { ContractStatus } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { ContractStatus } from 'src/types/general'
 
 export const contractStatusToId = (status?: string | (string | null)[] | null) => {
   switch (status) {

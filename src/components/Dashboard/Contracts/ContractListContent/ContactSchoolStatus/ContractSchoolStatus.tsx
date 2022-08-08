@@ -1,5 +1,6 @@
+import { useRef, useEffect } from 'react'
 import ContractStatusWidget from 'src/components/common/ContractStatusWidget/index'
-import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { ContractStatus, IContract } from 'src/types/general'
 import { Icons, SchoolInfo, IconsName, IconCompleted, SchoolNumberCtr, Schools, Isp } from './styles'
 
 interface ISchoolStatusProps {
@@ -14,6 +15,7 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
   onToggle,
 }: ISchoolStatusProps): JSX.Element => {
   const { isp, numberOfSchools, status, name, country, totalSpent, schoolsConnection } = contract
+  const ref = useRef<HTMLDivElement>(null)
 
   const pieChart = () => {
     switch (status) {
@@ -60,8 +62,14 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
     }
   }
 
+  useEffect(() => {
+    if (selected) {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [selected])
+
   return (
-    <SchoolInfo status={status} onClick={handleSelected} className={`${selected ? 'selected' : ''} `}>
+    <SchoolInfo status={status} onClick={handleSelected} selected={selected} ref={ref}>
       <div className="header">
         {country?.flagUrl && (
           <img

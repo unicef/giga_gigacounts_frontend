@@ -1,6 +1,5 @@
+import { ValueIteratee } from './extract'
 import { prop } from './prop'
-
-export type ValueIteratee<T, O> = (element: T, index?: number, collection?: T[]) => O
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function uniqBy<T, Path extends string, IterateeReturnT extends any>(

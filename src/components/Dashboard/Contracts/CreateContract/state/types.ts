@@ -44,13 +44,12 @@ export enum CreateContractActionType {
   SELECT_SCHOOL_BULK = 'SELECT_SCHOOL_BULK',
   SET_START_DATE = 'SET_START_DATE',
   SET_END_DATE = 'SET_END_DATE',
-  CREATE_CONTRACT_DRAFT = 'CREATE_CONTRACT_DRAFT',
-  UPDATE_CONTRACT_DRAFT = 'UPDATE_CONTRACT_DRAFT',
   SET_CURRENCY_CODE = 'SET_CURRENCY_CODE',
   SET_LTA = 'SET_LTA',
   SET_BUDGET = 'SET_BUDGET',
   SET_SERVICE_PROVIDER = 'SET_SERVICE_PROVIDER',
   SET_QUALITY_OF_SERVICE = 'SET_QUALITY_OF_SERVICE',
+  RESET = 'RESET',
 }
 
 export interface CreateContractAction {
@@ -72,9 +71,9 @@ export interface ExpectedMetric {
 export interface ContractForm {
   id: string | null
   name?: string
-  countryId: string | undefined
-  currencyId: string | undefined
-  ltaId: number | undefined
+  countryId?: string
+  currencyId?: string
+  ltaId: string | undefined
   ispId: number | undefined
   expectedMetrics: { metrics: ExpectedMetric[] }
   governmentBehalf: boolean

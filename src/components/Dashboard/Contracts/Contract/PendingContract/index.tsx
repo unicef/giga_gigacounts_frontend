@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import School from 'src/components/common/School/School'
 import File from 'src/components/common/File/File'
-import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts//@types/ContractType'
+import { ContractStatus, IContract } from 'src/types/general'
 import FormattedDate from 'src/components/common/Date'
 import { ContractPendingContainer } from './styles'
 import PendingContractMessage from './PendingContractMessage'

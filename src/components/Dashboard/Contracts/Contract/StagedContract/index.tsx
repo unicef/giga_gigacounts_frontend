@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import { ContractsActionType } from 'src/components/Dashboard/Contracts/state/types'
-import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { ContractStatus, IContract } from 'src/types/general'
 import File from 'src/components/common/File/File'
 import Dialog, { DialogType } from 'src/components/common/Dialog/Dialog'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -31,7 +31,10 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
   const [attachmentsSelected, setAttachmentsSelected] = useState(false)
   const [showDialog, setShowDialog] = useState(false)
   const onAttachmentSelect = () => setAttachmentsSelected(true)
-  const { dispatch, reloadContracts } = useContractsContext()
+  const {
+    dispatch,
+    actions: { reloadContracts },
+  } = useContractsContext()
 
   const toggleShowDialog = () => setShowDialog((prevState) => !prevState)
 

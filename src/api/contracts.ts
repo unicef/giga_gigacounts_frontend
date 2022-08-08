@@ -5,7 +5,7 @@ import {
   IContractDetails,
   IContractSchools,
   IPendingContractDetails,
-} from 'src/components/Dashboard/Contracts/@types/ContractType'
+} from 'src/types/general'
 import { contractStatusToId } from 'src/utils/contractStatusToId'
 import { ContractForm } from 'src/components/Dashboard/Contracts/CreateContract/state/types'
 
@@ -19,9 +19,9 @@ export const getContracts = async (status?: string | (string | null)[] | null): 
   throw new Error('Failed to get the contracts')
 }
 
-export const createContractDraft = async (name: string): Promise<IContractDraft | Error> => {
+export const createContractDraft = async (contract: ContractForm): Promise<IContractDraft | Error> => {
   const response = await instance.post('/contract/draft', {
-    name,
+    ...contract,
   })
   if (response.status === 200) return response.data
   throw new Error('Failed to save the contract draft')

@@ -19,14 +19,8 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       return {
         ...state,
         draft: {
+          ...state.draft,
           loading: true,
-          data: undefined,
-          error: undefined,
-        },
-        contractForm: {
-          ...CONTRACT_FORM_INITIAL_STATE,
-          countryId: state.countries.length > 0 ? state.countries[0].id : undefined,
-          currencyId: state.currencies.length > 0 ? state.currencies[0].id : undefined,
         },
       }
     }
@@ -35,9 +29,20 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       const { draft } = payload
       const countryId = draft.country?.id ?? state.contractForm.countryId
       const currencyId = draft.currency?.id ?? state.contractForm.currencyId
+      const ltaId = draft.lta?.id ?? state.contractForm.ltaId
+      const governmentBehalf = draft.governmentBehalf ?? state.contractForm.governmentBehalf
+      const budget = draft.budget ?? state.contractForm.budget
+      const startDate = draft.start_date?.length > 0 ? draft.start_date.split('T')[0] : ''
+      const endDate = draft.end_date?.length > 0 ? draft.end_date.split('T')[0] : ''
+      const expectedMetrics = draft.expectedMetrics
+        ? { metrics: draft.expectedMetrics }
+        : state.contractForm.expectedMetrics
+
+      const schools = draft.schools ? { schools: draft.schools } : state.contractForm.schools
 
       return {
         ...state,
+        loading: false,
         draft: {
           data: draft,
           loading: false,
@@ -49,14 +54,13 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           name: draft.name,
           countryId,
           currencyId,
-          ltaId: draft.ltaId,
-          ispId: draft.ispId,
-          expectedMetrics: { metrics: draft.expectedMetrics },
-          governmentBehalf: draft.governmentBehalf,
-          budget: draft.budget,
-          startDate: draft.startDate,
-          endDate: draft.endDate,
-          schools: { schools: draft.schools },
+          ltaId,
+          governmentBehalf,
+          startDate,
+          endDate,
+          expectedMetrics,
+          budget,
+          schools,
         },
       }
     }
@@ -125,29 +129,6 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
         contractForm: {
           ...state.contractForm,
           governmentBehalf: !state.contractForm.governmentBehalf,
-        },
-      }
-    }
-
-    case CreateContractActionType.CREATE_CONTRACT_DRAFT: {
-      return {
-        ...state,
-        loading: false,
-        contractForm: {
-          ...state.contractForm,
-          id: payload.id,
-          name: payload.name,
-        },
-      }
-    }
-
-    case CreateContractActionType.UPDATE_CONTRACT_DRAFT: {
-      return {
-        ...state,
-        loading: false,
-        contractForm: {
-          ...state.contractForm,
-          ...payload,
         },
       }
     }
@@ -292,6 +273,17 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
             ...state.contractForm.schools,
             schools: [...payload, ...state.contractForm.schools.schools],
           },
+        },
+      }
+    }
+
+    case CreateContractActionType.RESET: {
+      const { preset } = payload
+      return {
+        ...state,
+        contractForm: {
+          ...CONTRACT_FORM_INITIAL_STATE,
+          ...preset,
         },
       }
     }

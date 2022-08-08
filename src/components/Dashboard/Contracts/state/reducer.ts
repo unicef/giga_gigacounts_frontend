@@ -1,13 +1,22 @@
 import { ContractsAction, ContractsActionType, ContractsState } from './types'
-import { IContract } from '../@types/ContractType'
+import { IContract } from 'src/types/general'
 import { uniqBy } from 'src/utils/uniqBy'
 import { months } from 'src/consts/months'
 import { formatMetricValue } from 'src/utils/formatMetricValue'
+import { map } from 'src/utils/map'
+import { clean } from 'src/utils/clean'
 
 export const reducer = (state: ContractsState, action: ContractsAction): ContractsState => {
   const { type, payload } = action
 
   switch (type) {
+    case ContractsActionType.SET_NEW_CONTRACT: {
+      const { newContract } = payload
+      return {
+        ...state,
+        newContract,
+      }
+    }
     case ContractsActionType.SET_LOADING: {
       return {
         ...state,
@@ -16,17 +25,23 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
     }
 
     case ContractsActionType.RESPONSE: {
-      const { contracts, ltas } = payload
-      const ltaContracts = Object.entries(ltas)
-        .map(([ltaId, _contracts]) =>
+      const { contracts, ltas: ltaGroups } = payload
+
+      const ltaContracts = Object.entries(ltaGroups)
+        .map(([ltaName, _contracts]) =>
           (_contracts as IContract[]).map((contract) => ({
             ...contract,
-            ltaId,
+            lta: {
+              id: contract.ltaId,
+              name: ltaName,
+            },
           })),
         )
         .flat(1)
 
       const allContracts = uniqBy(ltaContracts.concat(contracts) as IContract[], 'id')
+
+      const ltas = uniqBy(clean(map(allContracts, 'lta')), 'id')
 
       return {
         ...state,
@@ -38,15 +53,8 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
             error: undefined,
           },
         })),
-        ltasIds: Object.keys(payload.ltas),
+        ltas,
         loading: false,
-      }
-    }
-
-    case ContractsActionType.CREATE_CONTRACT: {
-      return {
-        ...state,
-        contracts: [payload, ...(state.contracts || [])],
       }
     }
 

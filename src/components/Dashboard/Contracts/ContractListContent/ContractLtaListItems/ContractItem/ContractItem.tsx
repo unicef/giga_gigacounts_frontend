@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 
-import { ContractStatus, IContract } from 'src/components/Dashboard/Contracts/@types/ContractType'
+import { ContractStatus, IContract } from 'src/types/general'
 import ContractSchoolStatus from 'src/components/Dashboard/Contracts/ContractListContent/ContactSchoolStatus/ContractSchoolStatus'
 import ContractDefaultListItem from 'src/components/Dashboard/Contracts/ContractListContent/ContractDefaultListItem/ContractDefaultListItem'
 

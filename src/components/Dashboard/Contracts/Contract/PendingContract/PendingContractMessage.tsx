@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import Text from 'src/components/common/Text'
 import styled from 'styled-components/macro'
-import { ContractStatus } from '../../@types/ContractType'
+import { ContractStatus } from 'src/types/general'
+import Text from 'src/components/common/Text'
 
 const StyledIcon = styled.span``
 
