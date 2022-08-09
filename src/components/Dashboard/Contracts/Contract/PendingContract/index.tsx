@@ -28,7 +28,7 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
   )
 
   const uploadSpeed = useMemo(
-    () => contract.details.data?.expectedMetrics.find(({ metricId }) => metricId.toString() === '3'),
+    () => contract.details.data?.expectedMetrics.find(({ metricId }) => metricId.toString() === '4'),
     [contract.details.data?.expectedMetrics],
   )
 
@@ -60,7 +60,7 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
             <p>Budget:</p>
             <p>
               <b>
-                {contract.details.data?.currency?.id} {contract.details.data?.budget}
+                {contract.details.data?.currency?.code} {contract.details.data?.budget}
               </b>
             </p>
           </div>

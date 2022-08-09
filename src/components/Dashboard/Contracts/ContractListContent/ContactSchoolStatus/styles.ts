@@ -37,15 +37,9 @@ export const SchoolInfo = styled.div<{ status: ContractStatus; selected?: boolea
     gap: 8px;
   }
 
-  ${({ selected }) =>
-    selected &&
-    ` & p {
-      color: var(--color-white);
-    }
-      div & p {
-      color: var(--color-white);
-      }
-    `}
+  p {
+    color: ${({ selected }) => (selected ? 'var(--color-white);' : 'var(--color-mid-gray);')};
+  }
 `
 
 export const SchoolNumberCtr = styled.p`
