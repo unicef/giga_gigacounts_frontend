@@ -1,3 +1,5 @@
+import React, { useState } from 'react'
+import Message, { MessageType } from 'src/components/common/Message/Message'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import {
   SchoolContent,
@@ -14,6 +16,9 @@ const SchoolsQoS: React.FC = (): JSX.Element => {
   const {
     state: { schoolQosDate, schoolQosMedianValue, schoolQosMetricName },
   } = useContractsContext()
+
+  const [noSchoolMetricData, setNoSchoolMetricData] = useState(false)
+  
   return (
     <SchoolQoSContainer>
       <SchoolHeader>
@@ -24,6 +29,14 @@ const SchoolsQoS: React.FC = (): JSX.Element => {
         </small>
       </SchoolHeader>
       <SchoolContent>
+        {noSchoolMetricData && (
+          <Message
+          type={MessageType.NOTICE}
+          title='Quality of Service unavailable'
+          description='Unfortunately this school has no connection data to display'
+          onClose={() => setNoSchoolMetricData(false)}
+          />
+        )}
         <SchoolTableHeader>
           <>
             {schoolQosMetricName &&
