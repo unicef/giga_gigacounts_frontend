@@ -176,7 +176,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
     case CreateContractActionType.SET_ERROR: {
       return {
         ...state,
-        error: payload?.error.message,
+        error: payload?.error?.response?.data || 'Something went wrong!',
       }
     }
 
@@ -229,7 +229,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
         ...state,
         contractForm: {
           ...state.contractForm,
-          ispId: +payload,
+          ispId: payload,
         },
       }
     }
@@ -285,6 +285,13 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           ...CONTRACT_FORM_INITIAL_STATE,
           ...preset,
         },
+      }
+    }
+
+    case CreateContractActionType.SET_SHOW_DIALOG: {
+      return {
+        ...state,
+        showDialog: !state.showDialog,
       }
     }
 

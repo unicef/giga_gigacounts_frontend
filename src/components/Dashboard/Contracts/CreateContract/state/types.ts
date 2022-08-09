@@ -49,6 +49,7 @@ export enum CreateContractActionType {
   SET_BUDGET = 'SET_BUDGET',
   SET_SERVICE_PROVIDER = 'SET_SERVICE_PROVIDER',
   SET_QUALITY_OF_SERVICE = 'SET_QUALITY_OF_SERVICE',
+  SET_SHOW_DIALOG = 'SET_SHOW_DIALOG',
   RESET = 'RESET',
 }
 
@@ -103,4 +104,5 @@ export interface CreateContractState {
   ltas: ILtas[]
   contractForm: ContractForm
   schools: ISchool[]
+  showDialog: boolean
 }

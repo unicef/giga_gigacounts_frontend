@@ -157,10 +157,10 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [
       localState,
       fetchContract,
+      fetchContracts,
       setActiveNavItem,
       setSelectedSchool,
       fetchSchoolMeasures,
-      fetchContracts,
       setNewContract,
     ],
   )

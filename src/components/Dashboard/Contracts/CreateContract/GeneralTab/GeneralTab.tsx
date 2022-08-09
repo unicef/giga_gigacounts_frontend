@@ -22,7 +22,7 @@ import { useCountryCode } from '../state/hooks'
 
 const GeneralTab: React.FC = (): JSX.Element => {
   const {
-    state: { loading, countries, currencies, ltas, flag, contractForm, draft },
+    state: { loading, countries, currencies, ltas, contractForm, draft },
     actions: { reload, saveDraft },
     dispatch,
   } = useCreateContractContext()
@@ -135,7 +135,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
               >
                 {currencies.map((currency) => (
                   <option key={currency.id} value={currency.id}>
-                    {currency.name}
+                    {currency.code}
                   </option>
                 ))}
               </select>
