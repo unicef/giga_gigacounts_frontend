@@ -63,6 +63,10 @@ const UploadButton = ({ onUpload, onError, type, typeId = null, disabled = false
             await onUpload(fileUpload)
 
             setLoading(false)
+
+            if (inputFileRef.current) {
+              inputFileRef.current.value = ''
+            }
           }
 
           reader.onerror = () => {

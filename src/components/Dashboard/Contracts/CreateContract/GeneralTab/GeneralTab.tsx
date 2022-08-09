@@ -64,6 +64,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
   const onUpload = async (file: IFileUpload) => {
     if (file) {
       try {
+        await saveDraft()
         await uploadAttachment(file)
         reload()
       } catch (error) {
@@ -73,6 +74,11 @@ const GeneralTab: React.FC = (): JSX.Element => {
   }
 
   const onUploadError = (error: Error) => dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
+
+  const onAttachmentDelete = async () => {
+    await saveDraft()
+    reload()
+  }
 
   return (
     <GeneralContainer>
@@ -188,13 +194,13 @@ const GeneralTab: React.FC = (): JSX.Element => {
           </p>
         </Attachments>
         <UploadFiles>
-          {draft.data?.attachments.map((attachment) => (
+          {draft.data?.attachments?.map((attachment) => (
             <File
               id={attachment.id}
               name={attachment.name}
               url={attachment.url}
               key={attachment.id}
-              onDelete={reload}
+              onDelete={onAttachmentDelete}
               allowDelete
             />
           ))}

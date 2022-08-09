@@ -1,6 +1,15 @@
 import { CONTRACT_FORM_INITIAL_STATE } from './initial-state'
 import { CreateContractAction, CreateContractActionType, CreateContractState } from './types'
 
+const parseDate = (obj: Record<string, string>, props: string[]) => {
+  const prop = props.find((prop) => typeof obj[prop] === 'string' && obj[prop].length > 0)
+
+  if (prop) {
+    return obj[prop]?.split('T')[0] ?? ''
+  }
+
+  return ''
+}
 export const reducer = (state: CreateContractState, action: CreateContractAction): CreateContractState => {
   const { type, payload } = action
 
@@ -32,19 +41,21 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       const ltaId = draft.lta?.id ?? state.contractForm.ltaId
       const governmentBehalf = draft.governmentBehalf ?? state.contractForm.governmentBehalf
       const budget = draft.budget ?? state.contractForm.budget
-      const startDate = draft.start_date?.length > 0 ? draft.start_date.split('T')[0] : ''
-      const endDate = draft.end_date?.length > 0 ? draft.end_date.split('T')[0] : ''
+
+      const startDate = parseDate(draft, ['startDate', 'start_date'])
+      const endDate = parseDate(draft, ['endDate', 'end_date'])
+
       const expectedMetrics = draft.expectedMetrics
         ? { metrics: draft.expectedMetrics }
         : state.contractForm.expectedMetrics
 
-      const schools = draft.schools ? { schools: draft.schools } : state.contractForm.schools
+      const schools = draft.schools?.schools ?? draft.schools ?? state.contractForm.schools?.schools
 
       return {
         ...state,
         loading: false,
         draft: {
-          data: draft,
+          data: { ...draft, attachments: draft.attachments ?? state.draft.data?.attachments },
           loading: false,
           error: undefined,
         },
@@ -60,7 +71,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           endDate,
           expectedMetrics,
           budget,
-          schools,
+          schools: { schools },
         },
       }
     }
