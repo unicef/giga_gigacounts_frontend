@@ -1,5 +1,5 @@
 import { MouseEvent, useMemo } from 'react'
-import { deleteContractDraft, publishContractDraft, updateContractDraft } from 'src/api/contracts'
+import { deleteContractDraft, publishContractDraft } from 'src/api/contracts'
 import ConnectionTab from './ConnectionTab/ConnectionTab'
 import GeneralTab from './GeneralTab/GeneralTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
