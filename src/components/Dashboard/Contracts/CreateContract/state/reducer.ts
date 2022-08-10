@@ -89,13 +89,13 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
     }
 
     case CreateContractActionType.GET_FORM_DATA: {
-      const { countries, currencies, ltas } = payload
+      const { countries, currencies } = payload
 
       return {
         ...state,
         countries,
         currencies,
-        ltas,
+        // ltas,
         loading: false,
         contractForm: {
           ...state.contractForm,
@@ -303,6 +303,13 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       return {
         ...state,
         showDialog: !state.showDialog,
+      }
+    }
+
+    case CreateContractActionType.GET_LTS_BY_COUNTRY_ID: {
+      return {
+        ...state,
+        ltas: payload,
       }
     }
 

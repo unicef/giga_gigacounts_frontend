@@ -51,6 +51,7 @@ export enum CreateContractActionType {
   SET_QUALITY_OF_SERVICE = 'SET_QUALITY_OF_SERVICE',
   SET_SHOW_DIALOG = 'SET_SHOW_DIALOG',
   RESET = 'RESET',
+  GET_LTS_BY_COUNTRY_ID = 'GET_LTS_BY_COUNTRY_ID',
 }
 
 export interface CreateContractAction {

@@ -42,8 +42,12 @@ export const getCurrency = async (): Promise<ICurrency | Error> => {
   throw new Error('Failed to get the currencies')
 }
 
-export const getLtas = async (): Promise<ILtas | Error> => {
-  const response = await instance.get('/lta')
+export const getLtas = async (countryId?: string): Promise<ILtas | Error> => {
+  const response = await instance.get('/lta', {
+    params: {
+      countryId,
+    },
+  })
 
   if (response.status === 200) {
     return response.data

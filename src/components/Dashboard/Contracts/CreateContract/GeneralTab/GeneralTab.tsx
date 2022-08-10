@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react'
+import { ChangeEvent, useEffect } from 'react'
 import { uploadAttachment } from 'src/api/attachments'
 import File from 'src/components/common/File/File'
 import { IFileUpload } from 'src/types/general'
@@ -23,7 +23,7 @@ import { useCountryCode } from '../state/hooks'
 const GeneralTab: React.FC = (): JSX.Element => {
   const {
     state: { loading, countries, currencies, ltas, contractForm, draft },
-    actions: { reload, saveDraft },
+    actions: { reload, saveDraft, getLtsByCountryId },
     dispatch,
   } = useCreateContractContext()
 
@@ -79,6 +79,10 @@ const GeneralTab: React.FC = (): JSX.Element => {
     await saveDraft()
     reload()
   }
+
+  useEffect(() => {
+    contractForm.countryId && getLtsByCountryId(contractForm?.countryId)
+  }, [contractForm.countryId, getLtsByCountryId])
 
   return (
     <GeneralContainer>

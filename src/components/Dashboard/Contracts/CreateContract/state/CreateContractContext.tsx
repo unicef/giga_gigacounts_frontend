@@ -10,6 +10,7 @@ import { useContractsContext } from 'src/components/Dashboard/Contracts/state/us
 import { CREATE_CONTRACT_INITIAL_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { ContractForm, CreateContractAction, CreateContractActionType, CreateContractState } from './types'
+import { createAction } from 'src/utils/createAction'
 
 export interface ICreateContractContext {
   state: CreateContractState
@@ -17,6 +18,7 @@ export interface ICreateContractContext {
   actions: {
     reload: () => void
     saveDraft: () => void
+    getLtsByCountryId: (countryId: string) => void
   }
 }
 
@@ -27,6 +29,9 @@ export const CreateContractContext = createContext<ICreateContractContext>({
       throw new Error('Not implemented')
     },
     saveDraft: () => {
+      throw new Error('Not implemented')
+    },
+    getLtsByCountryId: () => {
       throw new Error('Not implemented')
     },
   },
@@ -82,19 +87,19 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   const fetchData = useCallback(async () => {
     try {
       axios
-        .all([getCountries(), getCurrency(), getLtas()])
+        .all([getCountries(), getCurrency()])
         .then(
           axios.spread((...responses) => {
             const countries = responses[0]
             const currencies = responses[1]
-            const ltas = responses[2]
+            // const ltas = responses[2]
 
             dispatch({
               type: CreateContractActionType.GET_FORM_DATA,
               payload: {
                 countries,
                 currencies,
-                ltas,
+                // ltas,
               },
             })
           }),
@@ -131,6 +136,15 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
       dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error: new Error('Please enter a name') } })
     }
   }, [localState.contractForm, reloadContracts])
+
+  const getLtsByCountryId = useCallback(async (countryId: string) => {
+    try {
+      const response = await getLtas(countryId)
+      dispatch(createAction(CreateContractActionType.GET_LTS_BY_COUNTRY_ID, response))
+    } catch (error) {
+      dispatch(createAction(CreateContractActionType.SET_ERROR, error))
+    }
+  }, [])
 
   useEffect(() => {
     fetchData()
@@ -174,10 +188,11 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
       actions: {
         reload,
         saveDraft,
+        getLtsByCountryId,
       },
       dispatch,
     }),
-    [localState, reload, saveDraft],
+    [localState, reload, saveDraft, getLtsByCountryId],
   )
 
   return <CreateContractContext.Provider value={value}>{children}</CreateContractContext.Provider>
