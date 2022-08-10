@@ -92,14 +92,12 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
           axios.spread((...responses) => {
             const countries = responses[0]
             const currencies = responses[1]
-            // const ltas = responses[2]
 
             dispatch({
               type: CreateContractActionType.GET_FORM_DATA,
               payload: {
                 countries,
                 currencies,
-                // ltas,
               },
             })
           }),

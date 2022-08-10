@@ -95,7 +95,6 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
         ...state,
         countries,
         currencies,
-        // ltas,
         loading: false,
         contractForm: {
           ...state.contractForm,
