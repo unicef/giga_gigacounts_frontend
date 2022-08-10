@@ -1,4 +1,4 @@
-export const formatMetricValue = (value: string, metricId: number) => {
+export const formatMetricValue = (value: number, metricId: number) => {
   switch (metricId) {
     case 0:
       return `${value}%`

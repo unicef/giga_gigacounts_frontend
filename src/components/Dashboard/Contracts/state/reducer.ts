@@ -125,31 +125,50 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
     case ContractsActionType.SET_SCHOOL_MEASURES: {
       let date, medianValue, metricName
 
-      const result = Object.keys(payload[0]).map((key: string) => ({
-        [key]: payload.map((obj: { [x: string]: any }) => obj[key]),
-      }))
+      if (payload.length > 0) {
+        const result = Object.keys(payload[0]).map((key: string) => ({
+          [key]: payload.map((obj: { [x: string]: any }) => obj[key]),
+        }))
 
-      result?.forEach((item) => {
-        if (item.date) {
-          const uniqueDate: Set<number> = new Set(item.date.map((date: string) => new Date(date).getMonth()))
-          date = Array.from(uniqueDate).map((monthNumber) => {
-            return months[monthNumber]
-          })
+        const chunkArray = (arr: number[], chunk_size: number) => {
+          let resultArr = []
+          while (arr.length) {
+            resultArr.push(arr.splice(0, chunk_size))
+          }
+          return resultArr
         }
-        if (item.metric_name) {
-          const unique: Set<string> = new Set(item.metric_name)
-          metricName = Array.from(unique)
-        }
-        if (item.median_value) {
-          medianValue = item.median_value.map((value: string, i: number) => formatMetricValue(value, i))
-        }
-      })
 
+        result?.forEach((item) => {
+          if (item.date) {
+            const uniqueDate: Set<number> = new Set(item.date.map((date: string) => new Date(date).getMonth()))
+            date = Array.from(uniqueDate).map((monthNumber) => {
+              return months[monthNumber]
+            })
+          }
+          if (item.metric_name) {
+            const unique: Set<string> = new Set(item.metric_name)
+            metricName = Array.from(unique)
+          }
+          if (item.median_value) {
+            const arrayOfSizeFour = chunkArray(item.median_value, 4)
+            medianValue = arrayOfSizeFour.map((chunkValue: number[]) =>
+              chunkValue.map((value, i) => formatMetricValue(value, i)),
+            )
+          }
+        })
+
+        return {
+          ...state,
+          schoolQosDate: date,
+          schoolQosMetricName: metricName,
+          schoolQosMedianValue: medianValue,
+          noSchoolMetricData: false,
+          loading: false,
+        }
+      }
       return {
         ...state,
-        schoolQosDate: date,
-        schoolQosMetricName: metricName,
-        schoolQosMedianValue: medianValue,
+        noSchoolMetricData: true,
         loading: false,
       }
     }

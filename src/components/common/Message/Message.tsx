@@ -10,6 +10,7 @@ interface MessageProps {
   type?: MessageType
   title?: string
   description?: string
+  showCloseBtn?: boolean
   onClose?: () => void
 }
 
@@ -17,6 +18,7 @@ const Message: React.FC<MessageProps> = ({
   type = MessageType.NOTICE,
   title = 'Title',
   description = 'Description',
+  showCloseBtn = true,
   onClose,
 }: MessageProps): JSX.Element => {
   return (
@@ -25,7 +27,7 @@ const Message: React.FC<MessageProps> = ({
         <p>
           <b>{title}</b>
         </p>
-        <span className="icon icon-24 icon-close icon-white-60" onClick={onClose}></span>
+        {showCloseBtn && <span className="icon icon-24 icon-close icon-white-60" onClick={onClose}></span>}
       </div>
       <small>{description}</small>
     </MessageContainer>

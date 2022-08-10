@@ -1,3 +1,4 @@
+import Message, { MessageType } from 'src/components/common/Message/Message'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import {
   SchoolContent,
@@ -12,8 +13,9 @@ import {
 
 const SchoolsQoS: React.FC = (): JSX.Element => {
   const {
-    state: { schoolQosDate, schoolQosMedianValue, schoolQosMetricName },
+    state: { schoolQosDate, schoolQosMedianValue, schoolQosMetricName, noSchoolMetricData },
   } = useContractsContext()
+
   return (
     <SchoolQoSContainer>
       <SchoolHeader>
@@ -24,34 +26,45 @@ const SchoolsQoS: React.FC = (): JSX.Element => {
         </small>
       </SchoolHeader>
       <SchoolContent>
-        <SchoolTableHeader>
+        {noSchoolMetricData ? (
+          <Message
+            type={MessageType.NOTICE}
+            title="Quality of Service unavailable"
+            description="Unfortunately this school has no connection data to display"
+            showCloseBtn={false}
+          />
+        ) : (
           <>
-            {schoolQosMetricName &&
-              schoolQosMetricName.map((name, i) => (
-                <small key={i}>
-                  <b>{name}</b>
-                </small>
-              ))}
-          </>
-        </SchoolTableHeader>
-        <SchoolTableContent>
-          {schoolQosDate &&
-            schoolQosDate.map((month, i) => (
-              <SchoolTableSection key={i}>
-                <h6>{month}</h6>
-              </SchoolTableSection>
-            ))}
-          <SchoolTableRow>
-            <>
-              {schoolQosMedianValue &&
-                schoolQosMedianValue.map((value, i) => (
-                  <SchoolTableRowMetric key={i} className="table-line-metric">
-                    <small>{value}</small>
-                  </SchoolTableRowMetric>
+            <SchoolTableHeader>
+              {schoolQosMetricName &&
+                schoolQosMetricName.map((name) => (
+                  <small key={name}>
+                    <b>{name}</b>
+                  </small>
                 ))}
-            </>
-          </SchoolTableRow>
-        </SchoolTableContent>
+            </SchoolTableHeader>
+            <SchoolTableContent>
+              {schoolQosDate &&
+                schoolQosDate.map((month, index) => (
+                  <>
+                    <SchoolTableSection>
+                      <h6>{month}</h6>
+                    </SchoolTableSection>
+                    <SchoolTableRow>
+                      {schoolQosMedianValue &&
+                        [schoolQosMedianValue?.[index]].map((median) =>
+                          median.map((el) => (
+                            <SchoolTableRowMetric key={`${Math.random()}`}>
+                              <small>{el}</small>
+                            </SchoolTableRowMetric>
+                          )),
+                        )}
+                    </SchoolTableRow>
+                  </>
+                ))}
+            </SchoolTableContent>
+          </>
+        )}
       </SchoolContent>
     </SchoolQoSContainer>
   )
