@@ -21,7 +21,7 @@ const ConnectionTab: React.FC = (): JSX.Element => {
   const fetchData = useCallback(async () => {
     try {
       const metrics = await getSuggestedMetrics()
-      const isps = await getIsp(contractForm.countryId, parseInt(contractForm.ltaId || ''))
+      const isps = await getIsp(contractForm.countryId, contractForm.ltaId)
 
       dispatch({
         type: CreateContractActionType.SET_METRICS_ISPS,

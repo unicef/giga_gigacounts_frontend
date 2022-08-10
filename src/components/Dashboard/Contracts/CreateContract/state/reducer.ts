@@ -185,6 +185,15 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
     }
 
     case CreateContractActionType.SET_ERROR: {
+      const validationErrors = payload?.error?.response?.data?.errors
+
+      if (validationErrors?.length > 0) {
+        return {
+          ...state,
+          error: validationErrors[0].message,
+        }
+      }
+
       return {
         ...state,
         error: payload?.error?.response?.data || 'Something went wrong!',
