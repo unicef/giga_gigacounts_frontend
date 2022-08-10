@@ -1,5 +1,4 @@
 import { useMemo, useRef } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
 import ContractLtaListItems from './ContractLtaListItems/ContractLtaListItems'
 import ContractLoader from './ContractLoader/ContractLoader'
 import { ContractListContainer } from './styles'
@@ -10,17 +9,13 @@ import { NEW_CONTRACT } from '../state/initial-state'
 
 const ContractListContent: React.FC = (): JSX.Element => {
   const { state } = useContractsContext()
-  const { loading, ltas } = state
-  const { id } = useParams<{ id: string }>()
-  const [searchParams] = useSearchParams()
-  const draftId = useMemo(() => searchParams.get('draft') || '', [searchParams])
+  const { loading, ltas, selectedContractListId } = state
+
   const contracts = useOtherContracts()
 
   const ref = useRef<HTMLDivElement>(null)
 
   const newContract = useMemo(() => state.newContract && state.newContract.ltaId === undefined, [state.newContract])
-
-  const selectedId = useMemo(() => id ?? draftId, [draftId, id])
 
   return (
     <ContractListContainer ref={ref}>
@@ -35,7 +30,7 @@ const ContractListContent: React.FC = (): JSX.Element => {
             {newContract && <ContractItem contract={NEW_CONTRACT} selected />}
             {contracts !== undefined &&
               contracts.map((contract, i) => (
-                <ContractItem key={i} contract={contract} selected={selectedId === contract.id} />
+                <ContractItem key={i} contract={contract} selected={selectedContractListId === contract.listId} />
               ))}
           </>
         </>

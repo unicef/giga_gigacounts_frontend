@@ -152,6 +152,7 @@ export interface IContract<Status extends ContractStatus = ContractStatus> {
   status: Status
   totalSpent?: number
   details: DataState<DetailsTypeByStatus<Status>, true>
+  listId?: string
 }
 
 export interface IContractSchoolsConnection {

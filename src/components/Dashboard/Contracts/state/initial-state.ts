@@ -13,6 +13,7 @@ export const INITIAL_CONTRACTS_STATE: ContractsState = {
   error: undefined,
   loading: true,
   newContract: undefined,
+  selectedContractListId: undefined,
 }
 
 export const NEW_CONTRACT: IContract = {

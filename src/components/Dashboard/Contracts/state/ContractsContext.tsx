@@ -17,6 +17,7 @@ export interface IContractsContext {
     fetchSchoolMeasures: (schoolId: string, id: string, month: string) => void
     reloadContracts: () => void
     setNewContract: (newContract?: { ltaId?: string }) => void
+    setSelectContractListId: (listId: string) => void
   }
 }
 
@@ -42,6 +43,9 @@ export const ContractsContext = createContext<IContractsContext>({
       throw new Error('Not implemented')
     },
     setNewContract: () => {
+      throw new Error('Not implemented')
+    },
+    setSelectContractListId: () => {
       throw new Error('Not implemented')
     },
   },
@@ -141,6 +145,13 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [dispatch],
   )
 
+  const setSelectContractListId = useCallback(
+    (listId: string) => {
+      dispatch({ type: ContractsActionType.SET_SELECTED_CONTRACT_LIST_ID, payload: listId })
+    },
+    [dispatch],
+  )
+
   const value = useMemo(
     () => ({
       state: localState,
@@ -152,6 +163,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         fetchSchoolMeasures,
         reloadContracts: fetchContracts,
         setNewContract,
+        setSelectContractListId,
       },
     }),
     [
@@ -162,6 +174,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       setSelectedSchool,
       fetchSchoolMeasures,
       setNewContract,
+      setSelectContractListId,
     ],
   )
   useEffect(() => {

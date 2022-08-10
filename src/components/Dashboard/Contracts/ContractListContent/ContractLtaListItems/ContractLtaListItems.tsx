@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { IContract, ILta } from 'src/types/general'
 import { ISP_ROLE } from 'src/consts/roles'
 import { useRoleCheck } from 'src/state/hooks'
@@ -30,16 +30,13 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ lta }: IContractLi
     [lta.id, state.newContract],
   )
 
-  const { id } = useParams<{ id: string }>()
-  const [searchParams] = useSearchParams()
-  const draftId = useMemo(() => searchParams.get('draft') || '', [searchParams])
   const contracts = useLtaContracts(lta.id)
 
   const isISP = useRoleCheck(ISP_ROLE)
 
   const selectedContract = useMemo(
-    () => contracts?.find((contract: IContract) => contract.id === (id ?? draftId)),
-    [contracts, draftId, id],
+    () => contracts?.find((contract: IContract) => contract.listId === state.selectedContractListId),
+    [contracts, state.selectedContractListId],
   )
 
   const [isExpanded, setIsExpanded] = useState<boolean>(selectedContract !== undefined)
@@ -75,7 +72,7 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ lta }: IContractLi
       {isExpanded ? (
         <>
           {contracts?.map((contract, i) => (
-            <ContractItem key={i} contract={contract} selected={selectedContract?.id === contract.id} />
+            <ContractItem key={i} contract={contract} selected={selectedContract?.listId === contract.listId} />
           ))}
           {newContract && <ContractItem contract={NEW_CONTRACT} selected />}
           {!isISP ? <ContractLtaFooter onClick={handleAddLtaContract}>Create Contract Here</ContractLtaFooter> : <></>}

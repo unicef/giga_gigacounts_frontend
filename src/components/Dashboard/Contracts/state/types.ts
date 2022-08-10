@@ -11,6 +11,7 @@ export enum ContractsActionType {
   SET_ACTIVE_NAV_ITEM = 'SET_ACTIVE_NAV_ITEM',
   SET_SCHOOL_MEASURES = 'SET_SCHOOL_MEASURES',
   SET_SELECTED_SCHOOL = 'SET_SELECTED_SCHOOL',
+  SET_SELECTED_CONTRACT_LIST_ID = 'SET_SELECTED_CONTRACT_LIST_ID',
 }
 
 export interface ContractsAction {
@@ -36,4 +37,5 @@ export interface ContractsState {
   newContract?: {
     ltaId?: string
   }
+  selectedContractListId?: string
 }

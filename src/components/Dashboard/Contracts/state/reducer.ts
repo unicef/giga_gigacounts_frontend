@@ -39,8 +39,7 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
         )
         .flat(1)
 
-      const allContracts = uniqBy(ltaContracts.concat(contracts) as IContract[], 'id')
-
+      const allContracts = ltaContracts.concat(contracts) as IContract[]
       const ltas = uniqBy(clean(map(allContracts, 'lta')), 'id')
 
       return {
@@ -187,6 +186,13 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
           schoolId: payload.schoolId,
           contractId: payload.contractId,
         },
+      }
+    }
+
+    case ContractsActionType.SET_SELECTED_CONTRACT_LIST_ID: {
+      return {
+        ...state,
+        selectedContractListId: payload,
       }
     }
 

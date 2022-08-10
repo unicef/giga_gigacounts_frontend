@@ -10,3 +10,5 @@ export const useRoleCheck = (role: string) => {
   const userRole = selectUser(useContext(GeneralContext).state).data.role
   return userRole === role
 }
+
+export const useSelectedContract = () => localStorage.getItem('selectedContract') || ''
