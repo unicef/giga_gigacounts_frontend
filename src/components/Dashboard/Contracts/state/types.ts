@@ -28,7 +28,8 @@ export interface ContractsState {
   }
   schoolQosDate?: string[]
   schoolQosMetricName?: string[]
-  schoolQosMedianValue?: string[]
+  schoolQosMedianValue?: string[][]
+  noSchoolMetricData: boolean
   activeNavItem?: string
   error?: Error
   loading?: boolean

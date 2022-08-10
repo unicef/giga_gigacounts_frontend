@@ -9,6 +9,7 @@ export const INITIAL_CONTRACTS_STATE: ContractsState = {
   schoolQosDate: undefined,
   schoolQosMetricName: undefined,
   schoolQosMedianValue: undefined,
+  noSchoolMetricData: false,
   error: undefined,
   loading: true,
   newContract: undefined,
