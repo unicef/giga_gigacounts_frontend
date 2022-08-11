@@ -1,4 +1,3 @@
-import { useContractsContext } from '../../../state/useContractsContext'
 import { WidgetMetric } from '../TabButton/styles'
 import { PaymentsTabContainer } from './styles'
 
