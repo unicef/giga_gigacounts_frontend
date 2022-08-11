@@ -27,10 +27,8 @@ export interface ContractsState {
     schoolId?: string
     contractId?: string
   }
-  schoolQosDate?: string[]
-  schoolQosMetricName?: string[]
-  schoolQosMedianValue?: string[][]
   noSchoolMetricData: boolean
+  schoolsQos: SchoolsQos[]
   activeNavItem?: string
   error?: Error
   loading?: boolean
@@ -38,4 +36,34 @@ export interface ContractsState {
     ltaId?: string
   }
   selectedContractListId?: string
+}
+
+export interface SchoolsQos {
+  year: number
+  month: number
+  metrics: {
+    uptime: SchoolQosMetric
+    latency: SchoolQosMetric
+    upload: SchoolQosMetric
+    download: SchoolQosMetric
+  }
+}
+
+export interface SchoolQosMetric {
+  value: number
+  unit: string
+}
+
+export interface SchoolQosResponse {
+  date: string
+  metric_name: string
+  unit: string
+  median_value: number
+}
+
+export enum MetricPropertyType {
+  latency = 'latency',
+  uptime = 'uptime',
+  'download speed' = 'download',
+  'upload speed' = 'upload',
 }

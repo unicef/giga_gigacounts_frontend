@@ -1,5 +1,7 @@
+import { Fragment, useMemo } from 'react'
 import Message, { MessageType } from 'src/components/common/Message/Message'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
+import { MONTHS } from 'src/consts/months'
 import {
   SchoolContent,
   SchoolHeader,
@@ -13,8 +15,18 @@ import {
 
 const SchoolsQoS: React.FC = (): JSX.Element => {
   const {
-    state: { schoolQosDate, schoolQosMedianValue, schoolQosMetricName, noSchoolMetricData },
+    state: { noSchoolMetricData, schoolsQos },
   } = useContractsContext()
+
+  const schoolQosTableHeader = useMemo(
+    () => [
+      { id: 1, title: 'Latency' },
+      { id: 2, title: 'Uptime' },
+      { id: 3, title: 'Download' },
+      { id: 4, title: 'Upload' },
+    ],
+    [],
+  )
 
   return (
     <SchoolQoSContainer>
@@ -36,32 +48,31 @@ const SchoolsQoS: React.FC = (): JSX.Element => {
         ) : (
           <>
             <SchoolTableHeader>
-              {schoolQosMetricName &&
-                schoolQosMetricName.map((name) => (
-                  <small key={name}>
-                    <b>{name}</b>
-                  </small>
-                ))}
+              {schoolQosTableHeader.map((header) => (
+                <small key={header.id}>
+                  <b>{header.title}</b>
+                </small>
+              ))}
             </SchoolTableHeader>
             <SchoolTableContent>
-              {schoolQosDate &&
-                schoolQosDate.map((month, index) => (
-                  <>
-                    <SchoolTableSection>
-                      <h6>{month}</h6>
-                    </SchoolTableSection>
-                    <SchoolTableRow>
-                      {schoolQosMedianValue &&
-                        [schoolQosMedianValue?.[index]].map((median) =>
-                          median.map((el) => (
-                            <SchoolTableRowMetric key={`${Math.random()}`}>
-                              <small>{el}</small>
-                            </SchoolTableRowMetric>
-                          )),
-                        )}
-                    </SchoolTableRow>
-                  </>
-                ))}
+              {schoolsQos.map((item) => (
+                <Fragment key={item.month}>
+                  <SchoolTableSection>
+                    <h6>{MONTHS[item.month]}</h6>
+                  </SchoolTableSection>
+                  <></>
+                  <SchoolTableRow>
+                    {Object.entries(item.metrics).map(([key, metric]) => (
+                      <SchoolTableRowMetric key={key}>
+                        <small>
+                          {metric.value}
+                          {metric.unit}
+                        </small>
+                      </SchoolTableRowMetric>
+                    ))}
+                  </SchoolTableRow>
+                </Fragment>
+              ))}
             </SchoolTableContent>
           </>
         )}

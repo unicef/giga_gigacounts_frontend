@@ -1,8 +1,13 @@
-import { ContractsAction, ContractsActionType, ContractsState } from './types'
+import {
+  ContractsAction,
+  ContractsActionType,
+  ContractsState,
+  MetricPropertyType,
+  SchoolQosResponse,
+  SchoolsQos,
+} from './types'
 import { IContract } from 'src/types/general'
 import { uniqBy } from 'src/utils/uniqBy'
-import { months } from 'src/consts/months'
-import { formatMetricValue } from 'src/utils/formatMetricValue'
 import { map } from 'src/utils/map'
 import { clean } from 'src/utils/clean'
 
@@ -122,52 +127,62 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
     }
 
     case ContractsActionType.SET_SCHOOL_MEASURES: {
-      let date, medianValue, metricName
-
-      if (payload.length > 0) {
-        const result = Object.keys(payload[0]).map((key: string) => ({
-          [key]: payload.map((obj: { [x: string]: any }) => obj[key]),
-        }))
-
-        const chunkArray = (arr: number[], chunk_size: number) => {
-          let resultArr = []
-          while (arr.length) {
-            resultArr.push(arr.splice(0, chunk_size))
-          }
-          return resultArr
+      const getMetricProperty = (metric_name: string) => {
+        const metricPropertyMapping = {
+          latency: MetricPropertyType.latency,
+          uptime: MetricPropertyType.uptime,
+          'download speed': MetricPropertyType['download speed'],
+          'upload speed': MetricPropertyType['upload speed'],
         }
-
-        result?.forEach((item) => {
-          if (item.date) {
-            const uniqueDate: Set<number> = new Set(item.date.map((date: string) => new Date(date).getMonth()))
-            date = Array.from(uniqueDate).map((monthNumber) => {
-              return months[monthNumber]
-            })
-          }
-          if (item.metric_name) {
-            const unique: Set<string> = new Set(item.metric_name)
-            metricName = Array.from(unique)
-          }
-          if (item.median_value) {
-            const arrayOfSizeFour = chunkArray(item.median_value, 4)
-            medianValue = arrayOfSizeFour.map((chunkValue: number[]) =>
-              chunkValue.map((value, i) => formatMetricValue(value, i)),
-            )
-          }
-        })
-
-        return {
-          ...state,
-          schoolQosDate: date,
-          schoolQosMetricName: metricName,
-          schoolQosMedianValue: medianValue,
-          noSchoolMetricData: false,
-          loading: false,
-        }
+        return metricPropertyMapping[metric_name.toLowerCase() as keyof typeof metricPropertyMapping]
       }
+
+      const noSchoolMetricData = !payload.length
+
+      const schoolsQos: SchoolsQos[] = payload.reduce((acc: SchoolsQos[], item: SchoolQosResponse) => {
+        const date = new Date(item.date)
+        const year = date.getFullYear()
+        const month = date.getMonth()
+        const existingIndex = acc.findIndex((prev) => prev.year === year && prev.month === month)
+        const metricName = getMetricProperty(item.metric_name)
+
+        if (existingIndex === -1) {
+          return [
+            ...acc,
+            {
+              year,
+              month,
+              metrics: {
+                [metricName]: {
+                  value: item.median_value,
+                  unit: item.unit,
+                },
+              },
+            },
+          ]
+        }
+
+        return [
+          ...acc.slice(0, existingIndex),
+          {
+            year,
+            month,
+            metrics: {
+              ...acc[existingIndex].metrics,
+              [metricName]: {
+                value: item.median_value,
+                unit: item.unit,
+              },
+            },
+          },
+          ...acc.slice(existingIndex + 1),
+        ]
+      }, [])
+
       return {
         ...state,
-        noSchoolMetricData: true,
+        schoolsQos: schoolsQos,
+        noSchoolMetricData,
         loading: false,
       }
     }
