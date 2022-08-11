@@ -217,6 +217,13 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
         error: payload,
       }
 
+    case ContractsActionType.SET_ACTIVE_TAB: {
+      return {
+        ...state,
+        activeTab: payload,
+      }
+    }
+
     default:
       return {
         ...state,

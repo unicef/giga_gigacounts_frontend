@@ -12,6 +12,7 @@ export enum ContractsActionType {
   SET_SCHOOL_MEASURES = 'SET_SCHOOL_MEASURES',
   SET_SELECTED_SCHOOL = 'SET_SELECTED_SCHOOL',
   SET_SELECTED_CONTRACT_LIST_ID = 'SET_SELECTED_CONTRACT_LIST_ID',
+  SET_ACTIVE_TAB = 'SET_ACTIVE_TAB',
 }
 
 export interface ContractsAction {
@@ -36,6 +37,17 @@ export interface ContractsState {
     ltaId?: string
   }
   selectedContractListId?: string
+  activeTab: ContractStagedActiveTab
+}
+
+export interface ContractStagedTabItems {
+  id: string
+  name: string
+}
+
+export enum ContractStagedActiveTab {
+  SchoolsTab = 'schoolTab',
+  PaymentsTab = 'paymentsTab',
 }
 
 export interface SchoolsQos {

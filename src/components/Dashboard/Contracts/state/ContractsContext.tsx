@@ -6,6 +6,7 @@ import { ChildrenProps } from 'src/types/utils'
 import { INITIAL_CONTRACTS_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { ContractsAction, ContractsActionType, ContractsState } from './types'
+import { createAction } from 'src/utils/createAction'
 
 export interface IContractsContext {
   state: ContractsState
@@ -18,6 +19,7 @@ export interface IContractsContext {
     reloadContracts: () => void
     setNewContract: (newContract?: { ltaId?: string }) => void
     setSelectContractListId: (listId: string) => void
+    setSelectedTab: (tabId: string) => void
   }
 }
 
@@ -46,6 +48,9 @@ export const ContractsContext = createContext<IContractsContext>({
       throw new Error('Not implemented')
     },
     setSelectContractListId: () => {
+      throw new Error('Not implemented')
+    },
+    setSelectedTab: () => {
       throw new Error('Not implemented')
     },
   },
@@ -152,6 +157,13 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [dispatch],
   )
 
+  const setSelectedTab = useCallback(
+    (tabId: string) => {
+      dispatch(createAction(ContractsActionType.SET_ACTIVE_TAB, tabId))
+    },
+    [dispatch],
+  )
+
   const value = useMemo(
     () => ({
       state: localState,
@@ -164,6 +176,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         reloadContracts: fetchContracts,
         setNewContract,
         setSelectContractListId,
+        setSelectedTab,
       },
     }),
     [
@@ -175,6 +188,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       fetchSchoolMeasures,
       setNewContract,
       setSelectContractListId,
+      setSelectedTab,
     ],
   )
   useEffect(() => {
