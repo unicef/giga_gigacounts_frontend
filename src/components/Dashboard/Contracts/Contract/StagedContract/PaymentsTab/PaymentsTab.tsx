@@ -1,22 +1,21 @@
 import { WidgetMetric } from '../TabButton/styles'
-import { PaymentsTabContainer } from './styles'
+import PaymentChart from './PaymentChart/PaymentChart'
+import PaymentDate from './PaymentDate/PaymentDate'
+import { PaymentsTabContainer, PaymentsRow, PaymentsRowContainer, PaymentsRowDetails, PaymentsRowMetrics } from './styles'
 
 const PaymentsTab: React.FC = (): JSX.Element => {
   return (
     <PaymentsTabContainer>
-      <div className="row">
-        <div className="date-grid">
-          <div>date</div>
-          <div>month</div>
-          <div>year</div>
-        </div>
-        <div className="metrics flex-col">
-          <div className="first-row">
-            <p>currency</p>
-            <p>description</p>
-            <p>status</p>
-          </div>
-          <div className="metrics">
+      <PaymentsRow>
+        <PaymentDate date = 'Thu Nov 10 2022'/>
+        <PaymentsRowContainer>
+          <PaymentsRowDetails>
+            <p><b>currency</b></p>
+            <small>description</small>
+            <span className='icon icon-20 icon-completed icon-green'></span>
+            <div>Verified</div>
+          </PaymentsRowDetails>
+          <PaymentsRowMetrics>
             <WidgetMetric>
               <span className={`icon icon-20 icon-light-blue icon-plug`}></span>
               <small>
@@ -35,10 +34,14 @@ const PaymentsTab: React.FC = (): JSX.Element => {
                 <b style={{ textTransform: 'none' }}>value</b>
               </small>
             </WidgetMetric>
-            <div className="vlad"></div>
-          </div>
-        </div>
-      </div>
+            <PaymentChart
+              low = {30}
+              average = {50}
+              good = {20}
+            />
+          </PaymentsRowMetrics>
+        </PaymentsRowContainer>
+      </PaymentsRow>
     </PaymentsTabContainer>
   )
 }
