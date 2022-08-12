@@ -6,22 +6,27 @@ interface PaymentChartProps {
   good?: number
 }
 
-
 const PaymentChart: React.FC<PaymentChartProps> = ({
   low = 10,
   average = 20,
-  good = 70
-}: PaymentChartProps ):  JSX.Element => {
+  good = 70,
+}: PaymentChartProps): JSX.Element => {
   return (
     <PaymentChartContainer>
       <PaymentChartLow value={low}>
-        <small><b>{low}%</b></small>
+        <small>
+          <b>{low}%</b>
+        </small>
       </PaymentChartLow>
       <PaymentChartAverage value={average}>
-        <small><b>{average}%</b></small>
+        <small>
+          <b>{average}%</b>
+        </small>
       </PaymentChartAverage>
       <PaymentChartGood value={good}>
-        <small><b>{good}%</b></small>
+        <small>
+          <b>{good}%</b>
+        </small>
       </PaymentChartGood>
     </PaymentChartContainer>
   )

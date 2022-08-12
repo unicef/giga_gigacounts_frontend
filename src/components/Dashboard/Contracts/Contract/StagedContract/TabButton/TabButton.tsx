@@ -34,7 +34,7 @@ export const TabButton: React.FC<IContractDetailsProps> = ({
           {tab.id === ContractStagedActiveTab.SchoolsTab ? (
             contract?.details.data?.connectionsMedian &&
             contract?.details.data?.connectionsMedian.map((item) => (
-              <WidgetMetric key={item.metric_id}>
+              <WidgetMetric key={item.metric_id} selected={selected}>
                 <span
                   className={`icon icon-20 ${getMetricIconClassName(item.metric_id)} ${
                     selected ? 'icon-light-blue' : 'icon-mid-grey'
@@ -46,10 +46,10 @@ export const TabButton: React.FC<IContractDetailsProps> = ({
               </WidgetMetric>
             ))
           ) : (
-            <WidgetMetric>
-              <span className="icon icon-20 icon-coins icon-mid-grey"></span>
+            <WidgetMetric selected={selected}>
+              <span className={`icon icon-20 icon-coins  ${selected ? 'icon-light-blue' : 'icon-mid-grey'}`}></span>
               <small>
-                <b>0</b>
+                <b>BWP: 0</b>
               </small>
               <small>
                 <b>/</b>

@@ -40,11 +40,15 @@ export const WidgetInfo = styled.div`
   align-items: center;
   gap: 12px;
 `
-export const WidgetMetric = styled.div`
+export const WidgetMetric = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   gap: 4px;
   color: var(--color-darker-grey);
+  ${({ selected }) =>
+    selected && {
+      color: 'var(--color-light-blue)',
+    }};
 `
 export const WidgetChart = styled.div`
   grid-area: chart;

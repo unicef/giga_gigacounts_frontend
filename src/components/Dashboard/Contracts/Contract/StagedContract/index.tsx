@@ -139,7 +139,6 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
               </Dates>
             </Info>
           </ContractStagedHeader>
-          {/* <SchoolsTab contractSchools={contract?.details.data?.schools ?? []} /> */}
           <TabContent contractSchools={contract?.details.data?.schools ?? []} />
           {showDialog && (
             <Dialog
