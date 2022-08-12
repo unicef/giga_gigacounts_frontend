@@ -20,6 +20,7 @@ export interface IContractsContext {
     setNewContract: (newContract?: { ltaId?: string }) => void
     setSelectContractListId: (listId: string) => void
     setSelectedTab: (tabId: string) => void
+    setSelectedPayment: (paymentId: string, contractId: string) => void
   }
 }
 
@@ -51,6 +52,9 @@ export const ContractsContext = createContext<IContractsContext>({
       throw new Error('Not implemented')
     },
     setSelectedTab: () => {
+      throw new Error('Not implemented')
+    },
+    setSelectedPayment: () => {
       throw new Error('Not implemented')
     },
   },
@@ -142,6 +146,17 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     },
     [dispatch],
   )
+  const setSelectedPayment = useCallback(
+    (paymentId: string, contractId: string) => {
+      dispatch(
+        createAction(ContractsActionType.SET_SELECTED_PAYMENT, {
+          paymentId,
+          contractId,
+        }),
+      )
+    },
+    [dispatch],
+  )
 
   const setNewContract = useCallback(
     (newContract?: { ltaId?: string }) => {
@@ -177,6 +192,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         setNewContract,
         setSelectContractListId,
         setSelectedTab,
+        setSelectedPayment,
       },
     }),
     [
@@ -189,6 +205,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       setNewContract,
       setSelectContractListId,
       setSelectedTab,
+      setSelectedPayment,
     ],
   )
   useEffect(() => {

@@ -64,17 +64,3 @@ export const WidgetChart = styled.div`
     color: var(--color-blue);
   }
 `
-export const Dates = styled.div`
-  display: grid;
-  grid-template-columns: min-content 72px auto;
-  gap: 6px;
-  padding-left: 8px;
-
-  & > p {
-    color: var(--color-darkest-grey);
-  }
-
-  & > p > b {
-    color: var(--color-blue);
-  }
-`

@@ -13,6 +13,7 @@ export enum ContractsActionType {
   SET_SELECTED_SCHOOL = 'SET_SELECTED_SCHOOL',
   SET_SELECTED_CONTRACT_LIST_ID = 'SET_SELECTED_CONTRACT_LIST_ID',
   SET_ACTIVE_TAB = 'SET_ACTIVE_TAB',
+  SET_SELECTED_PAYMENT = 'SET_SELECTED_PAYMENT',
 }
 
 export interface ContractsAction {
@@ -26,6 +27,10 @@ export interface ContractsState {
   ltas?: ILta[]
   selectedSchool?: {
     schoolId?: string
+    contractId?: string
+  }
+  selectedPayment?: {
+    paymentId?: string
     contractId?: string
   }
   noSchoolMetricData: boolean

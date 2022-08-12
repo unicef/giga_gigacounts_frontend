@@ -11,7 +11,7 @@ interface IContractDetailsProps {
   onSwitchTab: (tab: ContractStagedTabItems) => void
 }
 
-export const TabButton: React.FC<IContractDetailsProps> = ({
+export const TabButtons: React.FC<IContractDetailsProps> = ({
   contract,
   tab,
   selected,
@@ -81,4 +81,4 @@ export const TabButton: React.FC<IContractDetailsProps> = ({
   )
 }
 
-export default TabButton
+export default TabButtons

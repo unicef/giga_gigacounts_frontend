@@ -24,7 +24,7 @@ import {
 import { publishContractToCompleted } from 'src/api/contracts'
 
 import PaymentsTab from './PaymentsTab/PaymentsTab'
-import TabButton from './TabButton/TabButton'
+import TabButtons from './TabButtons/TabButtons'
 import { createAction } from 'src/utils/createAction'
 interface IContractDetailsProps {
   contract: IContract<ContractStatus.Ongoing | ContractStatus.Expired>
@@ -117,7 +117,7 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
             </Header>
             <Info>
               {contractStagedTabItems.map((tab) => (
-                <TabButton
+                <TabButtons
                   key={tab.id}
                   tab={tab}
                   contract={contract}

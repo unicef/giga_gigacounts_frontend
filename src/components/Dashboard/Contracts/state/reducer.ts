@@ -204,6 +204,17 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
       }
     }
 
+    case ContractsActionType.SET_SELECTED_PAYMENT: {
+      return {
+        ...state,
+        selectedPayment: {
+          ...state.selectedPayment,
+          paymentId: payload.paymentId,
+          contractId: payload.contractId,
+        },
+      }
+    }
+
     case ContractsActionType.SET_SELECTED_CONTRACT_LIST_ID: {
       return {
         ...state,

@@ -13,6 +13,7 @@ export const INITIAL_CONTRACTS_STATE: ContractsState = {
   newContract: undefined,
   selectedContractListId: undefined,
   activeTab: ContractStagedActiveTab.SchoolsTab,
+  selectedPayment: undefined,
 }
 
 export const NEW_CONTRACT: IContract = {
