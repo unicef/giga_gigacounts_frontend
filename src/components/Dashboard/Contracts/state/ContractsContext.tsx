@@ -6,6 +6,7 @@ import { ChildrenProps } from 'src/types/utils'
 import { INITIAL_CONTRACTS_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { ContractsAction, ContractsActionType, ContractsState } from './types'
+import { createAction } from 'src/utils/createAction'
 
 export interface IContractsContext {
   state: ContractsState
@@ -18,6 +19,8 @@ export interface IContractsContext {
     reloadContracts: () => void
     setNewContract: (newContract?: { ltaId?: string }) => void
     setSelectContractListId: (listId: string) => void
+    setSelectedTab: (tabId: string) => void
+    setSelectedPayment: (paymentId: string, contractId: string) => void
   }
 }
 
@@ -46,6 +49,12 @@ export const ContractsContext = createContext<IContractsContext>({
       throw new Error('Not implemented')
     },
     setSelectContractListId: () => {
+      throw new Error('Not implemented')
+    },
+    setSelectedTab: () => {
+      throw new Error('Not implemented')
+    },
+    setSelectedPayment: () => {
       throw new Error('Not implemented')
     },
   },
@@ -137,6 +146,17 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     },
     [dispatch],
   )
+  const setSelectedPayment = useCallback(
+    (paymentId: string, contractId: string) => {
+      dispatch(
+        createAction(ContractsActionType.SET_SELECTED_PAYMENT, {
+          paymentId,
+          contractId,
+        }),
+      )
+    },
+    [dispatch],
+  )
 
   const setNewContract = useCallback(
     (newContract?: { ltaId?: string }) => {
@@ -148,6 +168,13 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
   const setSelectContractListId = useCallback(
     (listId: string) => {
       dispatch({ type: ContractsActionType.SET_SELECTED_CONTRACT_LIST_ID, payload: listId })
+    },
+    [dispatch],
+  )
+
+  const setSelectedTab = useCallback(
+    (tabId: string) => {
+      dispatch(createAction(ContractsActionType.SET_ACTIVE_TAB, tabId))
     },
     [dispatch],
   )
@@ -164,6 +191,8 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         reloadContracts: fetchContracts,
         setNewContract,
         setSelectContractListId,
+        setSelectedTab,
+        setSelectedPayment,
       },
     }),
     [
@@ -175,6 +204,8 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       fetchSchoolMeasures,
       setNewContract,
       setSelectContractListId,
+      setSelectedTab,
+      setSelectedPayment,
     ],
   )
   useEffect(() => {

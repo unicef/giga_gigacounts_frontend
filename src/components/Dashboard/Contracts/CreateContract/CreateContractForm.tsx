@@ -111,10 +111,10 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
           )}
         </FormHeaderActions>
         <FormHeaderTabs>
-          {tabsItems.map((tab, i) => {
+          {tabsItems.map((tab) => {
             return (
               <button
-                key={i}
+                key={tab.id}
                 id={tab.id}
                 name={tab.name}
                 onClick={onSwitchTab}
