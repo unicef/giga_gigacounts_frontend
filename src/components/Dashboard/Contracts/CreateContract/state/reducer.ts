@@ -298,6 +298,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
 
     case CreateContractActionType.RESET: {
       const { preset } = payload
+
       return {
         ...state,
         contractForm: {
