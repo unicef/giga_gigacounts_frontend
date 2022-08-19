@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import {
   ContractsActionType,
-  ContractStagedActiveTab,
+  ContractStagedActiveTab as StagedContractTab,
   ContractStagedTabItems,
 } from 'src/components/Dashboard/Contracts/state/types'
 import { ContractStatus, IContract } from 'src/types/general'
@@ -26,19 +26,24 @@ import { publishContractToCompleted } from 'src/api/contracts'
 import PaymentsTab from './PaymentsTab/PaymentsTab'
 import TabButtons from './TabButtons/TabButtons'
 import { createAction } from 'src/utils/createAction'
+import Text from 'src/components/common/Text'
+import { useOnClickOutside } from 'src/hooks/useOnClickOutside'
 interface IContractDetailsProps {
   contract: IContract<ContractStatus.Ongoing | ContractStatus.Expired>
 }
 
 const tabs = {
-  [ContractStagedActiveTab.SchoolsTab]: SchoolsTab,
-  [ContractStagedActiveTab.PaymentsTab]: PaymentsTab,
+  [StagedContractTab.SchoolsTab]: SchoolsTab,
+  [StagedContractTab.PaymentsTab]: PaymentsTab,
 }
 
-const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContractDetailsProps): JSX.Element => {
-  const [attachmentsSelected, setAttachmentsSelected] = useState(false)
+const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContractDetailsProps): JSX.Element => {
+  const [attachmentsExpanded, setAttachmentsExpanded] = useState(false)
   const [showDialog, setShowDialog] = useState(false)
-  const onAttachmentSelect = () => setAttachmentsSelected(true)
+
+  const attachmentsRef = useRef<HTMLDivElement>(null)
+  useOnClickOutside(attachmentsRef, () => setAttachmentsExpanded(false))
+  const onAttachmentClick = () => setAttachmentsExpanded((prev) => !prev)
 
   const {
     state: { activeTab },
@@ -94,17 +99,20 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
                   </LtaNumber>
                 )}
               </ContractNumber>
-              <button className="title-item attachments-button" onClick={onAttachmentSelect}>
-                <span className="icon icon-24 icon-files icon-mid-grey"></span>
-                <Attachments>Attachments</Attachments>
-              </button>
-              {attachmentsSelected && (
-                <AttachmentsDropdown>
-                  {contract.details.data?.attachments.map(({ id, name }) => (
-                    <File key={id} name={name} id={id} allowDelete={false} />
-                  ))}
-                </AttachmentsDropdown>
-              )}
+              <div ref={attachmentsRef}>
+                <button className="title-item attachments-button" onClick={onAttachmentClick}>
+                  <span className="icon icon-24 icon-files icon-mid-grey"></span>
+                  <Attachments>Attachments</Attachments>
+                </button>
+                {attachmentsExpanded && (
+                  <AttachmentsDropdown>
+                    {contract.details.data?.attachments.length === 0 && <Text fontSize="14px">No attachments</Text>}
+                    {contract.details.data?.attachments.map(({ id, name }) => (
+                      <File key={id} name={name} id={id} allowDelete={false} />
+                    ))}
+                  </AttachmentsDropdown>
+                )}
+              </div>
               <TitleItem>
                 <span className="icon icon-24 icon-network icon-mid-grey"></span>
                 <p>{contract?.details.data?.isp}</p>
@@ -157,4 +165,4 @@ const ContractStaged: React.FC<IContractDetailsProps> = ({ contract }: IContract
   )
 }
 
-export default ContractStaged
+export default StagedContract

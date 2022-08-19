@@ -4,7 +4,7 @@ import { ContractStatus, IContract } from 'src/types/general'
 import { ChildrenProps } from 'src/types/utils'
 import { useContract } from '../state/hooks'
 import PendingContract from './PendingContract'
-import ContractStaged from './StagedContract'
+import StagedContract from './StagedContract'
 
 interface ContractProps extends ChildrenProps {
   id?: string
@@ -40,7 +40,7 @@ const Contract: React.FC<ContractProps> = ({ id }: ContractProps): JSX.Element =
   return contract.status === ContractStatus.Sent || contract.status === ContractStatus.Confirmed ? (
     <PendingContract contract={contract as IContract<ContractStatus.Sent>} />
   ) : (
-    <ContractStaged contract={contract as IContract<ContractStatus.Ongoing>} />
+    <StagedContract contract={contract as IContract<ContractStatus.Ongoing>} />
   )
 }
 
