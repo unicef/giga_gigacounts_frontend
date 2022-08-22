@@ -70,6 +70,11 @@ export interface ExpectedMetric {
   value: number
 }
 
+export interface ContractPreset {
+  ltaId?: string
+  countryCode?: string
+}
+
 export interface ContractForm {
   id: string | null
   name?: string

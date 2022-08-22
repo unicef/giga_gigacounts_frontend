@@ -9,7 +9,13 @@ import { clean } from 'src/utils/clean'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import { CREATE_CONTRACT_INITIAL_STATE } from './initial-state'
 import { reducer } from './reducer'
-import { ContractForm, CreateContractAction, CreateContractActionType, CreateContractState } from './types'
+import {
+  ContractForm,
+  ContractPreset,
+  CreateContractAction,
+  CreateContractActionType,
+  CreateContractState,
+} from './types'
 import { createAction } from 'src/utils/createAction'
 
 export interface ICreateContractContext {
@@ -44,9 +50,10 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   const location = useLocation()
   const navigate = useNavigate()
   const {
-    state: { newContract },
+    state: { newContract, ...state },
     actions: { setNewContract, reloadContracts },
   } = useContractsContext()
+
   const [localState, dispatch] = useReducer(
     reducer,
     useMemo(
@@ -157,16 +164,19 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   }, [fetchDraft, draftId, localState.contractForm.id, setSearchParams, localState.draft.loading, setNewContract])
 
   useEffect(() => {
-    const { reset, preset } = (location.state ?? {}) as { reset?: boolean; preset?: ContractForm }
+    const { reset } = (location.state ?? {}) as { reset?: boolean }
 
     if (reset) {
+      const { ltaId, countryCode } = (location.state as { preset?: ContractPreset })?.preset ?? {}
+      const countryId = localState.countries.find((country) => country.code === countryCode)?.id
+
       navigate(location.pathname, { replace: true })
       dispatch({
         type: CreateContractActionType.RESET,
-        payload: { preset },
+        payload: { preset: { ltaId, countryId } },
       })
     }
-  }, [location.pathname, location.state, navigate])
+  }, [localState.countries, location.pathname, location.state, navigate, state])
 
   useEffect(() => {
     if (localState.contractForm.id === null && !localState.draft.loading) {

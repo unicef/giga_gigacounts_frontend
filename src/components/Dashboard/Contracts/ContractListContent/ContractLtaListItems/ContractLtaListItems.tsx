@@ -43,15 +43,17 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ lta }: IContractLi
 
   const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState)
 
-  const handleAddLtaContract = () =>
+  const handleAddLtaContract = () => {
     navigate('/dashboard/contract', {
       state: {
         preset: {
           ltaId: contracts?.[0].lta?.id,
+          countryCode: contracts?.[0].country?.code,
         },
         reset: true,
       },
     })
+  }
 
   useEffect(() => {
     if (newContract !== undefined || selectedContract !== undefined) {
