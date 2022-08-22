@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import Loader from 'src/components/common/Loader'
 import { ContractDetailsContainer } from './styles'
 import { useContract } from '../state/hooks'
 
@@ -13,7 +14,7 @@ const ContractDetails: React.FC<IContractDetailsProps> = ({ id }: IContractDetai
   return (
     <ContractDetailsContainer>
       {contract?.details.loading ? (
-        <div>Loading...</div>
+        <Loader />
       ) : (
         <div>
           <h5>Contract Number: {contract?.details.data?.name}</h5>

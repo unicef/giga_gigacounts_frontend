@@ -9,15 +9,16 @@ import { NavItem } from './NavItem/NavItem'
 import { ProfileIcon } from './ProfileIcon/ProfileIcon'
 import { StyledNav, StyledLogo, MenuContainer, StyledDivider } from './styles'
 import { useContractsContext } from '../Contracts/state/useContractsContext'
+import { NavItemType } from '../Contracts/state/types'
 
 const Navigation: React.FC = (): JSX.Element => {
   const navigate = useNavigate()
   const user = useUser()
-  const contractCounts = useContractCounts()
   const {
     state: { activeNavItem },
     actions: { setActiveNavItem },
   } = useContractsContext()
+  const contractCounts = useContractCounts()
   const mouseOver = useRef<boolean>(false)
 
   const { role, country, name } = user.data
@@ -39,6 +40,8 @@ const Navigation: React.FC = (): JSX.Element => {
     setHovered(false)
   }
 
+  const handleNaveItemClick = (item?: NavItemType) => setActiveNavItem(item)
+
   return (
     <StyledNav onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} expanded={hovered}>
       <StyledLogo
@@ -55,60 +58,66 @@ const Navigation: React.FC = (): JSX.Element => {
         <StyledDivider />
         <NavItem
           collapsed={!hovered}
-          selected={activeNavItem === 'all contracts'}
+          selected={activeNavItem === undefined}
           label="All Contracts"
           number={contractCounts.data.total}
           icon="icon-list"
-          onClick={setActiveNavItem}
+          onClick={handleNaveItemClick}
         />
 
         <NavItem
           collapsed={!hovered}
           label={ContractStatus.Draft}
-          selected={activeNavItem === ContractStatus.Draft.toLowerCase()}
+          value={NavItemType.draft}
+          selected={activeNavItem === NavItemType.draft}
           number={contractCounts.data.draft}
           icon="icon-draft"
-          onClick={setActiveNavItem}
+          onClick={handleNaveItemClick}
         />
         <NavItem
           collapsed={!hovered}
           label={ContractStatus.Sent}
-          selected={activeNavItem === ContractStatus.Sent.toLowerCase()}
+          value={NavItemType.sent}
+          selected={activeNavItem === NavItemType.sent}
           number={contractCounts.data.sent}
           icon="icon-sent"
-          onClick={setActiveNavItem}
+          onClick={handleNaveItemClick}
         />
         <NavItem
           collapsed={!hovered}
           label={ContractStatus.Confirmed}
-          selected={activeNavItem === ContractStatus.Confirmed.toLowerCase()}
+          value={NavItemType.confirmed}
+          selected={activeNavItem === NavItemType.confirmed}
           number={contractCounts.data.confirmed}
           icon="icon-confirmed"
-          onClick={setActiveNavItem}
+          onClick={handleNaveItemClick}
         />
         <NavItem
           collapsed={!hovered}
           label={ContractStatus.Ongoing}
-          selected={activeNavItem === ContractStatus.Ongoing.toLowerCase()}
+          value={NavItemType.ongoing}
+          selected={activeNavItem === NavItemType.ongoing}
           number={contractCounts.data.ongoing}
           icon="icon-ongoing"
-          onClick={setActiveNavItem}
+          onClick={handleNaveItemClick}
         />
         <NavItem
           collapsed={!hovered}
           label={ContractStatus.Expired}
-          selected={activeNavItem === ContractStatus.Expired.toLowerCase()}
+          value={NavItemType.expired}
+          selected={activeNavItem === NavItemType.expired}
           number={contractCounts.data.expired}
           icon="icon-expired"
-          onClick={setActiveNavItem}
+          onClick={handleNaveItemClick}
         />
         <NavItem
           collapsed={!hovered}
           label={ContractStatus.Completed}
-          selected={activeNavItem === ContractStatus.Completed.toLowerCase()}
+          value={NavItemType.completed}
+          selected={activeNavItem === NavItemType.completed}
           number={contractCounts.data.completed}
           icon="icon-completed"
-          onClick={setActiveNavItem}
+          onClick={handleNaveItemClick}
         />
       </MenuContainer>
       <ProfileIcon collapsed={!hovered} name={name} role={role} />

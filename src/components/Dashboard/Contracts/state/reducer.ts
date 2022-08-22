@@ -20,8 +20,10 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
       return {
         ...state,
         newContract,
+        activeNavItem: undefined,
       }
     }
+
     case ContractsActionType.SET_LOADING: {
       return {
         ...state,
@@ -212,13 +214,6 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
           paymentId: payload.paymentId,
           contractId: payload.contractId,
         },
-      }
-    }
-
-    case ContractsActionType.SET_SELECTED_CONTRACT_LIST_ID: {
-      return {
-        ...state,
-        selectedContractListId: payload,
       }
     }
 

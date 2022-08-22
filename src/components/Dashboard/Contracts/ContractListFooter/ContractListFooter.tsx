@@ -7,7 +7,7 @@ const ContractListFooter: React.FC = (): JSX.Element => {
   const navigate = useNavigate()
 
   const handleAddContract = () =>
-    navigate('/dashboard/contract', {
+    navigate('contract', {
       state: {
         reset: true,
       },

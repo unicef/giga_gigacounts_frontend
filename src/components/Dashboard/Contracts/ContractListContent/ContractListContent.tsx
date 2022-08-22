@@ -4,18 +4,22 @@ import ContractLoader from './ContractLoader/ContractLoader'
 import { ContractListContainer } from './styles'
 import ContractItem from './ContractLtaListItems/ContractItem/ContractItem'
 import { useContractsContext } from '../state/useContractsContext'
-import { useOtherContracts } from '../state/hooks'
+import { useLtas, useOtherContracts, useSelectedContract } from '../state/hooks'
 import { NEW_CONTRACT } from '../state/initial-state'
 
 const ContractListContent: React.FC = (): JSX.Element => {
   const { state } = useContractsContext()
-  const { loading, ltas, selectedContractListId } = state
+  const { loading } = state
+
+  const ltas = useLtas()
 
   const contracts = useOtherContracts()
 
   const ref = useRef<HTMLDivElement>(null)
 
   const newContract = useMemo(() => state.newContract && state.newContract.ltaId === undefined, [state.newContract])
+
+  const selectedContract = useSelectedContract()
 
   return (
     <ContractListContainer ref={ref}>
@@ -30,7 +34,7 @@ const ContractListContent: React.FC = (): JSX.Element => {
             {newContract && <ContractItem contract={NEW_CONTRACT} selected />}
             {contracts !== undefined &&
               contracts.map((contract, i) => (
-                <ContractItem key={i} contract={contract} selected={selectedContractListId === contract.listId} />
+                <ContractItem key={i} contract={contract} selected={selectedContract?.listId === contract.listId} />
               ))}
           </>
         </>

@@ -9,14 +9,14 @@ interface IContractSchoolProps {
 }
 
 const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }: IContractSchoolProps): JSX.Element => {
-  let { id } = useParams()
+  let { contractId } = useParams()
   const {
     state: { selectedSchool },
     actions: { setSelectedSchool },
   } = useContractsContext()
 
   const onSchoolSelected = (schoolId: string) => {
-    if (id) setSelectedSchool(schoolId, id)
+    if (contractId) setSelectedSchool(schoolId, contractId)
   }
 
   return (

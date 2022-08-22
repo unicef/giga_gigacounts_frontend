@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { IContract, ILta } from 'src/types/general'
+import { ILta } from 'src/types/general'
 import { ISP_ROLE } from 'src/consts/roles'
 import { useRoleCheck } from 'src/state/hooks'
-import { useLtaContracts } from 'src/components/Dashboard/Contracts/state/hooks'
+import { useLtaContracts, useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import { NEW_CONTRACT } from 'src/components/Dashboard/Contracts/state/initial-state'
 import ContractItem from './ContractItem/ContractItem'
@@ -34,17 +34,14 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ lta }: IContractLi
 
   const isISP = useRoleCheck(ISP_ROLE)
 
-  const selectedContract = useMemo(
-    () => contracts?.find((contract: IContract) => contract.listId === state.selectedContractListId),
-    [contracts, state.selectedContractListId],
-  )
+  const selectedContract = useSelectedContract()
 
   const [isExpanded, setIsExpanded] = useState<boolean>(selectedContract !== undefined)
 
   const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState)
 
   const handleAddLtaContract = () => {
-    navigate('/dashboard/contract', {
+    navigate('contract', {
       state: {
         preset: {
           ltaId: contracts?.[0].lta?.id,

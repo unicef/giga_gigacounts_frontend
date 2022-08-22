@@ -5,7 +5,7 @@ import { getContract, getContractDetails, getContracts, getContractSchools } fro
 import { ChildrenProps } from 'src/types/utils'
 import { INITIAL_CONTRACTS_STATE } from './initial-state'
 import { reducer } from './reducer'
-import { ContractsAction, ContractsActionType, ContractsState } from './types'
+import { ContractsAction, ContractsActionType, ContractsState, NavItemType } from './types'
 import { createAction } from 'src/utils/createAction'
 
 export interface IContractsContext {
@@ -13,12 +13,11 @@ export interface IContractsContext {
   dispatch: Dispatch<ContractsAction>
   actions: {
     fetchContract: (id: string) => void
-    setActiveNavItem: (item: string) => void
+    setActiveNavItem: (item?: NavItemType) => void
     setSelectedSchool: (schoolId: string, contractId: string) => void
     fetchSchoolMeasures: (schoolId: string, id: string, month: string) => void
     reloadContracts: () => void
     setNewContract: (newContract?: { ltaId?: string }) => void
-    setSelectContractListId: (listId: string) => void
     setSelectedTab: (tabId: string) => void
     setSelectedPayment: (paymentId: string, contractId: string) => void
   }
@@ -48,9 +47,6 @@ export const ContractsContext = createContext<IContractsContext>({
     setNewContract: () => {
       throw new Error('Not implemented')
     },
-    setSelectContractListId: () => {
-      throw new Error('Not implemented')
-    },
     setSelectedTab: () => {
       throw new Error('Not implemented')
     },
@@ -63,14 +59,14 @@ export const ContractsContext = createContext<IContractsContext>({
 export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
   const [localState, dispatch] = useReducer(reducer, INITIAL_CONTRACTS_STATE)
 
-  const fetchContracts = useCallback((navItem?: string) => {
+  const fetchContracts = useCallback(() => {
     dispatch({
       type: ContractsActionType.SET_LOADING,
     })
-    getContracts(navItem)
+    getContracts()
       .then((response) => dispatch({ type: ContractsActionType.RESPONSE, payload: response }))
       .catch((error) => dispatch({ type: ContractsActionType.SET_ERROR, payload: error }))
-  }, [])
+  }, [dispatch])
 
   const fetchContract = useCallback(
     async (id: string) => {
@@ -103,7 +99,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         dispatch({ type: ContractsActionType.SET_CONTRACT_DETAILS_ERROR, payload: error })
       }
     },
-    [localState],
+    [localState, dispatch],
   )
 
   const fetchSchoolMeasures = useCallback(
@@ -127,11 +123,10 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
   }, [localState.selectedSchool, fetchSchoolMeasures])
 
   const setActiveNavItem = useCallback(
-    (navItem: string) => {
+    (navItem?: NavItemType) => {
       dispatch({ type: ContractsActionType.SET_ACTIVE_NAV_ITEM, payload: navItem })
-      fetchContracts(navItem)
     },
-    [fetchContracts],
+    [dispatch],
   )
 
   const setSelectedSchool = useCallback(
@@ -165,13 +160,6 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [dispatch],
   )
 
-  const setSelectContractListId = useCallback(
-    (listId: string) => {
-      dispatch({ type: ContractsActionType.SET_SELECTED_CONTRACT_LIST_ID, payload: listId })
-    },
-    [dispatch],
-  )
-
   const setSelectedTab = useCallback(
     (tabId: string) => {
       dispatch(createAction(ContractsActionType.SET_ACTIVE_TAB, tabId))
@@ -190,7 +178,6 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         fetchSchoolMeasures,
         reloadContracts: fetchContracts,
         setNewContract,
-        setSelectContractListId,
         setSelectedTab,
         setSelectedPayment,
       },
@@ -203,14 +190,15 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       setSelectedSchool,
       fetchSchoolMeasures,
       setNewContract,
-      setSelectContractListId,
       setSelectedTab,
       setSelectedPayment,
     ],
   )
   useEffect(() => {
-    fetchContracts()
-  }, [fetchContracts])
+    if (localState.contracts === undefined && localState.loading === false) {
+      fetchContracts()
+    }
+  }, [fetchContracts, localState.contracts, localState.loading])
 
   return <ContractsContext.Provider value={value}>{children}</ContractsContext.Provider>
 }

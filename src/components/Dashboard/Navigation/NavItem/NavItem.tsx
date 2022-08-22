@@ -1,3 +1,4 @@
+import { NavItemType } from 'src/components/Dashboard/Contracts/state/types'
 import { NavItemContainer, StatusAndNumber } from './styles'
 
 export interface NavItemProps {
@@ -6,7 +7,8 @@ export interface NavItemProps {
   icon?: string
   number?: number
   selected?: boolean
-  onClick?: (label: string) => void
+  onClick?: (label?: NavItemType) => void
+  value?: NavItemType
 }
 
 export const NavItem: React.FC<NavItemProps> = ({
@@ -16,9 +18,10 @@ export const NavItem: React.FC<NavItemProps> = ({
   selected = false,
   icon,
   onClick,
+  value,
 }: NavItemProps): JSX.Element => {
   return (
-    <NavItemContainer collapsed={collapsed} onClick={() => onClick?.(label.toLowerCase())}>
+    <NavItemContainer collapsed={collapsed} onClick={() => onClick?.(value)}>
       <span className={`icon icon-24 ${icon} ${selected ? 'icon-white' : 'icon-light-blue'}`} />
       {!collapsed && (
         <>

@@ -4,14 +4,12 @@ import { ContractsState, ContractStagedActiveTab } from './types'
 export const INITIAL_CONTRACTS_STATE: ContractsState = {
   contracts: undefined,
   ltas: undefined,
-  activeNavItem: 'all contracts',
   selectedSchool: undefined,
   noSchoolMetricData: false,
   schoolsQos: [],
   error: undefined,
-  loading: true,
+  loading: false,
   newContract: undefined,
-  selectedContractListId: undefined,
   activeTab: ContractStagedActiveTab.SchoolsTab,
   selectedPayment: undefined,
 }

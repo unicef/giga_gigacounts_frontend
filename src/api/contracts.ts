@@ -6,15 +6,10 @@ import {
   IContractSchools,
   IPendingContractDetails,
 } from 'src/types/general'
-import { contractStatusToId } from 'src/utils/contractStatusToId'
 import { ContractForm } from 'src/components/Dashboard/Contracts/CreateContract/state/types'
 
 export const getContracts = async (status?: string | (string | null)[] | null): Promise<IContractsData | Error> => {
-  const response = await instance.get('/contract', {
-    params: {
-      status: contractStatusToId(status),
-    },
-  })
+  const response = await instance.get('/contract')
   if (response.status === 200) return response.data
   throw new Error('Failed to get the contracts')
 }

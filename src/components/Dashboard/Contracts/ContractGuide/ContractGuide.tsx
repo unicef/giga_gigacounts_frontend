@@ -4,18 +4,16 @@ import images from 'src/assets/images'
 import { ContractGuideContainer, ContractGuideItem, ContractGuideChartItem } from './styles'
 import { ISP_ROLE } from 'src/consts/roles'
 import { useRoleCheck } from 'src/state/hooks'
-import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 
 const ContractGuide: React.FC = (): JSX.Element => {
   const navigate = useNavigate()
 
-  const {
-    actions: { setActiveNavItem },
-  } = useContractsContext()
-
   const createDraft = () => {
-    navigate('/dashboard/contract')
-    setActiveNavItem('all contracts')
+    navigate('contract', {
+      state: {
+        reset: true,
+      },
+    })
   }
 
   return (

@@ -28,6 +28,7 @@ import TabButtons from './TabButtons/TabButtons'
 import { createAction } from 'src/utils/createAction'
 import Text from 'src/components/common/Text'
 import { useOnClickOutside } from 'src/hooks/useOnClickOutside'
+import Loader from 'src/components/common/Loader'
 interface IContractDetailsProps {
   contract: IContract<ContractStatus.Ongoing | ContractStatus.Expired>
 }
@@ -84,7 +85,7 @@ const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContract
   return (
     <>
       {contract?.details.loading ? (
-        <div>Loading...</div>
+        <Loader />
       ) : (
         <ContractStagedContainer>
           <ContractStagedHeader>

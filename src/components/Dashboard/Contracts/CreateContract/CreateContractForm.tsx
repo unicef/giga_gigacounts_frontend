@@ -66,7 +66,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
   const onPublishDraft = async () => {
     try {
       const response = await publishContractDraft(contractForm, draft.data?.id)
-      navigate(`/dashboard/contract/${response?.id}`)
+      navigate(`contract/${response?.id}`)
     } catch (error) {
       dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }

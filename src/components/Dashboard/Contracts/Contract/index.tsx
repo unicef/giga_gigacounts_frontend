@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
+import Loader from 'src/components/common/Loader'
 import { ContractStatus, IContract } from 'src/types/general'
 import { ChildrenProps } from 'src/types/utils'
 import { useContract } from '../state/hooks'
@@ -30,7 +31,7 @@ const Contract: React.FC<ContractProps> = ({ id }: ContractProps): JSX.Element =
   }, [contract?.details.data, contract?.details.error, contract?.details.loading, fetchContract, id])
 
   if (loading || contracts === undefined || !contract?.details.data) {
-    return <>Loading...</>
+    return <Loader />
   }
 
   if (!contract) {

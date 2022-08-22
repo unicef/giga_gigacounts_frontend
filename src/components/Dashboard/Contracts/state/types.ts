@@ -11,7 +11,6 @@ export enum ContractsActionType {
   SET_ACTIVE_NAV_ITEM = 'SET_ACTIVE_NAV_ITEM',
   SET_SCHOOL_MEASURES = 'SET_SCHOOL_MEASURES',
   SET_SELECTED_SCHOOL = 'SET_SELECTED_SCHOOL',
-  SET_SELECTED_CONTRACT_LIST_ID = 'SET_SELECTED_CONTRACT_LIST_ID',
   SET_ACTIVE_TAB = 'SET_ACTIVE_TAB',
   SET_SELECTED_PAYMENT = 'SET_SELECTED_PAYMENT',
 }
@@ -35,13 +34,12 @@ export interface ContractsState {
   }
   noSchoolMetricData: boolean
   schoolsQos: SchoolsQos[]
-  activeNavItem?: string
+  activeNavItem?: NavItemType
   error?: Error
   loading?: boolean
   newContract?: {
     ltaId?: string
   }
-  selectedContractListId?: string
   activeTab: ContractStagedActiveTab
 }
 
@@ -83,4 +81,13 @@ export enum MetricPropertyType {
   uptime = 'uptime',
   'download speed' = 'download',
   'upload speed' = 'upload',
+}
+
+export enum NavItemType {
+  draft = 'draft',
+  sent = 'sent',
+  confirmed = 'confirmed',
+  ongoing = 'ongoing',
+  expired = 'expired',
+  completed = 'completed',
 }

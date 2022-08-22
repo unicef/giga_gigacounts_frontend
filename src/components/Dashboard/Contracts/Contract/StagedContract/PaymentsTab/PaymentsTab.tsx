@@ -1,18 +1,18 @@
 import { useParams } from 'react-router-dom'
 import Payment from 'src/components/common/Payment/Payment'
-import { useContractsContext } from '../../../state/useContractsContext'
+import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import PaymentDetails from './PaymentDetails/PaymentDetails'
 import { PaymentsTabContainer, PaymentsRow } from './styles'
 
 const PaymentsTab: React.FC = (): JSX.Element => {
-  let { id } = useParams()
+  let { contractId } = useParams()
   const {
     state: { selectedPayment },
     actions: { setSelectedPayment },
   } = useContractsContext()
 
   const onPaymentSelected = (paymentId: string) => {
-    if (id) setSelectedPayment(paymentId, id)
+    if (contractId) setSelectedPayment(paymentId, contractId)
   }
 
   const payments = [
