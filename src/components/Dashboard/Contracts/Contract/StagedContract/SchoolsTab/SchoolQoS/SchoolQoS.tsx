@@ -58,7 +58,9 @@ const SchoolsQoS: React.FC = (): JSX.Element => {
               {schoolsQos.map((item) => (
                 <Fragment key={item.month}>
                   <SchoolTableSection>
-                    <h6>{MONTHS[item.month]}</h6>
+                    <h6>
+                      {MONTHS[item.month]} - {item.year}
+                    </h6>
                   </SchoolTableSection>
                   <></>
                   <SchoolTableRow>

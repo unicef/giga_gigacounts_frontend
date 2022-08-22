@@ -141,8 +141,8 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
 
       const schoolsQos: SchoolsQos[] = payload.reduce((acc: SchoolsQos[], item: SchoolQosResponse) => {
         const date = new Date(item.date)
-        const year = date.getFullYear()
-        const month = date.getMonth()
+        const year = date.getUTCFullYear()
+        const month = date.getUTCMonth()
         const existingIndex = acc.findIndex((prev) => prev.year === year && prev.month === month)
         const metricName = getMetricProperty(item.metric_name)
 
