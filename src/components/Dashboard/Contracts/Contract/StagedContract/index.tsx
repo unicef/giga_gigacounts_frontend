@@ -29,6 +29,8 @@ import { createAction } from 'src/utils/createAction'
 import Text from 'src/components/common/Text'
 import { useOnClickOutside } from 'src/hooks/useOnClickOutside'
 import Loader from 'src/components/common/Loader'
+import { useRoleCheck } from 'src/state/hooks'
+import { ISP_ROLE } from 'src/consts/roles'
 interface IContractDetailsProps {
   contract: IContract<ContractStatus.Ongoing | ContractStatus.Expired>
 }
@@ -41,6 +43,7 @@ const tabs = {
 const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContractDetailsProps): JSX.Element => {
   const [attachmentsExpanded, setAttachmentsExpanded] = useState(false)
   const [showDialog, setShowDialog] = useState(false)
+  const isIsp = useRoleCheck(ISP_ROLE)
 
   const attachmentsRef = useRef<HTMLDivElement>(null)
   useOnClickOutside(attachmentsRef, () => setAttachmentsExpanded(false))
@@ -118,7 +121,7 @@ const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContract
                 <span className="icon icon-24 icon-network icon-mid-grey"></span>
                 <p>{contract?.details.data?.isp}</p>
               </TitleItem>
-              {contract && contract.status === ContractStatus.Expired && (
+              {!isIsp && contract && contract.status === ContractStatus.Expired && (
                 <button className="title-item btn-blue" onClick={toggleShowDialog}>
                   Finish
                 </button>
