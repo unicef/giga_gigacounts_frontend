@@ -145,6 +145,7 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   const getLtsByCountryId = useCallback(async (countryId: string) => {
     try {
       const response = await getLtas(countryId)
+
       dispatch(createAction(CreateContractActionType.GET_LTS_BY_COUNTRY_ID, response))
     } catch (error) {
       dispatch(createAction(CreateContractActionType.SET_ERROR, error))

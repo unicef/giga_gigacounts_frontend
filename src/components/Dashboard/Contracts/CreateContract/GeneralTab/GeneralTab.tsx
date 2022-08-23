@@ -46,7 +46,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
   }
 
   const onLtaChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    dispatch({ type: CreateContractActionType.SET_LTA, payload: e.target.value })
+    dispatch({ type: CreateContractActionType.SET_LTA, payload: e.target.value || undefined })
   }
 
   const onBudgetChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -125,8 +125,8 @@ const GeneralTab: React.FC = (): JSX.Element => {
           />
           <div className="input-container dropdown">
             <select onChange={onLtaChange} value={contractForm.ltaId ?? ''} disabled={draft.loading}>
-              <option value={undefined} hidden>
-                Part of Long Term Agreement
+              <option value="" hidden={contractForm.ltaId === undefined}>
+                {contractForm.ltaId ? 'None' : 'Part of Long Term Agreement'}
               </option>
               {ltas.map((lta) => (
                 <option key={lta.id} value={lta.id}>
