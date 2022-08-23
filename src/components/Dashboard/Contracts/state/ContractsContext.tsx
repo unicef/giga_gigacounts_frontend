@@ -7,6 +7,8 @@ import { INITIAL_CONTRACTS_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { ContractsAction, ContractsActionType, ContractsState, NavItemType } from './types'
 import { createAction } from 'src/utils/createAction'
+import { useParams, useSearchParams } from 'react-router-dom'
+import { selectContract, selectDraft } from './selectors'
 
 export interface IContractsContext {
   state: ContractsState
@@ -58,6 +60,15 @@ export const ContractsContext = createContext<IContractsContext>({
 
 export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
   const [localState, dispatch] = useReducer(reducer, INITIAL_CONTRACTS_STATE)
+
+  const { contractId } = useParams()
+  const [searchParams] = useSearchParams()
+
+  const draftId = useMemo(() => searchParams.get('draft') || '', [searchParams])
+
+  const selector = useMemo(() => (draftId ? selectDraft(draftId) : selectContract(contractId)), [draftId, contractId])
+
+  const selectedContract = useMemo(() => selector(localState), [selector, localState])
 
   const fetchContracts = useCallback(() => {
     dispatch({
@@ -117,18 +128,6 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [dispatch],
   )
 
-  useEffect(() => {
-    if (localState.selectedSchool?.schoolId && localState.selectedSchool?.contractId)
-      fetchSchoolMeasures(localState.selectedSchool?.schoolId, localState.selectedSchool?.contractId, 'month')
-  }, [localState.selectedSchool, fetchSchoolMeasures])
-
-  const setActiveNavItem = useCallback(
-    (navItem?: NavItemType) => {
-      dispatch({ type: ContractsActionType.SET_ACTIVE_NAV_ITEM, payload: navItem })
-    },
-    [dispatch],
-  )
-
   const setSelectedSchool = useCallback(
     (schoolId: string, contractId: string) => {
       dispatch({
@@ -166,6 +165,24 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     },
     [dispatch],
   )
+
+  useEffect(() => {
+    if (localState.selectedSchool?.schoolId && localState.selectedSchool?.contractId)
+      fetchSchoolMeasures(localState.selectedSchool?.schoolId, localState.selectedSchool?.contractId, 'month')
+  }, [localState.selectedSchool, fetchSchoolMeasures])
+
+  const setActiveNavItem = useCallback(
+    (navItem?: NavItemType) => {
+      dispatch({ type: ContractsActionType.SET_ACTIVE_NAV_ITEM, payload: navItem })
+    },
+    [dispatch],
+  )
+
+  useEffect(() => {
+    if (localState.newContract && selectedContract) {
+      dispatch({ type: ContractsActionType.SET_NEW_CONTRACT, payload: { newContract: undefined } })
+    }
+  }, [localState.newContract, selectedContract])
 
   const value = useMemo(
     () => ({

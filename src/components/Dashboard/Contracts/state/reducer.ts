@@ -120,6 +120,7 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
                 loading: false,
                 error: undefined,
               },
+              newContract: undefined,
             }
           }
 

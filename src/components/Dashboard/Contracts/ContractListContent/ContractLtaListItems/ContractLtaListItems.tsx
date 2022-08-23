@@ -24,6 +24,7 @@ interface IContractListProps {
 const ContractLtaListItems: React.FC<IContractListProps> = ({ lta }: IContractListProps): JSX.Element => {
   const navigate = useNavigate()
   const { state } = useContractsContext()
+  const selectedContract = useSelectedContract()
 
   const newContract = useMemo(
     () => state.newContract && state.newContract.ltaId === lta.id,
@@ -33,8 +34,6 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ lta }: IContractLi
   const contracts = useLtaContracts(lta.id)
 
   const isISP = useRoleCheck(ISP_ROLE)
-
-  const selectedContract = useSelectedContract()
 
   const [isExpanded, setIsExpanded] = useState<boolean>(selectedContract !== undefined)
 
