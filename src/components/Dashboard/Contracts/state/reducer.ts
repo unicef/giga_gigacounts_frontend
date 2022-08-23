@@ -7,9 +7,6 @@ import {
   SchoolsQos,
 } from './types'
 import { IContract } from 'src/types/general'
-import { uniqBy } from 'src/utils/uniqBy'
-import { map } from 'src/utils/map'
-import { clean } from 'src/utils/clean'
 
 export const reducer = (state: ContractsState, action: ContractsAction): ContractsState => {
   const { type, payload } = action
@@ -32,7 +29,10 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
     }
 
     case ContractsActionType.RESPONSE: {
-      const { contracts, ltas: ltaGroups } = payload
+      const {
+        contracts: { contracts, ltas: ltaGroups },
+        ltas,
+      } = payload
 
       const ltaContracts = Object.entries(ltaGroups)
         .map(([ltaName, _contracts]) =>
@@ -47,7 +47,6 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
         .flat(1)
 
       const allContracts = ltaContracts.concat(contracts) as IContract[]
-      const ltas = uniqBy(clean(map(allContracts, 'lta')), 'id')
 
       return {
         ...state,

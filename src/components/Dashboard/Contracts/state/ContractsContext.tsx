@@ -7,6 +7,7 @@ import { INITIAL_CONTRACTS_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { ContractsAction, ContractsActionType, ContractsState, NavItemType } from './types'
 import { createAction } from 'src/utils/createAction'
+import { getLtas } from 'src/api/createContract'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { selectContract, selectDraft } from './selectors'
 
@@ -74,8 +75,8 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     dispatch({
       type: ContractsActionType.SET_LOADING,
     })
-    getContracts()
-      .then((response) => dispatch({ type: ContractsActionType.RESPONSE, payload: response }))
+    Promise.all([getLtas(), getContracts()])
+      .then(([ltas, contracts]) => dispatch({ type: ContractsActionType.RESPONSE, payload: { contracts, ltas } }))
       .catch((error) => dispatch({ type: ContractsActionType.SET_ERROR, payload: error }))
   }, [dispatch])
 

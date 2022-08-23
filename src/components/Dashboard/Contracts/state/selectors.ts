@@ -17,6 +17,10 @@ export const selectFilteredLtaContracts = (id?: string) => (state: ContractsStat
   id === undefined ? [] : selectFilteredContracts(state)?.filter((contract) => contract.ltaId === id)
 
 export const selectFilteredLtas = (state: ContractsState) => {
+  if (state.activeNavItem === undefined) {
+    return state.ltas
+  }
+
   return state.ltas?.filter((lta) => {
     const contracts = selectFilteredLtaContracts(lta.id)(state)
 
