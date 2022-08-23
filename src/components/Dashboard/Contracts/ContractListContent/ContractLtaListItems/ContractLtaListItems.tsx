@@ -41,8 +41,6 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({
 
   const isISP = useRoleCheck(ISP_ROLE)
 
-  const selectedContract = useSelectedContract()
-
   const toggleLtaContainer = () => onClick?.(lta.id)
 
   const handleAddLtaContract = () => {
