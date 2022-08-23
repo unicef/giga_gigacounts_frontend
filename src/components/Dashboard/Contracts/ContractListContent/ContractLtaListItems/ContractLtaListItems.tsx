@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ILta } from 'src/types/general'
 import { ISP_ROLE } from 'src/consts/roles'
@@ -19,9 +19,15 @@ import {
 
 interface IContractListProps {
   lta: ILta
+  expanded?: boolean
+  onClick?: (item: string) => void
 }
 
-const ContractLtaListItems: React.FC<IContractListProps> = ({ lta }: IContractListProps): JSX.Element => {
+const ContractLtaListItems: React.FC<IContractListProps> = ({
+  lta,
+  expanded = false,
+  onClick,
+}: IContractListProps): JSX.Element => {
   const navigate = useNavigate()
   const { state } = useContractsContext()
   const selectedContract = useSelectedContract()
@@ -35,9 +41,9 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ lta }: IContractLi
 
   const isISP = useRoleCheck(ISP_ROLE)
 
-  const [isExpanded, setIsExpanded] = useState<boolean>(selectedContract !== undefined)
+  const selectedContract = useSelectedContract()
 
-  const toggleLtaContainer = () => setIsExpanded((prevState) => !prevState)
+  const toggleLtaContainer = () => onClick?.(lta.id)
 
   const handleAddLtaContract = () => {
     navigate('contract', {
@@ -51,23 +57,17 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({ lta }: IContractLi
     })
   }
 
-  useEffect(() => {
-    if (newContract !== undefined || selectedContract !== undefined) {
-      setIsExpanded(true)
-    }
-  }, [newContract, selectedContract])
-
   return (
-    <ContractLtaListItemsContainer isExpanded={isExpanded}>
-      <Header isExpanded={isExpanded} onClick={toggleLtaContainer}>
+    <ContractLtaListItemsContainer isExpanded={expanded}>
+      <Header isExpanded={expanded} onClick={toggleLtaContainer}>
         <Hand className="icon icon-20 icon-agreement icon-white" />
-        <LtaNumber isExpanded={isExpanded}>{lta.name}</LtaNumber>
+        <LtaNumber isExpanded={expanded}>{lta.name}</LtaNumber>
         <ShowMore
-          className={`icon icon-24 ${isExpanded ? 'icon-arrow-up icon-white' : 'icon-arrow-down icon-darkest-grey'}`}
-          isExpanded={isExpanded}
+          className={`icon icon-24 ${expanded ? 'icon-arrow-up icon-white' : 'icon-arrow-down icon-darkest-grey'}`}
+          isExpanded={expanded}
         />
       </Header>
-      {isExpanded ? (
+      {expanded ? (
         <>
           {contracts?.map((contract, i) => (
             <ContractItem key={i} contract={contract} selected={selectedContract?.listId === contract.listId} />

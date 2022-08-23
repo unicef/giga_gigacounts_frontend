@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import ContractLtaListItems from './ContractLtaListItems/ContractLtaListItems'
 import ContractLoader from './ContractLoader/ContractLoader'
 import { ContractListContainer } from './styles'
@@ -6,6 +6,7 @@ import ContractItem from './ContractLtaListItems/ContractItem/ContractItem'
 import { useContractsContext } from '../state/useContractsContext'
 import { useLtas, useOtherContracts, useSelectedContract } from '../state/hooks'
 import { NEW_CONTRACT } from '../state/initial-state'
+import { useMutiToggle } from 'src/hooks/useMultiToggle'
 
 const ContractListContent: React.FC = (): JSX.Element => {
   const { state } = useContractsContext()
@@ -21,6 +22,21 @@ const ContractListContent: React.FC = (): JSX.Element => {
 
   const selectedContract = useSelectedContract()
 
+  const { expanded, toggle } = useMutiToggle(
+    useCallback(
+      (initiate: (item: string) => void) => {
+        if (!loading) {
+          if (selectedContract?.lta?.id) {
+            initiate(selectedContract.lta.id)
+          } else if (state.newContract?.ltaId) {
+            initiate(state.newContract.ltaId)
+          }
+        }
+      },
+      [loading, selectedContract?.lta?.id, state.newContract?.ltaId],
+    ),
+  )
+
   return (
     <ContractListContainer ref={ref}>
       {loading && ltas === undefined && contracts === undefined ? (
@@ -28,7 +44,7 @@ const ContractListContent: React.FC = (): JSX.Element => {
       ) : (
         <>
           {ltas?.map((lta, i) => (
-            <ContractLtaListItems key={i} lta={lta} />
+            <ContractLtaListItems key={i} lta={lta} expanded={expanded === lta.id} onClick={toggle} />
           ))}
           <>
             {newContract && <ContractItem contract={NEW_CONTRACT} selected />}
