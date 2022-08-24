@@ -56,11 +56,18 @@ export const WidgetChart = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 
   & > small {
+    position: absolute;
     width: 100%;
     height: 100%;
     margin: auto;
     color: var(--color-blue);
+
+    b {
+      position: relative;
+      top: 12px;
+    }
   }
 `

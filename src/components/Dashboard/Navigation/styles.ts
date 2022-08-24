@@ -5,7 +5,7 @@ export const StyledNav = styled.div<{ expanded: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 32px;
-  height: 100vh;
+  height: 100%;
   ${(props) =>
     props.expanded
       ? { width: '270px', padding: '8px 24px 16px 30px', transition: 'width .2s ease-out, padding .2s ease-out' }

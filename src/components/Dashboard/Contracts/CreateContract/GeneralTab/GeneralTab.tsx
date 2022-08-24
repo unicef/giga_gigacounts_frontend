@@ -15,7 +15,7 @@ import {
 } from './styles'
 import { GOV_ROLE } from 'src/consts/roles'
 import { useRoleCheck } from 'src/state/hooks'
-import UploadButton from './UploadButton'
+import UploadButton from 'src/components/common/UploadButton/UploadButton'
 import { useCreateContractContext } from '../state/useCreateContractContext'
 import { CreateContractActionType } from '../state/types'
 import { useCountryCode } from '../state/hooks'

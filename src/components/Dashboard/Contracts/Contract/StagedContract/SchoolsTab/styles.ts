@@ -2,10 +2,18 @@ import styled from 'styled-components/macro'
 
 export const SchoolTabContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  height: 100%;
+  overflow: hidden;
+`
+export const SchoolsRowWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding-right: 14px;
 
-  & > div:first-child {
-    width: 100%;
+  &:hover {
+    overflow-y: scroll;
+    padding-right: 0;
   }
 `
 
@@ -13,8 +21,6 @@ export const SchoolsTabRow = styled.div<{ active: boolean }>`
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: start;
-  justify-content: start;
   background-color: ${(props) => (props.active ? 'var(--color-lightest-blue)' : 'var(--color-white)')};
 
   :nth-child(even) {

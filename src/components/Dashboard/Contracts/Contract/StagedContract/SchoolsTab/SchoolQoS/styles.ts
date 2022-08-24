@@ -1,12 +1,10 @@
 import styled from 'styled-components/macro'
 
 export const SchoolQoSContainer = styled.div`
-  width: 100%;
-  max-width: 398px;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 16px 12px 24px 24px;
+  width: 355px;
   border-left: 1px solid var(--color-light-grey);
 `
 
@@ -14,6 +12,8 @@ export const SchoolHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 16px 12px 0px 24px;
+
   & > h5 {
     color: var(--color-dark-blue);
   }
@@ -24,15 +24,24 @@ export const SchoolHeader = styled.div`
 export const SchoolContent = styled.div`
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  padding: 0px 12px 0px 24px;
 `
 export const SchoolTableHeader = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  padding: 7px 8px;
   border-bottom: 1px solid var(--color-light-grey);
   align-items: center;
 `
 export const SchoolTableContent = styled.div`
+  overflow: hidden;
+  padding-right: 14px;
+
+  &:hover {
+    overflow-y: scroll;
+    padding-right: 0;
+  }
+
   & > :nth-child(even) {
     background-color: var(--color-lightest-grey);
   }

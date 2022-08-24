@@ -6,7 +6,7 @@ interface PaymentDateProps {
 }
 
 const PaymentDate: React.FC<PaymentDateProps> = ({
-  date = 'August 12, 2022',
+  date = new Date().toString(),
   active,
 }: PaymentDateProps): JSX.Element => {
   const dateObject = new Date(date)

@@ -3,7 +3,7 @@ import School from 'src/components/common/School/School'
 import { IContractSchools } from 'src/types/general'
 import { useContractsContext } from '../../../state/useContractsContext'
 import SchoolsQoS from './SchoolQoS/SchoolQoS'
-import { SchoolsTabRow, SchoolTabContainer } from './styles'
+import { SchoolsRowWrapper, SchoolsTabRow, SchoolTabContainer } from './styles'
 interface IContractSchoolProps {
   contractSchools: IContractSchools[]
 }
@@ -21,7 +21,7 @@ const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }: IContra
 
   return (
     <SchoolTabContainer>
-      <div>
+      <SchoolsRowWrapper>
         {contractSchools &&
           contractSchools.map((school) => (
             <SchoolsTabRow key={school.id} active={selectedSchool?.schoolId === school.id}>
@@ -38,7 +38,7 @@ const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }: IContra
               />
             </SchoolsTabRow>
           ))}
-      </div>
+      </SchoolsRowWrapper>
       {selectedSchool?.schoolId && <SchoolsQoS />}
     </SchoolTabContainer>
   )

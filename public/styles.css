@@ -225,6 +225,7 @@ small b {
 
 input[type='text'],
 input[type='date'],
+input[type='month'],
 input[type='password'],
 input[type='number'],
 input[type='email'] {
@@ -244,6 +245,7 @@ input[type='email'] {
 
 input[type='text']::placeholder,
 input[type='date']::placeholder,
+input[type='month']::placeholder,
 input[type='password']::placeholder,
 input[type='number']::placeholder,
 input[type='email']::placeholder {
@@ -252,6 +254,7 @@ input[type='email']::placeholder {
 
 input[type='text']:focus,
 input[type='date']:focus,
+input[type='month']:focus,
 input[type='password']:focus,
 input[type='number']:focus,
 input[type='email']:focus {
@@ -261,6 +264,7 @@ input[type='email']:focus {
 
 input[type='text']:focus-visible,
 input[type='date']:focus-visible,
+input[type='month']:focus-visible,
 input[type='password']:focus-visible,
 input[type='number']:focus-visible,
 input[type='email']:focus-visible {
@@ -338,7 +342,7 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-input[type=number] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 
@@ -609,6 +613,10 @@ input[type='checkbox']:checked:before {
 }
 
 @keyframes roll {
-  from {height: 0;}
-  to {height: auto;}
+  from {
+    height: 0;
+  }
+  to {
+    height: auto;
+  }
 }

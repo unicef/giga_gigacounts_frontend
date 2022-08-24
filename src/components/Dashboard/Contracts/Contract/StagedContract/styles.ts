@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 
 export const ContractStagedContainer = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 12px 24px 24px 12px;

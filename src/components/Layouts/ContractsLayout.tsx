@@ -10,6 +10,8 @@ import { Outlet } from 'react-router-dom'
 const Flex = styled.div`
   display: flex;
   height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 `
 
 const ContractsLayout: React.FC = (): JSX.Element => {

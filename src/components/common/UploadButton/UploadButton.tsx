@@ -1,29 +1,7 @@
 import { ChangeEvent, useRef, useState } from 'react'
-import styled from 'styled-components/macro'
+
 import { IFileUpload } from 'src/types/general'
-
-const UploadButtonWrapper = styled.div`
-  display: flex;
-
-  input[type='file'] {
-    display: none;
-  }
-`
-
-const Button = styled.button`
-  color: var(--color-white);
-  background-color: var(--color-blue);
-  cursor: pointer;
-
-  &:active {
-    background-color: var(--color-dark-blue);
-  }
-
-  &:disabled {
-    background-color: var(--color-darker-grey);
-    cursor: not-allowed;
-  }
-`
+import { Button, UploadButtonWrapper } from './styles'
 
 interface UploadButtonProps {
   disabled?: boolean

@@ -87,3 +87,9 @@ export const publishContractToCompleted = async (contractId: string) => {
   if (response.status === 200) return response.data
   throw new Error('Failed to change the contract status')
 }
+
+export const getContractAvailablePayments = async <T>(contractId: string): Promise<T> => {
+  const response = await instance.get<T>(`/contract/available-payments/${contractId}`)
+  if (response.status === 200) return response.data
+  throw new Error('Failed to get available payments')
+}

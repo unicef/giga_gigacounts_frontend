@@ -24,9 +24,13 @@ export const TabButtons: React.FC<IContractDetailsProps> = ({
       <button onClick={onTabHandler}>
         <WidgetTitle selected={selected}>
           <h5>{tab.name}</h5>
-          {tab.id === ContractStagedActiveTab.SchoolsTab && (
+          {tab.id === ContractStagedActiveTab.SchoolsTab ? (
             <small>
               <b>{contract?.details.data?.numberOfSchools}</b>
+            </small>
+          ) : (
+            <small>
+              <b>{contract?.details.data?.numberOfPayments}</b>
             </small>
           )}
         </WidgetTitle>
@@ -49,13 +53,15 @@ export const TabButtons: React.FC<IContractDetailsProps> = ({
             <WidgetMetric selected={selected}>
               <span className={`icon icon-20 icon-coins  ${selected ? 'icon-light-blue' : 'icon-mid-grey'}`}></span>
               <small>
-                <b>BWP: 0</b>
+                <b>
+                  {contract?.details.data?.currency.code}: {contract?.details.data?.budget}
+                </b>
               </small>
               <small>
                 <b>/</b>
               </small>
               <small className="icon-light-blue">
-                <b>0</b>
+                <b>{contract?.details.data?.totalSpent.amount}</b>
               </small>
             </WidgetMetric>
           )}
@@ -70,9 +76,12 @@ export const TabButtons: React.FC<IContractDetailsProps> = ({
           </WidgetChart>
         ) : (
           <WidgetChart>
-            <ContractStatusWidget showOnly={tab.name.toLowerCase()} payments={0} />
+            <ContractStatusWidget
+              showOnly={tab.name.toLowerCase()}
+              payments={contract?.details.data?.totalSpent.percentage ?? 0}
+            />
             <small>
-              <b>0%</b>
+              <b>{contract?.details.data?.totalSpent.percentage ?? 0}%</b>
             </small>
           </WidgetChart>
         )}

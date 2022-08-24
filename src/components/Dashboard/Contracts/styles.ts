@@ -9,6 +9,6 @@ export const ContractsMenu = styled.div`
   position: relative;
   min-width: 320px;
   width: 18%;
-  height: inherit;
+  height: 100%;
   background: #e5efff;
 `

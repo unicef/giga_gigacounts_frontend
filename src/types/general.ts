@@ -1,4 +1,3 @@
-import { ICurrency } from 'src/api/createContract'
 import { DataState } from 'src/state/types'
 import { ExpectedMetric } from '../components/Dashboard/Contracts/CreateContract/state/types'
 export interface ICountry {
@@ -106,9 +105,14 @@ export interface IContractDetails {
   startDate: string
   endDate: string
   numberOfSchools: string
+  numberOfPayments: string
+  budget: string
+  currency: ICurrency
   schoolsConnection: ISchoolsConnections
   connectionsMedian: IConnectionMedian[]
   schools: IContractSchools[]
+  payments: []
+  totalSpent: IContractTotalSpent
 }
 
 export interface IPendingContractDetails {
@@ -176,6 +180,49 @@ export interface ISchoolMeasures {
   metric_name: string
   uint: string
   median_value: number
+}
+
+export interface IContractTotalSpent {
+  amount: string
+  percentage: number
+}
+
+export interface IInvoice {
+  file: string
+  name: string
+}
+
+export interface IPaymentForm {
+  month: number
+  year: number
+  contractId: string
+  description: string
+  currencyId: string
+  amount: number
+  invoice: IInvoice
+}
+
+export interface IContractPayment {
+  id: string
+  paidDate: string
+  description: string
+  currency: ICurrency
+  amount: 10000
+  status: string
+  metrics: ISchoolsConnections
+  invoice: IInvoice
+}
+
+export interface IPaymentMeasure {
+  month: number
+  year: number
+  contractId: string
+}
+
+export interface ICurrency {
+  id: string
+  code?: string
+  name: string
 }
 
 export enum ContractStatus {

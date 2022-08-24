@@ -1,9 +1,9 @@
 import { DataState } from 'src/state/types'
-import { ICountries, ICurrency, ILtas } from 'src/api/createContract'
+import { ICountries, ILtas } from 'src/api/createContract'
 import { IIsp } from 'src/api/isp'
 import { IMetric } from 'src/api/metrics'
 import { ISchool } from 'src/api/school'
-import { IDraft } from 'src/types/general'
+import { ICurrency, IDraft } from 'src/types/general'
 
 export enum CreateContractActiveTab {
   GeneralTab = 'generalTab',

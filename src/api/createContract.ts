@@ -1,3 +1,4 @@
+import { ICurrency } from 'src/types/general'
 import instance from './init'
 
 export interface ICountries {
@@ -5,12 +6,6 @@ export interface ICountries {
   name: string
   code: string
   flag_url: string
-}
-
-export interface ICurrency {
-  id: string
-  code?: string
-  name: string
 }
 
 export interface ILtas {

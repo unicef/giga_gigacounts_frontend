@@ -103,8 +103,8 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
       }
     }
 
-    case ContractsActionType.SET_CONTRACT_DETAILS_SCHOOLS: {
-      const { details, schools } = payload
+    case ContractsActionType.SET_CONTRACT_DETAILS_SCHOOLS_PAYMENTS: {
+      const { details, schools, payments } = payload
       return {
         ...state,
         contracts: state.contracts?.map((contract) => {
@@ -115,6 +115,7 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
                 data: {
                   ...details,
                   schools,
+                  payments,
                 },
                 loading: false,
                 error: undefined,
@@ -214,6 +215,7 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
           paymentId: payload.paymentId,
           contractId: payload.contractId,
         },
+        paymentActiveNewRow: false,
       }
     }
 
@@ -227,6 +229,61 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
       return {
         ...state,
         activeTab: payload,
+      }
+    }
+
+    case ContractsActionType.SHOW_PAYMENT_DETAILS: {
+      return {
+        ...state,
+        paymentDetails: payload,
+        paymentActiveNewRow: payload,
+      }
+    }
+
+    case ContractsActionType.SET_PAYMENT_DESCRIPTION: {
+      return {
+        ...state,
+        paymentForm: {
+          ...state.paymentForm,
+          description: payload,
+        },
+      }
+    }
+    case ContractsActionType.SET_PAYMENT_DATE: {
+      const { month, year } = payload
+      return {
+        ...state,
+        paymentForm: {
+          ...state.paymentForm,
+          month,
+          year,
+        },
+      }
+    }
+    case ContractsActionType.SET_PAYMENT_AMOUNT: {
+      return {
+        ...state,
+        paymentForm: {
+          ...state.paymentForm,
+          amount: payload,
+        },
+      }
+    }
+
+    case ContractsActionType.SET_PAYMENT_FORM: {
+      return {
+        ...state,
+        paymentForm: {
+          ...state.paymentForm,
+          ...payload,
+        },
+      }
+    }
+
+    case ContractsActionType.PAYMENT_CREATED: {
+      return {
+        ...state,
+        loading: false,
       }
     }
 

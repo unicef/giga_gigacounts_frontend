@@ -8,7 +8,7 @@ export const ContractListContainer = styled.div`
   padding: 16px 14px 58px;
   gap: 8px;
   isolation: isolate;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 
   &:hover {

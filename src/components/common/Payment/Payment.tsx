@@ -1,5 +1,6 @@
-import PaymentChart from 'src/components/Dashboard/Contracts/Contract/StagedContract/PaymentsTab/PaymentChart/PaymentChart'
+import PaymentChart from 'src/components/common/PaymentChart/PaymentChart'
 import PaymentDate from 'src/components/common/PaymentDate/PaymentDate'
+import { IContractPayment } from 'src/types/general'
 import {
   PaymentContainer,
   PaymentsRowContainer,
@@ -11,25 +12,35 @@ import {
 
 interface PaymentProps {
   active?: boolean
-  paymentId: string
+  payment: IContractPayment
   onPaymentSelected?: (paymentId: string) => void
 }
 
-const Payment: React.FC<PaymentProps> = ({ active, paymentId = '', onPaymentSelected }: PaymentProps): JSX.Element => {
-  const onPaymentSelectedById = () => onPaymentSelected?.(paymentId)
+const getIcon = (status: string) =>
+  ({
+    Pending: <span className="icon icon-20 icon-expired icon-light-blue"></span>,
+    Verified: <span className="icon icon-20 icon-completed icon-green"></span>,
+    Rejected: <span className="icon icon-20 icon-error icon-red"></span>,
+  }[status])
+
+const Payment: React.FC<PaymentProps> = ({ active, payment, onPaymentSelected }: PaymentProps): JSX.Element => {
+  const onPaymentSelectedById = () => onPaymentSelected?.(payment.id)
+  const icon = getIcon(payment.status)
 
   return (
     <PaymentContainer onClick={onPaymentSelectedById}>
-      <PaymentDate date="Thu Nov 10 2022" active={active} />
+      <PaymentDate date={payment.paidDate} active={active} />
       <PaymentsRowContainer>
         <PaymentsRowDetails active={active}>
           <p>
-            <b>BWP 3 000 000</b>
+            <b>
+              {payment.currency.code} {payment.amount}
+            </b>
           </p>
-          <small>Description</small>
+          <small>{payment.description}</small>
           <PaymentVerified>
-            <span className="icon icon-20 icon-completed icon-green"></span>
-            <p>Verified</p>
+            {icon}
+            <p>{payment.status}</p>
           </PaymentVerified>
         </PaymentsRowDetails>
         <PaymentsRowMetrics>
@@ -51,7 +62,11 @@ const Payment: React.FC<PaymentProps> = ({ active, paymentId = '', onPaymentSele
               <b style={{ textTransform: 'none' }}>20Mb/s</b>
             </small>
           </WidgetMetric>
-          <PaymentChart low={31} average={35} good={34} />
+          <PaymentChart
+            low={payment.metrics.withoutConnection}
+            average={payment.metrics.atLeastOneBellowAvg}
+            good={payment.metrics.allEqualOrAboveAvg}
+          />
         </PaymentsRowMetrics>
       </PaymentsRowContainer>
     </PaymentContainer>

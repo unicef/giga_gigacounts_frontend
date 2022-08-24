@@ -18,6 +18,7 @@ export const PaymentChartLow = styled.div<{ value: number }>`
   padding: 0 6px;
   text-align: right;
   color: var(--color-white);
+  min-width: 30px;
 `
 
 export const PaymentChartAverage = styled.div<{ value: number }>`
@@ -27,6 +28,7 @@ export const PaymentChartAverage = styled.div<{ value: number }>`
   padding: 0 6px;
   text-align: right;
   color: var(--color-white);
+  min-width: 30px;
 `
 
 export const PaymentChartGood = styled.div<{ value: number }>`
@@ -36,4 +38,5 @@ export const PaymentChartGood = styled.div<{ value: number }>`
   padding: 0 6px;
   text-align: right;
   color: var(--color-white);
+  min-width: 30px;
 `
