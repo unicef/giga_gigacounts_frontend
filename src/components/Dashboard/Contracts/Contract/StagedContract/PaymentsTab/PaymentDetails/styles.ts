@@ -46,11 +46,12 @@ export const PaymentHeader = styled.div`
 export const CurrencyContainer = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 16px;
 
-  .input-container {
-    width: 100%;
-    height: 32px;
+  .error-text {
+    color: var(--color-red);
+    font-size: 12px;
   }
 `
 
@@ -58,6 +59,17 @@ export const Currency = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+`
+
+export const CurrencyAmountWrapper = styled.div`
+  display: flex;
+  gap: 16px;
+  width: 100%;
+
+  .input-container {
+    width: 100%;
+    height: 32px;
+  }
 `
 
 export const InvoiceContainer = styled.div`
@@ -90,7 +102,7 @@ export const ButtonsContainer = styled.div`
   height: 32px;
 `
 
-export const SaveButton = styled.button`
+export const SaveButton = styled.button<{ isAmountValid: boolean }>`
   background-color: var(--color-green);
   color: var(--color-white);
   width: 150px;
@@ -100,6 +112,12 @@ export const SaveButton = styled.button`
     color: var(--color-white);
     transition: all 0.1s ease-out;
   }
+  ${({ isAmountValid }) =>
+    isAmountValid && {
+      backgroundColor: 'var(--color-light-grey)',
+      color: 'var(--color-white)',
+      pointerEvents: 'none',
+    }}
 `
 
 export const CancelButton = styled.button`

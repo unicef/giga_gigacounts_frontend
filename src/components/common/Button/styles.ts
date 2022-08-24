@@ -20,4 +20,9 @@ export const ButtonComponent = styled.button`
     color: var(--color-white);
     transition: all 0.1s ease-out;
   }
+
+  &:disabled {
+    background-color: var(--color-light-grey);
+    cursor: not-allowed;
+  }
 `

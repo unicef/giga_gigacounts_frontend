@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import NewPayment from 'src/components/Dashboard/Contracts/Contract/StagedContract/PaymentsTab/Payment/NewPayment/NewPayment'
 import Payment from 'src/components/Dashboard/Contracts/Contract/StagedContract/PaymentsTab/Payment/Payment'
 import { IContractPayment } from 'src/types/general'
@@ -15,11 +15,18 @@ interface IContractPaymentProps {
 
 const PaymentsTab: React.FC<IContractPaymentProps> = ({ contractPayments }: IContractPaymentProps): JSX.Element => {
   const {
-    state: { selectedPaymentId, paymentDetails, paymentActiveNewRow },
+    state: { selectedPaymentId, layout, paymentActiveNewRow },
     actions: { setSelectedPayment, createNewPayment },
   } = usePaymentsContext()
 
   const selectedContract = useSelectedContract()
+
+  const disableCreate = useMemo(
+    () =>
+      selectedContract?.details.data &&
+      new Date(selectedContract?.details.data?.startDate).getTime() > new Date().getTime(),
+    [selectedContract?.details.data],
+  )
 
   const onPaymentSelected = useCallback(
     (paymentId: string) => {
@@ -28,21 +35,16 @@ const PaymentsTab: React.FC<IContractPaymentProps> = ({ contractPayments }: ICon
     [setSelectedPayment],
   )
 
-  const onCreateNewPayment = useCallback(() => {
-    if (selectedContract?.id !== undefined) {
-      createNewPayment(true, selectedContract.id)
-    }
-  }, [createNewPayment, selectedContract?.id])
-
   return (
     <PaymentsTabContainer>
       <PaymentRowWrapper>
-        <PaymentsRow>
-          <NewPayment onCreateNewPayment={onCreateNewPayment} />
-        </PaymentsRow>
-        {paymentDetails && (
+        {layout === 'create' ? (
           <PaymentsRow active={paymentActiveNewRow}>
             <NewPayment placeholderRow />
+          </PaymentsRow>
+        ) : (
+          <PaymentsRow selectable={false}>
+            <NewPayment onCreateNewPayment={createNewPayment} disabled={disableCreate} />
           </PaymentsRow>
         )}
         {contractPayments &&
@@ -56,7 +58,7 @@ const PaymentsTab: React.FC<IContractPaymentProps> = ({ contractPayments }: ICon
             </PaymentsRow>
           ))}
       </PaymentRowWrapper>
-      {(selectedPaymentId || paymentDetails) && (
+      {(selectedPaymentId || layout !== 'view') && (
         <PaymentDetails contractId={selectedContract?.id} paymentId={selectedPaymentId} />
       )}
     </PaymentsTabContainer>

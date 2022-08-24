@@ -2,7 +2,7 @@ import React, { CSSProperties } from 'react'
 import { syncedHistory } from 'src/config/syncedHistory'
 import { ButtonComponent } from './styles'
 
-export type ButtonPropType = {
+export interface ButtonPropType {
   link?: string
   className?: string
   label?: string
@@ -18,7 +18,7 @@ export const Button: React.FC<ButtonPropType> = ({
   link,
   className = '',
   label = '',
-  isDisabled,
+  isDisabled = false,
   children = null,
   type = 'button',
 }) => {

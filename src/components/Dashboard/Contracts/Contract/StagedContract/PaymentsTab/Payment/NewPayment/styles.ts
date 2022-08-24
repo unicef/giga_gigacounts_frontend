@@ -16,6 +16,11 @@ export const PaymentsRowContainer = styled.div`
   .addNewPayment {
     max-width: fit-content;
   }
+
+  svg {
+    margin: auto;
+    width: 40px;
+  }
 `
 
 export const PaymentDateContainer = styled.div`
@@ -60,6 +65,32 @@ export const PaymentsRowDetails = styled.div<{ active?: boolean }>`
     ${({ active }) =>
       active && {
         color: 'var(--color-light-blue)',
+      }}
+  }
+`
+
+export const PaymentsRowMetrics = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 44px;
+`
+
+export const WidgetMetric = styled.div<{ active?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-darker-grey);
+  ${({ active }) =>
+    active && {
+      color: 'var(--color-light-blue)',
+    }};
+
+  small > b {
+    color: var(--color-dark-grey);
+    ${({ active }) =>
+      active && {
+        color: 'var(--color-darkest-blue)',
       }}
   }
 `

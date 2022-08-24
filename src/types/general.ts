@@ -219,6 +219,18 @@ export interface IPaymentMeasure {
   contractId: string
 }
 
+export interface IPaymentDate {
+  month: number
+  year: number
+}
+
+export interface IPaymentMetrics {
+  connectionsMedian: []
+  allEqualOrAboveAvg: number
+  atLeastOneBellowAvg: number
+  withoutConnection: number
+}
+
 export interface ICurrency {
   id: string
   code?: string

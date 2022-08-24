@@ -440,6 +440,11 @@ input[type='number'] {
   color: var(--color-dark-green);
 }
 
+.btn-grey {
+  color: var(--color-white);
+  background-color: var(--color-light-grey);
+}
+
 /* The container must be positioned relative: */
 
 .input-container {

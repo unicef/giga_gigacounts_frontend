@@ -1,16 +1,19 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect } from 'react'
 import { uploadAttachment } from 'src/api/attachments'
 import Message, { MessageType } from 'src/components/common/Message/Message'
 import UploadButton from 'src/components/common/UploadButton/UploadButton'
-import { useContract } from 'src/components/Dashboard/Contracts/state/hooks'
+import { useContract, useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
 import { IFileUpload } from 'src/types/general'
 import { createAction } from 'src/utils/createAction'
 import { usePaymentsContext } from '../state/usePaymentsContext'
 import { PaymentsActionType } from '../state/types'
+import { ISP_ROLE } from 'src/consts/roles'
+import { useRoleCheck } from 'src/state/hooks'
 import {
   ButtonsContainer,
   CancelButton,
   Currency,
+  CurrencyAmountWrapper,
   CurrencyContainer,
   InvoiceContainer,
   PaymentDetailsContainer,
@@ -19,6 +22,7 @@ import {
   SaveButton,
   UploadFiles,
 } from './styles'
+import { MONTHS } from 'src/consts/months'
 
 interface IContractPaymentDetailsProps {
   contractId?: string
@@ -27,26 +31,33 @@ interface IContractPaymentDetailsProps {
 
 const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
   contractId,
-  paymentId,
 }: IContractPaymentDetailsProps): JSX.Element => {
-  const [showMessage, setShowMessage] = useState(false)
   const {
-    state: { paymentForm },
-    actions: { savePayment },
+    state: { paymentForm, paymentDates, isAmountValid, showErrorMessage },
+    actions: { savePayment, cancelPayment, onPaymentFormDateChange },
     dispatch,
   } = usePaymentsContext()
 
+  const selectedContract = useSelectedContract()
   const contract = useContract(contractId)
+
+  useEffect(() => {
+    if (selectedContract?.id !== contractId) {
+      cancelPayment()
+    }
+  }, [cancelPayment, contractId, selectedContract?.id])
 
   const onDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch(createAction(PaymentsActionType.SET_PAYMENT_DESCRIPTION, e.target.value))
   }
-  const onDateChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const paymentDate = date.find((item) => item.id === e.target.value)
-    dispatch(createAction(PaymentsActionType.SET_PAYMENT_DATE, paymentDate))
-  }
+  const onDateChange = (e: ChangeEvent<HTMLSelectElement>) => onPaymentFormDateChange(paymentDates[+e.target.value])
+
   const onAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch(createAction(PaymentsActionType.SET_PAYMENT_AMOUNT, e.target.value))
+  }
+
+  const onAmountBlur = () => {
+    dispatch(createAction(PaymentsActionType.SET_IS_AMOUNT_VALID))
   }
 
   const onUpload = async (file: IFileUpload) => {
@@ -61,26 +72,8 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
 
   const onUploadError = (error: Error) => dispatch(createAction(PaymentsActionType.SET_ERROR, error))
 
-  const date: { id: string; month: string; year: string }[] = [
-    {
-      id: '1',
-      month: 'August',
-      year: '2022',
-    },
-    {
-      id: '2',
-      month: 'September',
-      year: '2022',
-    },
-    {
-      id: '3',
-      month: 'October',
-      year: '2022',
-    },
-  ]
-
   const onMessageClose = () => {
-    setShowMessage((prevState) => !prevState)
+    dispatch(createAction(PaymentsActionType.SHOW_ERROR_MESSAGE, false))
   }
 
   return (
@@ -92,7 +85,7 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus ultrices nunc, tortor ullamcorper. Amet
             placerat consequat eget faucibus in nec.
           </small> */}
-          {showMessage && (
+          {showErrorMessage && (
             <Message
               type={MessageType.ERROR}
               title="Your payment was declined"
@@ -110,33 +103,38 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
             onChange={onDescriptionChange}
           />
           <div className="input-container dropdown">
-            <select value={paymentForm.year ?? ''} onChange={onDateChange} required>
-              <option value={undefined} hidden>
-                September 30, 2022
+            <select onChange={onDateChange} required>
+              <option value="" hidden>
+                {MONTHS[paymentForm.month]} - {paymentForm.year}
               </option>
-              {date.map((data) => (
-                <option key={data.id} value={data.id}>
-                  {data.month}
+              {paymentDates.map((date, index) => (
+                <option key={index} value={index}>
+                  {MONTHS[date.month]} - {date.year}
                 </option>
               ))}
             </select>
           </div>
           <CurrencyContainer>
-            <Currency>
-              <span className="icon icon-24 icon-coins icon-blue" />
-              <p>{contract?.details.data?.currency?.code}</p>
-            </Currency>
-            <div className="input-container">
-              <input
-                type="number"
-                value={paymentForm.amount ?? ''}
-                min="0"
-                placeholder="Value"
-                step="0.01"
-                required
-                onChange={onAmountChange}
-              />
-            </div>
+            <CurrencyAmountWrapper>
+              <Currency>
+                <span className="icon icon-24 icon-coins icon-blue" />
+                <p>{contract?.details.data?.currency?.code}</p>
+              </Currency>
+              <div className="input-container">
+                <input
+                  type="number"
+                  value={paymentForm.amount ?? ''}
+                  min="0"
+                  placeholder="Value"
+                  step="0.01"
+                  required
+                  onChange={onAmountChange}
+                  onBlur={onAmountBlur}
+                  className={`${isAmountValid ? 'input-error' : ''}`}
+                />
+              </div>
+            </CurrencyAmountWrapper>
+            {isAmountValid && <span className="error-text">Amount must greater than 0</span>}
           </CurrencyContainer>
         </form>
         <InvoiceContainer>
@@ -146,20 +144,26 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
             <UploadButton onUpload={onUpload} onError={onUploadError} type="payment" typeId="1" />
           </UploadFiles>
         </InvoiceContainer>
-        <InvoiceContainer>
-          <h5>Receipt</h5>
-          <p>
-            Find the receipt here. Remember that this is a legal document that supports the payment was done
-            successfully.
-          </p>
-          <UploadFiles>
-            <UploadButton onUpload={onUpload} onError={onUploadError} type="payment" typeId="2" />
-          </UploadFiles>
-        </InvoiceContainer>
+        {!useRoleCheck(ISP_ROLE) && (
+          <InvoiceContainer>
+            <h5>Receipt</h5>
+            <p>
+              Find the receipt here. Remember that this is a legal document that supports the payment was done
+              successfully.
+            </p>
+            <UploadFiles>
+              <UploadButton onUpload={onUpload} onError={onUploadError} type="payment" typeId={contractId ?? ''} />
+            </UploadFiles>
+          </InvoiceContainer>
+        )}
       </PaymentFormContainer>
       <ButtonsContainer>
-        <SaveButton onClick={savePayment}>Save</SaveButton>{' '}
-        <CancelButton className="btn-transparent-grey active">Cancel</CancelButton>
+        <SaveButton onClick={savePayment} isAmountValid={isAmountValid} disabled={isAmountValid}>
+          Save
+        </SaveButton>
+        <CancelButton className="btn-transparent-grey active" onClick={cancelPayment}>
+          Cancel
+        </CancelButton>
       </ButtonsContainer>
     </PaymentDetailsContainer>
   )
