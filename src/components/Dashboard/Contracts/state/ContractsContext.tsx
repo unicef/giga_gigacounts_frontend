@@ -1,15 +1,15 @@
 import { createContext, FC, useReducer, useCallback, useMemo, Dispatch, useEffect } from 'react'
-import { ContractStatus, IContractPayment } from 'src/types/general'
+import { useParams, useSearchParams } from 'react-router-dom'
+import { ContractStatus } from 'src/types/general'
 import { getSchoolMeasures } from 'src/api/school'
 import { getContract, getContractDetails, getContracts, getContractSchools } from 'src/api/contracts'
 import { ChildrenProps } from 'src/types/utils'
+import { createAction } from 'src/utils/createAction'
+import { getLtas } from 'src/api/createContract'
+import { getContractPayments } from 'src/api/payments'
 import { INITIAL_CONTRACTS_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { ContractsAction, ContractsActionType, ContractsState, NavItemType } from './types'
-import { createAction } from 'src/utils/createAction'
-import { createPayment, getContractPayments, getPayment } from 'src/api/payments'
-import { getLtas } from 'src/api/createContract'
-import { useParams, useSearchParams } from 'react-router-dom'
 import { selectContract, selectDraft } from './selectors'
 
 export interface IContractsContext {
@@ -23,9 +23,6 @@ export interface IContractsContext {
     reloadContracts: () => void
     setNewContract: (newContract?: { ltaId?: string }) => void
     setSelectedTab: (tabId: string) => void
-    setSelectedPayment: (paymentId: string, contractId: string) => void
-    createNewPayment: (showPaymentDetails: boolean, contractId: string) => void
-    savePayment: () => void
   }
 }
 
@@ -54,15 +51,6 @@ export const ContractsContext = createContext<IContractsContext>({
       throw new Error('Not implemented')
     },
     setSelectedTab: () => {
-      throw new Error('Not implemented')
-    },
-    setSelectedPayment: () => {
-      throw new Error('Not implemented')
-    },
-    savePayment: () => {
-      throw new Error('Not implemented')
-    },
-    createNewPayment: () => {
       throw new Error('Not implemented')
     },
   },
@@ -152,33 +140,6 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [dispatch],
   )
 
-  const setSelectedPayment = useCallback(
-    (paymentId: string, contractId: string) => {
-      dispatch(
-        createAction(ContractsActionType.SET_SELECTED_PAYMENT, {
-          paymentId,
-          contractId,
-        }),
-      )
-    },
-    [dispatch],
-  )
-
-  const fetchPayment = useCallback(async (paymentId: string) => {
-    try {
-      const response = await getPayment<IContractPayment>(paymentId)
-      dispatch(createAction(ContractsActionType.SET_PAYMENT_FORM, response))
-    } catch (error) {
-      dispatch(createAction(ContractsActionType.SET_ERROR, error))
-    }
-  }, [])
-
-  useEffect(() => {
-    if (localState.selectedPayment?.paymentId && localState.selectedPayment.contractId) {
-      fetchPayment(localState.selectedPayment.paymentId)
-    }
-  }, [localState.selectedPayment, fetchPayment])
-
   const setNewContract = useCallback(
     (newContract?: { ltaId?: string }) => {
       dispatch({ type: ContractsActionType.SET_NEW_CONTRACT, payload: { newContract } })
@@ -211,37 +172,6 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     }
   }, [localState.newContract, selectedContract])
 
-  const createNewPayment = useCallback(
-    async (showPaymentDetails: boolean, contractId: string) => {
-      try {
-        dispatch(createAction(ContractsActionType.SHOW_PAYMENT_DETAILS, showPaymentDetails))
-        // const getAvailablePayments = await getContractAvailablePayments(contractId)
-
-        // const getMetrics = await getNewPaymentMetrics<ISchoolsConnections>({
-        //   month: 1,
-        //   year: 2022,
-        //   contractId,
-        // })
-      } catch (error) {
-        dispatch(createAction(ContractsActionType.SET_ERROR, error))
-      }
-      // fetch payment details - API available payments - month - year - dropdown
-      // fetch data new row - API calculate measures
-      // set details active
-    },
-    [dispatch],
-  )
-
-  const savePayment = useCallback(async () => {
-    dispatch(createAction(ContractsActionType.SET_LOADING))
-    try {
-      const payment = await createPayment(localState.paymentForm)
-      dispatch(createAction(ContractsActionType.PAYMENT_CREATED, payment))
-    } catch (error) {
-      dispatch(createAction(ContractsActionType.SET_ERROR, error))
-    }
-  }, [localState.paymentForm, dispatch])
-
   const value = useMemo(
     () => ({
       state: localState,
@@ -254,9 +184,6 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         reloadContracts: fetchContracts,
         setNewContract,
         setSelectedTab,
-        setSelectedPayment,
-        savePayment,
-        createNewPayment,
       },
     }),
     [
@@ -268,9 +195,6 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       fetchSchoolMeasures,
       setNewContract,
       setSelectedTab,
-      setSelectedPayment,
-      savePayment,
-      createNewPayment,
     ],
   )
   useEffect(() => {

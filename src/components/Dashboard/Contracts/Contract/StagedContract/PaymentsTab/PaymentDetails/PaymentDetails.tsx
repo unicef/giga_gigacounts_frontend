@@ -3,10 +3,10 @@ import { uploadAttachment } from 'src/api/attachments'
 import Message, { MessageType } from 'src/components/common/Message/Message'
 import UploadButton from 'src/components/common/UploadButton/UploadButton'
 import { useContract } from 'src/components/Dashboard/Contracts/state/hooks'
-import { ContractsActionType } from 'src/components/Dashboard/Contracts/state/types'
-import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import { IFileUpload } from 'src/types/general'
 import { createAction } from 'src/utils/createAction'
+import { usePaymentsContext } from '../state/usePaymentsContext'
+import { PaymentsActionType } from '../state/types'
 import {
   ButtonsContainer,
   CancelButton,
@@ -22,29 +22,31 @@ import {
 
 interface IContractPaymentDetailsProps {
   contractId?: string
+  paymentId?: string
 }
 
 const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
   contractId,
+  paymentId,
 }: IContractPaymentDetailsProps): JSX.Element => {
   const [showMessage, setShowMessage] = useState(false)
   const {
     state: { paymentForm },
     actions: { savePayment },
     dispatch,
-  } = useContractsContext()
+  } = usePaymentsContext()
 
   const contract = useContract(contractId)
 
   const onDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch(createAction(ContractsActionType.SET_PAYMENT_DESCRIPTION, e.target.value))
+    dispatch(createAction(PaymentsActionType.SET_PAYMENT_DESCRIPTION, e.target.value))
   }
   const onDateChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const paymentDate = date.find((item) => item.id === e.target.value)
-    dispatch(createAction(ContractsActionType.SET_PAYMENT_DATE, paymentDate))
+    dispatch(createAction(PaymentsActionType.SET_PAYMENT_DATE, paymentDate))
   }
   const onAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch(createAction(ContractsActionType.SET_PAYMENT_AMOUNT, e.target.value))
+    dispatch(createAction(PaymentsActionType.SET_PAYMENT_AMOUNT, e.target.value))
   }
 
   const onUpload = async (file: IFileUpload) => {
@@ -52,12 +54,12 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
       try {
         await uploadAttachment(file)
       } catch (error) {
-        dispatch(createAction(ContractsActionType.SET_ERROR, error))
+        dispatch(createAction(PaymentsActionType.SET_ERROR, error))
       }
     }
   }
 
-  const onUploadError = (error: Error) => dispatch(createAction(ContractsActionType.SET_ERROR, error))
+  const onUploadError = (error: Error) => dispatch(createAction(PaymentsActionType.SET_ERROR, error))
 
   const date: { id: string; month: string; year: string }[] = [
     {

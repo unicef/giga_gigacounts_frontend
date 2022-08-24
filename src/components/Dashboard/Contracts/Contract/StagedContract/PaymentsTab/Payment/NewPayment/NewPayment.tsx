@@ -1,5 +1,5 @@
-import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
-import { Button } from '../Button/Button'
+import { Button } from 'src/components/common/Button/Button'
+import { usePaymentsContext } from '../../state/usePaymentsContext'
 import { PaymentContainer, PaymentsRowContainer, PaymentDateContainer, PaymentsRowDetails } from './styles'
 
 type NewPaymentProps = {
@@ -10,7 +10,7 @@ type NewPaymentProps = {
 const NewPayment: React.FC<NewPaymentProps> = ({ onCreateNewPayment, placeholderRow }: NewPaymentProps) => {
   const {
     state: { paymentForm },
-  } = useContractsContext()
+  } = usePaymentsContext()
 
   const today = new Date()
   const day = today.getDate()

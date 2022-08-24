@@ -111,7 +111,7 @@ export interface IContractDetails {
   schoolsConnection: ISchoolsConnections
   connectionsMedian: IConnectionMedian[]
   schools: IContractSchools[]
-  payments: []
+  payments: IContractPayment[]
   totalSpent: IContractTotalSpent
 }
 

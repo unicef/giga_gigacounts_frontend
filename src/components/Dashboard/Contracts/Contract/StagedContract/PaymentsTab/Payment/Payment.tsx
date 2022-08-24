@@ -1,5 +1,5 @@
-import PaymentChart from 'src/components/common/PaymentChart/PaymentChart'
-import PaymentDate from 'src/components/common/PaymentDate/PaymentDate'
+import PaymentChart from 'src/components/Dashboard/Contracts/Contract/StagedContract/PaymentsTab/PaymentChart/PaymentChart'
+import PaymentDate from 'src/components/Dashboard/Contracts/Contract/StagedContract/PaymentsTab/PaymentDate/PaymentDate'
 import { IContractPayment } from 'src/types/general'
 import {
   PaymentContainer,
