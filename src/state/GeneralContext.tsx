@@ -45,6 +45,8 @@ export const GeneralContextProvider = ({ children }: ChildrenProps) => {
 
     if (AUTH_TOKEN) {
       fetchData()
+    } else {
+      dispatch(updateUser(undefined))
     }
   }, [fetchData])
 
