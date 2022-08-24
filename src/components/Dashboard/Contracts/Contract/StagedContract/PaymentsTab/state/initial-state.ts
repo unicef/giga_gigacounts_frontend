@@ -1,5 +1,5 @@
-import { IContract, ContractStatus, IPaymentForm } from 'src/types/general'
-import { ContractsState, ContractStagedActiveTab } from './types'
+import { IPaymentForm } from 'src/types/general'
+import { PaymentsState } from './types'
 
 export const PAYMENT_FORM_INITIAL_STATE: IPaymentForm = {
   month: 2,
@@ -14,27 +14,11 @@ export const PAYMENT_FORM_INITIAL_STATE: IPaymentForm = {
   },
 }
 
-export const INITIAL_CONTRACTS_STATE: ContractsState = {
-  contracts: undefined,
-  ltas: undefined,
-  selectedSchool: undefined,
-  noSchoolMetricData: false,
-  schoolsQos: [],
+export const INITIAL_PAYMENTS_STATE: PaymentsState = {
   error: undefined,
   loading: false,
-  newContract: undefined,
-  activeTab: ContractStagedActiveTab.SchoolsTab,
-  contractPayments: [],
-}
-
-export const NEW_CONTRACT: IContract = {
-  ltaId: null,
-  name: 'New Contract',
-  status: ContractStatus.Draft,
-  added: true,
-  details: {
-    data: undefined,
-    loading: true,
-    error: undefined,
-  },
+  selectedPaymentId: undefined,
+  paymentDetails: false,
+  paymentActiveNewRow: false,
+  paymentForm: PAYMENT_FORM_INITIAL_STATE,
 }
