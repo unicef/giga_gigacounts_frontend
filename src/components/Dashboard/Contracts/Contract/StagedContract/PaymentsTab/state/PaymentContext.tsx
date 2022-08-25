@@ -119,6 +119,7 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
   const fetchPayment = useCallback(async (paymentId: string) => {
     try {
       const response = await getPayment<IContractPayment>(paymentId)
+
       dispatch(createAction(PaymentsActionType.SET_PAYMENT_FORM, response))
     } catch (error) {
       dispatch(createAction(PaymentsActionType.SET_ERROR, error))
@@ -159,7 +160,10 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
         try {
           const payment = await updatePayment(
             selectedPayment.id,
-            diff(localState.paymentForm, selectedPayment.paidDate),
+            diff(localState.paymentForm, {
+              month: new Date(selectedPayment.paidDate).getMonth() + 1,
+              year: new Date(selectedPayment.paidDate).getFullYear(),
+            }),
           )
           reloadContractPayments(selectedContract?.id)
           dispatch(createAction(PaymentsActionType.PAYMENT_UPDATED, { payment }))

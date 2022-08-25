@@ -26,9 +26,9 @@ const FormattedDate = ({ date, ...props }: FormattedDateProps) => {
 
   const { year, month, day } = useMemo(
     () => ({
-      year: dateObj.getFullYear(),
-      month: Month[dateObj.getMonth()],
-      day: dateObj.getDate(),
+      year: dateObj.getUTCFullYear(),
+      month: Month[dateObj.getUTCMonth()],
+      day: dateObj.getUTCDate(),
     }),
     [dateObj],
   )

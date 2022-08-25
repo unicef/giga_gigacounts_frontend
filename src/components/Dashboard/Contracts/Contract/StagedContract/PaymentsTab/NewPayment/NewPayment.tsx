@@ -42,7 +42,7 @@ const NewPayment: React.FC<NewPaymentProps> = ({ onCreateNewPayment, placeholder
   }, [layout, paymentDates, paymentForm.month, paymentForm.year])
 
   const day = useMemo(() => {
-    return new Date(paymentDate.year, paymentDate.month, 0).getDate()
+    return new Date(paymentDate.year, paymentDate.month, 0).getUTCDate()
   }, [paymentDate.month, paymentDate.year])
 
   const selectedContract = useSelectedContract()

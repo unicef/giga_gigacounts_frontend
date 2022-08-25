@@ -10,9 +10,9 @@ const PaymentDate: React.FC<PaymentDateProps> = ({
   active,
 }: PaymentDateProps): JSX.Element => {
   const dateObject = new Date(date)
-  const day = dateObject.getDate()
+  const day = dateObject.getUTCDate()
   const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(dateObject)
-  const year = dateObject.getFullYear()
+  const year = dateObject.getUTCFullYear()
 
   return (
     <PaymentDateContainer active={active}>
