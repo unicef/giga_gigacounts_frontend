@@ -3,7 +3,7 @@ import { uploadAttachment } from 'src/api/attachments'
 import Message, { MessageType } from 'src/components/common/Message/Message'
 import UploadButton from 'src/components/common/UploadButton/UploadButton'
 import { useContract, useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
-import { IFileUpload } from 'src/types/general'
+import { IFileUpload, UploadType } from 'src/types/general'
 import { createAction } from 'src/utils/createAction'
 import { usePaymentsContext } from '../state/usePaymentsContext'
 import { PaymentsActionType } from '../state/types'
@@ -23,6 +23,7 @@ import {
   UploadFiles,
 } from './styles'
 import { MONTHS } from 'src/consts/months'
+import File from 'src/components/common/File/File'
 
 interface IContractPaymentDetailsProps {
   contractId?: string
@@ -33,8 +34,8 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
   contractId,
 }: IContractPaymentDetailsProps): JSX.Element => {
   const {
-    state: { paymentForm, paymentDates, isAmountValid, showErrorMessage },
-    actions: { savePayment, cancelPayment, onPaymentFormDateChange },
+    state: { paymentForm, paymentDates, isAmountValid, showErrorMessage, selectedPaymentId },
+    actions: { savePayment, cancelPayment, onPaymentFormDateChange, reload },
     dispatch,
   } = usePaymentsContext()
 
@@ -64,6 +65,7 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
     if (file) {
       try {
         await uploadAttachment(file)
+        reload()
       } catch (error) {
         dispatch(createAction(PaymentsActionType.SET_ERROR, error))
       }
@@ -75,6 +77,8 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
   const onMessageClose = () => {
     dispatch(createAction(PaymentsActionType.SHOW_ERROR_MESSAGE, false))
   }
+
+  const onAttachmentDelete = async () => reload()
 
   return (
     <PaymentDetailsContainer>
@@ -140,9 +144,24 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
         <InvoiceContainer>
           <h5>Invoice</h5>
           <p>Find the invoice here. Remember that this is a legal document that supports the payment created.</p>
-          <UploadFiles>
-            <UploadButton onUpload={onUpload} onError={onUploadError} type="payment" typeId="1" />
-          </UploadFiles>
+          {paymentForm && paymentForm.invoice?.id ? (
+            <UploadFiles>
+              <File
+                id={paymentForm.invoice.id}
+                name={paymentForm.invoice.name}
+                url={paymentForm.invoice.url}
+                onDelete={onAttachmentDelete}
+                allowDelete
+              />
+            </UploadFiles>
+          ) : (
+            <UploadButton
+              onUpload={onUpload}
+              onError={onUploadError}
+              type={UploadType.invoice}
+              typeId={selectedPaymentId ?? ''}
+            />
+          )}
         </InvoiceContainer>
         {!useRoleCheck(ISP_ROLE) && (
           <InvoiceContainer>
@@ -151,9 +170,24 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
               Find the receipt here. Remember that this is a legal document that supports the payment was done
               successfully.
             </p>
-            <UploadFiles>
-              <UploadButton onUpload={onUpload} onError={onUploadError} type="payment" typeId={contractId ?? ''} />
-            </UploadFiles>
+            {paymentForm && paymentForm.receipt?.id ? (
+              <UploadFiles>
+                <File
+                  id={paymentForm.receipt.id}
+                  name={paymentForm.receipt.name}
+                  url={paymentForm.receipt.url}
+                  onDelete={onAttachmentDelete}
+                  allowDelete
+                />
+              </UploadFiles>
+            ) : (
+              <UploadButton
+                onUpload={onUpload}
+                onError={onUploadError}
+                type={UploadType.receipt}
+                typeId={selectedPaymentId ?? ''}
+              />
+            )}
           </InvoiceContainer>
         )}
       </PaymentFormContainer>

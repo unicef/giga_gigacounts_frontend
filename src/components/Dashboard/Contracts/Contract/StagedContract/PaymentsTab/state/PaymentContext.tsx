@@ -21,6 +21,7 @@ export interface IPaymentsContext {
     savePayment: () => void
     cancelPayment: () => void
     onPaymentFormDateChange: ({ year, month }: { year: number; month: number }) => void
+    reload: () => void
   }
 }
 
@@ -45,6 +46,9 @@ export const PaymentsContext = createContext<IPaymentsContext>({
     onPaymentFormDateChange: () => {
       throw new Error('Not implemented')
     },
+    reload: () => {
+      throw new Error('Not implemented')
+    },
   },
 })
 
@@ -59,7 +63,7 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
 
   const selectedContract = useSelectedContract()
 
-  const ContractAvailablePayments = useCallback(async () => {
+  const contractAvailablePayments = useCallback(async () => {
     if (selectedContract?.id) {
       dispatch(createAction(PaymentsActionType.SET_LOADING))
       try {
@@ -123,6 +127,12 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
       dispatch(createAction(PaymentsActionType.SET_ERROR, error))
     }
   }, [])
+
+  const reload = useCallback(async () => {
+    if (localState.selectedPaymentId) {
+      fetchPayment(localState.selectedPaymentId)
+    }
+  }, [fetchPayment, localState.selectedPaymentId])
 
   const createNewPayment = useCallback(async () => {
     if (selectedContract?.id) {
@@ -199,9 +209,9 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
 
   useEffect(() => {
     if (!localState.loading && localState.contractId !== selectedContract?.id) {
-      ContractAvailablePayments()
+      contractAvailablePayments()
     }
-  }, [ContractAvailablePayments, localState.contractId, localState.loading, selectedContract?.id])
+  }, [contractAvailablePayments, localState.contractId, localState.loading, selectedContract?.id])
 
   const value = useMemo(
     () => ({
@@ -213,9 +223,10 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
         createNewPayment,
         cancelPayment,
         onPaymentFormDateChange,
+        reload,
       },
     }),
-    [localState, setSelectedPayment, savePayment, createNewPayment, onPaymentFormDateChange],
+    [localState, setSelectedPayment, savePayment, createNewPayment, onPaymentFormDateChange, reload],
   )
 
   return <PaymentsContext.Provider value={value}>{children}</PaymentsContext.Provider>

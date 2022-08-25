@@ -99,7 +99,7 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
     }
 
     case PaymentsActionType.SET_PAYMENT_FORM: {
-      const { description, paidDate, amount, invoice } = payload
+      const { description, paidDate, amount, invoice, receipt } = payload
       return {
         ...state,
         layout: 'edit',
@@ -110,6 +110,7 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
           year: paidDate.year,
           amount,
           invoice,
+          receipt,
         },
       }
     }

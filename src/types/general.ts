@@ -188,8 +188,10 @@ export interface IContractTotalSpent {
 }
 
 export interface IInvoice {
-  file: string
+  id: string
+  ipfs_url: string | null
   name: string
+  url: string
 }
 
 export interface IPaymentForm {
@@ -200,6 +202,7 @@ export interface IPaymentForm {
   currencyId: string
   amount: number
   invoice: IInvoice
+  receipt: IInvoice
 }
 
 export interface IContractPayment {
@@ -244,4 +247,11 @@ export enum ContractStatus {
   Ongoing = 'Ongoing',
   Expired = 'Expired',
   Completed = 'Completed',
+}
+
+export enum UploadType {
+  invoice = 'invoice',
+  receipt = 'receipt',
+  draft = 'draft',
+  contract = 'contract',
 }

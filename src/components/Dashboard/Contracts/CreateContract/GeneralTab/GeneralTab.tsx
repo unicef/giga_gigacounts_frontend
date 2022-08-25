@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect } from 'react'
 import { uploadAttachment } from 'src/api/attachments'
 import File from 'src/components/common/File/File'
-import { IFileUpload } from 'src/types/general'
+import { IFileUpload, UploadType } from 'src/types/general'
 import {
   AttachmentContainer,
   Attachments,
@@ -211,7 +211,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
           <UploadButton
             onUpload={onUpload}
             onError={onUploadError}
-            type="draft"
+            type={UploadType.draft}
             typeId={contractForm.id}
             disabled={contractForm.id === null}
           />
