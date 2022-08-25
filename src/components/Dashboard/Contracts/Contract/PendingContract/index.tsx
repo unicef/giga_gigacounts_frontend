@@ -157,7 +157,7 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
 
         <div className="schools">
           {contract.details.data?.schools.map((school) => (
-            <School key={school.id} name={school.name} id={school.id} location={school.locations} />
+            <School key={school.id} name={school.name} id={school.externalId} location={school.locations} />
           ))}
         </div>
       </div>
