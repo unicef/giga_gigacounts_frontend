@@ -31,6 +31,11 @@ export const DownloadButton = styled.button`
   text-decoration: underline;
   text-transform: none;
   text-align: left;
+
+  &:disabled {
+    cursor: default;
+    text-decoration: none;
+  }
 `
 
 export const DeleteButton = styled.button`

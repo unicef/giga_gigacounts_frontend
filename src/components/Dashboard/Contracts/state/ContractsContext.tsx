@@ -21,6 +21,7 @@ export interface IContractsContext {
     setSelectedSchool: (schoolId: string, contractId: string) => void
     fetchSchoolMeasures: (schoolId: string, id: string, month: string) => void
     reloadContracts: () => void
+    reloadContractPayments: (id?: string) => void
     setNewContract: (newContract?: { ltaId?: string }) => void
     setSelectedTab: (tabId: string) => void
   }
@@ -45,6 +46,9 @@ export const ContractsContext = createContext<IContractsContext>({
       throw new Error('Not implemented')
     },
     reloadContracts: () => {
+      throw new Error('Not implemented')
+    },
+    reloadContractPayments: () => {
       throw new Error('Not implemented')
     },
     setNewContract: () => {
@@ -114,10 +118,10 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
 
   const fetchSchoolMeasures = useCallback(
     async (schoolId: string, id: string, month: string) => {
+      dispatch({
+        type: ContractsActionType.SET_LOADING,
+      })
       try {
-        dispatch({
-          type: ContractsActionType.SET_LOADING,
-        })
         const response = await getSchoolMeasures(schoolId, id, month)
         dispatch({ type: ContractsActionType.SET_SCHOOL_MEASURES, payload: response })
       } catch (error) {
@@ -125,6 +129,36 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       }
     },
     [dispatch],
+  )
+
+  const fetchContractPayments = useCallback(
+    async (id = contractId) => {
+      const contract = localState.contracts?.find((contract) => contract.id === id)
+
+      if (!id || contract === undefined || [ContractStatus.Sent, ContractStatus.Confirmed].includes(contract.status)) {
+        return
+      }
+
+      dispatch({
+        type: ContractsActionType.SET_CONTRACT_PAYMENTS_LOADING,
+        payload: { contractId: id },
+      })
+
+      try {
+        const payments = await getContractPayments(id)
+
+        dispatch({
+          type: ContractsActionType.SET_CONTRACT_PAYMENTS,
+          payload: {
+            payments,
+            contractId: id,
+          },
+        })
+      } catch (error) {
+        dispatch({ type: ContractsActionType.SET_CONTRACT_PAYMENTS_ERROR, payload: error })
+      }
+    },
+    [contractId, localState.contracts],
   )
 
   const setSelectedSchool = useCallback(
@@ -182,6 +216,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         setSelectedSchool,
         fetchSchoolMeasures,
         reloadContracts: fetchContracts,
+        reloadContractPayments: fetchContractPayments,
         setNewContract,
         setSelectedTab,
       },
@@ -193,6 +228,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       setActiveNavItem,
       setSelectedSchool,
       fetchSchoolMeasures,
+      fetchContractPayments,
       setNewContract,
       setSelectedTab,
     ],

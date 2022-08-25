@@ -22,3 +22,9 @@ export const getContractPayments = async (contractId: string): Promise<IContract
   if (response.status === 200) return response.data
   throw new Error('Failed to get contract payments')
 }
+
+export const updatePayment = async <T>(paymentId: string, payment: Partial<IPaymentForm>): Promise<T> => {
+  const response = await instance.put<T>(ENDPOINT_URL, { paymentId, ...payment })
+  if (response.status === 200) return response.data
+  throw new Error('Failed to update payment')
+}

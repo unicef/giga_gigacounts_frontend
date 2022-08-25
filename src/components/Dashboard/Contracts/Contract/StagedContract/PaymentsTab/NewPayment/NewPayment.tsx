@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 import { Button } from 'src/components/common/Button/Button'
 import { useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
 import { MONTHS } from 'src/consts/months'
-import PaymentChart from '../../PaymentChart/PaymentChart'
-import { usePaymentsContext } from '../../state/usePaymentsContext'
+import PaymentChart from '../PaymentChart/PaymentChart'
+import { usePaymentsContext } from '../state/usePaymentsContext'
 
 import {
   PaymentContainer,
@@ -22,13 +22,28 @@ type NewPaymentProps = {
 
 const NewPayment: React.FC<NewPaymentProps> = ({ onCreateNewPayment, placeholderRow, disabled }: NewPaymentProps) => {
   const {
-    state: { loading, paymentForm, paymentMetrics, paymentActiveNewRow },
+    state: { loading, layout, paymentForm, paymentDates, paymentMetrics, paymentActiveNewRow },
   } = usePaymentsContext()
 
-  const day = useMemo(
-    () => new Date(paymentForm.year, paymentForm.month, 0).getDate(),
-    [paymentForm.month, paymentForm.year],
-  )
+  const paymentDate = useMemo(() => {
+    if (layout === 'create') {
+      return {
+        month: paymentForm.month,
+        year: paymentForm.year,
+      }
+    }
+
+    return (
+      paymentDates?.[0] ?? {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+      }
+    )
+  }, [layout, paymentDates, paymentForm.month, paymentForm.year])
+
+  const day = useMemo(() => {
+    return new Date(paymentDate.year, paymentDate.month, 0).getDate()
+  }, [paymentDate.month, paymentDate.year])
 
   const selectedContract = useSelectedContract()
 
@@ -37,9 +52,9 @@ const NewPayment: React.FC<NewPaymentProps> = ({ onCreateNewPayment, placeholder
       <PaymentDateContainer>
         <h4>{day}</h4>
         <small>
-          <b>{MONTHS[paymentForm.month]}</b>
+          <b>{MONTHS[paymentDate.month]}</b>
         </small>
-        <span className="super-small">{paymentForm.year}</span>
+        <span className="super-small">{paymentDate.year}</span>
       </PaymentDateContainer>
       <PaymentsRowContainer>
         {placeholderRow ? (

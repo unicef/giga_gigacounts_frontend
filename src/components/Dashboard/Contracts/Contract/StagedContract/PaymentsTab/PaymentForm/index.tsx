@@ -24,20 +24,21 @@ import {
 } from './styles'
 import { MONTHS } from 'src/consts/months'
 import File from 'src/components/common/File/File'
+import { usePayment } from '../state/hooks'
 
-interface IContractPaymentDetailsProps {
+interface IPaymentFormProps {
   contractId?: string
   paymentId?: string
 }
 
-const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
-  contractId,
-}: IContractPaymentDetailsProps): JSX.Element => {
+const PaymentForm: React.FC<IPaymentFormProps> = ({ contractId }: IPaymentFormProps): JSX.Element => {
   const {
-    state: { paymentForm, paymentDates, isAmountValid, showErrorMessage, selectedPaymentId },
+    state: { paymentForm, paymentDates, isAmountValid, showErrorMessage, selectedPaymentId, layout, loading },
     actions: { savePayment, cancelPayment, onPaymentFormDateChange, reload },
     dispatch,
   } = usePaymentsContext()
+
+  const selectedPayment = usePayment(selectedPaymentId)
 
   const selectedContract = useSelectedContract()
   const contract = useContract(contractId)
@@ -64,8 +65,14 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
   const onUpload = async (file: IFileUpload) => {
     if (file) {
       try {
-        await uploadAttachment(file)
-        reload()
+        if (file.typeId) {
+          await uploadAttachment(file)
+          reload()
+        } else if (file.type === UploadType.invoice) {
+          dispatch(createAction(PaymentsActionType.SET_INVOICE, { invoice: file }))
+        } else if (file.type === UploadType.receipt) {
+          dispatch(createAction(PaymentsActionType.SET_RECEIPT, { receipt: file }))
+        }
       } catch (error) {
         dispatch(createAction(PaymentsActionType.SET_ERROR, error))
       }
@@ -78,7 +85,9 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
     dispatch(createAction(PaymentsActionType.SHOW_ERROR_MESSAGE, false))
   }
 
-  const onAttachmentDelete = async () => reload()
+  const onInvoiceRemove = () => dispatch(createAction(PaymentsActionType.SET_INVOICE, { invoice: undefined }))
+
+  const onReceiptRemove = () => dispatch(createAction(PaymentsActionType.SET_RECEIPT, { receipt: undefined }))
 
   return (
     <PaymentDetailsContainer>
@@ -107,7 +116,7 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
             onChange={onDescriptionChange}
           />
           <div className="input-container dropdown">
-            <select onChange={onDateChange} required>
+            <select onChange={onDateChange} required disabled={loading}>
               <option value="" hidden>
                 {MONTHS[paymentForm.month]} - {paymentForm.year}
               </option>
@@ -144,13 +153,13 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
         <InvoiceContainer>
           <h5>Invoice</h5>
           <p>Find the invoice here. Remember that this is a legal document that supports the payment created.</p>
-          {paymentForm && paymentForm.invoice?.id ? (
+          {selectedPayment?.invoice?.id ? (
             <UploadFiles>
               <File
-                id={paymentForm.invoice.id}
-                name={paymentForm.invoice.name}
-                url={paymentForm.invoice.url}
-                onDelete={onAttachmentDelete}
+                id={selectedPayment?.invoice.id}
+                name={selectedPayment?.invoice.name}
+                url={selectedPayment?.invoice.url}
+                onDelete={reload}
                 allowDelete
               />
             </UploadFiles>
@@ -158,8 +167,11 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
             <UploadButton
               onUpload={onUpload}
               onError={onUploadError}
+              onDelete={onInvoiceRemove}
               type={UploadType.invoice}
               typeId={selectedPaymentId ?? ''}
+              value={paymentForm.invoice}
+              showValue={layout === 'create'}
             />
           )}
         </InvoiceContainer>
@@ -170,13 +182,13 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
               Find the receipt here. Remember that this is a legal document that supports the payment was done
               successfully.
             </p>
-            {paymentForm && paymentForm.receipt?.id ? (
+            {selectedPayment?.receipt?.id ? (
               <UploadFiles>
                 <File
-                  id={paymentForm.receipt.id}
-                  name={paymentForm.receipt.name}
-                  url={paymentForm.receipt.url}
-                  onDelete={onAttachmentDelete}
+                  id={selectedPayment.receipt.id}
+                  name={selectedPayment.receipt.name}
+                  url={selectedPayment.receipt.url}
+                  onDelete={reload}
                   allowDelete
                 />
               </UploadFiles>
@@ -184,15 +196,18 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
               <UploadButton
                 onUpload={onUpload}
                 onError={onUploadError}
+                onDelete={onReceiptRemove}
                 type={UploadType.receipt}
                 typeId={selectedPaymentId ?? ''}
+                value={paymentForm.receipt}
+                showValue={layout === 'create'}
               />
             )}
           </InvoiceContainer>
         )}
       </PaymentFormContainer>
       <ButtonsContainer>
-        <SaveButton onClick={savePayment} isAmountValid={isAmountValid} disabled={isAmountValid}>
+        <SaveButton onClick={savePayment} isAmountValid={isAmountValid} disabled={isAmountValid || loading}>
           Save
         </SaveButton>
         <CancelButton className="btn-transparent-grey active" onClick={cancelPayment}>
@@ -203,4 +218,4 @@ const PaymentDetails: React.FC<IContractPaymentDetailsProps> = ({
   )
 }
 
-export default PaymentDetails
+export default PaymentForm

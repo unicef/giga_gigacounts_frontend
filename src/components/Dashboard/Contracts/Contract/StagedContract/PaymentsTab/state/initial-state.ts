@@ -8,18 +8,8 @@ export const PAYMENT_FORM_INITIAL_STATE: IPaymentForm = {
   description: '',
   currencyId: '1',
   amount: 0,
-  invoice: {
-    id: '',
-    ipfs_url: '',
-    name: '',
-    url: '',
-  },
-  receipt: {
-    id: '',
-    ipfs_url: '',
-    name: '',
-    url: '',
-  },
+  invoice: undefined,
+  receipt: undefined,
 }
 
 export const INITIAL_PAYMENTS_STATE: PaymentsState = {

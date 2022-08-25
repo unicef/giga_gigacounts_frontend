@@ -1,7 +1,11 @@
+import { useMemo } from 'react'
 import PaymentChart from 'src/components/Dashboard/Contracts/Contract/StagedContract/PaymentsTab/PaymentChart/PaymentChart'
 import PaymentDate from 'src/components/Dashboard/Contracts/Contract/StagedContract/PaymentsTab/PaymentDate/PaymentDate'
 import { IContractPayment } from 'src/types/general'
+import { getMetricIconClassName } from 'src/utils/getMetricIcon'
+import { fillMissingConnectionsMedian } from '../state/utils'
 import {
+  MetricMidgetContainer,
   PaymentContainer,
   PaymentsRowContainer,
   PaymentsRowDetails,
@@ -27,6 +31,11 @@ const Payment: React.FC<PaymentProps> = ({ active, payment, onPaymentSelected }:
   const onPaymentSelectedById = () => onPaymentSelected?.(payment.id)
   const icon = getIcon(payment.status)
 
+  const connectionsMedian = useMemo(
+    () => fillMissingConnectionsMedian(payment.metrics.connectionsMedian),
+    [payment.metrics.connectionsMedian],
+  )
+
   return (
     <PaymentContainer onClick={onPaymentSelectedById}>
       <PaymentDate date={payment.paidDate} active={active} />
@@ -44,24 +53,25 @@ const Payment: React.FC<PaymentProps> = ({ active, payment, onPaymentSelected }:
           </PaymentVerified>
         </PaymentsRowDetails>
         <PaymentsRowMetrics>
-          <WidgetMetric active={active}>
-            <span className={`icon icon-20 ${active ? 'icon-light-blue' : 'icon-light-grey'}  icon-plug`}></span>
-            <small>
-              <b style={{ textTransform: 'none' }}>90%</b>
-            </small>
-            <span className={`icon icon-20 ${active ? 'icon-light-blue' : 'icon-light-grey'} icon-meter`}></span>
-            <small>
-              <b style={{ textTransform: 'none' }}>2ms</b>
-            </small>
-            <span className={`icon icon-20 ${active ? 'icon-light-blue' : 'icon-light-grey'} icon-down-speed`}></span>
-            <small>
-              <b style={{ textTransform: 'none' }}>10Mb/s</b>
-            </small>
-            <span className={`icon icon-20 ${active ? 'icon-light-blue' : 'icon-light-grey'} icon-up-speed`}></span>
-            <small>
-              <b style={{ textTransform: 'none' }}>20Mb/s</b>
-            </small>
-          </WidgetMetric>
+          <MetricMidgetContainer>
+            {connectionsMedian?.map(({ metric_id, unit, median_value }: any) => {
+              return (
+                <WidgetMetric key={metric_id} active={active}>
+                  <span
+                    className={`icon icon-20 ${getMetricIconClassName(metric_id)} ${
+                      active ? 'icon-light-blue' : 'icon-light-grey'
+                    }  icon-plug`}
+                  ></span>
+                  <small>
+                    <b style={{ textTransform: 'none' }}>
+                      {median_value}
+                      {unit}
+                    </b>
+                  </small>
+                </WidgetMetric>
+              )
+            })}
+          </MetricMidgetContainer>
           <PaymentChart
             low={payment.metrics.withoutConnection}
             average={payment.metrics.atLeastOneBellowAvg}

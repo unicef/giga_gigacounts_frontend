@@ -2,14 +2,29 @@ import { useMemo } from 'react'
 import { useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
 import { IContractDetails } from 'src/types/general'
 
-export const usePayment = (paymentId?: string) => {
+export const usePayments = () => {
   const selectedContract = useSelectedContract()
+  return useMemo(() => {
+    if (selectedContract && !selectedContract.details.loading && selectedContract.details.data) {
+      return (selectedContract.details.data as IContractDetails)?.payments
+    }
+
+    return {
+      data: undefined,
+      error: undefined,
+      loading: false,
+    }
+  }, [selectedContract])
+}
+
+export const usePayment = (paymentId?: string) => {
+  const payments = usePayments()
 
   return useMemo(() => {
-    if (paymentId && selectedContract && !selectedContract.details.loading && selectedContract.details.data) {
-      return (selectedContract.details.data as IContractDetails)?.payments?.find((payment) => payment.id === paymentId)
+    if (payments.data) {
+      return payments.data.find((payment) => payment.id === paymentId)
     }
 
     return undefined
-  }, [paymentId, selectedContract])
+  }, [paymentId, payments.data])
 }

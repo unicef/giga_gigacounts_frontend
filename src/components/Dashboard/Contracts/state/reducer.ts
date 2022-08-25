@@ -6,7 +6,7 @@ import {
   SchoolQosResponse,
   SchoolsQos,
 } from './types'
-import { IContract } from 'src/types/general'
+import { IContract, IContractDetails } from 'src/types/general'
 
 export const reducer = (state: ContractsState, action: ContractsAction): ContractsState => {
   const { type, payload } = action
@@ -115,10 +115,106 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
                 data: {
                   ...details,
                   schools,
-                  payments,
+                  payments: {
+                    data: payments,
+                    loading: false,
+                    error: undefined,
+                  },
                 },
                 loading: false,
                 error: undefined,
+              },
+              newContract: undefined,
+            }
+          }
+
+          return contract
+        }),
+      }
+    }
+
+    case ContractsActionType.SET_CONTRACT_PAYMENTS_LOADING: {
+      return {
+        ...state,
+        contracts: state.contracts?.map((contract) => {
+          const { contractId } = payload
+
+          if (contract.id === contractId) {
+            const { details } = contract
+
+            return {
+              ...contract,
+              details: {
+                ...details,
+                data: {
+                  ...(details.data as IContractDetails),
+                  payments: {
+                    data: (details.data as IContractDetails).payments.data,
+                    loading: true,
+                    error: undefined,
+                  },
+                },
+              },
+              newContract: undefined,
+            }
+          }
+
+          return contract
+        }),
+      }
+    }
+
+    case ContractsActionType.SET_CONTRACT_PAYMENTS_ERROR: {
+      return {
+        ...state,
+        contracts: state.contracts?.map((contract) => {
+          const { contractId, error } = payload
+
+          if (contract.id === contractId) {
+            const { details } = contract
+
+            return {
+              ...contract,
+              details: {
+                ...details,
+                data: {
+                  ...(details.data as IContractDetails),
+                  payments: {
+                    ...(details.data as IContractDetails).payments,
+                    error,
+                  },
+                },
+              },
+              newContract: undefined,
+            }
+          }
+
+          return contract
+        }),
+      }
+    }
+
+    case ContractsActionType.SET_CONTRACT_PAYMENTS: {
+      const { contractId, payments } = payload
+
+      return {
+        ...state,
+        contracts: state.contracts?.map((contract) => {
+          if (contract.id === contractId) {
+            const { details } = contract
+
+            return {
+              ...contract,
+              details: {
+                ...details,
+                data: {
+                  ...(details.data as IContractDetails),
+                  payments: {
+                    data: payments,
+                    loading: false,
+                    error: undefined,
+                  },
+                },
               },
               newContract: undefined,
             }

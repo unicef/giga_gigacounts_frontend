@@ -1,19 +1,24 @@
+import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import School from 'src/components/common/School/School'
-import { IContractSchools } from 'src/types/general'
-import { useContractsContext } from '../../../state/useContractsContext'
+import { useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
+import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import SchoolsQoS from './SchoolQoS/SchoolQoS'
 import { SchoolsRowWrapper, SchoolsTabRow, SchoolTabContainer } from './styles'
-interface IContractSchoolProps {
-  contractSchools: IContractSchools[]
-}
 
-const SchoolsTab: React.FC<IContractSchoolProps> = ({ contractSchools }: IContractSchoolProps): JSX.Element => {
+const SchoolsTab: React.FC = (): JSX.Element => {
   let { contractId } = useParams()
   const {
     state: { selectedSchool },
     actions: { setSelectedSchool },
   } = useContractsContext()
+
+  const selectedContract = useSelectedContract()
+
+  const contractSchools = useMemo(
+    () => selectedContract?.details.data?.schools,
+    [selectedContract?.details.data?.schools],
+  )
 
   const onSchoolSelected = (schoolId: string) => {
     if (contractId) setSelectedSchool(schoolId, contractId)

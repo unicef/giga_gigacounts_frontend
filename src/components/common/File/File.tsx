@@ -30,9 +30,9 @@ const File: React.FC<FileProps> = ({ id, type, url, name, onDelete, allowDelete 
     if (id) {
       setLoading(true)
       await deleteAttachment(id)
-      await onDelete?.()
-      setLoading(false)
     }
+    await onDelete?.()
+    setLoading(false)
   }
 
   const onDownloadClick = async () => {
@@ -58,7 +58,7 @@ const File: React.FC<FileProps> = ({ id, type, url, name, onDelete, allowDelete 
       </DownloadButton>
 
       {allowDelete && (
-        <DeleteButton title="delete" onClick={onDeleteClick} disabled={loading || id === undefined}>
+        <DeleteButton title="delete" onClick={onDeleteClick} disabled={loading}>
           <span className="icon icon-24 icon-trash icon-red"></span>
         </DeleteButton>
       )}

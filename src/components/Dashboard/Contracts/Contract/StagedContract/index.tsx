@@ -151,10 +151,7 @@ const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContract
               </Dates>
             </Info>
           </ContractStagedHeader>
-          <TabContent
-            contractSchools={contract?.details.data?.schools ?? []}
-            contractPayments={contract?.details.data?.payments ?? []}
-          />
+          <TabContent />
           {showDialog && (
             <Dialog
               type={DialogType.MESSAGE}

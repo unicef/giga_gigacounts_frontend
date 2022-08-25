@@ -111,7 +111,7 @@ export interface IContractDetails {
   schoolsConnection: ISchoolsConnections
   connectionsMedian: IConnectionMedian[]
   schools: IContractSchools[]
-  payments: IContractPayment[]
+  payments: DataState<IContractPayment[]>
   totalSpent: IContractTotalSpent
 }
 
@@ -187,7 +187,7 @@ export interface IContractTotalSpent {
   percentage: number
 }
 
-export interface IInvoice {
+export interface IPaymentAttachment {
   id: string
   ipfs_url: string | null
   name: string
@@ -201,8 +201,8 @@ export interface IPaymentForm {
   description: string
   currencyId: string
   amount: number
-  invoice: IInvoice
-  receipt: IInvoice
+  invoice: IFileUpload | undefined
+  receipt: IFileUpload | undefined
 }
 
 export interface IContractPayment {
@@ -212,8 +212,9 @@ export interface IContractPayment {
   currency: ICurrency
   amount: 10000
   status: string
-  metrics: ISchoolsConnections
-  invoice: IInvoice
+  metrics: IPaymentMetrics
+  invoice?: IPaymentAttachment
+  receipt?: IPaymentAttachment
 }
 
 export interface IPaymentMeasure {
@@ -228,7 +229,7 @@ export interface IPaymentDate {
 }
 
 export interface IPaymentMetrics {
-  connectionsMedian: []
+  connectionsMedian?: IConnectionMedian[]
   allEqualOrAboveAvg: number
   atLeastOneBellowAvg: number
   withoutConnection: number

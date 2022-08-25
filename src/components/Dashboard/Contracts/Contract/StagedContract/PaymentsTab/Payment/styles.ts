@@ -33,6 +33,15 @@ export const PaymentsRowDetails = styled.div<{ active?: boolean }>`
   }
 `
 
+export const MetricMidgetContainer = styled.div`
+  display: inline-grid;
+  grid-template-columns: 50px 50px 70px 70px;
+  grid-template-areas: 'm1  m2  m3  m4';
+  align-items: center;
+  gap: 6px;
+  width: 230px;
+`
+
 export const WidgetMetric = styled.div<{ active?: boolean }>`
   display: flex;
   align-items: center;

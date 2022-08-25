@@ -1,17 +1,32 @@
 import { ChangeEvent, useRef, useState } from 'react'
 
 import { IFileUpload } from 'src/types/general'
+import File from '../File/File'
 import { Button, UploadButtonWrapper } from './styles'
 
 interface UploadButtonProps {
   disabled?: boolean
   onUpload?: (file: IFileUpload) => Promise<void> | void
   onError?: (error: Error) => void
+  onDelete?: () => void
   typeId: string | null
   type: string
+  value?: IFileUpload
+  showValue?: boolean
+  allowDelete?: boolean
 }
 
-const UploadButton = ({ onUpload, onError, type, typeId = null, disabled = false }: UploadButtonProps) => {
+const UploadButton = ({
+  onUpload,
+  onError,
+  onDelete,
+  type,
+  value,
+  typeId = null,
+  disabled = false,
+  showValue = false,
+  allowDelete = true,
+}: UploadButtonProps) => {
   const [loading, setLoading] = useState(false)
   const inputFileRef = useRef<HTMLInputElement>(null)
 
@@ -67,9 +82,13 @@ const UploadButton = ({ onUpload, onError, type, typeId = null, disabled = false
         onChange={onFileInputChange}
         disabled={disabled}
       />
-      <Button onClick={onButtonClick} disabled={disabled || loading}>
-        Upload Files{loading && '…'}
-      </Button>
+      {value && showValue ? (
+        <File name={value.name} onDelete={onDelete} allowDelete={allowDelete} />
+      ) : (
+        <Button onClick={onButtonClick} disabled={disabled || loading}>
+          Upload Files{loading && '…'}
+        </Button>
+      )}
     </UploadButtonWrapper>
   )
 }

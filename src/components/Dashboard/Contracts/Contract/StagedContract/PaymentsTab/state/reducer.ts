@@ -99,7 +99,7 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
     }
 
     case PaymentsActionType.SET_PAYMENT_FORM: {
-      const { description, paidDate, amount, invoice, receipt } = payload
+      const { description, paidDate, amount } = payload
       return {
         ...state,
         layout: 'edit',
@@ -109,22 +109,27 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
           month: paidDate.month,
           year: paidDate.year,
           amount,
-          invoice,
-          receipt,
         },
       }
     }
 
-    case PaymentsActionType.PAYMENT_CREATED: {
+    case PaymentsActionType.PAYMENT_CREATED:
+    case PaymentsActionType.PAYMENT_UPDATED: {
+      const { payment } = payload
       return {
         ...state,
+        layout: 'edit',
+
         paymentForm: {
-          ...PAYMENT_FORM_INITIAL_STATE,
+          ...state.paymentForm,
+          description: payment.description,
+          month: payment.dateTo.month,
+          year: payment.dateTo.year,
         },
-        layout: 'view',
         paymentActiveNewRow: false,
-        selectedPaymentId: undefined,
+        selectedPaymentId: payment.id,
         loading: false,
+        error: undefined,
       }
     }
 
@@ -177,6 +182,25 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
       return {
         ...state,
         showErrorMessage: payload,
+      }
+    }
+
+    case PaymentsActionType.SET_INVOICE: {
+      return {
+        ...state,
+        paymentForm: {
+          ...state.paymentForm,
+          invoice: payload.invoice,
+        },
+      }
+    }
+    case PaymentsActionType.SET_RECEIPT: {
+      return {
+        ...state,
+        paymentForm: {
+          ...state.paymentForm,
+          receipt: payload.receipt,
+        },
       }
     }
 
