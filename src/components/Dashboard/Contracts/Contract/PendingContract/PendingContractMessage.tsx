@@ -25,7 +25,7 @@ const getContentByStatus = (status: string): PendingContractMessageContent => {
       return {
         iconClass: 'icon-completed',
         iconColorClass: 'icon-green',
-        text: 'The contract has been sent for Service Provider confirmation',
+        text: 'Contract confirmed waiting for starting date',
         textColor: '#46C66D',
       }
     default:
