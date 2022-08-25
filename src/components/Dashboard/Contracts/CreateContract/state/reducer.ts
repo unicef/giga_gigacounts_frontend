@@ -41,6 +41,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       const ltaId = draft.lta?.id ?? state.contractForm.ltaId
       const governmentBehalf = draft.governmentBehalf ?? state.contractForm.governmentBehalf
       const budget = draft.budget ?? state.contractForm.budget
+      const ispId = draft.isp?.id ?? state.contractForm.ispId
 
       const startDate = parseDate(draft, ['startDate', 'start_date'])
       const endDate = parseDate(draft, ['endDate', 'end_date'])
@@ -72,6 +73,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           expectedMetrics,
           budget,
           schools: { schools },
+          ispId,
         },
       }
     }
