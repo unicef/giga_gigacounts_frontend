@@ -1,14 +1,24 @@
-import { LayoutRouteProps, Navigate, PathRouteProps, Route } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
+import Loader from 'src/components/common/Loader'
+import DefaultLayout from 'src/components/Layouts/DefaultLayout'
 import { useUser } from 'src/state/hooks'
 
-const ProtectedRoute = ({ children, element, ...props }: PathRouteProps | LayoutRouteProps) => {
+const ProtectedRoute = () => {
   const user = useUser()
 
-  return (
-    <Route element={!user.loading && user.data.email ? element : <Navigate to="/" replace />} {...props}>
-      {children}
-    </Route>
-  )
+  if (user.loading) {
+    return (
+      <DefaultLayout>
+        <Loader />
+      </DefaultLayout>
+    )
+  }
+
+  if (user.data.email) {
+    return <Outlet />
+  }
+
+  return <Navigate to="/" replace />
 }
 
 export default ProtectedRoute

@@ -6,6 +6,7 @@ import Login from 'src/components/Login'
 import Loader from 'src/components/common/Loader'
 import NotFound from 'src/pages/NotFound'
 import { useUser } from 'src/state/hooks'
+import ProtectedRoute from './ProtectedRoute'
 
 const Contract = lazy(() => import('src/pages/Contract'))
 const CreateContractPage = lazy(() => import('src/pages/CreateContract'))
@@ -18,26 +19,28 @@ export const Router: React.FC = (): JSX.Element => {
       <Routes>
         <Route path="*" element={<NotFound />} />
         <Route index element={<Login />} />
-        <Route path="dashboard" element={<ContractsLayout />}>
-          <Route index element={!user.loading && user.data.name ? <ContractGuide /> : <Navigate to="/" replace />} />
-          <Route path="contract">
-            <Route
-              index
-              element={
-                <Suspense fallback={<Loader />}>
-                  <CreateContractPage />
-                </Suspense>
-              }
-            />
+        <Route element={<ProtectedRoute />}>
+          <Route path="dashboard" element={<ContractsLayout />}>
+            <Route index element={!user.loading && user.data.name ? <ContractGuide /> : <Navigate to="/" replace />} />
+            <Route path="contract">
+              <Route
+                index
+                element={
+                  <Suspense fallback={<Loader />}>
+                    <CreateContractPage />
+                  </Suspense>
+                }
+              />
 
-            <Route
-              path=":contractId"
-              element={
-                <Suspense fallback={<Loader />}>
-                  <Contract />
-                </Suspense>
-              }
-            />
+              <Route
+                path=":contractId"
+                element={
+                  <Suspense fallback={<Loader />}>
+                    <Contract />
+                  </Suspense>
+                }
+              />
+            </Route>
           </Route>
         </Route>
       </Routes>
