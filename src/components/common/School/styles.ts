@@ -11,6 +11,11 @@ export const SchoolContainer = styled.div`
   white-space: nowrap;
   background-color: inherit;
   cursor: pointer;
+
+  span {
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
 `
 
 export const SchoolName = styled.div`
