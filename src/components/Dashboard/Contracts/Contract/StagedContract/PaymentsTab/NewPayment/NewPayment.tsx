@@ -2,8 +2,10 @@ import { useMemo } from 'react'
 import { Button } from 'src/components/common/Button/Button'
 import { useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
 import { MONTHS } from 'src/consts/months'
+import { getMetricIconClassName } from 'src/utils/getMetricIcon'
 import PaymentChart from '../PaymentChart/PaymentChart'
 import { usePaymentsContext } from '../state/usePaymentsContext'
+import { fillMissingConnectionsMedian } from '../state/utils'
 
 import {
   PaymentContainer,
@@ -12,12 +14,13 @@ import {
   PaymentsRowDetails,
   PaymentsRowMetrics,
   WidgetMetric,
+  MetricMidgetContainer,
 } from './styles'
 
 type NewPaymentProps = {
+  disabled?: boolean
   placeholderRow?: boolean
   onCreateNewPayment?: () => void
-  disabled?: boolean
 }
 
 const NewPayment: React.FC<NewPaymentProps> = ({ onCreateNewPayment, placeholderRow, disabled }: NewPaymentProps) => {
@@ -47,6 +50,11 @@ const NewPayment: React.FC<NewPaymentProps> = ({ onCreateNewPayment, placeholder
 
   const selectedContract = useSelectedContract()
 
+  const connectionsMedian = useMemo(
+    () => fillMissingConnectionsMedian(paymentMetrics.connectionsMedian),
+    [paymentMetrics.connectionsMedian],
+  )
+
   return (
     <PaymentContainer>
       <PaymentDateContainer>
@@ -68,36 +76,25 @@ const NewPayment: React.FC<NewPaymentProps> = ({ onCreateNewPayment, placeholder
               <small>{paymentForm.description ? paymentForm.description : 'New payment'}</small>
             </PaymentsRowDetails>
             <PaymentsRowMetrics>
-              <WidgetMetric active={paymentActiveNewRow}>
-                <span
-                  className={`icon icon-20 ${paymentActiveNewRow ? 'icon-light-blue' : 'icon-light-grey'}  icon-plug`}
-                ></span>
-                <small>
-                  <b style={{ textTransform: 'none' }}>90%</b>
-                </small>
-                <span
-                  className={`icon icon-20 ${paymentActiveNewRow ? 'icon-light-blue' : 'icon-light-grey'} icon-meter`}
-                ></span>
-                <small>
-                  <b style={{ textTransform: 'none' }}>2ms</b>
-                </small>
-                <span
-                  className={`icon icon-20 ${
-                    paymentActiveNewRow ? 'icon-light-blue' : 'icon-light-grey'
-                  } icon-down-speed`}
-                ></span>
-                <small>
-                  <b style={{ textTransform: 'none' }}>10Mb/s</b>
-                </small>
-                <span
-                  className={`icon icon-20 ${
-                    paymentActiveNewRow ? 'icon-light-blue' : 'icon-light-grey'
-                  } icon-up-speed`}
-                ></span>
-                <small>
-                  <b style={{ textTransform: 'none' }}>20Mb/s</b>
-                </small>
-              </WidgetMetric>
+              <MetricMidgetContainer>
+                {connectionsMedian?.map(({ metric_id, unit, median_value }: any) => {
+                  return (
+                    <WidgetMetric key={metric_id} active={paymentActiveNewRow}>
+                      <span
+                        className={`icon icon-20 ${getMetricIconClassName(metric_id)} ${
+                          paymentActiveNewRow ? 'icon-light-blue' : 'icon-light-grey'
+                        }  icon-plug`}
+                      ></span>
+                      <small>
+                        <b style={{ textTransform: 'none' }}>
+                          {median_value}
+                          {unit}
+                        </b>
+                      </small>
+                    </WidgetMetric>
+                  )
+                })}
+              </MetricMidgetContainer>
               <PaymentChart
                 low={paymentMetrics.withoutConnection}
                 average={paymentMetrics.atLeastOneBellowAvg}
