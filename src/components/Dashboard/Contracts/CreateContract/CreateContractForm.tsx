@@ -14,6 +14,7 @@ import {
 import { validateForm } from 'src/utils/validateForm'
 import { useNavigate } from 'react-router-dom'
 import Dialog, { DialogType } from 'src/components/common/Dialog/Dialog'
+import { useContractsContext } from '../state/useContractsContext'
 
 interface ICreateContractFormProps {
   label?: string
@@ -27,10 +28,14 @@ const tabs = {
 
 const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element => {
   const {
+    actions: { reloadContracts },
+  } = useContractsContext()
+  const {
     state,
     dispatch,
     actions: { saveDraft },
   } = useCreateContractContext()
+
   const navigate = useNavigate()
 
   const { draft, contractForm, activeTab, error, showDialog } = state
@@ -66,6 +71,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
   const onPublishDraft = async () => {
     try {
       const response = await publishContractDraft(contractForm, draft.data?.id)
+      reloadContracts()
       navigate(`/dashboard/contract/${response?.id}`)
     } catch (error) {
       dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
@@ -75,6 +81,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
   const onDeleteDraft = async () => {
     try {
       draft && draft.data && (await deleteContractDraft(draft.data?.id))
+      reloadContracts()
       toggleShowDialog()
       navigate('/dashboard')
     } catch (error) {
