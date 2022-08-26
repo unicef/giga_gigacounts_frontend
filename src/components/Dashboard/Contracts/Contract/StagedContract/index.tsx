@@ -87,7 +87,7 @@ const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContract
 
   return (
     <>
-      {contract?.details.loading ? (
+      {contract?.details.data === undefined && contract?.details.loading ? (
         <Loader />
       ) : (
         <ContractStagedContainer>

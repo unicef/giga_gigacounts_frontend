@@ -5,7 +5,7 @@ import { IContractDetails } from 'src/types/general'
 export const usePayments = () => {
   const selectedContract = useSelectedContract()
   return useMemo(() => {
-    if (selectedContract && !selectedContract.details.loading && selectedContract.details.data) {
+    if (selectedContract && selectedContract.details.data !== undefined) {
       return (selectedContract.details.data as IContractDetails)?.payments
     }
 

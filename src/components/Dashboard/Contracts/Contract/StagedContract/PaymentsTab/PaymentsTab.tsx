@@ -46,7 +46,10 @@ const PaymentsTab: React.FC = (): JSX.Element => {
         ) : (
           selectedContract?.status !== ContractStatus.Completed && (
             <PaymentsRow selectable={false}>
-              <NewPayment onCreateNewPayment={createNewPayment} disabled={disableCreate} />
+              <NewPayment
+                onCreateNewPayment={createNewPayment}
+                disabled={disableCreate || loading || contractPayments.loading}
+              />
             </PaymentsRow>
           )
         )}
@@ -59,7 +62,7 @@ const PaymentsTab: React.FC = (): JSX.Element => {
             />
           </PaymentsRow>
         ))}
-        {loading || (contractPayments.loading && <Loader />)}
+        {(loading || contractPayments.loading) && <Loader />}
       </PaymentRowWrapper>
 
       {(selectedPaymentId || layout !== 'view') && (

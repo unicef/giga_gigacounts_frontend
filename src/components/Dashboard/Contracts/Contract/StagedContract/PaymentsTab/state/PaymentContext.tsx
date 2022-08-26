@@ -59,7 +59,7 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
   const selectedPayment = usePayment(localState.selectedPaymentId)
 
   const {
-    actions: { reloadContractPayments },
+    actions: { reloadContractPayments, fetchContract },
   } = useContractsContext()
 
   const selectedContract = useSelectedContract()
@@ -154,7 +154,7 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
   }, [selectedContract, dispatch])
 
   const savePayment = useCallback(async () => {
-    if (localState.paymentForm) {
+    if (selectedContract?.id && localState.paymentForm) {
       dispatch(createAction(PaymentsActionType.SET_LOADING))
       if (selectedPayment) {
         try {
@@ -165,7 +165,7 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
               year: new Date(selectedPayment.paidDate).getFullYear(),
             }),
           )
-          reloadContractPayments(selectedContract?.id)
+          fetchContract(selectedContract.id)
           dispatch(createAction(PaymentsActionType.PAYMENT_UPDATED, { payment }))
         } catch (error) {
           dispatch(createAction(PaymentsActionType.SET_ERROR, error))
@@ -173,7 +173,7 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
       } else {
         try {
           const payment = await createPayment(localState.paymentForm)
-          reloadContractPayments(selectedContract?.id)
+          fetchContract(selectedContract.id)
           dispatch(createAction(PaymentsActionType.PAYMENT_CREATED, { payment }))
         } catch (error) {
           dispatch(createAction(PaymentsActionType.SET_ERROR, error))
@@ -181,7 +181,7 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
       }
       fetchAvailablePayments()
     }
-  }, [fetchAvailablePayments, localState.paymentForm, reloadContractPayments, selectedContract?.id, selectedPayment])
+  }, [fetchAvailablePayments, fetchContract, localState.paymentForm, selectedContract?.id, selectedPayment])
 
   const cancelPayment = () => {
     dispatch(createAction(PaymentsActionType.CANCEL_PAYMENT))

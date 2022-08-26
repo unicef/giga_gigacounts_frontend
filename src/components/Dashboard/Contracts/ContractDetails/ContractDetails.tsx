@@ -13,7 +13,7 @@ const ContractDetails: React.FC<IContractDetailsProps> = ({ id }: IContractDetai
 
   return (
     <ContractDetailsContainer>
-      {contract?.details.loading ? (
+      {contract?.details.data === undefined && contract?.details.loading ? (
         <Loader />
       ) : (
         <div>
