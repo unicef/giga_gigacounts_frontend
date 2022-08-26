@@ -64,7 +64,7 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
 
   const selectedContract = useSelectedContract()
 
-  const contractAvailablePayments = useCallback(async () => {
+  const fetchAvailablePayments = useCallback(async () => {
     if (selectedContract?.id) {
       try {
         const availablePayments = await getContractAvailablePayments<IPaymentDate[]>(selectedContract.id)
@@ -179,8 +179,9 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
           dispatch(createAction(PaymentsActionType.SET_ERROR, error))
         }
       }
+      fetchAvailablePayments()
     }
-  }, [localState.paymentForm, reloadContractPayments, selectedContract?.id, selectedPayment])
+  }, [fetchAvailablePayments, localState.paymentForm, reloadContractPayments, selectedContract?.id, selectedPayment])
 
   const cancelPayment = () => {
     dispatch(createAction(PaymentsActionType.CANCEL_PAYMENT))
@@ -228,9 +229,9 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
 
   useEffect(() => {
     if (!localState.loading && localState.contractId !== selectedContract?.id) {
-      contractAvailablePayments()
+      fetchAvailablePayments()
     }
-  }, [contractAvailablePayments, localState.contractId, localState.loading, selectedContract?.id])
+  }, [fetchAvailablePayments, localState.contractId, localState.loading, selectedContract?.id])
 
   const value = useMemo(
     () => ({
