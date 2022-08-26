@@ -218,6 +218,7 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
     if (
       !localState.loading &&
       localState.paymentForm?.contractId &&
+      localState.layout !== 'edit' &&
       localState.layout !== 'view' &&
       selectedContract?.id !== localState.paymentForm.contractId
     ) {
