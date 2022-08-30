@@ -1,11 +1,11 @@
 name: Azure Static Web Apps CI/CD
 
 on:
-  push:
-    branches:
-      - dev
-    paths-ignore:
-      - '**/README.md'
+#  push:
+#    branches:
+#      - dev
+#    paths-ignore:
+#      - '**/README.md'
   workflow_dispatch:
     inputs:
       target_env:
