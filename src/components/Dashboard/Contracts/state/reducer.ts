@@ -316,6 +316,14 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
       }
     }
 
+    case ContractsActionType.SET_EXPANDED_LTA: {
+      const { ltaId = null } = payload ?? {}
+      return {
+        ...state,
+        expandedLtaId: ltaId,
+      }
+    }
+
     default:
       return {
         ...state,

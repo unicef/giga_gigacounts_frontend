@@ -15,6 +15,7 @@ export enum ContractsActionType {
   SET_SCHOOL_MEASURES = 'SET_SCHOOL_MEASURES',
   SET_SELECTED_SCHOOL = 'SET_SELECTED_SCHOOL',
   SET_ACTIVE_TAB = 'SET_ACTIVE_TAB',
+  SET_EXPANDED_LTA = 'SET_EXPANDED_LTA',
 }
 
 export interface ContractsAction {
@@ -40,6 +41,7 @@ export interface ContractsState {
   }
   activeTab: ContractStagedActiveTab
   contractPayments: Array<{}>
+  expandedLtaId: string | null
 }
 
 export interface ContractStagedTabItems {

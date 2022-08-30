@@ -19,6 +19,7 @@ import UploadButton from 'src/components/common/UploadButton/UploadButton'
 import { useCreateContractContext } from '../state/useCreateContractContext'
 import { CreateContractActionType } from '../state/types'
 import { useCountryCode } from '../state/hooks'
+import { useContractsContext } from '../../state/useContractsContext'
 
 const GeneralTab: React.FC = (): JSX.Element => {
   const {
@@ -26,6 +27,11 @@ const GeneralTab: React.FC = (): JSX.Element => {
     actions: { reload, saveDraft, getLtsByCountryId },
     dispatch,
   } = useCreateContractContext()
+
+  const {
+    state: { expandedLtaId },
+    actions: { toggleExpandedLta },
+  } = useContractsContext()
 
   const countryCode = useCountryCode(contractForm.countryId)
 
@@ -47,6 +53,9 @@ const GeneralTab: React.FC = (): JSX.Element => {
 
   const onLtaChange = (e: ChangeEvent<HTMLSelectElement>) => {
     dispatch({ type: CreateContractActionType.SET_LTA, payload: e.target.value || undefined })
+    if (e.target.value && e.target.value !== expandedLtaId) {
+      toggleExpandedLta(e.target.value)
+    }
   }
 
   const onBudgetChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -81,8 +90,10 @@ const GeneralTab: React.FC = (): JSX.Element => {
   }
 
   useEffect(() => {
-    contractForm.countryId && getLtsByCountryId(contractForm?.countryId)
-  }, [contractForm.countryId, getLtsByCountryId])
+    if (contractForm.countryId && ltas[contractForm.countryId] === undefined) {
+      getLtsByCountryId(contractForm.countryId)
+    }
+  }, [contractForm.countryId, getLtsByCountryId, ltas])
 
   return (
     <GeneralContainer>
@@ -124,15 +135,16 @@ const GeneralTab: React.FC = (): JSX.Element => {
             disabled={draft.loading}
           />
           <div className="input-container dropdown">
-            <select onChange={onLtaChange} value={contractForm.ltaId ?? ''} disabled={draft.loading}>
+            <select onChange={onLtaChange} value={contractForm.ltaId ?? ''} disabled={loading || draft.loading}>
               <option value="" hidden={contractForm.ltaId === undefined}>
                 {contractForm.ltaId ? 'None' : 'Part of Long Term Agreement'}
               </option>
-              {ltas.map((lta) => (
-                <option key={lta.id} value={lta.id}>
-                  {lta.name}
-                </option>
-              ))}
+              {contractForm.countryId &&
+                ltas[contractForm.countryId]?.map((lta) => (
+                  <option key={lta.id} value={lta.id}>
+                    {lta.name}
+                  </option>
+                ))}
             </select>
           </div>
 

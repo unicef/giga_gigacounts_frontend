@@ -140,6 +140,7 @@ type DetailsTypeByStatus<Status extends ContractStatus = ContractStatus> = Statu
 export interface ILta {
   id: string
   name: string
+  country_id: string
 }
 
 export interface IContract<Status extends ContractStatus = ContractStatus> {

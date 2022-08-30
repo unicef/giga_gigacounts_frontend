@@ -72,7 +72,7 @@ export interface ExpectedMetric {
 
 export interface ContractPreset {
   ltaId?: string
-  countryCode?: string
+  countryId?: string
 }
 
 export interface ContractForm {
@@ -107,7 +107,7 @@ export interface CreateContractState {
   isps: IIsp[]
   countries: ICountries[]
   currencies: ICurrency[]
-  ltas: ILtas[]
+  ltas: Record<string, ILtas[]>
   contractForm: ContractForm
   schools: ISchool[]
   showDialog: boolean

@@ -112,6 +112,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
         contractForm: {
           ...state.contractForm,
           countryId: payload,
+          ltaId: undefined,
         },
       }
     }
@@ -318,9 +319,13 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
     }
 
     case CreateContractActionType.GET_LTS_BY_COUNTRY_ID: {
+      const { countryId, ltas } = payload
       return {
         ...state,
-        ltas: payload,
+        ltas: {
+          ...state.ltas,
+          [countryId]: ltas,
+        },
       }
     }
 

@@ -24,6 +24,7 @@ export interface IContractsContext {
     reloadContractPayments: (id?: string) => void
     setNewContract: (newContract?: { ltaId?: string }) => void
     setSelectedTab: (tabId: string) => void
+    toggleExpandedLta: (ltaId: string | null) => void
   }
 }
 
@@ -55,6 +56,9 @@ export const ContractsContext = createContext<IContractsContext>({
       throw new Error('Not implemented')
     },
     setSelectedTab: () => {
+      throw new Error('Not implemented')
+    },
+    toggleExpandedLta: () => {
       throw new Error('Not implemented')
     },
   },
@@ -188,6 +192,17 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [dispatch],
   )
 
+  const toggleExpandedLta = useCallback(
+    (ltaId: string | null) => {
+      dispatch(
+        createAction(ContractsActionType.SET_EXPANDED_LTA, {
+          ltaId: localState.expandedLtaId === ltaId ? null : ltaId,
+        }),
+      )
+    },
+    [localState.expandedLtaId],
+  )
+
   useEffect(() => {
     if (localState.selectedSchool?.schoolId && localState.selectedSchool?.contractId)
       fetchSchoolMeasures(localState.selectedSchool?.schoolId, localState.selectedSchool?.contractId, 'month')
@@ -219,6 +234,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         reloadContractPayments: fetchContractPayments,
         setNewContract,
         setSelectedTab,
+        toggleExpandedLta,
       },
     }),
     [
@@ -231,6 +247,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
       fetchContractPayments,
       setNewContract,
       setSelectedTab,
+      toggleExpandedLta,
     ],
   )
   useEffect(() => {

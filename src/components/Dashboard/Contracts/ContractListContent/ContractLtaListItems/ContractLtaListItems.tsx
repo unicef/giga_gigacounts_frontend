@@ -47,8 +47,8 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({
     navigate('contract', {
       state: {
         preset: {
-          ltaId: contracts?.[0].lta?.id,
-          countryCode: contracts?.[0].country?.code,
+          ltaId: lta.id,
+          countryId: lta.country_id,
         },
         reset: true,
       },

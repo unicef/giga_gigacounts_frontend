@@ -51,7 +51,7 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   const navigate = useNavigate()
   const {
     state: { newContract, ...state },
-    actions: { setNewContract, reloadContracts },
+    actions: { setNewContract, reloadContracts, toggleExpandedLta },
   } = useContractsContext()
 
   const [localState, dispatch] = useReducer(
@@ -143,10 +143,11 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   }, [localState.contractForm, reloadContracts])
 
   const getLtsByCountryId = useCallback(async (countryId: string) => {
+    dispatch(createAction(CreateContractActionType.GET_LTS_BY_COUNTRY_ID, { countryId, ltas: [] }))
     try {
       const response = await getLtas(countryId)
 
-      dispatch(createAction(CreateContractActionType.GET_LTS_BY_COUNTRY_ID, response))
+      dispatch(createAction(CreateContractActionType.GET_LTS_BY_COUNTRY_ID, { countryId, ltas: response }))
     } catch (error) {
       dispatch(createAction(CreateContractActionType.SET_ERROR, error))
     }
@@ -167,17 +168,36 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   useEffect(() => {
     const { reset } = (location.state ?? {}) as { reset?: boolean }
 
-    if (reset) {
-      const { ltaId, countryCode } = (location.state as { preset?: ContractPreset })?.preset ?? {}
-      const countryId = localState.countries.find((country) => country.code === countryCode)?.id
+    if (reset && !localState.loading) {
+      const { ltaId, countryId } = (location.state as { preset?: ContractPreset })?.preset ?? {}
 
-      navigate(location.pathname, { replace: true })
-      dispatch({
-        type: CreateContractActionType.RESET,
-        payload: { preset: { ltaId, countryId } },
-      })
+      if (
+        ltaId &&
+        countryId &&
+        (ltaId !== localState.contractForm.ltaId || countryId !== localState.contractForm.countryId)
+      ) {
+        navigate(location.pathname, { replace: true })
+
+        dispatch({
+          type: CreateContractActionType.RESET,
+          payload: { preset: { ltaId, countryId } },
+        })
+
+        if (ltaId !== state.expandedLtaId) {
+          toggleExpandedLta(ltaId)
+        }
+      }
     }
-  }, [localState.countries, location.pathname, location.state, navigate, state])
+  }, [
+    localState,
+    localState.countries,
+    location,
+    location.pathname,
+    location.state,
+    navigate,
+    state,
+    toggleExpandedLta,
+  ])
 
   useEffect(() => {
     if (localState.contractForm.id === null && !localState.draft.loading) {
