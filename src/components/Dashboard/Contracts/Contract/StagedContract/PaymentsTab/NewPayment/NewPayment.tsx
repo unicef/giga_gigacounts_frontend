@@ -83,7 +83,7 @@ const NewPayment: React.FC<NewPaymentProps> = ({ onCreateNewPayment, placeholder
                       <span
                         className={`icon icon-20 ${getMetricIconClassName(metric_id)} ${
                           paymentActiveNewRow ? 'icon-light-blue' : 'icon-light-grey'
-                        }  icon-plug`}
+                        }`}
                       ></span>
                       <small>
                         <b style={{ textTransform: 'none' }}>

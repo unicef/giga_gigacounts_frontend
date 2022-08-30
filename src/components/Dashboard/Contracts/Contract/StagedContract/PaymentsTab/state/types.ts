@@ -37,6 +37,6 @@ export interface PaymentsState {
   paymentMetrics: IPaymentMetrics
   paymentDates: IPaymentDate[]
   contractId?: string
-  isAmountValid: boolean
+  amountNotValid: boolean
   showErrorMessage: boolean
 }

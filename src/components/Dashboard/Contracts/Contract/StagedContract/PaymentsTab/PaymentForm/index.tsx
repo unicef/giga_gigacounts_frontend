@@ -33,7 +33,7 @@ interface IPaymentFormProps {
 
 const PaymentForm: React.FC<IPaymentFormProps> = ({ contractId }: IPaymentFormProps): JSX.Element => {
   const {
-    state: { paymentForm, paymentDates, isAmountValid, showErrorMessage, selectedPaymentId, layout, loading },
+    state: { paymentForm, paymentDates, amountNotValid, showErrorMessage, selectedPaymentId, layout, loading },
     actions: { savePayment, cancelPayment, onPaymentFormDateChange, reload },
     dispatch,
   } = usePaymentsContext()
@@ -58,8 +58,8 @@ const PaymentForm: React.FC<IPaymentFormProps> = ({ contractId }: IPaymentFormPr
     dispatch(createAction(PaymentsActionType.SET_PAYMENT_AMOUNT, e.target.value))
   }
 
-  const onAmountBlur = () => {
-    dispatch(createAction(PaymentsActionType.SET_IS_AMOUNT_VALID))
+  const onAmountBlur = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch(createAction(PaymentsActionType.SET_IS_AMOUNT_VALID, e.target.value))
   }
 
   const onUpload = async (file: IFileUpload) => {
@@ -143,11 +143,11 @@ const PaymentForm: React.FC<IPaymentFormProps> = ({ contractId }: IPaymentFormPr
                   required
                   onChange={onAmountChange}
                   onBlur={onAmountBlur}
-                  className={`${isAmountValid ? 'input-error' : ''}`}
+                  className={`${amountNotValid ? 'input-error' : ''}`}
                 />
               </div>
             </CurrencyAmountWrapper>
-            {isAmountValid && <span className="error-text">Amount must greater than 0</span>}
+            {amountNotValid && <span className="error-text">Amount must greater than 0</span>}
           </CurrencyContainer>
         </form>
         <InvoiceContainer>
@@ -207,7 +207,11 @@ const PaymentForm: React.FC<IPaymentFormProps> = ({ contractId }: IPaymentFormPr
         )}
       </PaymentFormContainer>
       <ButtonsContainer>
-        <SaveButton onClick={savePayment} isAmountValid={isAmountValid} disabled={isAmountValid || loading}>
+        <SaveButton
+          onClick={savePayment}
+          amountNotValid={paymentForm.amount <= 0}
+          disabled={loading || paymentForm.amount <= 0}
+        >
           Save
         </SaveButton>
         <CancelButton className="btn-transparent-grey active" onClick={cancelPayment}>

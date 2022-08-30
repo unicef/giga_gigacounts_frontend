@@ -26,6 +26,6 @@ export const INITIAL_PAYMENTS_STATE: PaymentsState = {
     withoutConnection: 0,
   },
   paymentDates: [],
-  isAmountValid: false,
+  amountNotValid: false,
   showErrorMessage: false,
 }

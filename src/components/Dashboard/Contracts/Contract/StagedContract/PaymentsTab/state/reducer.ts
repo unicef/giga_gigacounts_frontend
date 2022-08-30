@@ -166,15 +166,14 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
         layout: 'view',
         paymentActiveNewRow: false,
         selectedPaymentId: undefined,
-        isAmountValid: false,
+        amountNotValid: false,
       }
     }
 
     case PaymentsActionType.SET_IS_AMOUNT_VALID: {
-      const isAmountValid = state.paymentForm.amount === 0 || state.paymentForm.amount.toString() === ''
       return {
         ...state,
-        isAmountValid,
+        amountNotValid: payload > 0 ? false : true,
       }
     }
 

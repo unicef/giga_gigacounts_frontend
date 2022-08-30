@@ -102,7 +102,7 @@ export const ButtonsContainer = styled.div`
   height: 32px;
 `
 
-export const SaveButton = styled.button<{ isAmountValid: boolean }>`
+export const SaveButton = styled.button<{ amountNotValid: boolean }>`
   background-color: var(--color-green);
   color: var(--color-white);
   width: 150px;
@@ -112,8 +112,8 @@ export const SaveButton = styled.button<{ isAmountValid: boolean }>`
     color: var(--color-white);
     transition: all 0.1s ease-out;
   }
-  ${({ isAmountValid }) =>
-    isAmountValid && {
+  ${({ amountNotValid }) =>
+    amountNotValid && {
       backgroundColor: 'var(--color-light-grey)',
       color: 'var(--color-white)',
       pointerEvents: 'none',

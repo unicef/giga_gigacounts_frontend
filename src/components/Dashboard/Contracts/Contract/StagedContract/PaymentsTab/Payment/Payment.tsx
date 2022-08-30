@@ -60,7 +60,7 @@ const Payment: React.FC<PaymentProps> = ({ active, payment, onPaymentSelected }:
                   <span
                     className={`icon icon-20 ${getMetricIconClassName(metric_id)} ${
                       active ? 'icon-light-blue' : 'icon-light-grey'
-                    }  icon-plug`}
+                    }`}
                   ></span>
                   <small>
                     <b style={{ textTransform: 'none' }}>
