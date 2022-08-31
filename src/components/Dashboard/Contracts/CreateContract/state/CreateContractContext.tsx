@@ -2,7 +2,7 @@ import axios from 'axios'
 import { createContext, FC, useReducer, useMemo, Dispatch, useCallback, useEffect } from 'react'
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'
 import { createContractDraft, updateContractDraft } from 'src/api/contracts'
-import { getCountries, getCurrency, getLtas } from 'src/api/createContract'
+import { getCountries, getCurrencies, getLtas } from 'src/api/createContract'
 import { getDraft } from 'src/api/drafts'
 import { ChildrenProps } from 'src/types/utils'
 import { clean } from 'src/utils/clean'
@@ -94,7 +94,7 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   const fetchData = useCallback(async () => {
     try {
       axios
-        .all([getCountries(), getCurrency()])
+        .all([getCountries(), getCurrencies()])
         .then(
           axios.spread((...responses) => {
             const countries = responses[0]

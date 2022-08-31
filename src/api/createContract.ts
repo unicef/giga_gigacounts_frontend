@@ -27,7 +27,7 @@ export const getCountries = async (): Promise<ICountries | Error> => {
   throw new Error('Failed to get the contracts')
 }
 
-export const getCurrency = async (): Promise<ICurrency | Error> => {
+export const getCurrencies = async (): Promise<ICurrency | Error> => {
   const response = await instance.get('/currency')
 
   if (response.status === 200) {

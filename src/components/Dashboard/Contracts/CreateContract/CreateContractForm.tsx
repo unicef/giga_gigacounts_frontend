@@ -1,20 +1,20 @@
 import { MouseEvent, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { deleteContractDraft, publishContractDraft } from 'src/api/contracts'
-import ConnectionTab from './ConnectionTab/ConnectionTab'
-import GeneralTab from './GeneralTab/GeneralTab'
-import SchoolsTab from './SchoolsTab/SchoolsTab'
-import { useCreateContractContext } from './state/useCreateContractContext'
-import { CreateContractContainer, Header, FormHeaderActions, FormHeaderTabs, FormHeaderMessage } from './styles'
+import Dialog, { DialogType } from 'src/components/common/Dialog/Dialog'
+import { useContractsContext } from '../state/useContractsContext'
 import {
   CreateContractActionType,
   CreateContractActiveTab,
   CreateContractTabState,
   CreateContractTab,
 } from './state/types'
-import { validateForm } from 'src/utils/validateForm'
-import { useNavigate } from 'react-router-dom'
-import Dialog, { DialogType } from 'src/components/common/Dialog/Dialog'
-import { useContractsContext } from '../state/useContractsContext'
+import ConnectionTab from './ConnectionTab/ConnectionTab'
+import GeneralTab from './GeneralTab/GeneralTab'
+import SchoolsTab from './SchoolsTab/SchoolsTab'
+import { useCreateContractContext } from './state/useCreateContractContext'
+import { validateForm } from './utils/validateForm'
+import { CreateContractContainer, Header, FormHeaderActions, FormHeaderTabs, FormHeaderMessage } from './styles'
 
 interface ICreateContractFormProps {
   label?: string
