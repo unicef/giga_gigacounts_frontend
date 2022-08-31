@@ -52,7 +52,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
   }
 
   const onLtaChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    dispatch({ type: CreateContractActionType.SET_LTA, payload: e.target.value || undefined })
+    dispatch({ type: CreateContractActionType.SET_LTA, payload: e.target.value || null })
     if (e.target.value && e.target.value !== expandedLtaId) {
       toggleExpandedLta(e.target.value)
     }
