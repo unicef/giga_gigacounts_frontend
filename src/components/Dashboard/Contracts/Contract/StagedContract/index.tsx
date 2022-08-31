@@ -8,6 +8,16 @@ import {
 import { ContractStatus, IContract } from 'src/types/general'
 import File from 'src/components/common/File/File'
 import Dialog, { DialogType } from 'src/components/common/Dialog/Dialog'
+import { publishContractToCompleted } from 'src/api/contracts'
+import { createAction } from 'src/utils/createAction'
+import Text from 'src/components/common/Text'
+import { useOnClickOutside } from 'src/hooks/useOnClickOutside'
+import Loader from 'src/components/common/Loader'
+import { useRoleCheck } from 'src/state/hooks'
+import { ISP_ROLE } from 'src/consts/roles'
+import { useGeneralContext } from 'src/state/GeneralContext'
+import TabButtons from './TabButtons/TabButtons'
+import PaymentsTab from './PaymentsTab/PaymentsTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
 import {
   Attachments,
@@ -21,16 +31,7 @@ import {
   LtaNumber,
   TitleItem,
 } from './styles'
-import { publishContractToCompleted } from 'src/api/contracts'
 
-import PaymentsTab from './PaymentsTab/PaymentsTab'
-import TabButtons from './TabButtons/TabButtons'
-import { createAction } from 'src/utils/createAction'
-import Text from 'src/components/common/Text'
-import { useOnClickOutside } from 'src/hooks/useOnClickOutside'
-import Loader from 'src/components/common/Loader'
-import { useRoleCheck } from 'src/state/hooks'
-import { ISP_ROLE } from 'src/consts/roles'
 interface IContractDetailsProps {
   contract: IContract<ContractStatus.Ongoing | ContractStatus.Expired>
 }
@@ -55,6 +56,10 @@ const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContract
     actions: { reloadContracts, setSelectedTab },
   } = useContractsContext()
 
+  const {
+    actions: { reloadContractCounts },
+  } = useGeneralContext()
+
   const toggleShowDialog = () => setShowDialog((prevState) => !prevState)
 
   const onContractStatusChange = async () => {
@@ -62,6 +67,7 @@ const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContract
       if (contract && contract.id) await publishContractToCompleted(contract.id)
       toggleShowDialog()
       reloadContracts()
+      reloadContractCounts()
     } catch (error) {
       dispatch(createAction(ContractsActionType.SET_ERROR, error))
     }
