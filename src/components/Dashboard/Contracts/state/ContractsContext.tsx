@@ -21,7 +21,7 @@ export interface IContractsContext {
     setSelectedSchool: (schoolId: string, contractId: string) => void
     fetchSchoolMeasures: (schoolId: string, id: string, month: string) => void
     reloadContracts: () => void
-    reloadContractPayments: (id?: string) => void
+    reloadContractPayments: (id?: string) => Promise<void>
     setNewContract: (newContract?: { ltaId?: string }) => void
     setSelectedTab: (tabId: string) => void
     toggleExpandedLta: (ltaId: string | null) => void

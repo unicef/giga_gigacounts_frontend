@@ -14,7 +14,6 @@ export enum PaymentsActionType {
   SET_IS_AMOUNT_VALID = 'SET_IS_AMOUNT_VALID',
   SET_INVOICE = 'SET_INVOICE',
   SET_RECEIPT = 'SET_RECEIPT',
-  CHANGE_PAYMENT_STATUS = 'CHANGE_PAYMENT_STATUS',
 }
 
 export interface PaymentsAction {

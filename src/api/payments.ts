@@ -1,4 +1,4 @@
-import { IPaymentForm, IContractPayment } from 'src/types/general'
+import { IPaymentForm, IContractPayment, IPaymentStatus } from 'src/types/general'
 import instance from './init'
 
 const ENDPOINT_URL = '/payment'
@@ -23,7 +23,7 @@ export const updatePayment = async <T>(paymentId: string, payment: Partial<IPaym
   throw new Error('Failed to update payment')
 }
 
-export const changePaymentStatus = async <T>(paymentId: string, status: number): Promise<T> => {
+export const changePaymentStatus = async <T>(paymentId: string, status: IPaymentStatus): Promise<T> => {
   const response = await instance.post<T>(`${ENDPOINT_URL}/change-status`, { paymentId, status })
   if (response.status === 200) return response.data
   throw new Error('Failed to update payment')

@@ -30,7 +30,7 @@ import {
 const PaymentForm: React.FC = (): JSX.Element => {
   const {
     state: { paymentForm, paymentDates, amountNotValid, selectedPaymentId, layout, loading },
-    actions: { savePayment, cancelPayment, onPaymentFormDateChange, reload, verifyPayment },
+    actions: { savePayment, cancelPayment, onPaymentFormDateChange, reload, verifyPayment, rejectPayment },
     dispatch,
   } = usePaymentsContext()
 
@@ -55,7 +55,10 @@ const PaymentForm: React.FC = (): JSX.Element => {
 
   const createdByIsp = useMemo(() => selectedPayment?.createdBy?.role === ISP_ROLE, [selectedPayment?.createdBy?.role])
 
-  const hasCreatorRole = useMemo(() => isIsp === createdByIsp, [createdByIsp, isIsp])
+  const hasCreatorRole = useMemo(
+    () => !selectedPayment || isIsp === createdByIsp,
+    [createdByIsp, isIsp, selectedPayment],
+  )
 
   const contractCompleted = useMemo(() => contract?.status === ContractStatus.Completed, [contract?.status])
 
@@ -65,8 +68,8 @@ const PaymentForm: React.FC = (): JSX.Element => {
   )
 
   const showReceipt = useMemo(
-    () => selectedPayment?.receipt || ((createdByIsp || !isIsp) && !contractCompleted),
-    [contractCompleted, createdByIsp, isIsp, selectedPayment?.receipt],
+    () => selectedPayment?.receipt || (!isIsp && !contractCompleted),
+    [contractCompleted, isIsp, selectedPayment?.receipt],
   )
 
   const showVerifyReject = useMemo(
@@ -125,6 +128,7 @@ const PaymentForm: React.FC = (): JSX.Element => {
               type={MessageType.ERROR}
               title="Your payment was declined"
               description="Country Office declined your payment request. Please fill in the correct information or re-upload the invoice"
+              showCloseBtn={false}
             />
           )}
         </PaymentHeader>
@@ -240,7 +244,13 @@ const PaymentForm: React.FC = (): JSX.Element => {
             <PrimaryButton onClick={verifyPayment} disabled={amountNotValid || loading}>
               Verify
             </PrimaryButton>
-            <SecondaryButton className="btn-transparent-grey active">Reject</SecondaryButton>
+            <SecondaryButton
+              onClick={rejectPayment}
+              disabled={amountNotValid || loading}
+              className="btn-transparent-grey active"
+            >
+              Reject
+            </SecondaryButton>
           </>
         )}
         {!readonly && (

@@ -13,22 +13,22 @@ interface PendingContractProps {
 
 const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingContractProps): JSX.Element => {
   const uptime = useMemo(
-    () => contract.details.data?.expectedMetrics.find(({ metricId }) => metricId.toString() === '1'),
+    () => contract.details.data?.expectedMetrics?.find(({ metricId }) => metricId.toString() === '1'),
     [contract.details.data?.expectedMetrics],
   )
 
   const latency = useMemo(
-    () => contract.details.data?.expectedMetrics.find(({ metricId }) => metricId.toString() === '2'),
+    () => contract.details.data?.expectedMetrics?.find(({ metricId }) => metricId.toString() === '2'),
     [contract.details.data?.expectedMetrics],
   )
 
   const downloadSpeed = useMemo(
-    () => contract.details.data?.expectedMetrics.find(({ metricId }) => metricId.toString() === '3'),
+    () => contract.details.data?.expectedMetrics?.find(({ metricId }) => metricId.toString() === '3'),
     [contract.details.data?.expectedMetrics],
   )
 
   const uploadSpeed = useMemo(
-    () => contract.details.data?.expectedMetrics.find(({ metricId }) => metricId.toString() === '4'),
+    () => contract.details.data?.expectedMetrics?.find(({ metricId }) => metricId.toString() === '4'),
     [contract.details.data?.expectedMetrics],
   )
 
