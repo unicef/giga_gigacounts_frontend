@@ -21,7 +21,7 @@ const findType = (url?: string) => {
   return 'FILE'
 }
 
-const File: React.FC<FileProps> = ({ id, type, url, name, onDelete, allowDelete }: FileProps): JSX.Element => {
+const File: React.FC<FileProps> = ({ id, type, url, name, onDelete, allowDelete = false }: FileProps): JSX.Element => {
   const realType = useMemo(() => type ?? findType(url ?? name), [name, type, url])
 
   const [loading, setLoading] = useState(false)

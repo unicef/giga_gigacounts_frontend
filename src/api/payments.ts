@@ -11,12 +11,6 @@ export const createPayment = async <T>(payment: IPaymentForm): Promise<T> => {
   throw new Error('Failed to create a payment')
 }
 
-export const getPayment = async <T>(paymentId: string): Promise<T> => {
-  const response = await instance.get<T>(`${ENDPOINT_URL}/${paymentId}`)
-  if (response.status === 200) return response.data
-  throw new Error('Failed to get payment')
-}
-
 export const getContractPayments = async (contractId: string): Promise<IContractPayment[]> => {
   const response = await instance.get<IContractPayment[]>(`${ENDPOINT_URL}/contract/${contractId}`)
   if (response.status === 200) return response.data
@@ -25,6 +19,12 @@ export const getContractPayments = async (contractId: string): Promise<IContract
 
 export const updatePayment = async <T>(paymentId: string, payment: Partial<IPaymentForm>): Promise<T> => {
   const response = await instance.put<T>(ENDPOINT_URL, { paymentId, ...payment })
+  if (response.status === 200) return response.data
+  throw new Error('Failed to update payment')
+}
+
+export const changePaymentStatus = async <T>(paymentId: string, status: number): Promise<T> => {
+  const response = await instance.post<T>(`${ENDPOINT_URL}/change-status`, { paymentId, status })
   if (response.status === 200) return response.data
   throw new Error('Failed to update payment')
 }

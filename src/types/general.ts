@@ -188,6 +188,12 @@ export interface IContractTotalSpent {
   percentage: number
 }
 
+export enum IPaymentStatus {
+  Verified = 'Verified',
+  Rejected = 'Rejected',
+  Pending = 'Pending',
+}
+
 export interface IPaymentAttachment {
   id: string
   ipfs_url: string | null
@@ -204,18 +210,28 @@ export interface IPaymentForm {
   amount: number
   invoice: IFileUpload | undefined
   receipt: IFileUpload | undefined
+  metrics: IPaymentMetrics
 }
 
 export interface IContractPayment {
   id: string
-  paidDate: string
+  paidDate: {
+    month: number
+    year: number
+  }
+  dateFrom: string
+  dateTo: string
   description: string
   currency: ICurrency
-  amount: 10000
-  status: string
+  amount: number
+  status: IPaymentStatus
   metrics: IPaymentMetrics
   invoice?: IPaymentAttachment
   receipt?: IPaymentAttachment
+  createdBy: {
+    name?: string
+    role?: string
+  }
 }
 
 export interface IPaymentMeasure {

@@ -13,43 +13,73 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
     }
 
     case PaymentsActionType.SET_AVAILABLE_PAYMENTS: {
-      const { availablePayments, selectedContract } = payload
-
-      const firstAvailablePayment = availablePayments[0]
+      const { availablePayments } = payload
 
       return {
         ...state,
-        paymentForm: {
-          ...PAYMENT_FORM_INITIAL_STATE,
-          month: firstAvailablePayment?.month ?? PAYMENT_FORM_INITIAL_STATE.month,
-          year: firstAvailablePayment?.year ?? PAYMENT_FORM_INITIAL_STATE.year,
-          contractId: selectedContract.id,
-          currencyId: selectedContract.details.data.currency.id,
-        },
         paymentDates: availablePayments,
-        contractId: selectedContract.id,
         loading: false,
       }
     }
 
     case PaymentsActionType.SET_PAYMENT_METRICS: {
-      const { paymentMetrics } = payload
+      const { metrics } = payload
 
       return {
         ...state,
-        paymentMetrics,
+        paymentForm: {
+          ...state.paymentForm,
+          metrics,
+        },
         loading: false,
       }
     }
 
     case PaymentsActionType.SET_SELECTED_PAYMENT: {
-      const { paymentId } = payload ?? {}
+      const { payment, contract } = payload ?? {}
+
+      if (payment && contract) {
+        return {
+          ...state,
+          selectedPaymentId: payment.id,
+          layout: 'edit',
+          paymentForm: {
+            ...PAYMENT_FORM_INITIAL_STATE,
+            month: payment.paidDate.month,
+            year: payment.paidDate.year,
+            contractId: contract.id,
+            currencyId: contract.details.data.currency.id,
+            amount: +payment.amount,
+            description: payment.description,
+            metrics: payment.metrics,
+          },
+          amountNotValid: false,
+        }
+      }
 
       return {
         ...state,
-        selectedPaymentId: paymentId,
-        paymentActiveNewRow: false,
-        layout: 'edit',
+        selectedPaymentId: undefined,
+        layout: 'view',
+        amountNotValid: false,
+        paymentForm: {
+          ...PAYMENT_FORM_INITIAL_STATE,
+        },
+      }
+    }
+
+    case PaymentsActionType.RESET: {
+      return {
+        ...state,
+        selectedPaymentId: undefined,
+        layout: 'view',
+        amountNotValid: false,
+        paymentForm: {
+          ...PAYMENT_FORM_INITIAL_STATE,
+        },
+        paymentDates: [],
+        error: undefined,
+        loading: false,
       }
     }
 
@@ -59,14 +89,6 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
         error: payload,
         loading: false,
       }
-
-    case PaymentsActionType.SHOW_PAYMENT_DETAILS: {
-      return {
-        ...state,
-        layout: payload,
-        paymentActiveNewRow: payload,
-      }
-    }
 
     case PaymentsActionType.SET_PAYMENT_DESCRIPTION: {
       return {
@@ -98,43 +120,8 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
       }
     }
 
-    case PaymentsActionType.SET_PAYMENT_FORM: {
-      const { description, paidDate, amount } = payload
-      return {
-        ...state,
-        layout: 'edit',
-        paymentForm: {
-          ...state.paymentForm,
-          description,
-          month: paidDate.month,
-          year: paidDate.year,
-          amount,
-        },
-      }
-    }
-
-    case PaymentsActionType.PAYMENT_CREATED:
-    case PaymentsActionType.PAYMENT_UPDATED: {
-      const { payment } = payload
-      return {
-        ...state,
-        layout: 'edit',
-
-        paymentForm: {
-          ...state.paymentForm,
-          description: payment.description,
-          month: payment.dateTo.month,
-          year: payment.dateTo.year,
-        },
-        paymentActiveNewRow: false,
-        selectedPaymentId: payment.id,
-        loading: false,
-        error: undefined,
-      }
-    }
-
     case PaymentsActionType.CREATE_NEW_PAYMENT: {
-      const { availablePayments, paymentMetrics, selectedContract } = payload
+      const { availablePayments, metrics, selectedContract } = payload
 
       const firstAvailablePayment = availablePayments[0]
 
@@ -146,41 +133,19 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
           year: firstAvailablePayment?.year ?? PAYMENT_FORM_INITIAL_STATE.year,
           contractId: selectedContract.id,
           currencyId: selectedContract.details.data.currency.id,
+          metrics,
         },
         paymentDates: availablePayments,
-        contractId: selectedContract.id,
-        paymentMetrics,
         layout: 'create',
-        paymentActiveNewRow: true,
         loading: false,
         selectedPaymentId: undefined,
-      }
-    }
-
-    case PaymentsActionType.CANCEL_PAYMENT: {
-      return {
-        ...state,
-        paymentForm: {
-          ...PAYMENT_FORM_INITIAL_STATE,
-        },
-        layout: 'view',
-        paymentActiveNewRow: false,
-        selectedPaymentId: undefined,
-        amountNotValid: false,
       }
     }
 
     case PaymentsActionType.SET_IS_AMOUNT_VALID: {
       return {
         ...state,
-        amountNotValid: payload > 0 ? false : true,
-      }
-    }
-
-    case PaymentsActionType.SHOW_ERROR_MESSAGE: {
-      return {
-        ...state,
-        showErrorMessage: payload,
+        amountNotValid: payload,
       }
     }
 

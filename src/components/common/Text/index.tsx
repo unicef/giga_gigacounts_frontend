@@ -14,12 +14,13 @@ export interface ColorProps {
 
 export interface FontWeightProps {
   bold?: boolean
+  fontWeight?: number
 }
 
 export type TextProps = HTMLAttributes<HTMLSpanElement> & FontWeightProps & ColorProps & TextAlignProps & FontSizeProps
 
 const StyledSpan = styled.span<TextProps>`
-  font-weight: ${({ bold }) => (bold ? 'bold' : 'normal')};
+  font-weight: ${({ fontWeight, bold }) => (fontWeight ? fontWeight : bold ? 'bold' : 'normal')};
   ${({ color }) => color && { color }}
   ${({ textAlign }) => textAlign && { textAlign }}
   ${({ fontSize }) => fontSize && { fontSize }}

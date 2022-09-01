@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import { useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
 import { IContractDetails } from 'src/types/general'
+import { checkPaymentChanges } from '../utils'
+import { usePaymentsContext } from './usePaymentsContext'
 
 export const usePayments = () => {
   const selectedContract = useSelectedContract()
@@ -27,4 +29,25 @@ export const usePayment = (paymentId?: string) => {
 
     return undefined
   }, [paymentId, payments.data])
+}
+
+export const useSelectedPayment = () => {
+  const {
+    state: { selectedPaymentId },
+  } = usePaymentsContext()
+
+  return usePayment(selectedPaymentId)
+}
+
+export const useIsPaymentDirty = () => {
+  const {
+    state: { paymentForm },
+  } = usePaymentsContext()
+
+  const selectedPayment = useSelectedPayment()
+
+  return useMemo(
+    () => !selectedPayment || checkPaymentChanges(selectedPayment, paymentForm),
+    [paymentForm, selectedPayment],
+  )
 }

@@ -1,4 +1,22 @@
+import { Button } from 'src/components/common/Button/Button'
 import styled from 'styled-components/macro'
+
+export const PaymentsRow = styled.div<{ active?: boolean; selectable?: boolean; dirty?: boolean }>`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 16px 16px 16px 12px;
+  gap: 16px;
+  height: 82px;
+  cursor: ${({ selectable = true }) => (selectable ? 'pointer' : 'auto')};
+  background-color: ${(props) => (props.active ? 'var(--color-lightest-blue)' : 'var(--color-white)')};
+
+  :nth-child(even) {
+    background-color: ${(props) => (props.active ? 'var(--color-lightest-blue)' : 'var(--color-lightest-grey)')};
+  }
+
+  ${({ dirty = false }) => dirty && 'box-shadow: inset 0px 0px 4px 1px var(--color-orange-on-blue);'}
+`
 
 export const PaymentContainer = styled.div`
   display: flex;
@@ -13,6 +31,11 @@ export const PaymentsRowContainer = styled.div`
   padding-left: 24px;
   border-left: 2px solid var(--color-black-10);
 `
+
+export const CreatePaymentButton = styled(Button)`
+  max-width: fit-content;
+`
+
 export const PaymentsRowDetails = styled.div<{ active?: boolean }>`
   width: 100%;
   display: flex;
@@ -61,7 +84,7 @@ export const WidgetMetric = styled.div<{ active?: boolean }>`
   }
 `
 
-export const PaymentVerified = styled.div`
+export const PaymentStatus = styled.div`
   display: flex;
   align-items: center;
   margin-left: auto;

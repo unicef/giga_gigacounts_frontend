@@ -9,7 +9,6 @@ export interface ButtonPropType {
   isDisabled?: boolean
   children?: React.ReactNode
   type?: 'submit' | 'reset' | 'button'
-
   onClick?: () => void
 }
 
@@ -40,7 +39,7 @@ export const Button: React.FC<ButtonPropType> = ({
   }
 
   return (
-    <ButtonComponent style={style} className={`${className}`} onClick={clickHandler} disabled={isDisabled} type={type}>
+    <ButtonComponent style={style} className={className} onClick={clickHandler} disabled={isDisabled} type={type}>
       {children}
       <span>{label}</span>
     </ButtonComponent>

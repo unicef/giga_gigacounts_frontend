@@ -17,17 +17,3 @@ export const PaymentRowWrapper = styled.div`
     padding-right: 0;
   }
 `
-export const PaymentsRow = styled.div<{ active?: boolean; selectable?: boolean }>`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 16px 16px 16px 12px;
-  gap: 16px;
-  height: 82px;
-  cursor: ${({ selectable = true }) => (selectable ? 'pointer' : 'auto')};
-  background-color: ${(props) => (props.active ? 'var(--color-lightest-blue)' : 'var(--color-white)')};
-
-  :nth-child(even) {
-    background-color: ${(props) => (props.active ? 'var(--color-lightest-blue)' : 'var(--color-lightest-grey)')};
-  }
-`

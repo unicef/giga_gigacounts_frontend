@@ -1,17 +1,21 @@
-import { ChangeEvent, useEffect } from 'react'
+import { ChangeEvent, useMemo } from 'react'
 import { uploadAttachment } from 'src/api/attachments'
 import Message, { MessageType } from 'src/components/common/Message/Message'
 import UploadButton from 'src/components/common/UploadButton/UploadButton'
-import { useContract, useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
-import { IFileUpload, UploadType } from 'src/types/general'
+import { useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
+import { ContractStatus, IFileUpload, IPaymentStatus, UploadType } from 'src/types/general'
 import { createAction } from 'src/utils/createAction'
-import { usePaymentsContext } from '../state/usePaymentsContext'
-import { PaymentsActionType } from '../state/types'
 import { ISP_ROLE } from 'src/consts/roles'
 import { useRoleCheck } from 'src/state/hooks'
+import { MONTHS } from 'src/consts/months'
+import File from 'src/components/common/File/File'
+import { usePaymentsContext } from '../state/usePaymentsContext'
+import { PaymentsActionType } from '../state/types'
+import { useIsPaymentDirty, usePayment } from '../state/hooks'
+import PaymentDetails from '../PaymentDetails'
 import {
   ButtonsContainer,
-  CancelButton,
+  SecondaryButton,
   Currency,
   CurrencyAmountWrapper,
   CurrencyContainer,
@@ -19,47 +23,73 @@ import {
   PaymentDetailsContainer,
   PaymentFormContainer,
   PaymentHeader,
-  SaveButton,
+  PrimaryButton,
   UploadFiles,
 } from './styles'
-import { MONTHS } from 'src/consts/months'
-import File from 'src/components/common/File/File'
-import { usePayment } from '../state/hooks'
 
-interface IPaymentFormProps {
-  contractId?: string
-  paymentId?: string
-}
-
-const PaymentForm: React.FC<IPaymentFormProps> = ({ contractId }: IPaymentFormProps): JSX.Element => {
+const PaymentForm: React.FC = (): JSX.Element => {
   const {
-    state: { paymentForm, paymentDates, amountNotValid, showErrorMessage, selectedPaymentId, layout, loading },
-    actions: { savePayment, cancelPayment, onPaymentFormDateChange, reload },
+    state: { paymentForm, paymentDates, amountNotValid, selectedPaymentId, layout, loading },
+    actions: { savePayment, cancelPayment, onPaymentFormDateChange, reload, verifyPayment },
     dispatch,
   } = usePaymentsContext()
 
   const selectedPayment = usePayment(selectedPaymentId)
 
-  const selectedContract = useSelectedContract()
-  const contract = useContract(contractId)
-
-  useEffect(() => {
-    if (selectedContract?.id !== contractId) {
-      cancelPayment()
+  const allPaymentDates = useMemo(() => {
+    if (selectedPayment) {
+      return [...paymentDates, selectedPayment.paidDate].sort((a, b) => a.year - b.year || a.month - b.month)
     }
-  }, [cancelPayment, contractId, selectedContract?.id])
+
+    return paymentDates
+  }, [paymentDates, selectedPayment])
+
+  const selectedDateIndex = useMemo(
+    () => allPaymentDates.findIndex(({ month, year }) => month === paymentForm.month && year === paymentForm.year) ?? 0,
+    [allPaymentDates, paymentForm.month, paymentForm.year],
+  )
+
+  const contract = useSelectedContract()
+
+  const isIsp = useRoleCheck(ISP_ROLE)
+
+  const createdByIsp = useMemo(() => selectedPayment?.createdBy?.role === ISP_ROLE, [selectedPayment?.createdBy?.role])
+
+  const hasCreatorRole = useMemo(() => isIsp === createdByIsp, [createdByIsp, isIsp])
+
+  const contractCompleted = useMemo(() => contract?.status === ContractStatus.Completed, [contract?.status])
+
+  const readonly = useMemo(
+    () => !hasCreatorRole || (isIsp && selectedPayment?.status === IPaymentStatus.Verified) || contractCompleted,
+    [contractCompleted, hasCreatorRole, isIsp, selectedPayment?.status],
+  )
+
+  const showReceipt = useMemo(
+    () => selectedPayment?.receipt || ((createdByIsp || !isIsp) && !contractCompleted),
+    [contractCompleted, createdByIsp, isIsp, selectedPayment?.receipt],
+  )
+
+  const showVerifyReject = useMemo(
+    () => createdByIsp && !isIsp && selectedPayment?.status === IPaymentStatus.Pending,
+    [createdByIsp, isIsp, selectedPayment?.status],
+  )
+
+  const isDirty = useIsPaymentDirty()
 
   const onDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch(createAction(PaymentsActionType.SET_PAYMENT_DESCRIPTION, e.target.value))
   }
-  const onDateChange = (e: ChangeEvent<HTMLSelectElement>) => onPaymentFormDateChange(paymentDates[+e.target.value])
+  const onDateChange = (e: ChangeEvent<HTMLSelectElement>) => onPaymentFormDateChange(allPaymentDates[+e.target.value])
 
   const onAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch(createAction(PaymentsActionType.SET_PAYMENT_AMOUNT, e.target.value))
+    dispatch(createAction(PaymentsActionType.SET_PAYMENT_AMOUNT, +e.target.value))
   }
 
   const onAmountBlur = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch(createAction(PaymentsActionType.SET_IS_AMOUNT_VALID, e.target.value))
+    const inValid = +e.target.value <= 0
+    if (amountNotValid !== inValid) {
+      dispatch(createAction(PaymentsActionType.SET_IS_AMOUNT_VALID, inValid))
+    }
   }
 
   const onUpload = async (file: IFileUpload) => {
@@ -81,10 +111,6 @@ const PaymentForm: React.FC<IPaymentFormProps> = ({ contractId }: IPaymentFormPr
 
   const onUploadError = (error: Error) => dispatch(createAction(PaymentsActionType.SET_ERROR, error))
 
-  const onMessageClose = () => {
-    dispatch(createAction(PaymentsActionType.SHOW_ERROR_MESSAGE, false))
-  }
-
   const onInvoiceRemove = () => dispatch(createAction(PaymentsActionType.SET_INVOICE, { invoice: undefined }))
 
   const onReceiptRemove = () => dispatch(createAction(PaymentsActionType.SET_RECEIPT, { receipt: undefined }))
@@ -94,102 +120,104 @@ const PaymentForm: React.FC<IPaymentFormProps> = ({ contractId }: IPaymentFormPr
       <PaymentFormContainer>
         <PaymentHeader>
           <h5>Payment Details</h5>
-          {/* <small>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cursus ultrices nunc, tortor ullamcorper. Amet
-            placerat consequat eget faucibus in nec.
-          </small> */}
-          {showErrorMessage && (
+          {isIsp && selectedPayment?.status === IPaymentStatus.Rejected && (
             <Message
               type={MessageType.ERROR}
               title="Your payment was declined"
               description="Country Office declined your payment request. Please fill in the correct information or re-upload the invoice"
-              showCloseBtn
-              onClose={onMessageClose}
             />
           )}
         </PaymentHeader>
-        <form>
-          <input
-            type="text"
-            placeholder="Description"
-            value={paymentForm.description ?? ''}
-            onChange={onDescriptionChange}
-          />
-          <div className="input-container dropdown">
-            <select onChange={onDateChange} required disabled={loading}>
-              <option value="" hidden>
-                {MONTHS[paymentForm.month]} - {paymentForm.year}
-              </option>
-              {paymentDates.map((date, index) => (
-                <option key={index} value={index}>
-                  {MONTHS[date.month]} - {date.year}
+        {selectedPayment && readonly ? (
+          selectedPayment && <PaymentDetails payment={selectedPayment} />
+        ) : (
+          <form>
+            <input
+              type="text"
+              placeholder="Description"
+              value={paymentForm.description ?? ''}
+              onChange={onDescriptionChange}
+              disabled={loading}
+            />
+            <div className="input-container dropdown">
+              <select onChange={onDateChange} required disabled={loading} value={selectedDateIndex}>
+                <option value="" hidden>
+                  {MONTHS[paymentForm.month]} - {paymentForm.year}
                 </option>
-              ))}
-            </select>
-          </div>
-          <CurrencyContainer>
-            <CurrencyAmountWrapper>
-              <Currency>
-                <span className="icon icon-24 icon-coins icon-blue" />
-                <p>{contract?.details.data?.currency?.code}</p>
-              </Currency>
-              <div className="input-container">
-                <input
-                  type="number"
-                  value={paymentForm.amount ?? ''}
-                  min="0"
-                  placeholder="Value"
-                  step="0.01"
-                  required
-                  onChange={onAmountChange}
-                  onBlur={onAmountBlur}
-                  className={`${amountNotValid ? 'input-error' : ''}`}
-                />
-              </div>
-            </CurrencyAmountWrapper>
-            {amountNotValid && <span className="error-text">Amount must greater than 0</span>}
-          </CurrencyContainer>
-        </form>
+                {allPaymentDates.map((date, index) => (
+                  <option key={index} value={index}>
+                    {MONTHS[date.month]} - {date.year}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <CurrencyContainer>
+              <CurrencyAmountWrapper>
+                <Currency>
+                  <span className="icon icon-24 icon-coins icon-light-blue" />
+                  <p>{contract?.details.data?.currency?.code}</p>
+                </Currency>
+                <div className="input-container">
+                  <input
+                    type="number"
+                    value={paymentForm.amount ?? ''}
+                    min="0"
+                    placeholder="Value"
+                    step="0.01"
+                    required
+                    onChange={onAmountChange}
+                    onBlur={onAmountBlur}
+                    className={`${amountNotValid ? 'input-error' : ''}`}
+                    disabled={loading}
+                  />
+                </div>
+              </CurrencyAmountWrapper>
+              {amountNotValid && <span className="error-text">Amount must greater than 0</span>}
+            </CurrencyContainer>
+          </form>
+        )}
         <InvoiceContainer>
           <h5>Invoice</h5>
           <p>Find the invoice here. Remember that this is a legal document that supports the payment created.</p>
-          {selectedPayment?.invoice?.id ? (
+          {selectedPayment?.invoice ? (
             <UploadFiles>
               <File
                 id={selectedPayment?.invoice.id}
                 name={selectedPayment?.invoice.name}
                 url={selectedPayment?.invoice.url}
                 onDelete={reload}
-                allowDelete
+                allowDelete={!readonly}
               />
             </UploadFiles>
           ) : (
-            <UploadButton
-              onUpload={onUpload}
-              onError={onUploadError}
-              onDelete={onInvoiceRemove}
-              type={UploadType.invoice}
-              typeId={selectedPaymentId ?? ''}
-              value={paymentForm.invoice}
-              showValue={layout === 'create'}
-            />
+            !readonly && (
+              <UploadButton
+                onUpload={onUpload}
+                onError={onUploadError}
+                onDelete={onInvoiceRemove}
+                type={UploadType.invoice}
+                typeId={selectedPaymentId ?? ''}
+                value={paymentForm.invoice}
+                showValue={layout === 'create'}
+              />
+            )
           )}
         </InvoiceContainer>
-        {!useRoleCheck(ISP_ROLE) && (
+        {showReceipt && (
           <InvoiceContainer>
             <h5>Receipt</h5>
             <p>
               Find the receipt here. Remember that this is a legal document that supports the payment was done
               successfully.
             </p>
-            {selectedPayment?.receipt?.id ? (
+            {selectedPayment?.receipt ? (
               <UploadFiles>
                 <File
                   id={selectedPayment.receipt.id}
                   name={selectedPayment.receipt.name}
                   url={selectedPayment.receipt.url}
                   onDelete={reload}
-                  allowDelete
+                  allowDelete={!isIsp}
                 />
               </UploadFiles>
             ) : (
@@ -207,16 +235,24 @@ const PaymentForm: React.FC<IPaymentFormProps> = ({ contractId }: IPaymentFormPr
         )}
       </PaymentFormContainer>
       <ButtonsContainer>
-        <SaveButton
-          onClick={savePayment}
-          amountNotValid={paymentForm.amount <= 0}
-          disabled={loading || paymentForm.amount <= 0}
-        >
-          Save
-        </SaveButton>
-        <CancelButton className="btn-transparent-grey active" onClick={cancelPayment}>
-          Cancel
-        </CancelButton>
+        {showVerifyReject && (
+          <>
+            <PrimaryButton onClick={verifyPayment} disabled={amountNotValid || loading}>
+              Verify
+            </PrimaryButton>
+            <SecondaryButton className="btn-transparent-grey active">Reject</SecondaryButton>
+          </>
+        )}
+        {!readonly && (
+          <>
+            <PrimaryButton onClick={savePayment} disabled={loading || paymentForm.amount <= 0 || !isDirty}>
+              Save
+            </PrimaryButton>
+            <SecondaryButton className="btn-transparent-grey active" onClick={cancelPayment}>
+              Cancel
+            </SecondaryButton>
+          </>
+        )}
       </ButtonsContainer>
     </PaymentDetailsContainer>
   )

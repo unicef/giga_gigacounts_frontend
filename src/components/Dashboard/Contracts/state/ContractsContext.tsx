@@ -16,7 +16,7 @@ export interface IContractsContext {
   state: ContractsState
   dispatch: Dispatch<ContractsAction>
   actions: {
-    fetchContract: (id: string) => void
+    fetchContract: (id: string) => Promise<void>
     setActiveNavItem: (item?: NavItemType) => void
     setSelectedSchool: (schoolId: string, contractId: string) => void
     fetchSchoolMeasures: (schoolId: string, id: string, month: string) => void

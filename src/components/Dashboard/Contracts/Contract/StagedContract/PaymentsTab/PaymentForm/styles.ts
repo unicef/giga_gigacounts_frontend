@@ -1,10 +1,12 @@
 import styled from 'styled-components/macro'
 
 export const PaymentDetailsContainer = styled.div`
+  flex-shrink: 0;
+  flex-grow: 0;
+  flex-basis: 355px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 355px;
   border-left: 1px solid var(--color-light-grey);
   height: 100%;
 `
@@ -102,7 +104,7 @@ export const ButtonsContainer = styled.div`
   height: 32px;
 `
 
-export const SaveButton = styled.button<{ amountNotValid: boolean }>`
+export const PrimaryButton = styled.button<{ disabled: boolean }>`
   background-color: var(--color-green);
   color: var(--color-white);
   width: 150px;
@@ -112,14 +114,14 @@ export const SaveButton = styled.button<{ amountNotValid: boolean }>`
     color: var(--color-white);
     transition: all 0.1s ease-out;
   }
-  ${({ amountNotValid }) =>
-    amountNotValid && {
+  ${({ disabled }) =>
+    disabled && {
       backgroundColor: 'var(--color-light-grey)',
       color: 'var(--color-white)',
       pointerEvents: 'none',
     }}
 `
 
-export const CancelButton = styled.button`
+export const SecondaryButton = styled.button`
   width: 150px;
 `

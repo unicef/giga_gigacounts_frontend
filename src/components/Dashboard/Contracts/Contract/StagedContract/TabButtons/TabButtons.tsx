@@ -78,10 +78,10 @@ export const TabButtons: React.FC<IContractDetailsProps> = ({
           <WidgetChart>
             <ContractStatusWidget
               showOnly={tab.name.toLowerCase()}
-              payments={contract?.details.data?.totalSpent.percentage ?? 0}
+              payments={Math.min(contract?.details.data?.totalSpent.percentage ?? 0, 100)}
             />
             <small>
-              <b>{Math.round(contract?.details.data?.totalSpent.percentage ?? 0)}%</b>
+              <b>{Math.min(Math.round(contract?.details.data?.totalSpent.percentage ?? 0), 100)}%</b>
             </small>
           </WidgetChart>
         )}
