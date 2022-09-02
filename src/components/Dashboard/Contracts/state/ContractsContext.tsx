@@ -9,7 +9,7 @@ import { getLtas } from 'src/api/createContract'
 import { getContractPayments } from 'src/api/payments'
 import { INITIAL_CONTRACTS_STATE } from './initial-state'
 import { reducer } from './reducer'
-import { ContractsAction, ContractsActionType, ContractsState, NavItemType } from './types'
+import { ContractsAction, ContractsActionType, ContractsState, ContractStagedActiveTab, NavItemType } from './types'
 import { selectContract, selectDraft } from './selectors'
 
 export interface IContractsContext {
@@ -18,12 +18,12 @@ export interface IContractsContext {
   actions: {
     fetchContract: (id: string) => Promise<void>
     setActiveNavItem: (item?: NavItemType) => void
-    setSelectedSchool: (schoolId: string, contractId: string) => void
+    setSelectedSchool: (schoolId: string) => void
     fetchSchoolMeasures: (schoolId: string, id: string, month: string) => void
     reloadContracts: () => void
     reloadContractPayments: (id?: string) => Promise<void>
     setNewContract: (newContract?: { ltaId?: string }) => void
-    setSelectedTab: (tabId: string) => void
+    setSelectedTab: (tabId: ContractStagedActiveTab) => void
     toggleExpandedLta: (ltaId: string | null) => void
   }
 }
@@ -122,14 +122,12 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
 
   const fetchSchoolMeasures = useCallback(
     async (schoolId: string, id: string, month: string) => {
-      dispatch({
-        type: ContractsActionType.SET_LOADING,
-      })
+      dispatch({ type: ContractsActionType.SET_SCHOOL_MEASURES_LOADING, payload: { schoolId } })
       try {
         const response = await getSchoolMeasures(schoolId, id, month)
-        dispatch({ type: ContractsActionType.SET_SCHOOL_MEASURES, payload: response })
+        dispatch({ type: ContractsActionType.SET_SCHOOL_MEASURES, payload: { qos: response, schoolId } })
       } catch (error) {
-        dispatch({ type: ContractsActionType.SET_CONTRACT_DETAILS_ERROR, payload: error })
+        dispatch({ type: ContractsActionType.SET_SCHOOL_MEASURES_ERROR, payload: { error, schoolId } })
       }
     },
     [dispatch],
@@ -166,16 +164,22 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
   )
 
   const setSelectedSchool = useCallback(
-    (schoolId: string, contractId: string) => {
+    (schoolId?: string) => {
+      const school =
+        schoolId === undefined ? undefined : selectedContract?.details.data?.schools.find(({ id }) => id === schoolId)
       dispatch({
         type: ContractsActionType.SET_SELECTED_SCHOOL,
         payload: {
-          schoolId,
-          contractId,
+          schoolId: school?.id,
+          contractId: selectedContract?.id,
         },
       })
+
+      if (selectedContract?.id && school?.id && !localState.schoolsQos[school.id]) {
+        fetchSchoolMeasures(school.id, selectedContract.id, 'month')
+      }
     },
-    [dispatch],
+    [fetchSchoolMeasures, localState, selectedContract],
   )
 
   const setNewContract = useCallback(
@@ -186,7 +190,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
   )
 
   const setSelectedTab = useCallback(
-    (tabId: string) => {
+    (tabId: ContractStagedActiveTab) => {
       dispatch(createAction(ContractsActionType.SET_ACTIVE_TAB, tabId))
     },
     [dispatch],
@@ -204,9 +208,18 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
   )
 
   useEffect(() => {
-    if (localState.selectedSchool?.schoolId && localState.selectedSchool?.contractId)
-      fetchSchoolMeasures(localState.selectedSchool?.schoolId, localState.selectedSchool?.contractId, 'month')
-  }, [localState.selectedSchool, fetchSchoolMeasures])
+    if (
+      localState.selectedSchool?.schoolId &&
+      localState.selectedSchool?.contractId &&
+      selectedContract?.id !== localState.selectedSchool?.contractId
+    )
+      setSelectedSchool()
+  }, [
+    localState.selectedSchool?.contractId,
+    localState.selectedSchool?.schoolId,
+    selectedContract?.id,
+    setSelectedSchool,
+  ])
 
   const setActiveNavItem = useCallback(
     (navItem?: NavItemType) => {

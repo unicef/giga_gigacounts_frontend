@@ -164,7 +164,7 @@ const drawChart = (
 interface ContractStatusWidgetProps {
   selected?: boolean
   expired?: boolean
-  showOnly?: string
+  showOnly?: 'schools' | 'payments'
   average?: number
   good?: number
   payments?: number

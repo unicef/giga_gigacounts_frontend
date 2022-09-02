@@ -24,7 +24,7 @@ const Navigation: React.FC = (): JSX.Element => {
   const { role, country, name } = user.data
   const isAdmin = role === ADMIN_ROLE
 
-  const [hovered, setHovered] = useState(true)
+  const [hovered, setHovered] = useState(false)
 
   const handleMouseEnter = () => {
     mouseOver.current = true
@@ -32,12 +32,16 @@ const Navigation: React.FC = (): JSX.Element => {
       if (mouseOver.current) {
         setHovered(true)
       }
-    }, 1000)
+    }, 300)
   }
 
   const handleMouseLeave = () => {
     mouseOver.current = false
-    setHovered(false)
+    setTimeout(() => {
+      if (!mouseOver.current) {
+        setHovered(false)
+      }
+    }, 100)
   }
 
   const handleNaveItemClick = (item?: NavItemType) => setActiveNavItem(item)

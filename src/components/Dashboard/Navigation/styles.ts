@@ -8,8 +8,8 @@ export const StyledNav = styled.div<{ expanded: boolean }>`
   height: 100%;
   ${(props) =>
     props.expanded
-      ? { width: '270px', padding: '8px 24px 16px 30px', transition: 'width .2s ease-out, padding .2s ease-out' }
-      : { width: '72px', padding: '8px 6px 16px 8px', transition: 'width .5s ease-out, padding .2s ease-out' }}
+      ? { width: '270px', padding: '8px 24px 16px 30px', transition: 'width .3s ease-out, padding .3s ease-out' }
+      : { width: '72px', padding: '8px 6px 16px 8px', transition: 'width .5s ease-out, padding .3s ease-out' }}
 `
 
 export const StyledLogo = styled.img`

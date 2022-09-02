@@ -9,13 +9,7 @@ import { clean } from 'src/utils/clean'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import { CREATE_CONTRACT_INITIAL_STATE } from './initial-state'
 import { reducer } from './reducer'
-import {
-  ContractForm,
-  ContractPreset,
-  CreateContractAction,
-  CreateContractActionType,
-  CreateContractState,
-} from './types'
+import { ContractPreset, CreateContractAction, CreateContractActionType, CreateContractState } from './types'
 import { createAction } from 'src/utils/createAction'
 
 export interface ICreateContractContext {
@@ -54,16 +48,7 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
     actions: { setNewContract, reloadContracts, toggleExpandedLta },
   } = useContractsContext()
 
-  const [localState, dispatch] = useReducer(
-    reducer,
-    useMemo(
-      () => ({
-        ...CREATE_CONTRACT_INITIAL_STATE,
-        contractForm: { ...CREATE_CONTRACT_INITIAL_STATE.contractForm, ...(location.state as ContractForm) },
-      }),
-      [location.state],
-    ),
-  )
+  const [localState, dispatch] = useReducer(reducer, CREATE_CONTRACT_INITIAL_STATE)
 
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -186,6 +171,11 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
         if (ltaId !== state.expandedLtaId) {
           toggleExpandedLta(ltaId)
         }
+      } else {
+        setSearchParams({})
+        dispatch({
+          type: CreateContractActionType.RESET,
+        })
       }
     }
   }, [
@@ -195,6 +185,7 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
     location.pathname,
     location.state,
     navigate,
+    setSearchParams,
     state,
     toggleExpandedLta,
   ])

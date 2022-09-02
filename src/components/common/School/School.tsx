@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import Text from '../Text'
 import { SchoolContainer, SchoolName } from './styles'
 
@@ -45,6 +46,8 @@ const School: React.FC<SchoolProps> = ({
     onSchoolSelected?.(schoolId)
   }
 
+  const formattedLocation = useMemo(() => location.split(',').join(', '), [location])
+
   return (
     <SchoolContainer onClick={onSchoolSelectedById}>
       <SchoolName>
@@ -63,7 +66,7 @@ const School: React.FC<SchoolProps> = ({
         {id}
       </Text>
       <Text textAlign="right" fontSize="12px" color={active ? 'var(--color-dark-blue)' : 'var(--color-darker-grey)'}>
-        {location}
+        {formattedLocation}
       </Text>
       {showStatus && <span className={`icon icon-18 ${getIconColorClassName(status)} icon-plug`}></span>}
     </SchoolContainer>

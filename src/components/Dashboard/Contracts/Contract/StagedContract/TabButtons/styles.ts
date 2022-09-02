@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 
 export const TabContainer = styled.div<{ selected: boolean }>`
   button {
-    height: auto;
+    height: 68px;
     display: grid;
     grid-template-columns: auto min-content;
     grid-template-rows: auto;
@@ -31,7 +31,7 @@ export const WidgetTitle = styled.div<{ selected: boolean }>`
   color: var(--color-mid-grey);
   ${({ selected }) =>
     selected && {
-      color: 'var(--color-light-blue)',
+      color: 'var(--color-dark-blue)',
     }};
 `
 export const WidgetInfo = styled.div`
@@ -42,12 +42,12 @@ export const WidgetInfo = styled.div`
 `
 export const WidgetMetric = styled.div<{ selected?: boolean }>`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 4px;
   color: var(--color-darker-grey);
   ${({ selected }) =>
     selected && {
-      color: 'var(--color-light-blue)',
+      color: 'var(--color-darkest-blue)',
     }};
 `
 export const WidgetChart = styled.div`

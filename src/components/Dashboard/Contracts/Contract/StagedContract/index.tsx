@@ -1,9 +1,9 @@
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
 import {
   ContractsActionType,
+  ContractStagedActiveTab,
   ContractStagedActiveTab as StagedContractTab,
-  ContractStagedTabItems,
 } from 'src/components/Dashboard/Contracts/state/types'
 import { ContractStatus, IContract } from 'src/types/general'
 import File from 'src/components/common/File/File'
@@ -16,7 +16,6 @@ import Loader from 'src/components/common/Loader'
 import { useRoleCheck } from 'src/state/hooks'
 import { ISP_ROLE } from 'src/consts/roles'
 import { useGeneralContext } from 'src/state/GeneralContext'
-import TabButtons from './TabButtons/TabButtons'
 import PaymentsTab from './PaymentsTab/PaymentsTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
 import {
@@ -31,14 +30,16 @@ import {
   LtaNumber,
   TitleItem,
 } from './styles'
+import SchoolsTabButton from './TabButtons/SchoolsTabButton'
+import PaymentsTabButton from './TabButtons/PaymentsTabButton'
 
 interface IContractDetailsProps {
   contract: IContract<ContractStatus.Ongoing | ContractStatus.Expired>
 }
 
 const tabs = {
-  [StagedContractTab.SchoolsTab]: SchoolsTab,
-  [StagedContractTab.PaymentsTab]: PaymentsTab,
+  [StagedContractTab.schools]: SchoolsTab,
+  [StagedContractTab.payments]: PaymentsTab,
 }
 
 const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContractDetailsProps): JSX.Element => {
@@ -73,21 +74,9 @@ const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContract
     }
   }
 
-  const onSwitchTab = (tab: ContractStagedTabItems) => setSelectedTab(tab.id)
+  const switchToSchoolsTab = () => setSelectedTab(ContractStagedActiveTab.schools)
 
-  const contractStagedTabItems: ContractStagedTabItems[] = useMemo(
-    () => [
-      {
-        id: 'schoolTab',
-        name: 'Schools',
-      },
-      {
-        id: 'paymentsTab',
-        name: 'Payments',
-      },
-    ],
-    [],
-  )
+  const switchToPaymentsTab = () => setSelectedTab(ContractStagedActiveTab.payments)
 
   const TabContent = tabs[activeTab]
 
@@ -134,15 +123,17 @@ const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContract
               )}
             </Header>
             <Info>
-              {contractStagedTabItems.map((tab) => (
-                <TabButtons
-                  key={tab.id}
-                  tab={tab}
-                  contract={contract}
-                  onSwitchTab={onSwitchTab}
-                  selected={activeTab === tab.id}
-                />
-              ))}
+              <SchoolsTabButton
+                contract={contract}
+                selected={activeTab === ContractStagedActiveTab.schools}
+                onClick={switchToSchoolsTab}
+              />
+              <PaymentsTabButton
+                contract={contract}
+                selected={activeTab === ContractStagedActiveTab.payments}
+                onClick={switchToPaymentsTab}
+              />
+
               <Dates>
                 <span className="icon icon-24 icon-date icon-light-blue"></span>
                 <p>Start Date:</p>

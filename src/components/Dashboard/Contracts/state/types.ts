@@ -1,3 +1,4 @@
+import { DataState } from 'src/state/types'
 import { IContract, ILta } from 'src/types/general'
 
 export enum ContractsActionType {
@@ -12,6 +13,8 @@ export enum ContractsActionType {
   SET_CONTRACT_DETAILS_LOADING = 'SET_CONTRACT_DETAILS_LOADING',
   SET_CONTRACT_DETAILS_ERROR = 'SET_CONTRACT_DETAILS_ERROR',
   SET_ACTIVE_NAV_ITEM = 'SET_ACTIVE_NAV_ITEM',
+  SET_SCHOOL_MEASURES_LOADING = 'SET_SCHOOL_MEASURES_LOADING',
+  SET_SCHOOL_MEASURES_ERROR = 'SET_SCHOOL_MEASURES_ERROR',
   SET_SCHOOL_MEASURES = 'SET_SCHOOL_MEASURES',
   SET_SELECTED_SCHOOL = 'SET_SELECTED_SCHOOL',
   SET_ACTIVE_TAB = 'SET_ACTIVE_TAB',
@@ -31,8 +34,7 @@ export interface ContractsState {
     schoolId?: string
     contractId?: string
   }
-  noSchoolMetricData: boolean
-  schoolsQos: SchoolsQos[]
+  schoolsQos: Record<string, DataState<SchoolsQos[], true>>
   activeNavItem?: NavItemType
   error?: Error
   loading?: boolean
@@ -50,8 +52,8 @@ export interface ContractStagedTabItems {
 }
 
 export enum ContractStagedActiveTab {
-  SchoolsTab = 'schoolTab',
-  PaymentsTab = 'paymentsTab',
+  schools = 'schools',
+  payments = 'payments',
 }
 
 export interface SchoolsQos {

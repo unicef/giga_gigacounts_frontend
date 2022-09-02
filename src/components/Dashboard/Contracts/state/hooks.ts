@@ -1,6 +1,6 @@
-import { useMemo, useContext } from 'react'
+import { useMemo } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { ContractsContext } from './ContractsContext'
+import { IContractSchools } from 'src/types/general'
 import {
   selectContract,
   selectDraft,
@@ -8,19 +8,20 @@ import {
   selectFilteredLtas,
   selectFilteredOtherContracts,
 } from './selectors'
+import { useContractsContext } from './useContractsContext'
 
-export const useLtas = () => selectFilteredLtas(useContext(ContractsContext).state)
+export const useLtas = () => selectFilteredLtas(useContractsContext().state)
 
-export const useLtaContracts = (id?: string) => selectFilteredLtaContracts(id)(useContext(ContractsContext).state)
+export const useLtaContracts = (id?: string) => selectFilteredLtaContracts(id)(useContractsContext().state)
 
-export const useOtherContracts = () => selectFilteredOtherContracts(useContext(ContractsContext).state)
+export const useOtherContracts = () => selectFilteredOtherContracts(useContractsContext().state)
 
-export const useContract = (id?: string) => selectContract(id)(useContext(ContractsContext).state)
+export const useContract = (id?: string) => selectContract(id)(useContractsContext().state)
 
-export const useDraft = (id?: string) => selectDraft(id)(useContext(ContractsContext).state)
+export const useDraft = (id?: string) => selectDraft(id)(useContractsContext().state)
 
 export const useSelectedContract = () => {
-  const { state } = useContext(ContractsContext)
+  const { state } = useContractsContext()
   const { contractId } = useParams()
   const [searchParams] = useSearchParams()
 
@@ -29,4 +30,35 @@ export const useSelectedContract = () => {
   const selector = useMemo(() => (draftId ? selectDraft(draftId) : selectContract(contractId)), [draftId, contractId])
 
   return useMemo(() => selector(state), [selector, state])
+}
+
+export const useSelectedSchool = (): IContractSchools | undefined => {
+  const {
+    state: { selectedSchool },
+  } = useContractsContext()
+  const selectedContract = useSelectedContract()
+
+  return useMemo(
+    () =>
+      selectedContract && selectedSchool && selectedContract?.id === selectedSchool.contractId
+        ? selectedContract?.details.data?.schools.find(({ id }) => id === selectedSchool.schoolId)
+        : undefined,
+    [selectedContract, selectedSchool],
+  )
+}
+
+export const useSchoolQoS = (schoolId?: string) => {
+  const {
+    state: { schoolsQos },
+  } = useContractsContext()
+
+  return schoolId === undefined ? undefined : schoolsQos[schoolId]
+}
+
+export const useSelectedSchoolQos = () => {
+  const {
+    state: { selectedSchool },
+  } = useContractsContext()
+
+  return useSchoolQoS(selectedSchool?.schoolId)
 }

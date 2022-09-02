@@ -300,7 +300,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
     }
 
     case CreateContractActionType.RESET: {
-      const { preset } = payload
+      const { preset } = payload ?? {}
 
       const currencyId = state.currencies[0].id
 

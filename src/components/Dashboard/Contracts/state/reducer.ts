@@ -1,12 +1,6 @@
-import {
-  ContractsAction,
-  ContractsActionType,
-  ContractsState,
-  MetricPropertyType,
-  SchoolQosResponse,
-  SchoolsQos,
-} from './types'
+import { ContractsAction, ContractsActionType, ContractsState, SchoolQosResponse, SchoolsQos } from './types'
 import { IContract, IContractDetails } from 'src/types/general'
+import { getMetricProperty } from './utils'
 
 export const reducer = (state: ContractsState, action: ContractsAction): ContractsState => {
   const { type, payload } = action
@@ -225,20 +219,39 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
       }
     }
 
-    case ContractsActionType.SET_SCHOOL_MEASURES: {
-      const getMetricProperty = (metric_name: string) => {
-        const metricPropertyMapping = {
-          latency: MetricPropertyType.latency,
-          uptime: MetricPropertyType.uptime,
-          'download speed': MetricPropertyType['download speed'],
-          'upload speed': MetricPropertyType['upload speed'],
-        }
-        return metricPropertyMapping[metric_name.toLowerCase() as keyof typeof metricPropertyMapping]
+    case ContractsActionType.SET_SCHOOL_MEASURES_LOADING: {
+      const { schoolId } = payload
+      return {
+        ...state,
+        schoolsQos: {
+          ...state.schoolsQos,
+          [schoolId]: {
+            ...state.schoolsQos[schoolId],
+            loading: true,
+          },
+        },
       }
+    }
 
-      const noSchoolMetricData = !payload.length
+    case ContractsActionType.SET_SCHOOL_MEASURES_ERROR: {
+      const { schoolId } = payload
+      return {
+        ...state,
+        schoolsQos: {
+          ...state.schoolsQos,
+          [schoolId]: {
+            ...state.schoolsQos[schoolId],
+            loading: false,
+            error: payload.error,
+          },
+        },
+      }
+    }
 
-      const schoolsQos: SchoolsQos[] = payload.reduce((acc: SchoolsQos[], item: SchoolQosResponse) => {
+    case ContractsActionType.SET_SCHOOL_MEASURES: {
+      const { schoolId, qos } = payload
+
+      const schoolsQos: SchoolsQos[] = qos.reduce((acc: SchoolsQos[], item: SchoolQosResponse) => {
         const date = new Date(item.date)
         const year = date.getUTCFullYear()
         const month = date.getUTCMonth() + 1
@@ -280,8 +293,14 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
 
       return {
         ...state,
-        schoolsQos: schoolsQos,
-        noSchoolMetricData,
+        schoolsQos: {
+          ...state.schoolsQos,
+          [schoolId]: {
+            data: schoolsQos,
+            loading: false,
+            error: payload.error,
+          },
+        },
         loading: false,
       }
     }
@@ -293,13 +312,17 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
       }
 
     case ContractsActionType.SET_SELECTED_SCHOOL: {
+      const { schoolId, contractId } = payload
       return {
         ...state,
-        selectedSchool: {
-          ...state.selectedSchool,
-          schoolId: payload.schoolId,
-          contractId: payload.contractId,
-        },
+        selectedSchool:
+          schoolId === undefined
+            ? undefined
+            : {
+                ...state.selectedSchool,
+                schoolId: schoolId,
+                contractId: contractId,
+              },
       }
     }
 

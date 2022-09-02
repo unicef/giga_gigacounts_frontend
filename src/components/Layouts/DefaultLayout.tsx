@@ -5,6 +5,7 @@ import { ChildrenProps } from 'src/types/utils'
 
 const Flex = styled.div`
   display: flex;
+  height: 100vh;
 `
 
 const DefaultLayout: React.FC<ChildrenProps> = ({ children }): JSX.Element => {
