@@ -250,10 +250,10 @@ export const PaymentsProvider: FC<ChildrenProps> = ({ children }) => {
   }, [fetchAvailablePayments, reloadContractPayments, selectedContract?.id, selectedContract?.status])
 
   useEffect(() => {
-    if (selectedContract?.id !== localState.paymentForm.contractId) {
+    if (localState.layout !== 'view' && selectedContract?.id !== localState.paymentForm.contractId) {
       reset()
     }
-  }, [localState.paymentForm.contractId, reset, selectedContract?.id])
+  }, [localState.layout, localState.paymentForm.contractId, reset, selectedContract?.id])
 
   const value = useMemo(
     () => ({
