@@ -85,7 +85,9 @@ const PaymentForm: React.FC = (): JSX.Element => {
   const onDateChange = (e: ChangeEvent<HTMLSelectElement>) => onPaymentFormDateChange(allPaymentDates[+e.target.value])
 
   const onAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch(createAction(PaymentsActionType.SET_PAYMENT_AMOUNT, +e.target.value))
+    if (paymentForm.amount !== +e.target.value) {
+      dispatch(createAction(PaymentsActionType.SET_PAYMENT_AMOUNT, +e.target.value))
+    }
   }
 
   const onAmountBlur = (e: ChangeEvent<HTMLInputElement>) => {
@@ -168,7 +170,7 @@ const PaymentForm: React.FC = (): JSX.Element => {
                 <div className="input-container">
                   <input
                     type="number"
-                    value={paymentForm.amount ?? ''}
+                    value={paymentForm.amount.toString()}
                     min="0"
                     placeholder="Value"
                     step="0.01"
