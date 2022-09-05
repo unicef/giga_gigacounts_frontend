@@ -29,7 +29,7 @@ import {
 
 const PaymentForm: React.FC = (): JSX.Element => {
   const {
-    state: { paymentForm, paymentDates, amountNotValid, selectedPaymentId, layout, loading },
+    state: { paymentForm, paymentDates, amountNotValid, selectedPaymentId, layout, loading, error },
     actions: { savePayment, cancelPayment, onPaymentFormDateChange, reload, verifyPayment, rejectPayment },
     dispatch,
   } = usePaymentsContext()
@@ -136,6 +136,10 @@ const PaymentForm: React.FC = (): JSX.Element => {
           selectedPayment && <PaymentDetails payment={selectedPayment} />
         ) : (
           <form>
+            {error && (
+              <Message type={MessageType.ERROR} title="Error" description={error.message} showCloseBtn={false} />
+            )}
+
             <input
               type="text"
               placeholder="Description"

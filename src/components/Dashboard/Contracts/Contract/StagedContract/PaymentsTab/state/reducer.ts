@@ -84,6 +84,13 @@ export const reducer = (state: PaymentsState, action: PaymentsAction): PaymentsS
     }
 
     case PaymentsActionType.SET_ERROR:
+      if (payload?.response?.status === 422) {
+        return {
+          ...state,
+          error: new Error(payload.response.data),
+          loading: false,
+        }
+      }
       return {
         ...state,
         error: payload,
