@@ -127,7 +127,7 @@ const PaymentForm: React.FC = (): JSX.Element => {
             <Message
               type={MessageType.ERROR}
               title="Your payment was declined"
-              description="Country Office declined your payment request. Please fill in the correct information or re-upload the invoice"
+              description="Please contact the country office or government for more details and fill in the correct information or re-upload an invoice."
               showCloseBtn={false}
             />
           )}
