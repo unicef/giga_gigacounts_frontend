@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import web3 from 'web3'
+import { ethers } from 'ethers'
 import instance from 'src/api/init'
 
 import { LoginFormContainer, Logo, Form, InputContainer, InputFrame, Input, EmailErrorMessage } from './styles'
@@ -32,7 +32,7 @@ export const LoginForm: React.FC = (): JSX.Element => {
     if (password === '') setPasswordError(true)
     else {
       try {
-        const encryptedPassword = await web3.utils.sha3(password)
+        const encryptedPassword = await ethers.utils.id(password)
 
         const res = await instance.post('/login', {
           email,

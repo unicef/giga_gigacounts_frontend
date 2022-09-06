@@ -1,6 +1,6 @@
 ![Protofire](https://protofire.io/img/protofire.svg)
 
-# Unicef Giga FE
+# Gigacounts FE
 
 ## _Getting started_
 
