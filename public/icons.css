@@ -400,3 +400,32 @@
 .icon-dai::before {
   content: "\ea30";
 }
+
+
+.icon-child::before {
+  content: "\ea31";
+}
+
+.icon-arrow-right::before {
+  content: "\ea32";
+}
+
+.icon-connector::before {
+  content: "\ea33";
+}
+
+.icon-link::before {
+  content: "\ea34";
+}
+
+.icon-wallet-verified::before {
+  content: "\ea35";
+}
+
+.icon-wallet-unknown::before {
+  content: "\ea36";
+}
+
+.icon-safe::before {
+  content: "\ea37";
+}
