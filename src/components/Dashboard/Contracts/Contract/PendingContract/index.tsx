@@ -37,11 +37,11 @@ const PendingContract: React.FC<PendingContractProps> = ({ contract }: PendingCo
       <div className="title">
         <div className="title-item contract-number">
           <h5>{contract.name}</h5>
-          {contract.ltaId !== null && (
+          {contract.details.data?.lta && (
             <div className="lta-number">
-              <span className="icon icon-24 icon-contract icon-mid-grey"></span>
+              <span className="icon icon-24 icon-agreement icon-mid-grey"></span>
               <p>
-                <b>{contract.ltaId}</b>
+                <b>{contract.details.data?.lta}</b>
               </p>
             </div>
           )}

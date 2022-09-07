@@ -239,6 +239,11 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
     case CreateContractActionType.SET_METRICS_ISPS: {
       const { metrics, isps } = payload
 
+      console.log({
+        metrics,
+        isps,
+      })
+
       return {
         ...state,
         metrics,
