@@ -1,4 +1,4 @@
-import { ICountry } from 'src/types/general'
+import { IUser } from 'src/types/general'
 import instance from './init'
 
 export interface ICounts {
@@ -9,14 +9,6 @@ export interface ICounts {
 export interface ContractCountsResponse {
   counts: ICounts[]
   totalCount: number
-}
-
-export interface IUser {
-  name: string
-  lastName: string
-  email: string
-  role: string
-  country?: ICountry
 }
 
 export const getUserProfile = async (): Promise<IUser> => {

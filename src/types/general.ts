@@ -6,12 +6,19 @@ export interface ICountry {
   flagUrl: string
 }
 
+export interface ISafe {
+  id: string
+  name: string
+  address: string
+}
+
 export interface IUser {
   name: string
   lastName: string
   email: string
   role: string
   country?: ICountry
+  safe: ISafe
 }
 
 export interface IContractCounts {

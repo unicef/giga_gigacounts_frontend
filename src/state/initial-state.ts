@@ -11,6 +11,11 @@ export const INITIAL_USER_STATE: UserState = {
       code: '',
       flagUrl: '',
     },
+    safe: {
+      id: '',
+      name: '',
+      address: '',
+    },
   },
   error: undefined,
   loading: true,

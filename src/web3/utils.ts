@@ -1,5 +1,12 @@
-import { SUPPORTED_CHAINS } from './consts'
-import { CHAIN_ID } from './types'
+import { SELECTED_CHAIN_ID, SUPPORTED_CHAINS } from './consts'
+import { CHAIN_ID, ExplorerLinkType } from './types'
 
-export const getInfuraRpcUrl = (networkKey: CHAIN_ID, infuraId: string) =>
-  infuraId ? `https://${SUPPORTED_CHAINS[networkKey].rpcPrefix}.infura.io/v3/${infuraId}` : ''
+export const getExplorerUrl = (
+  hash: string,
+  type: ExplorerLinkType = ExplorerLinkType.address,
+  chainId: CHAIN_ID = SELECTED_CHAIN_ID,
+) => {
+  const { blockExplorerUrl } = SUPPORTED_CHAINS[chainId]
+
+  return `${blockExplorerUrl}/${type}/${hash}`
+}

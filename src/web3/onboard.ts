@@ -15,6 +15,7 @@ init({
   chains: CHAINS,
   appMetadata: {
     name: 'Gigacounts',
+    description: 'Manage Giga contracts, budget and payments',
     icon,
     recommendedInjectedWallets: [{ name: 'MetaMask', url: 'https://metamask.io' }],
   },

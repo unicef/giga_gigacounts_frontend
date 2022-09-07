@@ -2,7 +2,7 @@ import { utils } from 'ethers'
 import { useEffect, useState } from 'react'
 import { infuraProvider } from './infura'
 
-export const useBalance = (address: string) => {
+export const useEthBalance = (address: string) => {
   const [balance, setBalance] = useState<number | undefined>()
 
   useEffect(() => {
