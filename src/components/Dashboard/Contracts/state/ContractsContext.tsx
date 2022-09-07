@@ -7,6 +7,7 @@ import { ChildrenProps } from 'src/types/utils'
 import { createAction } from 'src/utils/createAction'
 import { getLtas } from 'src/api/createContract'
 import { getContractPayments } from 'src/api/payments'
+import { useGeneralContext } from 'src/state/GeneralContext'
 import { INITIAL_CONTRACTS_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { ContractsAction, ContractsActionType, ContractsState, ContractStagedActiveTab, NavItemType } from './types'
@@ -66,6 +67,10 @@ export const ContractsContext = createContext<IContractsContext>({
 
 export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
   const [localState, dispatch] = useReducer(reducer, INITIAL_CONTRACTS_STATE)
+
+  const {
+    actions: { reloadContractCounts },
+  } = useGeneralContext()
 
   const { contractId } = useParams()
   const [searchParams] = useSearchParams()
@@ -163,6 +168,11 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [contractId, localState.contracts],
   )
 
+  const reloadContracts = useCallback(() => {
+    fetchContracts()
+    reloadContractCounts()
+  }, [fetchContracts, reloadContractCounts])
+
   const setSelectedSchool = useCallback(
     (schoolId?: string) => {
       const school =
@@ -243,7 +253,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
         setActiveNavItem,
         setSelectedSchool,
         fetchSchoolMeasures,
-        reloadContracts: fetchContracts,
+        reloadContracts,
         reloadContractPayments: fetchContractPayments,
         setNewContract,
         setSelectedTab,
@@ -253,7 +263,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
     [
       localState,
       fetchContract,
-      fetchContracts,
+      reloadContracts,
       setActiveNavItem,
       setSelectedSchool,
       fetchSchoolMeasures,
