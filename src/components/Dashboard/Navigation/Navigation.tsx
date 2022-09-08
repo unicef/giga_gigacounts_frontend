@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ContractStatus } from 'src/types/general'
 import logos from 'src/assets/logos'
 import { ADMIN_ROLE } from 'src/consts/roles'
@@ -12,12 +12,15 @@ import { useContractsContext } from '../Contracts/state/useContractsContext'
 import { NavItemType } from '../Contracts/state/types'
 
 const Navigation: React.FC = (): JSX.Element => {
-  const navigate = useNavigate()
+  let navigate = useNavigate()
+  let location = useLocation()
+
   const user = useUser()
   const {
     state: { activeNavItem },
     actions: { setActiveNavItem },
   } = useContractsContext()
+
   const contractCounts = useContractCounts()
   const mouseOver = useRef<boolean>(false)
 
@@ -44,7 +47,21 @@ const Navigation: React.FC = (): JSX.Element => {
     }, 100)
   }
 
-  const handleNaveItemClick = (item?: NavItemType) => setActiveNavItem(item)
+  const handleNaveItemClick = (item?: NavItemType) => {
+    navigate('/dashboard', {
+      state: {
+        activeNavItem: item,
+      },
+    })
+  }
+
+  useEffect(() => {
+    const { activeNavItem } = (location.state ?? {}) as { activeNavItem?: NavItemType }
+    if (activeNavItem) {
+      setActiveNavItem(activeNavItem)
+      navigate(location.pathname, { replace: true })
+    }
+  }, [location.pathname, location.state, navigate, setActiveNavItem])
 
   return (
     <StyledNav onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} expanded={hovered}>

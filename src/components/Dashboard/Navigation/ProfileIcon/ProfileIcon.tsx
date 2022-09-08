@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGeneralContext } from 'src/state/GeneralContext'
-import { UserBlock } from './styles'
+import { Profile, UserBlock, UserIcon, UserLogout, UserName, UserRole } from './styles'
 
 export interface NavItemProps {
   collapsed?: boolean
@@ -11,7 +11,7 @@ export interface NavItemProps {
 }
 
 export const ProfileIcon: React.FC<NavItemProps> = ({
-  collapsed = false,
+  collapsed = true,
   name,
   role,
   ...props
@@ -28,34 +28,19 @@ export const ProfileIcon: React.FC<NavItemProps> = ({
   }, [reset, navigate])
 
   return (
-    <UserBlock className="noselect" style={collapsed ? { paddingLeft: '10px' } : {}} {...props}>
-      <div
-        className="icon icon-24 icon-person icon-white"
-        style={{
-          gridArea: 'userpick',
-          alignSelf: 'start',
-          height: '40px',
-          padding: '7px',
-          marginTop: '2px',
-          backgroundColor: 'var(--color-light-blue)',
-          border: '2px solid var(--color-white-15)',
-          borderRadius: '100px',
-        }}
-      />
-
-      {!collapsed && (
-        <>
-          <p style={{ gridArea: 'name', color: 'var(--color-white)', margin: '0' }}>
-            <b>{name?.substring(0, 8)}</b>
-          </p>
-          <small style={{ gridArea: 'role', color: 'var(--color-lightest-blue)', margin: '0' }}>{role}</small>
-          <div
-            className="icon icon-18 icon-logout icon-lighter-blue"
-            style={{ cursor: 'pointer', marginTop: '1px' }}
-            onClick={logout}
-          />
-        </>
-      )}
-    </UserBlock>
+    <Profile to="/profile">
+      <UserBlock className="noselect" style={collapsed ? { paddingLeft: '10px' } : {}} {...props}>
+        <UserIcon className="icon icon-24 icon-person icon-white" />
+        {!collapsed && (
+          <>
+            <UserName>
+              <b>{name}</b>
+            </UserName>
+            <UserRole>{role}</UserRole>
+            <UserLogout className="icon icon-18 icon-logout icon-lighter-blue" onClick={logout} />
+          </>
+        )}
+      </UserBlock>
+    </Profile>
   )
 }

@@ -7,6 +7,7 @@ import Loader from 'src/components/common/Loader'
 import NotFound from 'src/pages/NotFound'
 import { useUser } from 'src/state/hooks'
 import ProtectedRoute from './ProtectedRoute'
+import UserProfileLayout from 'src/components/Layouts/UserProfileLayout'
 
 const Contract = lazy(() => import('src/pages/Contract'))
 const CreateContractPage = lazy(() => import('src/pages/CreateContract'))
@@ -42,6 +43,7 @@ export const Router: React.FC = (): JSX.Element => {
               />
             </Route>
           </Route>
+          <Route path="profile" element={<UserProfileLayout />} />
         </Route>
       </Routes>
     </BrowserRouter>

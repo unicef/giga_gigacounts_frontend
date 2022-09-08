@@ -1,22 +1,15 @@
 import React from 'react'
-import styled from 'styled-components/macro'
 import Navigation from 'src/components/Dashboard/Navigation/Navigation'
 import { ContractsMenu } from '../Dashboard/Contracts/styles'
 import ContractListContent from '../Dashboard/Contracts/ContractListContent/ContractListContent'
 import ContractListFooter from '../Dashboard/Contracts/ContractListFooter/ContractListFooter'
 import { ContractsProvider } from '../Dashboard/Contracts/state/ContractsContext'
 import { Outlet } from 'react-router-dom'
-
-const Flex = styled.div`
-  display: flex;
-  height: 100vh;
-  width: 100%;
-  overflow-x: hidden;
-`
+import PageWrapper from '../common/PageWrapper/PageWrapper'
 
 const ContractsLayout: React.FC = (): JSX.Element => {
   return (
-    <Flex>
+    <PageWrapper>
       <ContractsProvider>
         <Navigation />
         <ContractsMenu>
@@ -25,7 +18,7 @@ const ContractsLayout: React.FC = (): JSX.Element => {
         </ContractsMenu>
         <Outlet />
       </ContractsProvider>
-    </Flex>
+    </PageWrapper>
   )
 }
 

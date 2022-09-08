@@ -10,6 +10,7 @@ import schoolsGreen from '../images/schools-green.svg'
 import schoolsOrange from '../images/schools-orange.svg'
 import schoolsRed from '../images/schools-red.svg'
 import loginImage from '../images/login-image.png'
+import metamaskLogo from '../images/metamask-logo.svg'
 
 const images = {
   chartExample,
@@ -18,7 +19,8 @@ const images = {
   schoolsGreen,
   schoolsOrange,
   schoolsRed,
-  loginImage
+  loginImage,
+  metamaskLogo
 }
 
 export default images

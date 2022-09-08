@@ -1,19 +1,14 @@
 import React from 'react'
-import styled from 'styled-components/macro'
 import Navigation from 'src/components/Dashboard/Navigation/Navigation'
 import { ChildrenProps } from 'src/types/utils'
-
-const Flex = styled.div`
-  display: flex;
-  height: 100vh;
-`
+import PageWrapper from '../common/PageWrapper/PageWrapper'
 
 const DefaultLayout: React.FC<ChildrenProps> = ({ children }): JSX.Element => {
   return (
-    <Flex>
+    <PageWrapper>
       <Navigation />
       {children}
-    </Flex>
+    </PageWrapper>
   )
 }
 
