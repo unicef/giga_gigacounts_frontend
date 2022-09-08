@@ -50,6 +50,8 @@ jobs:
           SKIP_PREFLIGHT_CHECK: true
           CI: false
           REACT_APP_BACKEND_URL: ${{ env.REACT_APP_BACKEND_URL }}
+          REACT_APP_INFURA_ID: ${{ secrets.REACT_APP_INFURA_ID }}
+          REACT_APP_NETWORK: 4
         with:
           azure_static_web_apps_api_token: ${{ secrets[env.AZURE_STATIC_WEB_APPS_API_TOKEN_VAR_NAME] }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
