@@ -11,6 +11,7 @@ export const INITIAL_USER_STATE: UserState = {
       code: '',
       flagUrl: '',
     },
+    walletAddress: null,
     safe: {
       id: '',
       name: '',

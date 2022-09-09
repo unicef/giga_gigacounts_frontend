@@ -1,13 +1,15 @@
 import React from 'react'
 import { Router } from './router/Router'
 import { GeneralContextProvider } from './state/GeneralContext'
-import 'src/web3/onboard'
+import { Web3ContextProvider } from './web3/Web4Context'
 
 const App: React.FC = (): JSX.Element => {
   // here should be added other wrappers
   return (
     <GeneralContextProvider>
-      <Router />
+      <Web3ContextProvider>
+        <Router />
+      </Web3ContextProvider>
     </GeneralContextProvider>
   )
 }

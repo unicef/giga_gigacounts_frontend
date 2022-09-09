@@ -19,6 +19,7 @@ export interface IUser {
   role: string
   country?: ICountry
   safe: ISafe
+  walletAddress: string | null
 }
 
 export interface IContractCounts {

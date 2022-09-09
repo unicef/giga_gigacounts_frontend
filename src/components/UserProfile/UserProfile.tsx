@@ -2,7 +2,8 @@ import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGeneralContext } from 'src/state/GeneralContext'
 import { useUser } from 'src/state/hooks'
-import Wallet from '../common/Wallet/Wallet'
+import { useWeb3Context } from 'src/web3/Web4Context'
+import ConnectedWallet from '../common/Wallet/ConnectedWallet'
 import {
   UserProfileContainer,
   UserProfileHeader,
@@ -19,6 +20,8 @@ import {
 } from './styles'
 
 const UserProfile = () => {
+  const { disconnect } = useWeb3Context()
+
   const navigate = useNavigate()
 
   const {
@@ -30,10 +33,11 @@ const UserProfile = () => {
   } = useGeneralContext()
 
   const logout = useCallback(() => {
+    disconnect()
     localStorage.removeItem('session')
     reset()
     navigate('/')
-  }, [reset, navigate])
+  }, [disconnect, reset, navigate])
 
   return (
     <UserProfileContainer>
@@ -73,9 +77,7 @@ const UserProfile = () => {
 
           <UserProfileMetamask>
             <h5>Attached wallet</h5>
-            <Wallet network="Etherium Mainnet" address="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" />
-            <small>Please sign a verification message to link your wallet address to your gigacounts account</small>
-            <button className="btn-green">Sign Message</button>
+            <ConnectedWallet />
           </UserProfileMetamask>
         </UserProfileCrypto>
       </UserProfileContent>

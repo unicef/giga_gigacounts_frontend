@@ -37,7 +37,7 @@ export const UserProfileContent = styled.div`
 `
 
 export const UserProfileInfo = styled.div`
-  width: 100%;
+  flex: 1 0 0;
   display: grid;
   grid-template-columns: min-content auto;
   grid-template-rows: min-content min-content min-content;
@@ -83,7 +83,7 @@ export const UserCountry = styled.div`
 `
 
 export const UserProfileCrypto = styled.div`
-  width: 100%;
+  flex: 0 0 750px;
   display: flex;
   flex-direction: column;
   gap: 60px;

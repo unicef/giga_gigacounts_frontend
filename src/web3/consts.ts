@@ -1,4 +1,4 @@
-import { CHAIN_ID } from './types'
+import { CHAIN_ID, IWeb3Context } from './types'
 import type { ChainWithDecimalId } from '@web3-onboard/common'
 
 export const INFURA_ID = process.env.REACT_APP_INFURA_ID ?? 'c6b741d4895e44b9918bb1c4ea0b8c0a'
@@ -27,3 +27,16 @@ export const SELECTED_CHAIN_ID = parseInt(process.env.REACT_APP_NETWORK ?? '4') 
 export const SELECTED_NETWORK = SUPPORTED_CHAINS[SELECTED_CHAIN_ID]
 
 export const CHAINS = [SELECTED_NETWORK]
+
+export const INITIAL_WEB3_CONTEXT_VALUE: IWeb3Context = {
+  wallet: null,
+  account: undefined,
+  chain: undefined,
+  connecting: false,
+  connect: () => {
+    throw new Error('Not implemented')
+  },
+  disconnect: () => {
+    throw new Error('Not implemented')
+  },
+}

@@ -8,5 +8,5 @@ export const getExplorerUrl = (
 ) => {
   const { blockExplorerUrl } = SUPPORTED_CHAINS[chainId]
 
-  return `${blockExplorerUrl}/${type}/${hash}`
+  return `${blockExplorerUrl}${type}/${hash}`
 }

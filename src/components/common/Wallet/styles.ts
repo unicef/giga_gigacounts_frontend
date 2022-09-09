@@ -28,13 +28,24 @@ export const WalletHeader = styled.div`
   color: var(--color-darkest-grey);
 `
 
-export const WalletNetwork = styled.span`
+export const StyledBadge = styled.span<{ connected?: boolean; error?: boolean }>`
   display: flex;
   align-items: center;
   border-radius: 20px;
-  padding: 0 10px 0 1px;
-  color: var(--color-dark-blue);
-  background-color: var(--color-lightest-blue);
+  padding: 0 10px;
+  color: var(--color-darkest-grey);
+  background-color: var(--color-black-10);
+  cursor: default;
+
+  ${({ connected, error }) =>
+    connected && {
+      color: error ? 'var(--color-white)' : 'var(--color-dark-blue)',
+      backgroundColor: error ? 'var(--color-red)' : 'var(--color-lightest-blue)',
+    }}
+
+  & > .icon {
+    margin-left: -10px;
+  }
 `
 
 export const WalletAddress = styled.div`
@@ -44,27 +55,22 @@ export const WalletAddress = styled.div`
   align-items: center;
 `
 
-export const ShowAddress = styled.div`
+export const ShowAddress = styled.div<{ verified?: boolean; error?: boolean }>`
   display: flex;
   gap: 4px;
   align-items: center;
   color: var(--color-dark-grey);
   width: 100%;
-`
-export const CopyAddress = styled.button`
-  background-color: transparent;
-  color: var(--color-dark-grey);
-  text-transform: none;
-  margin: 0;
-  padding: 0;
-  white-space: nowrap;
-`
+  flex-grow: 1;
 
-export const ViewAddress = styled.a`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--color-dark-grey);
-  text-decoration: none;
-  white-space: nowrap;
+  ${({ error }) =>
+    error && {
+      color: 'var(--color-darker-red)',
+    }}
+
+    & > .icon {
+    ${({ verified, error }) => ({
+      color: error ? 'var(--color-red)' : verified ? 'var(--color-green)' : 'var(--color-dark-grey)',
+    })}
+
 `

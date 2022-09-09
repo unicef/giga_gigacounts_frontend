@@ -5,7 +5,7 @@ import { init } from '@web3-onboard/react'
 
 const injected = injectedModule()
 
-init({
+export const onboard = init({
   wallets: [injected],
   accountCenter: {
     desktop: { enabled: false },
