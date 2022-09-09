@@ -6,10 +6,12 @@ import { INITIAL_WEB3_CONTEXT_VALUE, SUPPORTED_CHAINS } from './consts'
 import { IWeb3Context } from './types'
 
 import 'src/web3/onboard'
+import { useUser } from 'src/state/hooks'
 
 export const Web3Context = createContext<IWeb3Context>(INITIAL_WEB3_CONTEXT_VALUE)
 
 export const Web3ContextProvider = ({ children }: ChildrenProps) => {
+  const user = useUser()
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
   const connectedWallets = useWallets()
 
@@ -56,17 +58,25 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
   }, [connectedWallets])
 
   useEffect(() => {
+    if (user.loading) {
+      return
+    }
+
     const previouslyConnectedWallets = JSON.parse(window.localStorage.getItem('connectedWallets') ?? '[]')
 
     if (previouslyConnectedWallets?.length) {
-      connect({
-        autoSelect: {
-          label: previouslyConnectedWallets[0],
-          disableModals: true,
-        },
-      })
+      if (!user.data.email) {
+        window.localStorage.removeItem('connectedWallets')
+      } else {
+        connect({
+          autoSelect: {
+            label: previouslyConnectedWallets[0],
+            disableModals: true,
+          },
+        })
+      }
     }
-  }, [connect])
+  }, [connect, user.data.email, user.loading])
 
   return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>
 }

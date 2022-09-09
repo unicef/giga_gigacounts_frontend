@@ -79,9 +79,9 @@ const PaymentSkeleton: React.FC<PaymentSkeletonProps> = ({
           </PaymentsRowDetails>
           <PaymentsRowMetrics>
             <MetricMidgetContainer>
-              {connectionsMedian?.map(({ metric_id, unit, median_value }: any) => {
+              {connectionsMedian?.map(({ metric_id, unit, median_value, metric_name }: any) => {
                 return (
-                  <WidgetMetric key={metric_id} active={active}>
+                  <WidgetMetric key={metric_id} active={active} title={metric_name}>
                     <span
                       className={`icon icon-20 ${getMetricIconClassName(metric_id)} ${
                         active ? 'icon-light-blue' : 'icon-light-grey'

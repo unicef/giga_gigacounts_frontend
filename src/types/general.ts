@@ -18,7 +18,7 @@ export interface IUser {
   email: string
   role: string
   country?: ICountry
-  safe: ISafe
+  safe?: ISafe
   walletAddress: string | null
 }
 

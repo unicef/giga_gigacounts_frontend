@@ -3,19 +3,32 @@ import styled from 'styled-components/macro'
 
 export const Profile = styled(NavLink)`
   text-decoration: none;
-`
 
-export const UserBlock = styled.div`
-  width: 100%;
+  flex-grow: 1;
+
   display: grid;
   gap: 0 12px;
-  grid-template-columns: min-content minmax(135px, auto) min-content;
+  grid-template-columns: min-content minmax(100px, auto);
   grid-template-rows: min-content min-content;
   grid-template-areas:
-    'userIcon name logout'
-    'userIcon role logout';
+    'userIcon name'
+    'userIcon role';
+  align-items: center;
   background-color: var(--color-dark-blue);
   transition: all 0.2s ease-out;
+  align-items: center;
+`
+
+export const UserBlock = styled.div<{ collapsed?: boolean }>`
+  width: 100%;
+  display: flex;
+  gap: 0 12px;
+  align-items: center;
+
+  ${({ collapsed = false }) =>
+    collapsed && {
+      paddingLeft: '7px',
+    }}
 `
 export const UserIcon = styled.div`
   grid-area: userIcon;
@@ -35,6 +48,8 @@ export const UserName = styled.p`
   color: var(--color-white);
   margin: 0px;
   text-align: start;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 export const UserRole = styled.small`
@@ -42,6 +57,8 @@ export const UserRole = styled.small`
   color: var(--color-lightest-blue);
   margin: 0;
   text-align: start;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 export const UserLogout = styled.div`

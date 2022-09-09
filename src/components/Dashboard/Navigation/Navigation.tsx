@@ -15,7 +15,9 @@ const Navigation: React.FC = (): JSX.Element => {
   let navigate = useNavigate()
   let location = useLocation()
 
-  const user = useUser()
+  const {
+    data: { role, country, name },
+  } = useUser()
   const {
     state: { activeNavItem },
     actions: { setActiveNavItem },
@@ -24,7 +26,6 @@ const Navigation: React.FC = (): JSX.Element => {
   const contractCounts = useContractCounts()
   const mouseOver = useRef<boolean>(false)
 
-  const { role, country, name } = user.data
   const isAdmin = role === ADMIN_ROLE
 
   const [hovered, setHovered] = useState(false)

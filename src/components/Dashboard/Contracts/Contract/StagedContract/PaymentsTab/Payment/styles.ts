@@ -58,18 +58,22 @@ export const PaymentsRowDetails = styled.div<{ active?: boolean }>`
 
 export const MetricMidgetContainer = styled.div`
   display: inline-grid;
-  grid-template-columns: 50px 50px 70px 70px;
+  grid-template-columns: 64px 64px 80px 80px;
   grid-template-areas: 'm1  m2  m3  m4';
   align-items: center;
-  gap: 6px;
-  width: 230px;
+  gap: 8px;
+  width: 312px;
 `
 
 export const WidgetMetric = styled.div<{ active?: boolean }>`
   display: flex;
   align-items: center;
-  gap: 4px;
   color: var(--color-darker-grey);
+
+  & > .icon {
+    margin-right: 4px;
+  }
+
   ${({ active }) =>
     active && {
       color: 'var(--color-light-blue)',
@@ -101,5 +105,5 @@ export const PaymentsRowMetrics = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 44px;
+  gap: 32px;
 `

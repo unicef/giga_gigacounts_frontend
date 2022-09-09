@@ -38,7 +38,7 @@ const SchoolsQoS: React.FC = (): JSX.Element => {
           />
         )}
 
-        {schoolsQos?.data && (
+        {!!schoolsQos?.data?.length && (
           <>
             <SchoolTableHeader>
               {SCHOOLS_QOS_TABLE_HEADER.map((header) => (

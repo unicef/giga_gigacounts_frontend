@@ -28,8 +28,8 @@ export const ProfileIcon: React.FC<NavItemProps> = ({
   }, [reset, navigate])
 
   return (
-    <Profile to="/profile">
-      <UserBlock className="noselect" style={collapsed ? { paddingLeft: '10px' } : {}} {...props}>
+    <UserBlock className="noselect" collapsed={collapsed} {...props}>
+      <Profile to="/profile">
         <UserIcon className="icon icon-24 icon-person icon-white" />
         {!collapsed && (
           <>
@@ -37,10 +37,10 @@ export const ProfileIcon: React.FC<NavItemProps> = ({
               <b>{name}</b>
             </UserName>
             <UserRole>{role}</UserRole>
-            <UserLogout className="icon icon-18 icon-logout icon-lighter-blue" onClick={logout} />
           </>
         )}
-      </UserBlock>
-    </Profile>
+      </Profile>
+      {!collapsed && <UserLogout className="icon icon-18 icon-logout icon-lighter-blue" onClick={logout} />}
+    </UserBlock>
   )
 }
