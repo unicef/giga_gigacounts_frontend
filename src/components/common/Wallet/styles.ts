@@ -1,5 +1,11 @@
 import styled from 'styled-components/macro'
 
+export const WalletWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+
 export const WalletContainer = styled.div`
   width: 100%;
   display: grid;
@@ -68,11 +74,11 @@ export const ShowAddress = styled.div<{ verified?: boolean; error?: boolean }>`
       color: 'var(--color-darker-red)',
     }}
 
-    & > .icon {
+  & > .icon {
     ${({ verified, error }) => ({
       color: error ? 'var(--color-red)' : verified ? 'var(--color-green)' : 'var(--color-dark-grey)',
     })}
-
+  }
 `
 
 export const Description = styled.p`

@@ -1,9 +1,12 @@
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import images from 'src/assets/images'
 import { useGeneralContext } from 'src/state/GeneralContext'
 import { useUser } from 'src/state/hooks'
 import { useWeb3Context } from 'src/web3/Web4Context'
 import ConnectedWallet from '../common/Wallet/ConnectedWallet'
+import EthBalance from '../common/EthBalance'
+import Wallet from '../common/Wallet/Wallet'
 import {
   UserProfileContainer,
   UserProfileHeader,
@@ -20,13 +23,13 @@ import {
 } from './styles'
 
 const UserProfile = () => {
-  const { disconnect } = useWeb3Context()
+  const { chain, disconnect } = useWeb3Context()
 
   const navigate = useNavigate()
 
   const { data } = useUser()
 
-  const { name, lastName, role, country } = data ?? {}
+  const { name, lastName, role, country, safe } = data ?? {}
 
   const {
     actions: { reset },
@@ -72,6 +75,9 @@ const UserProfile = () => {
           <UserProfileBalance>
             <h5>Gigacounts crypto balance</h5>
             <small>To recieve a donation please copy your safe adddress and send it to the donor</small>
+            <Wallet label="Account Safe" chainId={chain?.id ?? 1} address={safe?.address ?? ''} icon={images.safe} />
+            {safe?.address && <EthBalance account={safe.address} />}
+
             <button className="btn-blue">Withdraw Funds</button>
           </UserProfileBalance>
 

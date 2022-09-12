@@ -21,39 +21,39 @@ const ConnectedWallet = (): JSX.Element => {
     return <Loader />
   }
 
+  if (!isConnected) {
+    return (
+      <div>
+        <ConnectedWalletDescription />
+        <button className="btn-blue" onClick={handleConnect}>
+          Connect
+        </button>
+      </div>
+    )
+  }
+
   if (!hasAttachedWallet) {
-    if (!isConnected) {
-      return (
-        <div>
-          <ConnectedWalletDescription />
-          <button className="btn-blue" onClick={handleConnect}>
-            Connect
-          </button>
-        </div>
-      )
-    } else {
-      return (
-        <div>
-          <ConnectedWalletDescription />
-          <Wallet connected address={account} chainId={chain?.id!} wrongChain={chain?.id !== SELECTED_CHAIN_ID} />
-          <Instructions>
-            <small>
-              To complete wallet attachment, please sign a verification message. Currently connected wallet address will
-              be linked to your Gigacounts account
-            </small>
-          </Instructions>
-          <button className="btn-green">Sign Message</button>
-        </div>
-      )
-    }
+    return (
+      <div>
+        <ConnectedWalletDescription />
+        <Wallet connected address={account} chainId={chain?.id!} wrongChain={chain?.id !== SELECTED_CHAIN_ID} />
+        <Instructions>
+          <small>
+            To complete wallet attachment, please sign a verification message. Currently connected wallet address will
+            be linked to your Gigacounts account
+          </small>
+        </Instructions>
+        <button className="btn-green">Sign Message</button>
+      </div>
+    )
   }
 
   return (
     <>
       <ConnectedWalletDescription />
       <Wallet
-        address={walletAddress}
-        chainId={SELECTED_CHAIN_ID}
+        address={account}
+        chainId={chain?.id!}
         wrongChain={chain?.id !== SELECTED_CHAIN_ID}
         wrongAddress={!!account && walletAddress !== account}
         connected={!!account}

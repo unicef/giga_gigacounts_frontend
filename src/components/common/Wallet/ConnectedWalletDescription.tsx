@@ -15,9 +15,9 @@ const ConnectedWalletDescription = (): JSX.Element => {
           <br />
           Install{' '}
           <a href="https://metamask.io/download/" target="_blank" rel="noreferrer">
-            Metamask
+            MetaMask
           </a>{' '}
-          plugin in your browser. Make sure that you are logged in or create a new Metamask account.
+          plugin in your browser. Make sure that you are logged in or create a new MetaMask account.
         </small>
       </Description>
     )
@@ -29,9 +29,9 @@ const ConnectedWalletDescription = (): JSX.Element => {
         This wallet will be used to sign the transactions, creating a crypto contract, managing budget on the platform.
         Install{' '}
         <a href="https://metamask.io/download/" target="_blank" rel="noreferrer">
-          Metamask
+          MetaMask
         </a>{' '}
-        plugin in your browser. Make sure that you are logged in or create a new Metamask account.
+        plugin in your browser. Make sure that you are logged in or create a new MetaMask account.
       </small>
     </Description>
   )
