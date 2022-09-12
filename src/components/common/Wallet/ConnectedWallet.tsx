@@ -1,13 +1,15 @@
 import Wallet from './Wallet'
 import { useWeb3Context } from 'src/web3/Web4Context'
 import { SELECTED_CHAIN_ID } from 'src/web3/consts'
-import { useUser } from 'src/state/hooks'
+import { useRoleCheck, useUser } from 'src/state/hooks'
+import { ISP_ROLE } from 'src/consts/roles'
 
 const ConnectedWallet = (): JSX.Element => {
   const {
     data: { walletAddress },
   } = useUser()
   const { account, chain, connect } = useWeb3Context()
+  const isp = useRoleCheck(ISP_ROLE)
 
   const handleConnect = () => connect()
 
@@ -42,6 +44,27 @@ const ConnectedWallet = (): JSX.Element => {
 
   return (
     <>
+      {isp ? (
+        <div>
+          <p>
+            <small>
+              This wallet will be used to withdraw your funds. Install{' '}
+              <a href="https://metamask.io/download/">Metamask</a> plugin in your browser. Make sure that you are logged
+              in or create a new Metamask account.
+            </small>
+          </p>
+        </div>
+      ) : (
+        <div>
+          <p>
+            <small>
+              This wallet will be used to sign the transactions, creating a crypto contract, managing budget on the
+              platform. Install <a href="https://metamask.io/download/">Metamask</a> plugin in your browser. Make sure
+              that you are logged in or create a new Metamask account.
+            </small>
+          </p>
+        </div>
+      )}
       <Wallet
         address={walletAddress}
         chainId={SELECTED_CHAIN_ID}
@@ -56,7 +79,10 @@ const ConnectedWallet = (): JSX.Element => {
       )}
       {account && walletAddress !== account && (
         <>
-          <small>Please sign a verification message to link your wallet address to your gigacounts account</small>
+          <small>
+            To complete wallet attachment, please sign a verification message. Currently connected wallet address will
+            be linked to your gigacounts account.
+          </small>
           <button className="btn-green" onClick={() => connect()}>
             Sign Message
           </button>
