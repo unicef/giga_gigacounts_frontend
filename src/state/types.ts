@@ -23,7 +23,7 @@ export interface ContractCounts {
   total: number
 }
 
-export type UserState = DataState<IUser>
+export type UserState = DataState<IUser, true>
 
 export type ContractCountsState = DataState<ContractCounts>
 

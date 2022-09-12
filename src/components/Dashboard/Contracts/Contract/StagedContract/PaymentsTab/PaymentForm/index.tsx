@@ -3,9 +3,8 @@ import { uploadAttachment } from 'src/api/attachments'
 import Message, { MessageType } from 'src/components/common/Message/Message'
 import UploadButton from 'src/components/common/UploadButton/UploadButton'
 import { useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
-import { ContractStatus, IFileUpload, IPaymentStatus, UploadType } from 'src/types/general'
+import { ContractStatus, IFileUpload, IPaymentStatus, UploadType, UserRole } from 'src/types/general'
 import { createAction } from 'src/utils/createAction'
-import { ISP_ROLE } from 'src/consts/roles'
 import { useRoleCheck } from 'src/state/hooks'
 import { MONTHS } from 'src/consts/months'
 import File from 'src/components/common/File/File'
@@ -51,9 +50,12 @@ const PaymentForm: React.FC = (): JSX.Element => {
 
   const contract = useSelectedContract()
 
-  const isIsp = useRoleCheck(ISP_ROLE)
+  const isIsp = useRoleCheck(UserRole.ISP)
 
-  const createdByIsp = useMemo(() => selectedPayment?.createdBy?.role === ISP_ROLE, [selectedPayment?.createdBy?.role])
+  const createdByIsp = useMemo(
+    () => selectedPayment?.createdBy?.role === UserRole.ISP,
+    [selectedPayment?.createdBy?.role],
+  )
 
   const hasCreatorRole = useMemo(
     () => !selectedPayment || isIsp === createdByIsp,

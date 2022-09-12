@@ -5,7 +5,7 @@ import {
   ContractStagedActiveTab,
   ContractStagedActiveTab as StagedContractTab,
 } from 'src/components/Dashboard/Contracts/state/types'
-import { ContractStatus, IContract } from 'src/types/general'
+import { ContractStatus, IContract, UserRole } from 'src/types/general'
 import File from 'src/components/common/File/File'
 import Dialog, { DialogType } from 'src/components/common/Dialog/Dialog'
 import { publishContractToCompleted } from 'src/api/contracts'
@@ -14,7 +14,6 @@ import Text from 'src/components/common/Text'
 import { useOnClickOutside } from 'src/hooks/useOnClickOutside'
 import Loader from 'src/components/common/Loader'
 import { useRoleCheck } from 'src/state/hooks'
-import { ISP_ROLE } from 'src/consts/roles'
 import { useGeneralContext } from 'src/state/GeneralContext'
 import PaymentsTab from './PaymentsTab/PaymentsTab'
 import SchoolsTab from './SchoolsTab/SchoolsTab'
@@ -45,7 +44,7 @@ const tabs = {
 const StagedContract: React.FC<IContractDetailsProps> = ({ contract }: IContractDetailsProps): JSX.Element => {
   const [attachmentsExpanded, setAttachmentsExpanded] = useState(false)
   const [showDialog, setShowDialog] = useState(false)
-  const isIsp = useRoleCheck(ISP_ROLE)
+  const isIsp = useRoleCheck(UserRole.ISP)
 
   const attachmentsRef = useRef<HTMLDivElement>(null)
   useOnClickOutside(attachmentsRef, () => setAttachmentsExpanded(false))

@@ -9,7 +9,7 @@ export const WalletContainer = styled.div`
     'logo header'
     'logo wallet';
   gap: 2px 8px;
-  padding: 8px 10px;
+  padding: 8px 16px 8px 10px;
   border-radius: 2px;
   background-color: var(--color-lightest-grey);
 
@@ -73,4 +73,15 @@ export const ShowAddress = styled.div<{ verified?: boolean; error?: boolean }>`
       color: error ? 'var(--color-red)' : verified ? 'var(--color-green)' : 'var(--color-dark-grey)',
     })}
 
+`
+
+export const Description = styled.p`
+  margin-bottom: 24px;
+  color: --var(--color-darkest-grey);
+`
+
+export const Instructions = styled.p`
+  margin-top: 24px;
+  margin-bottom: 16px;
+  color: --var(--color-darkest-grey);
 `

@@ -14,7 +14,7 @@ const ProtectedRoute = () => {
     )
   }
 
-  if (user.data.email) {
+  if (user.data !== undefined) {
     return <Outlet />
   }
 

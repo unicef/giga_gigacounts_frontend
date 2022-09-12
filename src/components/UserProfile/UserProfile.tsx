@@ -24,9 +24,9 @@ const UserProfile = () => {
 
   const navigate = useNavigate()
 
-  const {
-    data: { name, lastName, role, country },
-  } = useUser()
+  const { data } = useUser()
+
+  const { name, lastName, role, country } = data ?? {}
 
   const {
     actions: { reset },

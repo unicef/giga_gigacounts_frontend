@@ -16,7 +16,7 @@ const Login: React.FC = (): JSX.Element => {
     )
   }
 
-  if (user.data.name) {
+  if (user.data !== undefined) {
     return <Navigate to="/dashboard" replace />
   }
 

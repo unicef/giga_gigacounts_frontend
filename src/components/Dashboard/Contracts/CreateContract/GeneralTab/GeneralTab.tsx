@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect } from 'react'
 import { uploadAttachment } from 'src/api/attachments'
 import File from 'src/components/common/File/File'
-import { IFileUpload, UploadType } from 'src/types/general'
+import { IFileUpload, UploadType, UserRole } from 'src/types/general'
 import {
   AttachmentContainer,
   Attachments,
@@ -13,7 +13,6 @@ import {
   GeneralContainer,
   UploadFiles,
 } from './styles'
-import { GOV_ROLE } from 'src/consts/roles'
 import { useRoleCheck } from 'src/state/hooks'
 import UploadButton from 'src/components/common/UploadButton/UploadButton'
 import { useCreateContractContext } from '../state/useCreateContractContext'
@@ -114,7 +113,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
                 ))}
               </select>
             </div>
-            {!useRoleCheck(GOV_ROLE) && (
+            {!useRoleCheck(UserRole.GOV) && (
               <label>
                 <input
                   type="checkbox"

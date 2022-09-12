@@ -1,23 +1,7 @@
 import { ContractCountsState, GeneralState, UserState } from './types'
 
 export const INITIAL_USER_STATE: UserState = {
-  data: {
-    name: '',
-    lastName: '',
-    email: '',
-    role: '',
-    country: {
-      name: '',
-      code: '',
-      flagUrl: '',
-    },
-    walletAddress: null,
-    safe: {
-      id: '',
-      name: '',
-      address: '',
-    },
-  },
+  data: undefined,
   error: undefined,
   loading: true,
 }

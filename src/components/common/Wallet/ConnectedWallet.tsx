@@ -1,29 +1,31 @@
-import Wallet from './Wallet'
 import { useWeb3Context } from 'src/web3/Web4Context'
 import { SELECTED_CHAIN_ID } from 'src/web3/consts'
-import { useRoleCheck, useUser } from 'src/state/hooks'
-import { ISP_ROLE } from 'src/consts/roles'
+import { useUser } from 'src/state/hooks'
+import Wallet from './Wallet'
+import ConnectedWalletDescription from './ConnectedWalletDescription'
+import { Instructions } from './styles'
+import Loader from '../Loader'
 
 const ConnectedWallet = (): JSX.Element => {
-  const {
-    data: { walletAddress },
-  } = useUser()
-  const { account, chain, connect } = useWeb3Context()
-  const isp = useRoleCheck(ISP_ROLE)
+  const { data } = useUser()
+  const { account, chain, connect, initiated } = useWeb3Context()
+
+  const { walletAddress } = data ?? {}
+
+  const hasAttachedWallet = !!walletAddress
+  const isConnected = !!account
 
   const handleConnect = () => connect()
 
-  if (!walletAddress) {
-    if (!account || !chain?.id) {
+  if (!initiated) {
+    return <Loader />
+  }
+
+  if (!hasAttachedWallet) {
+    if (!isConnected) {
       return (
         <div>
-          <p>
-            <small>
-              This wallet will be used to sign the transactions, creating a crypto contract, managing budget on the
-              platform. Install <a href="https://metamask.io/download/">Metamask</a> plugin in your browser. Make sure
-              that you are logged in or create a new Metamask account.
-            </small>
-          </p>
+          <ConnectedWalletDescription />
           <button className="btn-blue" onClick={handleConnect}>
             Connect
           </button>
@@ -31,40 +33,24 @@ const ConnectedWallet = (): JSX.Element => {
       )
     } else {
       return (
-        <>
-          <Wallet connected address={account} chainId={chain?.id} wrongChain={chain?.id !== SELECTED_CHAIN_ID} />
-          <small>Please sign a verification message to link your wallet address to your gigacounts account</small>
-          <button className="btn-green" onClick={() => connect()}>
-            Sign Message
-          </button>
-        </>
+        <div>
+          <ConnectedWalletDescription />
+          <Wallet connected address={account} chainId={chain?.id!} wrongChain={chain?.id !== SELECTED_CHAIN_ID} />
+          <Instructions>
+            <small>
+              To complete wallet attachment, please sign a verification message. Currently connected wallet address will
+              be linked to your Gigacounts account
+            </small>
+          </Instructions>
+          <button className="btn-green">Sign Message</button>
+        </div>
       )
     }
   }
 
   return (
     <>
-      {isp ? (
-        <div>
-          <p>
-            <small>
-              This wallet will be used to withdraw your funds. Install{' '}
-              <a href="https://metamask.io/download/">Metamask</a> plugin in your browser. Make sure that you are logged
-              in or create a new Metamask account.
-            </small>
-          </p>
-        </div>
-      ) : (
-        <div>
-          <p>
-            <small>
-              This wallet will be used to sign the transactions, creating a crypto contract, managing budget on the
-              platform. Install <a href="https://metamask.io/download/">Metamask</a> plugin in your browser. Make sure
-              that you are logged in or create a new Metamask account.
-            </small>
-          </p>
-        </div>
-      )}
+      <ConnectedWalletDescription />
       <Wallet
         address={walletAddress}
         chainId={SELECTED_CHAIN_ID}

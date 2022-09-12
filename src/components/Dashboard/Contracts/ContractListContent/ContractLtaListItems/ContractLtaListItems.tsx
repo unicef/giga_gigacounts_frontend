@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ILta } from 'src/types/general'
-import { ISP_ROLE } from 'src/consts/roles'
+import { ILta, UserRole } from 'src/types/general'
 import { useRoleCheck } from 'src/state/hooks'
 import { useLtaContracts, useSelectedContract } from 'src/components/Dashboard/Contracts/state/hooks'
 import { useContractsContext } from 'src/components/Dashboard/Contracts/state/useContractsContext'
@@ -39,7 +38,7 @@ const ContractLtaListItems: React.FC<IContractListProps> = ({
 
   const contracts = useLtaContracts(lta.id)
 
-  const isISP = useRoleCheck(ISP_ROLE)
+  const isISP = useRoleCheck(UserRole.ISP)
 
   const toggleLtaContainer = () => onClick?.(lta.id)
 

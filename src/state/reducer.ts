@@ -1,5 +1,5 @@
 import { UPDATE_USER, UPDATE_CONTRACT_COUNTS } from './action-types'
-import { INITIAL_USER_STATE, INITIAL_CONTRACT_COUNTS_STATE } from './initial-state'
+import { INITIAL_CONTRACT_COUNTS_STATE } from './initial-state'
 import { Action, GeneralState, ContractCounts, ICounts } from './types'
 
 export const reducer = (state: GeneralState, action: Action): GeneralState => {
@@ -12,7 +12,7 @@ export const reducer = (state: GeneralState, action: Action): GeneralState => {
       return {
         ...state,
         user: {
-          data: user ?? INITIAL_USER_STATE,
+          data: user,
           error,
           loading: false,
         },

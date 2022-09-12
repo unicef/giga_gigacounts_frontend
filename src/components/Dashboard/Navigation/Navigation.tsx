@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ContractStatus } from 'src/types/general'
+import { ContractStatus, UserRole } from 'src/types/general'
 import logos from 'src/assets/logos'
-import { ADMIN_ROLE } from 'src/consts/roles'
 import { useUser, useContractCounts } from 'src/state/hooks'
 import Country from '../Country/Country'
 import { NavItem } from './NavItem/NavItem'
@@ -15,9 +14,7 @@ const Navigation: React.FC = (): JSX.Element => {
   let navigate = useNavigate()
   let location = useLocation()
 
-  const {
-    data: { role, country, name },
-  } = useUser()
+  const { data } = useUser()
   const {
     state: { activeNavItem },
     actions: { setActiveNavItem },
@@ -26,7 +23,9 @@ const Navigation: React.FC = (): JSX.Element => {
   const contractCounts = useContractCounts()
   const mouseOver = useRef<boolean>(false)
 
-  const isAdmin = role === ADMIN_ROLE
+  const { role, country, name } = data ?? {}
+
+  const isAdmin = role === UserRole.ADMIN
 
   const [hovered, setHovered] = useState(false)
 

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
-import { ContractListFooterContainer } from './styles'
 import { useRoleCheck } from 'src/state/hooks'
-import { ISP_ROLE } from 'src/consts/roles'
+import { UserRole } from 'src/types/general'
+import { ContractListFooterContainer } from './styles'
 
 const ContractListFooter: React.FC = (): JSX.Element => {
   const navigate = useNavigate()
@@ -15,7 +15,7 @@ const ContractListFooter: React.FC = (): JSX.Element => {
 
   return (
     <ContractListFooterContainer>
-      {!useRoleCheck(ISP_ROLE) && (
+      {!useRoleCheck(UserRole.ISP) && (
         <button className="btn-frameless" onClick={handleAddContract} style={{ cursor: 'pointer' }}>
           <div className="icon icon-24 icon-plus" />
           New Contract

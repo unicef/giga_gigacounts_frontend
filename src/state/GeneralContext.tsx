@@ -1,10 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from 'react'
+import { getContractsCounts, getUserProfile } from 'src/api/dashboard'
 import { ChildrenProps } from 'src/types/utils'
 import { INITIAL_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { GeneralState } from './types'
 import { updateContractCounts, updateUser } from './action-creators'
-import { getContractsCounts, getUserProfile } from 'src/api/dashboard'
 
 export interface GeneralContextValue {
   state: GeneralState

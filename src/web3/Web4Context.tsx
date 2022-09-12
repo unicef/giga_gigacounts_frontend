@@ -1,6 +1,6 @@
-import { useConnectWallet, useWallets } from '@web3-onboard/react'
 import { ethers } from 'ethers'
-import { createContext, useEffect, useMemo, useContext, useCallback } from 'react'
+import { createContext, useEffect, useMemo, useContext, useCallback, useState } from 'react'
+import { useConnectWallet, useWallets } from '@web3-onboard/react'
 import { ChildrenProps } from '../types/utils'
 import { INITIAL_WEB3_CONTEXT_VALUE, SUPPORTED_CHAINS } from './consts'
 import { IWeb3Context } from './types'
@@ -11,6 +11,7 @@ import { useUser } from 'src/state/hooks'
 export const Web3Context = createContext<IWeb3Context>(INITIAL_WEB3_CONTEXT_VALUE)
 
 export const Web3ContextProvider = ({ children }: ChildrenProps) => {
+  const [initiated, setInitiated] = useState(false)
   const user = useUser()
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
   const connectedWallets = useWallets()
@@ -40,6 +41,7 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
 
   const value = useMemo(
     () => ({
+      initiated,
       wallet,
       account,
       chain,
@@ -47,26 +49,36 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
       connect,
       disconnect: disconnectAll,
     }),
-    [wallet, account, chain, connecting, connect, disconnectAll],
+    [initiated, wallet, account, chain, connecting, connect, disconnectAll],
   )
 
   useEffect(() => {
-    if (!connectedWallets.length) return
+    if (user.loading || connecting || !initiated) {
+      return
+    }
 
     const connectedWalletsLabelArray = connectedWallets.map(({ label }) => label)
-    window.localStorage.setItem('connectedWallets', JSON.stringify(connectedWalletsLabelArray))
-  }, [connectedWallets])
+
+    if (connectedWalletsLabelArray.length) {
+      localStorage.setItem('connectedWallets', JSON.stringify(connectedWalletsLabelArray))
+    } else {
+      localStorage.removeItem('connectedWallets')
+    }
+  }, [connectedWallets, connecting, initiated, user.loading])
 
   useEffect(() => {
+    let inUnmounted = false
     if (user.loading) {
       return
     }
 
-    const previouslyConnectedWallets = JSON.parse(window.localStorage.getItem('connectedWallets') ?? '[]')
+    const previouslyConnectedWallets = JSON.parse(localStorage.getItem('connectedWallets') ?? '[]')
 
     if (previouslyConnectedWallets?.length) {
-      if (!user.data.email) {
-        window.localStorage.removeItem('connectedWallets')
+      if (user.data === undefined) {
+        localStorage.removeItem('connectedWallets')
+
+        setInitiated(true)
       } else {
         connect({
           autoSelect: {
@@ -74,9 +86,28 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
             disableModals: true,
           },
         })
+          .then((walletStates) => {
+            if (walletStates.length === 0) {
+              localStorage.removeItem('connectedWallets')
+            }
+          })
+          .catch(() => {
+            localStorage.removeItem('connectedWallets')
+          })
+          .finally(() => {
+            if (!inUnmounted) {
+              setInitiated(true)
+            }
+          })
       }
+    } else {
+      setInitiated(true)
     }
-  }, [connect, user.data.email, user.loading])
+
+    return () => {
+      inUnmounted = true
+    }
+  }, [connect, user.data, user.loading])
 
   return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>
 }

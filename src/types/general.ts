@@ -12,11 +12,18 @@ export interface ISafe {
   address: string
 }
 
+export enum UserRole {
+  ADMIN = 'Giga Admin',
+  GOV = 'Government',
+  ISP = 'ISP',
+  COUNTRY_OFFICE = 'Country Office',
+}
+
 export interface IUser {
   name: string
   lastName: string
   email: string
-  role: string
+  role: UserRole
   country?: ICountry
   safe?: ISafe
   walletAddress: string | null

@@ -10,6 +10,7 @@ export enum ExplorerLinkType {
 }
 
 export interface IWeb3Context {
+  initiated: boolean
   wallet: WalletState | null
   account: string | undefined
   chain: ChainWithDecimalId | undefined
