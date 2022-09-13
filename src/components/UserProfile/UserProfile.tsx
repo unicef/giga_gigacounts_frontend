@@ -25,13 +25,13 @@ import {
 import { UserRole } from 'src/types/general'
 
 const UserProfile = () => {
-  const { chain, disconnect } = useWeb3Context()
+  const { chain, disconnect, account } = useWeb3Context()
 
   const navigate = useNavigate()
 
   const { data } = useUser()
 
-  const { name, lastName, role, country, safe, isp } = data ?? {}
+  const { name, lastName, role, country, safe, isp, walletAddress } = data ?? {}
 
   const {
     actions: { reset },
@@ -78,6 +78,20 @@ const UserProfile = () => {
     [roleDescription],
   )
 
+  const hasAttachedWallet = !!walletAddress
+  const isConnected = !!account
+
+  const withdrawBtn = useMemo(
+    () => (
+      <>
+        {isConnected && hasAttachedWallet && walletAddress === account && role === UserRole.ISP && (
+          <button className="btn-blue">Withdraw Funds</button>
+        )}
+      </>
+    ),
+    [hasAttachedWallet, isConnected, account, role, walletAddress],
+  )
+
   return (
     <UserProfileContainer>
       <UserProfileHeader>
@@ -114,7 +128,7 @@ const UserProfile = () => {
             <Wallet label="Account Safe" chainId={chain?.id ?? 1} address={safe?.address ?? ''} icon={images.safe} />
             {safe?.address && <EthBalance account={safe.address} />}
 
-            <button className="btn-blue">Withdraw Funds</button>
+            {withdrawBtn}
           </UserProfileBalance>
 
           <UserProfileMetamask>
