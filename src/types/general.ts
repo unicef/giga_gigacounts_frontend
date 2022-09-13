@@ -27,6 +27,7 @@ export interface IUser {
   country?: ICountry
   safe?: ISafe
   walletAddress: string | null
+  isp?: IISP
 }
 
 export interface IContractCounts {
@@ -287,4 +288,9 @@ export enum UploadType {
   receipt = 'receipt',
   draft = 'draft',
   contract = 'contract',
+}
+
+export interface IISP {
+  id: string
+  name: string
 }
