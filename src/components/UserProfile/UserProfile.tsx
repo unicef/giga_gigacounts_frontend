@@ -81,14 +81,8 @@ const UserProfile = () => {
   const hasAttachedWallet = !!walletAddress
   const isConnected = !!account
 
-  const withdrawBtn = useMemo(
-    () => (
-      <>
-        {isConnected && hasAttachedWallet && walletAddress === account && role === UserRole.ISP && (
-          <button className="btn-blue">Withdraw Funds</button>
-        )}
-      </>
-    ),
+  const showWithdrawButton = useMemo(
+    () => isConnected && hasAttachedWallet && walletAddress === account && role === UserRole.ISP,
     [hasAttachedWallet, isConnected, account, role, walletAddress],
   )
 
@@ -128,7 +122,7 @@ const UserProfile = () => {
             <Wallet label="Account Safe" chainId={chain?.id ?? 1} address={safe?.address ?? ''} icon={images.safe} />
             {safe?.address && <EthBalance account={safe.address} />}
 
-            {withdrawBtn}
+            {showWithdrawButton && <button className="btn-blue">Withdraw Funds</button>}
           </UserProfileBalance>
 
           <UserProfileMetamask>
