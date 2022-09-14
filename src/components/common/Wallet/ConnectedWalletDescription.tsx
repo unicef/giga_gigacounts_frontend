@@ -17,7 +17,8 @@ const ConnectedWalletDescription = (): JSX.Element => {
           <a href="https://metamask.io/download/" target="_blank" rel="noreferrer">
             MetaMask
           </a>{' '}
-          plugin in your browser. Make sure that you are logged in or create a new MetaMask account.
+          plugin in your browser and please refresh the page. Make sure that you are logged in or create a new MetaMask
+          account.
         </small>
       </Description>
     )
@@ -31,7 +32,8 @@ const ConnectedWalletDescription = (): JSX.Element => {
         <a href="https://metamask.io/download/" target="_blank" rel="noreferrer">
           MetaMask
         </a>{' '}
-        plugin in your browser. Make sure that you are logged in or create a new MetaMask account.
+        plugin in your browser and please refresh the page. Make sure that you are logged in or create a new MetaMask
+        account.
       </small>
     </Description>
   )

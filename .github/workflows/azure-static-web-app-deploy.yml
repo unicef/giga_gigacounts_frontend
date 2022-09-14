@@ -1,11 +1,11 @@
 name: Azure Static Web Apps CI/CD
 
 on:
-#  push:
-#    branches:
-#      - dev
-#    paths-ignore:
-#      - '**/README.md'
+  #  push:
+  #    branches:
+  #      - dev
+  #    paths-ignore:
+  #      - '**/README.md'
   workflow_dispatch:
     inputs:
       target_env:
@@ -14,9 +14,9 @@ on:
         default: 'dev'
         type: choice
         options:
-        - dev
-        - stage
-        - uat
+          - dev
+          - stage
+          - uat
 
 jobs:
   build_and_deploy_job:
@@ -52,6 +52,7 @@ jobs:
           REACT_APP_BACKEND_URL: ${{ env.REACT_APP_BACKEND_URL }}
           REACT_APP_INFURA_ID: ${{ secrets.REACT_APP_INFURA_ID }}
           REACT_APP_NETWORK: 4
+          REACT_APP_COINGECKO_API: 'https://api.coingecko.com/api/v3/simple/price'
         with:
           azure_static_web_apps_api_token: ${{ secrets[env.AZURE_STATIC_WEB_APPS_API_TOKEN_VAR_NAME] }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)

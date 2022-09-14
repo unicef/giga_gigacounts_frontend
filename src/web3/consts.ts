@@ -40,4 +40,7 @@ export const INITIAL_WEB3_CONTEXT_VALUE: IWeb3Context = {
   disconnect: () => {
     throw new Error('Not implemented')
   },
+  verifyWallet: () => {
+    throw new Error('Not implemented')
+  },
 }
