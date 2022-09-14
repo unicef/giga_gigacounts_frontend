@@ -25,13 +25,13 @@ import {
 import { UserRole } from 'src/types/general'
 
 const UserProfile = () => {
-  const { chain, disconnect } = useWeb3Context()
+  const { chain, disconnect, account } = useWeb3Context()
 
   const navigate = useNavigate()
 
   const { data } = useUser()
 
-  const { name, lastName, role, country, safe, isp } = data ?? {}
+  const { name, lastName, role, country, safe, isp, walletAddress } = data ?? {}
 
   const {
     actions: { reset },
@@ -49,8 +49,8 @@ const UserProfile = () => {
       role === UserRole.ADMIN
         ? 'administrators'
         : role === UserRole.ISP
-        ? `${country?.name} ${isp?.name} users`
-        : `${country?.name} ${role?.toLocaleLowerCase()} users`
+        ? `${isp?.name}`
+        : `${country?.name} ${role?.toLocaleLowerCase()}`
     }`
   }, [role, country, isp])
 
@@ -63,9 +63,9 @@ const UserProfile = () => {
           rel="noreferrer"
           href="https://help.gnosis-safe.io/en/collections/2289028-getting-started"
         >
-          Gnosis safe
+          gnosis safe
         </SmallLink>{' '}
-        that is shared with all {roleDescription}. To deposit funds to your safe{' '}
+        that is shared with all {roleDescription} users. To deposit funds to your safe{' '}
         <SmallLink
           target="_blank"
           rel="noreferrer"
@@ -76,6 +76,14 @@ const UserProfile = () => {
       </small>
     ),
     [roleDescription],
+  )
+
+  const hasAttachedWallet = !!walletAddress
+  const isConnected = !!account
+
+  const showWithdrawButton = useMemo(
+    () => isConnected && hasAttachedWallet && walletAddress === account && role === UserRole.ISP,
+    [hasAttachedWallet, isConnected, account, role, walletAddress],
   )
 
   return (
@@ -114,7 +122,7 @@ const UserProfile = () => {
             <Wallet label="Account Safe" chainId={chain?.id ?? 1} address={safe?.address ?? ''} icon={images.safe} />
             {safe?.address && <EthBalance account={safe.address} />}
 
-            <button className="btn-blue">Withdraw Funds</button>
+            {showWithdrawButton && <button className="btn-blue">Withdraw Funds</button>}
           </UserProfileBalance>
 
           <UserProfileMetamask>
