@@ -64,7 +64,7 @@ export const UserName = styled.h5`
   color: var(--color-black);
 `
 
-export const UserRole = styled.p`
+export const UserRoleContainer = styled.p`
   grid-area: role;
   color: var(--color-mid-grey);
   padding-bottom: 8px;
@@ -109,4 +109,11 @@ export const UserProfileMetamask = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+`
+
+export const SmallLink = styled.a`
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 148%;
+  letter-spacing: 0.018em;
 `

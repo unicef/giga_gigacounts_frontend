@@ -68,7 +68,7 @@ const EthBalance: React.FC<EthBalanceProps> = ({ account }: EthBalanceProps) => 
           {usdBalance !== undefined && (
             <Price>
               {usdBalance > 0 && '~ '}
-              {usdBalance} USD
+              {usdBalance.toFixed(2)} USD
             </Price>
           )}
         </>

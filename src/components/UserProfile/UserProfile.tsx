@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import images from 'src/assets/images'
 import { useGeneralContext } from 'src/state/GeneralContext'
@@ -17,10 +17,12 @@ import {
   UserProfileBalance,
   UserProfileMetamask,
   UserName,
-  UserRole,
+  UserRoleContainer,
   UserCountry,
   UserAvatar,
+  SmallLink,
 } from './styles'
+import { UserRole } from 'src/types/general'
 
 const UserProfile = () => {
   const { chain, disconnect } = useWeb3Context()
@@ -29,7 +31,7 @@ const UserProfile = () => {
 
   const { data } = useUser()
 
-  const { name, lastName, role, country, safe } = data ?? {}
+  const { name, lastName, role, country, safe, isp } = data ?? {}
 
   const {
     actions: { reset },
@@ -41,6 +43,40 @@ const UserProfile = () => {
     reset()
     navigate('/')
   }, [disconnect, reset, navigate])
+
+  const roleDescription = useMemo(() => {
+    return `${
+      role === UserRole.ADMIN
+        ? 'administrators'
+        : role === UserRole.ISP
+        ? `${country?.name} ${isp?.name} users`
+        : `${country?.name} ${role?.toLocaleLowerCase()} users`
+    }`
+  }, [role, country, isp])
+
+  const description = useMemo(
+    () => (
+      <small>
+        This is a{' '}
+        <SmallLink
+          target="_blank"
+          rel="noreferrer"
+          href="https://help.gnosis-safe.io/en/collections/2289028-getting-started"
+        >
+          Gnosis safe
+        </SmallLink>{' '}
+        that is shared with all {roleDescription}. To deposit funds to your safe{' '}
+        <SmallLink
+          target="_blank"
+          rel="noreferrer"
+          href="https://www.coinbase.com/learn/tips-and-tutorials/how-to-send-crypto"
+        >
+          follow the instructions
+        </SmallLink>
+      </small>
+    ),
+    [roleDescription],
+  )
 
   return (
     <UserProfileContainer>
@@ -61,9 +97,9 @@ const UserProfile = () => {
           <UserName>
             {name} {lastName}
           </UserName>
-          <UserRole>
+          <UserRoleContainer>
             <b>{role}</b>
-          </UserRole>
+          </UserRoleContainer>
           {country && (
             <UserCountry>
               <img src={country.flagUrl} alt={country.name} />
@@ -74,7 +110,7 @@ const UserProfile = () => {
         <UserProfileCrypto>
           <UserProfileBalance>
             <h5>Gigacounts crypto balance</h5>
-            <small>To recieve a donation please copy your safe adddress and send it to the donor</small>
+            {description}
             <Wallet label="Account Safe" chainId={chain?.id ?? 1} address={safe?.address ?? ''} icon={images.safe} />
             {safe?.address && <EthBalance account={safe.address} />}
 
