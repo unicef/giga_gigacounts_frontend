@@ -1,12 +1,14 @@
-import { ethers } from 'ethers'
+import { ethers, providers } from 'ethers'
 import { createContext, useEffect, useMemo, useContext, useCallback, useState } from 'react'
 import { useConnectWallet, useWallets } from '@web3-onboard/react'
+import { useUser } from 'src/state/hooks'
+import { attachWallet, getWalletRandomString } from 'src/api/wallets'
+import { useGeneralContext } from 'src/state/GeneralContext'
 import { ChildrenProps } from '../types/utils'
 import { INITIAL_WEB3_CONTEXT_VALUE, SUPPORTED_CHAINS } from './consts'
 import { IWeb3Context } from './types'
 
 import 'src/web3/onboard'
-import { useUser } from 'src/state/hooks'
 
 export const Web3Context = createContext<IWeb3Context>(INITIAL_WEB3_CONTEXT_VALUE)
 
@@ -15,6 +17,9 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
   const user = useUser()
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
   const connectedWallets = useWallets()
+  const {
+    actions: { reload },
+  } = useGeneralContext()
 
   const account = useMemo(() => {
     const address = wallet?.accounts?.[0]?.address
@@ -39,6 +44,27 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
     }
   }, [disconnect, wallet])
 
+  const verifyWallet = useCallback(async () => {
+    if (!wallet?.provider || !account) {
+      return
+    }
+
+    try {
+      const verificationMessage = await getWalletRandomString()
+      const provider = new providers.Web3Provider(wallet.provider as unknown as providers.JsonRpcFetchFunc, 'any')
+
+      const signer = provider.getSigner()
+
+      const signedMessage = await signer.signMessage(verificationMessage)
+
+      await attachWallet(account, signedMessage)
+
+      reload()
+    } catch {
+      // do nothing
+    }
+  }, [account, reload, wallet?.provider])
+
   const value = useMemo(
     () => ({
       initiated,
@@ -48,8 +74,9 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
       connecting,
       connect,
       disconnect: disconnectAll,
+      verifyWallet,
     }),
-    [initiated, wallet, account, chain, connecting, connect, disconnectAll],
+    [initiated, wallet, account, chain, connecting, connect, disconnectAll, verifyWallet],
   )
 
   useEffect(() => {

@@ -8,7 +8,7 @@ import Loader from '../Loader'
 
 const ConnectedWallet = (): JSX.Element => {
   const { data } = useUser()
-  const { account, chain, connect, initiated } = useWeb3Context()
+  const { account, chain, connect, initiated, verifyWallet } = useWeb3Context()
 
   const { walletAddress } = data ?? {}
 
@@ -43,7 +43,9 @@ const ConnectedWallet = (): JSX.Element => {
             be linked to your Gigacounts account
           </small>
         </Instructions>
-        <button className="btn-green">Sign Message</button>
+        <button className="btn-green" onClick={verifyWallet}>
+          Sign Message
+        </button>
       </div>
     )
   }
@@ -69,7 +71,7 @@ const ConnectedWallet = (): JSX.Element => {
             To complete wallet attachment, please sign a verification message. Currently connected wallet address will
             be linked to your gigacounts account.
           </small>
-          <button className="btn-green" onClick={() => connect()}>
+          <button className="btn-green" onClick={verifyWallet}>
             Sign Message
           </button>
         </>

@@ -17,4 +17,5 @@ export interface IWeb3Context {
   connecting: boolean
   connect: (options?: ConnectOptions) => Promise<WalletState[]>
   disconnect: () => void
+  verifyWallet: () => void
 }
