@@ -50,7 +50,7 @@ export const DateStart = styled.div`
   & input[type='date'] {
     width: 40%;
     max-width: 200px;
-    min-width: 130px
+    min-width: 130px;
   }
 `
 
@@ -105,4 +105,23 @@ export const UploadFiles = styled.div`
   input[type='file'] {
     display: none;
   }
+`
+
+export const CurrencySelector = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+`
+
+export const CurrencyType = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 9px 16px;
+  gap: 4px;
+  background: #6fa6fe;
 `

@@ -12,6 +12,8 @@ import {
   FormContainer,
   GeneralContainer,
   UploadFiles,
+  CurrencySelector,
+  CurrencyType,
 } from './styles'
 import { useRoleCheck } from 'src/state/hooks'
 import UploadButton from 'src/components/common/UploadButton/UploadButton'
@@ -146,7 +148,10 @@ const GeneralTab: React.FC = (): JSX.Element => {
                 ))}
             </select>
           </div>
-
+          <CurrencySelector>
+            <CurrencyType>FIAT</CurrencyType>
+            <CurrencyType>CRYPTO</CurrencyType>
+          </CurrencySelector>
           <div className="input-container">
             <div className="dropdown currency">
               <select
