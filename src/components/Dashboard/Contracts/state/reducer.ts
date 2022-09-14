@@ -1,4 +1,11 @@
-import { ContractsAction, ContractsActionType, ContractsState, SchoolQosResponse, SchoolsQos } from './types'
+import {
+  ContractsAction,
+  ContractsActionType,
+  ContractsState,
+  NavItemType,
+  SchoolQosResponse,
+  SchoolsQos,
+} from './types'
 import { IContract, IContractDetails } from 'src/types/general'
 import { getMetricProperty } from './utils'
 
@@ -11,7 +18,7 @@ export const reducer = (state: ContractsState, action: ContractsAction): Contrac
       return {
         ...state,
         newContract,
-        activeNavItem: undefined,
+        activeNavItem: NavItemType.all,
       }
     }
 

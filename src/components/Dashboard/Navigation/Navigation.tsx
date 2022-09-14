@@ -79,8 +79,9 @@ const Navigation: React.FC = (): JSX.Element => {
         <StyledDivider />
         <NavItem
           collapsed={!hovered}
-          selected={activeNavItem === undefined}
+          selected={activeNavItem === NavItemType.all}
           label="All Contracts"
+          value={NavItemType.all}
           number={contractCounts.data.total}
           icon="icon-list"
           onClick={handleNaveItemClick}

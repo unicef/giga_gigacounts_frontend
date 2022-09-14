@@ -1,5 +1,5 @@
 import { IContract, ContractStatus } from 'src/types/general'
-import { ContractsState, ContractStagedActiveTab } from './types'
+import { ContractsState, ContractStagedActiveTab, NavItemType } from './types'
 
 export const INITIAL_CONTRACTS_STATE: ContractsState = {
   contracts: undefined,
@@ -12,6 +12,7 @@ export const INITIAL_CONTRACTS_STATE: ContractsState = {
   activeTab: ContractStagedActiveTab.schools,
   contractPayments: [],
   expandedLtaId: null,
+  activeNavItem: NavItemType.all,
 }
 
 export const NEW_CONTRACT: IContract = {

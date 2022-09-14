@@ -1,5 +1,5 @@
 import { ContractStatus } from 'src/types/general'
-import { ContractsState } from './types'
+import { ContractsState, NavItemType } from './types'
 
 export const selectAllLtaContracts = (id?: string) => (state: ContractsState) =>
   id === undefined ? [] : state.contracts?.filter((contract) => contract.ltaId === id)
@@ -8,7 +8,7 @@ export const selectAllOtherContracts = (state: ContractsState) =>
   state.contracts?.filter((contract) => contract.ltaId === undefined || contract.ltaId === null)
 
 export const selectFilteredContracts = (state: ContractsState) => {
-  return state.activeNavItem === undefined
+  return state.activeNavItem === NavItemType.all
     ? state.contracts
     : state.contracts?.filter((contract) => contract.status.toLowerCase() === state.activeNavItem)
 }
@@ -17,7 +17,7 @@ export const selectFilteredLtaContracts = (id?: string) => (state: ContractsStat
   id === undefined ? [] : selectFilteredContracts(state)?.filter((contract) => contract.ltaId === id)
 
 export const selectFilteredLtas = (state: ContractsState) => {
-  if (state.activeNavItem === undefined) {
+  if (state.activeNavItem === NavItemType.all) {
     return state.ltas
   }
 

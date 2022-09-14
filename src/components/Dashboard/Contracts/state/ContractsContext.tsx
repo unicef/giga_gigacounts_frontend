@@ -18,7 +18,7 @@ export interface IContractsContext {
   dispatch: Dispatch<ContractsAction>
   actions: {
     fetchContract: (id: string) => Promise<void>
-    setActiveNavItem: (item?: NavItemType) => void
+    setActiveNavItem: (item: NavItemType) => void
     setSelectedSchool: (schoolId: string) => void
     fetchSchoolMeasures: (schoolId: string, id: string, month: string) => void
     reloadContracts: () => void
@@ -232,7 +232,7 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
   ])
 
   const setActiveNavItem = useCallback(
-    (navItem?: NavItemType) => {
+    (navItem: NavItemType) => {
       dispatch({ type: ContractsActionType.SET_ACTIVE_NAV_ITEM, payload: navItem })
     },
     [dispatch],

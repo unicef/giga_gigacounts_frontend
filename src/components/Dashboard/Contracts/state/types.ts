@@ -35,7 +35,7 @@ export interface ContractsState {
     contractId?: string
   }
   schoolsQos: Record<string, DataState<SchoolsQos[], true>>
-  activeNavItem?: NavItemType
+  activeNavItem: NavItemType
   error?: Error
   loading?: boolean
   newContract?: {
@@ -87,6 +87,7 @@ export enum MetricPropertyType {
 }
 
 export enum NavItemType {
+  all = 'all',
   draft = 'draft',
   sent = 'sent',
   confirmed = 'confirmed',
