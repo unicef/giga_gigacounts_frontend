@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { ethers } from 'ethers'
 import instance from 'src/api/init'
 
-import { LoginFormContainer, Logo, Form, InputContainer, InputFrame, Input, EmailErrorMessage } from './styles'
+import { LoginFormContainer, Logo, Form, InputFrame, Input, EmailErrorMessage } from './styles'
 import { useGeneralContext } from 'src/state/GeneralContext'
 import logos from 'src/assets/logos'
 import Message, { MessageType } from 'src/components/common/Message/Message'
@@ -61,38 +61,36 @@ export const LoginForm: React.FC = (): JSX.Element => {
     <LoginFormContainer>
       <Logo alt="logo" src={logos.gigaLogoColor}></Logo>
       <Form error={wrongCredentialsError} onSubmit={(e) => handleSubmit(e)}>
-        <InputContainer order="0" error={wrongCredentialsError}>
-          <InputFrame order="0">
-            <Input
-              type="email"
-              name="email"
-              placeholder="Email"
-              className={emailError ? 'input-error' : ''}
-              onChange={handleEmailInput}
+        <InputFrame order="0">
+          <Input
+            type="email"
+            name="email"
+            placeholder="Email"
+            className={emailError ? 'input-error' : ''}
+            onChange={handleEmailInput}
+          />
+          {emailError && <EmailErrorMessage>{EMPTY_EMAIL_MESSAGE}</EmailErrorMessage>}
+        </InputFrame>
+        <InputFrame order="1">
+          <Input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className={passwordError ? 'input-error' : ''}
+            onChange={handlePasswordInput}
+          />
+          {passwordError && <EmailErrorMessage>{EMPTY_EMAIL_MESSAGE}</EmailErrorMessage>}
+        </InputFrame>
+        {wrongCredentialsError && (
+          <InputFrame order="2">
+            <Message
+              type={MessageType.ERROR}
+              title="Invalid Credentials"
+              description="Please contact Giga administrator for assistance"
+              onClose={() => setWrongCredentialsError(false)}
             />
-            {emailError && <EmailErrorMessage>{EMPTY_EMAIL_MESSAGE}</EmailErrorMessage>}
           </InputFrame>
-          <InputFrame order="1">
-            <Input
-              type="password"
-              name="password"
-              placeholder="Password"
-              className={passwordError ? 'input-error' : ''}
-              onChange={handlePasswordInput}
-            />
-            {passwordError && <EmailErrorMessage>{EMPTY_EMAIL_MESSAGE}</EmailErrorMessage>}
-          </InputFrame>
-          {wrongCredentialsError && (
-            <InputFrame order="2">
-              <Message
-                type={MessageType.ERROR}
-                title="Invalid Credentials"
-                description="Please contact giga administrator for assistance"
-                onClose={() => setWrongCredentialsError(false)}
-              />
-            </InputFrame>
-          )}
-        </InputContainer>
+        )}
         <button type="submit" className="btn-blue">
           Sign In
         </button>

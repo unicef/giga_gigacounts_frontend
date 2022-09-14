@@ -7,6 +7,7 @@ export const LoginContainer = styled.div`
   width: 100%;
   height: 100vh;
   background: #ffffff;
+  overflow: hidden;
 
   & > img {
     width: 100%;
