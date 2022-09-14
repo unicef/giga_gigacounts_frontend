@@ -1,5 +1,6 @@
 import { useUser } from 'src/state/hooks'
 import { UserRole } from 'src/types/general'
+import { SmallLink } from '../SmallLink'
 import { Description } from './styles'
 
 const ConnectedWalletDescription = (): JSX.Element => {
@@ -14,9 +15,9 @@ const ConnectedWalletDescription = (): JSX.Element => {
           This wallet will be used to withdraw your funds.
           <br />
           Install{' '}
-          <a href="https://metamask.io/download/" target="_blank" rel="noreferrer">
+          <SmallLink href="https://metamask.io/download/" target="_blank" rel="noreferrer">
             MetaMask
-          </a>{' '}
+          </SmallLink>{' '}
           plugin in your browser and please refresh the page. Make sure that you are logged in or create a new MetaMask
           account.
         </small>
@@ -29,9 +30,9 @@ const ConnectedWalletDescription = (): JSX.Element => {
       <small>
         This wallet will be used to sign the transactions, creating a crypto contract, managing budget on the platform.
         Install{' '}
-        <a href="https://metamask.io/download/" target="_blank" rel="noreferrer">
+        <SmallLink href="https://metamask.io/download/" target="_blank" rel="noreferrer">
           MetaMask
-        </a>{' '}
+        </SmallLink>{' '}
         plugin in your browser and please refresh the page. Make sure that you are logged in or create a new MetaMask
         account.
       </small>

@@ -20,9 +20,9 @@ import {
   UserRoleContainer,
   UserCountry,
   UserAvatar,
-  SmallLink,
 } from './styles'
 import { UserRole } from 'src/types/general'
+import { SmallLink } from '../common/SmallLink'
 
 const UserProfile = () => {
   const { chain, disconnect, account } = useWeb3Context()
