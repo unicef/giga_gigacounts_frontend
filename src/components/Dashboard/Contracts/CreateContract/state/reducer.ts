@@ -331,11 +331,13 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       const { preset } = payload ?? {}
 
       const currencyId = state.currencies[0].id
+      const countryId = state.countries[0].id
 
       return {
         ...state,
         contractForm: {
           ...CONTRACT_FORM_INITIAL_STATE,
+          countryId,
           currencyId,
           ...preset,
         },
