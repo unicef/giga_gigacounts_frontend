@@ -43,4 +43,7 @@ export const INITIAL_WEB3_CONTEXT_VALUE: IWeb3Context = {
   verifyWallet: () => {
     throw new Error('Not implemented')
   },
+  setChain: () => {
+    throw new Error('Not implemented')
+  },
 }

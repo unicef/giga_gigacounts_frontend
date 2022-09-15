@@ -1,6 +1,6 @@
 import { ethers, providers } from 'ethers'
 import { createContext, useEffect, useMemo, useContext, useCallback, useState } from 'react'
-import { useConnectWallet, useWallets } from '@web3-onboard/react'
+import { useConnectWallet, useWallets, useSetChain } from '@web3-onboard/react'
 import { useUser } from 'src/state/hooks'
 import { attachWallet, getWalletRandomString } from 'src/api/wallets'
 import { useGeneralContext } from 'src/state/GeneralContext'
@@ -20,6 +20,8 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
   const {
     actions: { reload },
   } = useGeneralContext()
+
+  const [, setChain] = useSetChain()
 
   const account = useMemo(() => {
     const address = wallet?.accounts?.[0]?.address
@@ -75,8 +77,9 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
       connect,
       disconnect: disconnectAll,
       verifyWallet,
+      setChain,
     }),
-    [initiated, wallet, account, chain, connecting, connect, disconnectAll, verifyWallet],
+    [initiated, wallet, account, chain, connecting, connect, disconnectAll, verifyWallet, setChain],
   )
 
   useEffect(() => {

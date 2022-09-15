@@ -83,11 +83,11 @@ export const ShowAddress = styled.div<{ verified?: boolean; error?: boolean }>`
 
 export const Description = styled.p`
   margin-bottom: 24px;
-  color: --var(--color-darkest-grey);
+  color: var(--color-darkest-grey);
 `
 
 export const Instructions = styled.p`
   margin-top: 24px;
   margin-bottom: 16px;
-  color: --var(--color-darkest-grey);
+  color: var(--color-darkest-grey);
 `

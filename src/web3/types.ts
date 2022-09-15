@@ -9,6 +9,12 @@ export enum ExplorerLinkType {
   token = 'token',
 }
 
+type SetChainOptions = {
+  chainId: string
+  chainNamespace?: string
+  wallet?: WalletState['label']
+}
+
 export interface IWeb3Context {
   initiated: boolean
   wallet: WalletState | null
@@ -18,4 +24,5 @@ export interface IWeb3Context {
   connect: (options?: ConnectOptions) => Promise<WalletState[]>
   disconnect: () => void
   verifyWallet: () => void
+  setChain: (options: SetChainOptions) => Promise<boolean>
 }
