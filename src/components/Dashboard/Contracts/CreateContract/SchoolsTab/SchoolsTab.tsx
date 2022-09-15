@@ -161,8 +161,10 @@ const SchoolsTab: React.FC = (): JSX.Element => {
       </UploadContainer>
       <SchoolSearchContainer>
         <SchoolSearchHeader>
-          <span className="icon icon-24 icon-search icon-mid-grey"></span>
-          <SchoolSearchInput type="text" name="search-input" placeholder="Search School Name / ID" ref={inputRef} />
+          <div style={{ display: 'flex', width: '100%' }}>
+            <span className="icon icon-24 icon-search icon-mid-grey"></span>
+            <SchoolSearchInput type="text" name="search-input" placeholder="Search School Name / ID" ref={inputRef} />
+          </div>
           <SearchButton onClick={handleSearch}>Search</SearchButton>
         </SchoolSearchHeader>
         <SchoolsTableContainer>

@@ -7,6 +7,7 @@ export const SchoolsContainer = styled.div`
   width: 100%;
   height: 100%;
   gap: 50px;
+  overflow: hidden;
 `
 
 export const UploadContainer = styled.div`
@@ -106,14 +107,13 @@ export const SchoolSearchContainer = styled.div`
 export const SchoolSearchHeader = styled.div`
   display: inline-grid;
   width: 100%;
-  grid-template-columns: 5% 85% 10%;
+  grid-template-columns: 90% 10%;
   grid-template-rows: 100%;
   justify-items: center;
   align-items: center;
   place-items: center;
   background-color: var(--color-lightest-grey);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  height: 5%;
 `
 
 export const SchoolSearchInput = styled.input`
@@ -149,7 +149,7 @@ export const SchoolsTableContainer = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  height: 95%;
+  overflow: hidden;
   width: 100%;
 `
 export const UploadFormatError = styled.div`

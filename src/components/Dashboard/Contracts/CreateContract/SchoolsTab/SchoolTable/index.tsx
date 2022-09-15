@@ -8,6 +8,7 @@ import {
   SchoolNameContainer,
   SchoolIDContainer,
   MainContainer,
+  SchoolTableContent,
 } from './styles'
 import { ISchool } from 'src/api/school'
 
@@ -37,19 +38,21 @@ const SchoolTable = ({ schools, onSelect, selectedSchools }: SchoolTableProps) =
         <NameHeaderLabel>School Name</NameHeaderLabel>
         <IdHeaderLabel>ID</IdHeaderLabel>
       </SchoolsTableHeader>
-      {schools.map((school) => (
-        <TableRow key={school.id}>
-          <SelectButton
-            type="checkbox"
-            ref={inputRef}
-            onChange={onButtonSelect(school.id)}
-            checked={isSelected(school.id)}
-            value={school.id}
-          />
-          <SchoolNameContainer>{school.name}</SchoolNameContainer>
-          <SchoolIDContainer>{school.external_id}</SchoolIDContainer>
-        </TableRow>
-      ))}
+      <SchoolTableContent>
+        {schools.map((school) => (
+          <TableRow key={school.id}>
+            <SelectButton
+              type="checkbox"
+              ref={inputRef}
+              onChange={onButtonSelect(school.id)}
+              checked={isSelected(school.id)}
+              value={school.id}
+            />
+            <SchoolNameContainer>{school.name}</SchoolNameContainer>
+            <SchoolIDContainer>{school.external_id}</SchoolIDContainer>
+          </TableRow>
+        ))}
+      </SchoolTableContent>
     </MainContainer>
   )
 }

@@ -1,12 +1,11 @@
 import styled from 'styled-components/macro'
 
 export const MainContainer = styled.div`
-  display: inline-grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
   width: 100%;
-  grid-template-columns: 100%;
-  justify-items: center;
-  align-items: baseline;
-  place-items: center;
+  height: 100%;
   gap: 10px;
 `
 
@@ -20,6 +19,7 @@ export const SchoolsTableHeader = styled.div`
   gap: 8px;
   border-bottom: 1px solid;
   border-bottom-color: rgba(0, 0, 0, 0.1);
+  height: 38px;
 `
 
 export const NameHeaderLabel = styled.p`
@@ -41,6 +41,26 @@ export const IdHeaderLabel = styled.p`
   letter-spacing: 0.003em;
   align-self: flex-end;
   color: var(--color-dark-grey);
+  padding-right: 14px;
+`
+
+export const SchoolTableContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  flex: 0 1 auto;
+  overflow: hidden;
+  padding-right: 14px;
+
+  &:hover {
+    overflow-y: scroll;
+    padding-right: 0;
+  }
+
+  & > :nth-child(even) {
+    background-color: var(--color-lightest-grey);
+  }
 `
 
 export const TableRow = styled.div`
@@ -49,6 +69,7 @@ export const TableRow = styled.div`
   grid-template-columns: 5% 85% 10%;
   justify-items: start;
   align-items: center;
+  padding: 8px 16px;
 `
 
 export const SelectButton = styled.input`
@@ -74,4 +95,5 @@ export const SchoolIDContainer = styled.div`
   letter-spacing: 0.003em;
   color: var(--color-darker-grey);
   align-self: center;
+  margin-left: auto;
 `
