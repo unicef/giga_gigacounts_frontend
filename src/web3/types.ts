@@ -24,6 +24,7 @@ export interface IWeb3Context extends Web3State {
   disconnect: () => void
   verifyWallet: () => void
   setChain: (options: SetChainOptions) => Promise<boolean>
+  resetError: () => void
 }
 
 export interface Web3State {

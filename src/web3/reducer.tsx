@@ -13,9 +13,10 @@ export const reducer = (state: Web3State, action: Web3Action): Web3State => {
       return {
         initiated: true,
         verifying: payload,
+        error: undefined,
       }
     case Web3ActionType.SET_ERROR:
-      if (payload.code === 'ACTION_REJECTED') {
+      if (payload?.code === 'ACTION_REJECTED') {
         return {
           initiated: true,
           verifying: false,
@@ -23,11 +24,11 @@ export const reducer = (state: Web3State, action: Web3Action): Web3State => {
         }
       }
 
-      if (payload.response?.status >= 400 && payload.response?.status <= 500) {
+      if (payload?.response?.status >= 400 && payload?.response?.status <= 500) {
         return {
           initiated: true,
           verifying: false,
-          error: new Error(payload.response.data),
+          error: new Error(payload.response?.data),
         }
       }
       return {

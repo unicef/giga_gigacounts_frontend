@@ -52,4 +52,7 @@ export const INITIAL_WEB3_CONTEXT_VALUE: IWeb3Context = {
   setChain: () => {
     throw new Error('Not implemented')
   },
+  resetError: () => {
+    throw new Error('Not implemented')
+  },
 }

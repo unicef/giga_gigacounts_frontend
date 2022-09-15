@@ -47,6 +47,11 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
     }
   }, [disconnect, wallet])
 
+  const resetError = () =>
+    dispatch({
+      type: Web3ActionType.SET_ERROR,
+    })
+
   const verifyWallet = useCallback(async () => {
     if (!wallet?.provider || !account) {
       return
@@ -93,6 +98,7 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
       disconnect: disconnectAll,
       verifyWallet,
       setChain,
+      resetError,
     }),
     [initiated, wallet, account, chain, connecting, verifying, error, connect, disconnectAll, verifyWallet, setChain],
   )

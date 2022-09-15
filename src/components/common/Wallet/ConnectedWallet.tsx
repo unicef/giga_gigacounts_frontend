@@ -11,7 +11,7 @@ import Address from './Address'
 
 const ConnectedWallet = (): JSX.Element => {
   const { data } = useUser()
-  const { account, chain, connect, initiated, setChain, verifyWallet, verifying, error } = useWeb3Context()
+  const { account, chain, connect, initiated, setChain, verifyWallet, verifying, error, resetError } = useWeb3Context()
 
   const { walletAddress } = data ?? {}
 
@@ -44,7 +44,7 @@ const ConnectedWallet = (): JSX.Element => {
   return (
     <>
       <ConnectedWalletDescription />
-      {!!error && <Message type={MessageType.ERROR} title="Error" description={error.message} showCloseBtn={false} />}
+      {!!error && <Message type={MessageType.ERROR} title="Error" description={error.message} onClose={resetError} />}
       <Wallet
         address={account}
         chainId={chain?.id!}
