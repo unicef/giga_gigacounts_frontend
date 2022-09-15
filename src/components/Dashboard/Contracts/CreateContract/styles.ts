@@ -9,6 +9,7 @@ export const CreateContractContainer = styled.div`
   background: var(--color-white);
   width: 100vw;
   height: 100vh;
+  overflow-y: auto;
 `
 
 export const Header = styled.div`

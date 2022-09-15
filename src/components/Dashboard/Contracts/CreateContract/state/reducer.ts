@@ -124,7 +124,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           ...state.contractForm,
           name: payload,
         },
-        error: '',
+        error: undefined,
       }
 
     case CreateContractActionType.SET_BUDGET:
@@ -192,13 +192,13 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       if (validationErrors?.length > 0) {
         return {
           ...state,
-          error: validationErrors[0].message,
+          error: new Error(validationErrors[0].message),
         }
       }
 
       return {
         ...state,
-        error: payload?.error?.response?.data || 'Something went wrong!',
+        error: new Error(payload?.error?.response?.data || 'Something went wrong!'),
       }
     }
 

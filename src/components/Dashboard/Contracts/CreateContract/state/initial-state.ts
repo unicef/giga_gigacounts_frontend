@@ -24,7 +24,7 @@ export const CREATE_CONTRACT_INITIAL_STATE: CreateContractState = {
     error: undefined,
   },
   activeTab: CreateContractActiveTab.GeneralTab,
-  error: '',
+  error: undefined,
   loading: true,
   missingData: false,
   invalidData: false,

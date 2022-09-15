@@ -136,7 +136,7 @@ const CreateContractForm: React.FC<ICreateContractFormProps> = (): JSX.Element =
             {error && (
               <>
                 <span className="icon icon-24 icon-error icon-red" />
-                <p className="error">{error}</p>
+                <p className="error">{error.message}</p>
               </>
             )}
           </FormHeaderMessage>

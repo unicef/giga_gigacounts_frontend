@@ -94,7 +94,7 @@ export interface ContractForm {
 export interface CreateContractState {
   draft: DataState<IDraft, true>
   activeTab: CreateContractActiveTab
-  error: string
+  error?: Error
   loading?: boolean
   missingData: boolean
   invalidData: boolean

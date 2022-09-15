@@ -4,7 +4,7 @@ const PageWrapper = styled.div`
   display: flex;
   height: 100vh;
   width: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
 `
 
 export default PageWrapper
