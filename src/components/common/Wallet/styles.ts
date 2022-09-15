@@ -61,12 +61,11 @@ export const WalletAddress = styled.div`
   align-items: center;
 `
 
-export const ShowAddress = styled.div<{ verified?: boolean; error?: boolean }>`
-  display: flex;
+export const AddressWrapper = styled.span<{ verified?: boolean; error?: boolean }>`
+  display: inline;
   gap: 4px;
   align-items: center;
   color: var(--color-dark-grey);
-  width: 100%;
   flex-grow: 1;
 
   ${({ error }) =>
@@ -75,6 +74,7 @@ export const ShowAddress = styled.div<{ verified?: boolean; error?: boolean }>`
     }}
 
   & > .icon {
+    vertical-align: middle;
     ${({ verified, error }) => ({
       color: error ? 'var(--color-red)' : verified ? 'var(--color-green)' : 'var(--color-dark-grey)',
     })}

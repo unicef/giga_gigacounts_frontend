@@ -1,10 +1,10 @@
 import { memo } from 'react'
 import images from 'src/assets/images'
-import { getWalletIcon } from 'src/utils/getWalletIcon'
 import CopyButton from '../CopyButton'
 import ExplorerLink from '../ExplorerLink'
+import Address from './Address'
 import ChainBadge from './ChainBadge'
-import { WalletContainer, WalletHeader, WalletAddress, ShowAddress, WalletWrapper } from './styles'
+import { WalletContainer, WalletHeader, WalletAddress, WalletWrapper } from './styles'
 
 interface WalletProps {
   chainId: number
@@ -41,10 +41,7 @@ const Wallet: React.FC<WalletProps> = memo(
             <ChainBadge chainId={chainId} wrongChain={wrongChain} connected={connected} />
           </WalletHeader>
           <WalletAddress>
-            <ShowAddress error={wrongAddress} verified={isVerified}>
-              <span className={`icon icon-24  ${getWalletIcon(wrongAddress, isVerified)} `} />
-              <p className="super-small ellipsis">{address}</p>
-            </ShowAddress>
+            <Address address={address} wrongAddress={wrongAddress} isVerified={isVerified} />
             <CopyButton textToCopy={address} label="Copy Wallet Address" tooltip="Wallet Address Copied!" />
             <ExplorerLink hash={address} label="View on Etherscan" showIcon className="super-small" />
           </WalletAddress>

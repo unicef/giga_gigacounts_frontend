@@ -3,10 +3,11 @@ import { SELECTED_CHAIN_ID } from 'src/web3/consts'
 import { useUser } from 'src/state/hooks'
 import Wallet from './Wallet'
 import ConnectedWalletDescription from './ConnectedWalletDescription'
-import { ShowAddress } from './styles'
 import Loader from '../Loader'
 import Message, { MessageType } from '../Message/Message'
 import { ethers } from 'ethers'
+import { LinkButton } from '../LinkButton'
+import Address from './Address'
 
 const ConnectedWallet = (): JSX.Element => {
   const { data } = useUser()
@@ -73,13 +74,14 @@ const ConnectedWallet = (): JSX.Element => {
         <>
           <div>
             <small>Connected wallet doesn&apos;t match your verified wallet on Gigacounts</small>
-            <small style={{ display: 'inline-flex', whiteSpace: 'nowrap', alignItems: 'center' }}>
-              Verify connected wallet or choose
-              <ShowAddress>
-                <span className="icon icon-24 icon-wallet" />
-                <p className="super-small ellipsis">{walletAddress} &nbsp;</p>
-              </ShowAddress>
-              in MetaMask.
+            <small>
+              <LinkButton onClick={verifyWallet}>Verify connected wallet</LinkButton> or choose{' '}
+              <Address address={walletAddress} /> in MetaMask.
+              {verifying && (
+                <span>
+                  <Loader />
+                </span>
+              )}
             </small>
           </div>
         </>
@@ -90,7 +92,7 @@ const ConnectedWallet = (): JSX.Element => {
             You are connected to the network that Gigacounts doesn&apos;t accept. Please select Ethereum network in your
             MetaMask.
           </small>
-          <button className="btn-blue" onClick={handleChangeChain}>
+          <button className="btn-blue" onClick={handleChangeChain} disabled={verifying}>
             Switch network
           </button>
         </>
