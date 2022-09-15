@@ -24,7 +24,7 @@ import { useContractsContext } from '../../state/useContractsContext'
 
 const GeneralTab: React.FC = (): JSX.Element => {
   const {
-    state: { loading, countries, currencies, ltas, contractForm, draft },
+    state: { loading, countries, currencies, ltas, contractForm, draft, currencyType },
     actions: { reload, saveDraft, getLtsByCountryId },
     dispatch,
   } = useCreateContractContext()
@@ -69,6 +69,10 @@ const GeneralTab: React.FC = (): JSX.Element => {
 
   const onEndDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: CreateContractActionType.SET_END_DATE, payload: e.target.value })
+  }
+
+  const onCurrencyTypeChange = (type: 'fiat' | 'crypto') => {
+    dispatch({ type: CreateContractActionType.SET_CURRENCY_TYPE, payload: type })
   }
 
   const onUpload = async (file: IFileUpload) => {
@@ -149,8 +153,12 @@ const GeneralTab: React.FC = (): JSX.Element => {
             </select>
           </div>
           <CurrencySelector>
-            <CurrencyType>FIAT</CurrencyType>
-            <CurrencyType>CRYPTO</CurrencyType>
+            <CurrencyType active={currencyType === 'fiat'} onClick={() => onCurrencyTypeChange('fiat')}>
+              FIAT
+            </CurrencyType>
+            <CurrencyType active={currencyType === 'crypto'} onClick={() => onCurrencyTypeChange('crypto')}>
+              CRYPTO
+            </CurrencyType>
           </CurrencySelector>
           <div className="input-container">
             <div className="dropdown currency">

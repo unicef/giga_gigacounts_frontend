@@ -332,6 +332,13 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       }
     }
 
+    case CreateContractActionType.SET_CURRENCY_TYPE: {
+      return {
+        ...state,
+        currencyType: payload,
+      }
+    }
+
     default:
       return {
         ...state,

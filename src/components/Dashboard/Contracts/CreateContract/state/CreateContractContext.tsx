@@ -79,7 +79,7 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   const fetchData = useCallback(async () => {
     try {
       axios
-        .all([getCountries(), getCurrencies()])
+        .all([getCountries(), getCurrencies(localState.currencyType)])
         .then(
           axios.spread((...responses) => {
             const countries = responses[0]
@@ -100,7 +100,7 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
     } catch (error) {
       dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
-  }, [])
+  }, [localState.currencyType])
 
   const reload = useCallback(async () => {
     if (localState.contractForm.id) {

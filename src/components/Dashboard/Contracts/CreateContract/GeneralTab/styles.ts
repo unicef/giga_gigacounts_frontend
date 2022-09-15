@@ -113,9 +113,11 @@ export const CurrencySelector = styled.div`
   flex-direction: row;
   align-items: flex-end;
   justify-content: center;
+  border: 1px solid var(--color-black-10);
+  cursor: pointer;
 `
 
-export const CurrencyType = styled.div`
+export const CurrencyType = styled.div<{ active?: boolean }>`
   width: 50%;
   display: flex;
   flex-direction: row;
@@ -123,5 +125,11 @@ export const CurrencyType = styled.div`
   align-items: center;
   padding: 9px 16px;
   gap: 4px;
-  background: #6fa6fe;
+  background: var(--color-lightest-grey);
+  color: var(--color-dark-grey);
+  ${({ active }) =>
+    active && {
+      background: 'var(--color-light-blue)',
+      color: 'var( --color-white)',
+    }}
 `

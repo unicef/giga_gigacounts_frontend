@@ -52,6 +52,7 @@ export enum CreateContractActionType {
   SET_SHOW_DIALOG = 'SET_SHOW_DIALOG',
   RESET = 'RESET',
   GET_LTS_BY_COUNTRY_ID = 'GET_LTS_BY_COUNTRY_ID',
+  SET_CURRENCY_TYPE = 'SET_CURRENCY_TYPE',
 }
 
 export interface CreateContractAction {
@@ -111,4 +112,5 @@ export interface CreateContractState {
   contractForm: ContractForm
   schools: ISchool[]
   showDialog: boolean
+  currencyType: 'fiat' | 'crypto'
 }
