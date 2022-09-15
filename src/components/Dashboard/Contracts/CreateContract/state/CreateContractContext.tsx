@@ -11,6 +11,7 @@ import { CREATE_CONTRACT_INITIAL_STATE } from './initial-state'
 import { reducer } from './reducer'
 import { ContractPreset, CreateContractAction, CreateContractActionType, CreateContractState } from './types'
 import { createAction } from 'src/utils/createAction'
+import { getSchools } from 'src/api/school'
 
 export interface ICreateContractContext {
   state: CreateContractState
@@ -19,6 +20,7 @@ export interface ICreateContractContext {
     reload: () => void
     saveDraft: () => void
     getLtsByCountryId: (countryId: string) => void
+    fetchSchools: () => void
   }
 }
 
@@ -32,6 +34,9 @@ export const CreateContractContext = createContext<ICreateContractContext>({
       throw new Error('Not implemented')
     },
     getLtsByCountryId: () => {
+      throw new Error('Not implemented')
+    },
+    fetchSchools: () => {
       throw new Error('Not implemented')
     },
   },
@@ -101,6 +106,20 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
       dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
   }, [localState.currencyType])
+
+  const fetchSchools = useCallback(async () => {
+    dispatch({ type: CreateContractActionType.SET_SCHOOLS_LOADING })
+
+    try {
+      const response = await getSchools(localState.contractForm.countryId)
+      dispatch({
+        type: CreateContractActionType.RESPONSE_SCHOOLS,
+        payload: { schools: response, country_id: localState.contractForm.countryId },
+      })
+    } catch (error) {
+      dispatch({ type: CreateContractActionType.SET_SCHOOLS_ERROR, payload: error })
+    }
+  }, [localState.contractForm.countryId])
 
   const reload = useCallback(async () => {
     if (localState.contractForm.id) {
@@ -209,10 +228,11 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
         reload,
         saveDraft,
         getLtsByCountryId,
+        fetchSchools,
       },
       dispatch,
     }),
-    [localState, reload, saveDraft, getLtsByCountryId],
+    [localState, reload, saveDraft, getLtsByCountryId, fetchSchools],
   )
 
   return <CreateContractContext.Provider value={value}>{children}</CreateContractContext.Provider>

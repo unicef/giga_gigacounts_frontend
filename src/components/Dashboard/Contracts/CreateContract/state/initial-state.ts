@@ -38,7 +38,10 @@ export const CREATE_CONTRACT_INITIAL_STATE: CreateContractState = {
   currencies: [],
   ltas: {},
   contractForm: CONTRACT_FORM_INITIAL_STATE,
-  schools: [],
+  schools: {
+    data: undefined,
+    loading: false,
+  },
   showDialog: false,
   currencyType: 'fiat',
 }

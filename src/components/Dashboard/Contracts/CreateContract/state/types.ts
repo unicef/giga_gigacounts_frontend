@@ -39,6 +39,8 @@ export enum CreateContractActionType {
   SET_METRICS_ISPS = 'SET_METRICS_ISPS',
   SET_COUNTRY_CODE = 'SET_COUNTRY_CODE',
   SET_BEHALF_GOVERNMENT = 'SET_BEHALF_GOVERNMENT',
+  SET_SCHOOLS_LOADING = 'SET_SCHOOLS_LOADING',
+  SET_SCHOOLS_ERROR = 'SET_SCHOOLS_ERROR',
   RESPONSE_SCHOOLS = 'RESPONSE_SCHOOLS',
   SELECT_SCHOOL = 'SELECT_SCHOOL',
   SELECT_SCHOOL_BULK = 'SELECT_SCHOOL_BULK',
@@ -110,7 +112,13 @@ export interface CreateContractState {
   currencies: ICurrency[]
   ltas: Record<string, ILtas[]>
   contractForm: ContractForm
-  schools: ISchool[]
+  schools: DataState<
+    ISchool[],
+    true,
+    {
+      contract_id?: number
+    }
+  >
   showDialog: boolean
   currencyType: 'fiat' | 'crypto'
 }

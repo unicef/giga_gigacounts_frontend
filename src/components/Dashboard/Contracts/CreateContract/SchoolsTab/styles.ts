@@ -102,6 +102,7 @@ export const SchoolSearchContainer = styled.div`
   align-content: flex-start;
   height: 100%;
   gap: 15px;
+  padding: 0 6px;
 `
 
 export const SchoolSearchHeader = styled.div`
@@ -142,6 +143,11 @@ export const SearchButton = styled.button`
   letter-spacing: 0.012em;
   text-transform: uppercase;
   color: var(--color-white);
+
+  &:disabled {
+    cursor: hourglass;
+    background-color: var(--color-light-grey);
+  }
 `
 
 export const SchoolsTableContainer = styled.div`

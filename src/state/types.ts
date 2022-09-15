@@ -2,10 +2,15 @@ import { IUser } from 'src/types/general'
 import { ActionType } from './action-types'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface DataState<T extends Record<string, any>, ALLOW_UNDEFINED extends boolean = false> {
+export interface DataState<
+  T extends Record<string, any>,
+  ALLOW_UNDEFINED extends boolean = false,
+  Meta extends Record<string, string | number | null | undefined | boolean> | undefined = undefined,
+> {
   data: ALLOW_UNDEFINED extends true ? T | undefined : T
   error?: Error
   loading: boolean
+  meta?: Meta extends undefined ? undefined : Record<string, string | number | null | undefined | boolean>
 }
 
 export interface ICounts {

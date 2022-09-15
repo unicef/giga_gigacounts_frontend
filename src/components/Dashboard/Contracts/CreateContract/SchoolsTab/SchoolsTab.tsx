@@ -18,15 +18,17 @@ import {
   UploadFormatError,
 } from './styles'
 import SchoolTable from './SchoolTable'
-import { getSchools } from 'src/api/school'
 import { useCreateContractContext } from '../state/useCreateContractContext'
 import { CreateContractActionType } from '../state/types'
 import Message, { MessageType } from 'src/components/common/Message/Message'
+import Loader from 'src/components/common/Loader'
 
 const SchoolsTab: React.FC = (): JSX.Element => {
-  const { dispatch, state } = useCreateContractContext()
-
-  const { contractForm } = state
+  const {
+    dispatch,
+    state,
+    actions: { fetchSchools },
+  } = useCreateContractContext()
 
   const inputRef = useRef<HTMLInputElement>(null)
   const csvReaderRef = useRef<HTMLInputElement>(null)
@@ -37,18 +39,13 @@ const SchoolsTab: React.FC = (): JSX.Element => {
   const [fileName, setFileName] = useState<string>()
   const [invalidFormat, setInvalidFormat] = useState<boolean>()
 
-  const fetchSchools = useCallback(async () => {
-    try {
-      const response = await getSchools(contractForm.countryId)
-      dispatch({ type: CreateContractActionType.RESPONSE_SCHOOLS, payload: response })
-    } catch (error) {
-      dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
-    }
-  }, [dispatch, contractForm.countryId])
-
   useEffect(() => {
-    fetchSchools()
-  }, [fetchSchools])
+    if (!state.schools.loading) {
+      if (state.schools.meta === undefined || state.schools.meta.country_id !== state.contractForm.countryId) {
+        fetchSchools()
+      }
+    }
+  }, [fetchSchools, state.contractForm.countryId, state.schools.loading, state.schools.meta])
 
   const handleSchoolSelection = useCallback(
     (id: string) => {
@@ -59,13 +56,15 @@ const SchoolsTab: React.FC = (): JSX.Element => {
 
   const filteredSchools = useMemo(() => {
     if (searchText) {
-      return state.schools.filter(
-        (school) =>
-          school.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          school.external_id.includes(searchText.toLowerCase()),
+      return (
+        state.schools.data?.filter(
+          (school) =>
+            school.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            school.external_id.includes(searchText.toLowerCase()),
+        ) ?? []
       )
     }
-    return state.schools
+    return state.schools.data
   }, [state.schools, searchText])
 
   const handleSearch = useCallback(() => {
@@ -77,13 +76,14 @@ const SchoolsTab: React.FC = (): JSX.Element => {
       const listOfSchools: { id: string }[] = []
       let notFoundCount = 0
       data.forEach((id) => {
-        const index = state.schools.findIndex((school) => school.external_id === id)
-        if (index >= 0) {
-          listOfSchools.push({ id: state.schools[index].id })
+        const index = state.schools.data?.findIndex((school) => school.external_id === id)
+        if (state.schools.data !== undefined && index !== undefined && index >= 0) {
+          listOfSchools.push({ id: state.schools.data[index].id })
         } else {
           notFoundCount++
         }
       })
+
       setFileName(fileInfo)
       setSchoolsNotFound(notFoundCount)
       if (csvReaderRef.current) csvReaderRef.current.value = ''
@@ -163,18 +163,38 @@ const SchoolsTab: React.FC = (): JSX.Element => {
         <SchoolSearchHeader>
           <div style={{ display: 'flex', width: '100%' }}>
             <span className="icon icon-24 icon-search icon-mid-grey"></span>
-            <SchoolSearchInput type="text" name="search-input" placeholder="Search School Name / ID" ref={inputRef} />
+            <SchoolSearchInput
+              type="text"
+              name="search-input"
+              placeholder="Search School Name / ID"
+              ref={inputRef}
+              disabled={state.schools.loading}
+            />
           </div>
-          <SearchButton onClick={handleSearch}>Search</SearchButton>
+          <SearchButton onClick={handleSearch} disabled={state.schools.loading}>
+            Search
+          </SearchButton>
         </SchoolSearchHeader>
         <SchoolsTableContainer>
-          {filteredSchools?.length ? (
-            <SchoolTable
-              onSelect={handleSchoolSelection}
-              schools={filteredSchools}
-              selectedSchools={state.contractForm.schools.schools}
+          {state.schools.error && (
+            <Message
+              type={MessageType.ERROR}
+              title="Error"
+              description={state.schools.error.message}
+              showCloseBtn={false}
             />
-          ) : null}
+          )}
+          {state.schools.loading ? (
+            <Loader />
+          ) : (
+            !!filteredSchools?.length && (
+              <SchoolTable
+                onSelect={handleSchoolSelection}
+                schools={filteredSchools}
+                selectedSchools={state.contractForm.schools.schools}
+              />
+            )
+          )}
         </SchoolsTableContainer>
       </SchoolSearchContainer>
     </SchoolsContainer>

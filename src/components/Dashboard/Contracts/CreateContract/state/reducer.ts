@@ -256,10 +256,38 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       }
     }
 
+    case CreateContractActionType.SET_SCHOOLS_LOADING: {
+      return {
+        ...state,
+        schools: {
+          ...state.schools,
+          loading: true,
+        },
+      }
+    }
+
+    case CreateContractActionType.SET_SCHOOLS_ERROR: {
+      return {
+        ...state,
+        schools: {
+          ...state.schools,
+          error: payload,
+          loading: false,
+        },
+      }
+    }
+
     case CreateContractActionType.RESPONSE_SCHOOLS: {
       return {
         ...state,
-        schools: payload,
+        schools: {
+          data: payload.schools,
+          error: undefined,
+          loading: false,
+          meta: {
+            country_id: payload.country_id,
+          },
+        },
       }
     }
 
