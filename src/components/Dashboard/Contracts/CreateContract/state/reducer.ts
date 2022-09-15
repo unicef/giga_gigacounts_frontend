@@ -329,6 +329,10 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           ...state.ltas,
           [countryId]: ltas,
         },
+        contractForm: {
+          ...state.contractForm,
+          countryId: countryId,
+        },
       }
     }
 
