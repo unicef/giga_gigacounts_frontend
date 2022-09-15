@@ -28,8 +28,14 @@ export const SELECTED_NETWORK = SUPPORTED_CHAINS[SELECTED_CHAIN_ID]
 
 export const CHAINS = [SELECTED_NETWORK]
 
-export const INITIAL_WEB3_CONTEXT_VALUE: IWeb3Context = {
+export const INITIAL_WEB3_STATE = {
   initiated: false,
+  verifying: false,
+  error: undefined,
+}
+
+export const INITIAL_WEB3_CONTEXT_VALUE: IWeb3Context = {
+  ...INITIAL_WEB3_STATE,
   wallet: null,
   account: undefined,
   chain: undefined,

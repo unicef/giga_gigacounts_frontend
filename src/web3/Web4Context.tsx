@@ -1,19 +1,20 @@
 import { ethers, providers } from 'ethers'
-import { createContext, useEffect, useMemo, useContext, useCallback, useState } from 'react'
+import { createContext, useEffect, useMemo, useContext, useCallback, useReducer } from 'react'
 import { useConnectWallet, useWallets, useSetChain } from '@web3-onboard/react'
 import { useUser } from 'src/state/hooks'
 import { attachWallet, getWalletRandomString } from 'src/api/wallets'
 import { useGeneralContext } from 'src/state/GeneralContext'
 import { ChildrenProps } from '../types/utils'
-import { INITIAL_WEB3_CONTEXT_VALUE, SUPPORTED_CHAINS } from './consts'
-import { IWeb3Context } from './types'
+import { INITIAL_WEB3_CONTEXT_VALUE, INITIAL_WEB3_STATE, SUPPORTED_CHAINS } from './consts'
+import { IWeb3Context, Web3ActionType } from './types'
 
 import 'src/web3/onboard'
+import { reducer } from './reducer'
 
 export const Web3Context = createContext<IWeb3Context>(INITIAL_WEB3_CONTEXT_VALUE)
 
 export const Web3ContextProvider = ({ children }: ChildrenProps) => {
-  const [initiated, setInitiated] = useState(false)
+  const [{ initiated, verifying, error }, dispatch] = useReducer(reducer, INITIAL_WEB3_STATE)
   const user = useUser()
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
   const connectedWallets = useWallets()
@@ -52,6 +53,10 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
     }
 
     try {
+      dispatch({
+        type: Web3ActionType.SET_VERIFYING,
+        payload: true,
+      })
       const verificationMessage = await getWalletRandomString()
       const provider = new providers.Web3Provider(wallet.provider as unknown as providers.JsonRpcFetchFunc, 'any')
 
@@ -62,8 +67,16 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
       await attachWallet(account, signedMessage)
 
       reload()
-    } catch {
-      // do nothing
+
+      dispatch({
+        type: Web3ActionType.SET_VERIFYING,
+        payload: false,
+      })
+    } catch (error) {
+      dispatch({
+        type: Web3ActionType.SET_ERROR,
+        payload: error,
+      })
     }
   }, [account, reload, wallet?.provider])
 
@@ -74,12 +87,14 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
       account,
       chain,
       connecting,
+      verifying,
+      error,
       connect,
       disconnect: disconnectAll,
       verifyWallet,
       setChain,
     }),
-    [initiated, wallet, account, chain, connecting, connect, disconnectAll, verifyWallet, setChain],
+    [initiated, wallet, account, chain, connecting, verifying, error, connect, disconnectAll, verifyWallet, setChain],
   )
 
   useEffect(() => {
@@ -98,7 +113,7 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
 
   useEffect(() => {
     let inUnmounted = false
-    if (user.loading) {
+    if (user.loading || initiated) {
       return
     }
 
@@ -108,8 +123,10 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
       if (user.data === undefined) {
         localStorage.removeItem('connectedWallets')
 
-        setInitiated(true)
-      } else {
+        dispatch({
+          type: Web3ActionType.SET_INITIATED,
+        })
+      } else if (!account) {
         connect({
           autoSelect: {
             label: previouslyConnectedWallets[0],
@@ -126,18 +143,26 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
           })
           .finally(() => {
             if (!inUnmounted) {
-              setInitiated(true)
+              dispatch({
+                type: Web3ActionType.SET_INITIATED,
+              })
             }
           })
+      } else {
+        dispatch({
+          type: Web3ActionType.SET_INITIATED,
+        })
       }
     } else {
-      setInitiated(true)
+      dispatch({
+        type: Web3ActionType.SET_INITIATED,
+      })
     }
 
     return () => {
       inUnmounted = true
     }
-  }, [connect, user.data, user.loading])
+  }, [account, connect, initiated, user.data, user.loading])
 
   return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>
 }

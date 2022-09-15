@@ -5,11 +5,12 @@ import Wallet from './Wallet'
 import ConnectedWalletDescription from './ConnectedWalletDescription'
 import { ShowAddress } from './styles'
 import Loader from '../Loader'
+import Message, { MessageType } from '../Message/Message'
 import { ethers } from 'ethers'
 
 const ConnectedWallet = (): JSX.Element => {
   const { data } = useUser()
-  const { account, chain, connect, initiated, setChain, verifyWallet } = useWeb3Context()
+  const { account, chain, connect, initiated, setChain, verifyWallet, verifying, error } = useWeb3Context()
 
   const { walletAddress } = data ?? {}
 
@@ -42,6 +43,7 @@ const ConnectedWallet = (): JSX.Element => {
   return (
     <>
       <ConnectedWalletDescription />
+      {!!error && <Message type={MessageType.ERROR} title="Error" description={error.message} showCloseBtn={false} />}
       <Wallet
         address={account}
         chainId={chain?.id!}
@@ -61,8 +63,9 @@ const ConnectedWallet = (): JSX.Element => {
             To complete wallet attachment, please sign a verification message. Currently connected wallet address will
             be linked to your Gigacounts account.
           </small>
-          <button className="btn-green" onClick={verifyWallet}>
-            Sign Message
+
+          <button className={`btn-green ${verifying ? 'btn-loading' : ''}`} onClick={verifyWallet} disabled={verifying}>
+            Sign Message {verifying && <Loader className="icon-white" />}
           </button>
         </>
       )}

@@ -1,14 +1,14 @@
 import React from 'react'
+import { ClassNameProps } from 'src/types/utils'
 import styled from 'styled-components/macro'
 
 const StyledSpinner = styled.svg`
   animation: rotate 2s linear infinite;
-  margin: -25px 0 0 -25px;
-  width: 50px;
-  height: 50px;
+  height: 100%;
+  max-height: 50px;
 
   & .path {
-    stroke: #5652bf;
+    stroke: currentColor;
     stroke-linecap: round;
     animation: dash 1.5s ease-in-out infinite;
   }
@@ -34,8 +34,8 @@ const StyledSpinner = styled.svg`
   }
 `
 
-const Spinner = () => (
-  <StyledSpinner viewBox="0 0 50 50">
+const Spinner = ({ className }: ClassNameProps) => (
+  <StyledSpinner viewBox="0 0 50 50" className={className}>
     <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="4" />
   </StyledSpinner>
 )

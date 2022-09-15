@@ -415,6 +415,15 @@ input[type='number'] {
   background-color: var(--color-darker-green);
 }
 
+.btn-green:disabled {
+  background-color: var(--color-light-grey);
+  cursor: not-allowed;
+}
+
+.btn-green.btn-loading {
+  cursor: progress;
+}
+
 .btn-frameless:active {
   color: var(--color-blue);
   background-color: transparent;
