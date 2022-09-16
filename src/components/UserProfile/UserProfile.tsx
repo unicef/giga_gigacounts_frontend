@@ -119,7 +119,7 @@ const UserProfile = () => {
           <UserProfileBalance>
             <h5>Gigacounts crypto balance</h5>
             {description}
-            <Wallet label="Account Safe" chainId={chain?.id ?? 1} address={safe?.address ?? ''} icon={images.safe} />
+            <Wallet label="Account Safe" chainLabel={chain?.label} address={safe?.address ?? ''} icon={images.safe} />
             {safe?.address && <EthBalance account={safe.address} />}
 
             {showWithdrawButton && <button className="btn-blue">Withdraw Funds</button>}

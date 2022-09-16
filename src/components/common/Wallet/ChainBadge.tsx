@@ -1,21 +1,20 @@
 import { memo } from 'react'
-import { SUPPORTED_CHAINS } from 'src/web3/consts'
 import { StyledBadge } from './styles'
 
 interface ChainBadgeProps {
-  chainId: number
+  label: string
   connected?: boolean
   wrongChain?: boolean
 }
 
 const ChainBadge: React.FC<ChainBadgeProps> = memo(
-  ({ chainId, connected = false, wrongChain = false }: ChainBadgeProps): JSX.Element => {
-    const label = SUPPORTED_CHAINS[chainId]?.label
-
+  ({ label, connected = false, wrongChain = false }: ChainBadgeProps): JSX.Element => {
     return (
       <StyledBadge connected={connected} error={wrongChain}>
         {connected && <span className="icon icon-20 icon-dot" />}
-        <span className="super-small">{label}</span>
+        <span className="super-small" style={{ textTransform: 'capitalize' }}>
+          {label}
+        </span>
       </StyledBadge>
     )
   },

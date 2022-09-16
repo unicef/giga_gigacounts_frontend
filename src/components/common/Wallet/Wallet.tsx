@@ -7,7 +7,7 @@ import ChainBadge from './ChainBadge'
 import { WalletContainer, WalletHeader, WalletAddress, WalletWrapper } from './styles'
 
 interface WalletProps {
-  chainId: number
+  chainLabel?: string
   address: string
   label?: string
   icon?: string
@@ -19,7 +19,7 @@ interface WalletProps {
 
 const Wallet: React.FC<WalletProps> = memo(
   ({
-    chainId,
+    chainLabel,
     address,
     label = 'MetaMask Wallet',
     icon = images.metamaskLogo,
@@ -38,7 +38,7 @@ const Wallet: React.FC<WalletProps> = memo(
                 <b>{label}</b>
               </p>
             )}
-            <ChainBadge chainId={chainId} wrongChain={wrongChain} connected={connected} />
+            {chainLabel && <ChainBadge label={chainLabel} wrongChain={wrongChain} connected={connected} />}
           </WalletHeader>
           <WalletAddress>
             <Address address={address} wrongAddress={wrongAddress} isVerified={isVerified} />

@@ -33,10 +33,18 @@ export const Web3ContextProvider = ({ children }: ChildrenProps) => {
 
   const chain = useMemo(() => {
     if (wallet?.chains?.[0].id) {
-      return SUPPORTED_CHAINS[parseInt(wallet?.chains?.[0].id)]
+      const supportedNetwork = SUPPORTED_CHAINS[parseInt(wallet?.chains?.[0].id)]
+      if (supportedNetwork) {
+        return supportedNetwork
+      }
+      const providerNetwork = ethers.providers.getNetwork(parseInt(wallet?.chains?.[0].id))
+      return {
+        id: providerNetwork.chainId,
+        token: 'ETH',
+        label: `${providerNetwork.name} Network`,
+        rpcUrl: '',
+      }
     }
-
-    return undefined
   }, [wallet?.chains])
 
   const disconnectAll = useCallback(() => {

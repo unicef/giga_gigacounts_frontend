@@ -47,7 +47,7 @@ const ConnectedWallet = (): JSX.Element => {
       {!!error && <Message type={MessageType.ERROR} title="Error" description={error.message} onClose={resetError} />}
       <Wallet
         address={account}
-        chainId={chain?.id!}
+        chainLabel={chain?.label}
         wrongChain={wrongNetwork}
         wrongAddress={wrongAddress}
         connected={!!account}

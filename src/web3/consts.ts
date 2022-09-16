@@ -12,6 +12,14 @@ export const SUPPORTED_CHAINS: Record<number, ChainWithDecimalId> = {
     rpcUrl: `https://mainnet.infura.io/v3/${INFURA_ID}`,
     blockExplorerUrl: 'https://etherscan.io/',
   },
+  3: {
+    id: 3,
+    token: 'ETH',
+    label: 'Ropsten Testnet',
+    publicRpcUrl: 'https://rpc.ankr.com/eth_ropsten',
+    rpcUrl: `https://ropsten.infura.io/v3//${INFURA_ID}`,
+    blockExplorerUrl: 'https://ropsten.etherscan.io/',
+  },
   4: {
     id: 4,
     token: 'ETH',
@@ -19,6 +27,22 @@ export const SUPPORTED_CHAINS: Record<number, ChainWithDecimalId> = {
     publicRpcUrl: 'https://rpc.ankr.com/eth_rinkeby',
     rpcUrl: `https://rinkeby.infura.io/v3/${INFURA_ID}`,
     blockExplorerUrl: 'https://rinkeby.etherscan.io/',
+  },
+  5: {
+    id: 5,
+    token: 'ETH',
+    label: 'Goerli Testnet',
+    publicRpcUrl: 'https://rpc.ankr.com/eth_goerli',
+    rpcUrl: `https://goerli.infura.io/v3/${INFURA_ID}`,
+    blockExplorerUrl: 'https://goerli.etherscan.io/',
+  },
+  42: {
+    id: 42,
+    token: 'ETH',
+    label: 'Kovan Testnet',
+    publicRpcUrl: 'https://rpc.ankr.com/eth_kovan',
+    rpcUrl: `https://kovan.infura.io/v3/${INFURA_ID}`,
+    blockExplorerUrl: 'https://kovan.etherscan.io/',
   },
 }
 
