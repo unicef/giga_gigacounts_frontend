@@ -1,3 +1,5 @@
+import { ICountries } from 'src/api/createContract'
+import { ICurrency } from 'src/types/general'
 import { CONTRACT_FORM_INITIAL_STATE } from './initial-state'
 import { CreateContractAction, CreateContractActionType, CreateContractState } from './types'
 
@@ -38,6 +40,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
       const { draft } = payload
       const countryId = draft.country?.id ?? state.contractForm.countryId
       const currencyId = draft.currency?.id ?? state.contractForm.currencyId
+      const currencyType = draft.currency?.type ?? state.contractForm.currencyType
       const ltaId = draft.lta?.id ?? state.contractForm.ltaId
       const governmentBehalf = draft.governmentBehalf ?? state.contractForm.governmentBehalf
       const budget = draft.budget ?? state.contractForm.budget
@@ -74,6 +77,7 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
           budget,
           schools: { schools },
           ispId,
+          currencyType,
         },
       }
     }
@@ -93,6 +97,11 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
     case CreateContractActionType.GET_FORM_DATA: {
       const { countries, currencies } = payload
 
+      const countryId =
+        countries.find((country: ICountries) => country.id === state.contractForm.countryId)?.id ?? countries[0].id
+      const currency =
+        currencies.find((currency: ICurrency) => currency.id === state.contractForm.currencyId) ?? currencies[0]
+
       return {
         ...state,
         countries,
@@ -100,8 +109,9 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
         loading: false,
         contractForm: {
           ...state.contractForm,
-          countryId: state.contractForm.countryId ?? countries[0].id,
-          currencyId: state.contractForm.currencyId ?? currencies[0].id,
+          countryId,
+          currencyId: currency.id,
+          currencyType: currency.type,
         },
       }
     }
@@ -337,7 +347,6 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
     case CreateContractActionType.RESET: {
       const { preset } = payload ?? {}
 
-      const currencyId = state.currencies[0].id
       const countryId = state.countries[0].id
 
       return {
@@ -345,7 +354,6 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
         contractForm: {
           ...CONTRACT_FORM_INITIAL_STATE,
           countryId,
-          currencyId,
           ...preset,
         },
       }
@@ -376,7 +384,10 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
     case CreateContractActionType.SET_CURRENCY_TYPE: {
       return {
         ...state,
-        currencyType: payload,
+        contractForm: {
+          ...state.contractForm,
+          currencyType: payload,
+        },
       }
     }
 

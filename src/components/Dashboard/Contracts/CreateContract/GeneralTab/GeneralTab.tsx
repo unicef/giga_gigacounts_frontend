@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect } from 'react'
 import { uploadAttachment } from 'src/api/attachments'
 import File from 'src/components/common/File/File'
-import { IFileUpload, UploadType, UserRole } from 'src/types/general'
+import { ICurrencyTypes, IFileUpload, UploadType, UserRole } from 'src/types/general'
 import {
   AttachmentContainer,
   Attachments,
@@ -24,7 +24,7 @@ import { useContractsContext } from '../../state/useContractsContext'
 
 const GeneralTab: React.FC = (): JSX.Element => {
   const {
-    state: { loading, countries, currencies, ltas, contractForm, draft, currencyType },
+    state: { loading, countries, currencies, ltas, contractForm, draft },
     actions: { reload, saveDraft, getLtsByCountryId },
     dispatch,
   } = useCreateContractContext()
@@ -71,7 +71,7 @@ const GeneralTab: React.FC = (): JSX.Element => {
     dispatch({ type: CreateContractActionType.SET_END_DATE, payload: e.target.value })
   }
 
-  const onCurrencyTypeChange = (type: 'fiat' | 'crypto') => {
+  const onCurrencyTypeChange = (type: ICurrencyTypes) => {
     dispatch({ type: CreateContractActionType.SET_CURRENCY_TYPE, payload: type })
   }
 
@@ -153,10 +153,16 @@ const GeneralTab: React.FC = (): JSX.Element => {
             </select>
           </div>
           <CurrencySelector>
-            <CurrencyType active={currencyType === 'fiat'} onClick={() => onCurrencyTypeChange('fiat')}>
+            <CurrencyType
+              active={contractForm.currencyType === ICurrencyTypes.fiat}
+              onClick={() => onCurrencyTypeChange(ICurrencyTypes.fiat)}
+            >
               FIAT
             </CurrencyType>
-            <CurrencyType active={currencyType === 'crypto'} onClick={() => onCurrencyTypeChange('crypto')}>
+            <CurrencyType
+              active={contractForm.currencyType === ICurrencyTypes.crypto}
+              onClick={() => onCurrencyTypeChange(ICurrencyTypes.crypto)}
+            >
               CRYPTO
             </CurrencyType>
           </CurrencySelector>

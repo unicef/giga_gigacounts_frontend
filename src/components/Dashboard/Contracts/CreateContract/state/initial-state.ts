@@ -1,3 +1,4 @@
+import { ICurrencyTypes } from 'src/types/general'
 import { ContractForm, CreateContractActiveTab, CreateContractState, CreateContractTabState } from './types'
 
 export const CONTRACT_FORM_INITIAL_STATE: ContractForm = {
@@ -15,6 +16,7 @@ export const CONTRACT_FORM_INITIAL_STATE: ContractForm = {
   schools: {
     schools: [],
   },
+  currencyType: ICurrencyTypes.fiat,
 }
 
 export const CREATE_CONTRACT_INITIAL_STATE: CreateContractState = {
@@ -43,5 +45,4 @@ export const CREATE_CONTRACT_INITIAL_STATE: CreateContractState = {
     loading: false,
   },
   showDialog: false,
-  currencyType: 'fiat',
 }

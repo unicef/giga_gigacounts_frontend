@@ -84,7 +84,7 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
   const fetchData = useCallback(async () => {
     try {
       axios
-        .all([getCountries(), getCurrencies(localState.currencyType)])
+        .all([getCountries(), getCurrencies(localState.contractForm.currencyType)])
         .then(
           axios.spread((...responses) => {
             const countries = responses[0]
@@ -105,7 +105,7 @@ export const CreateContractContextProvider: FC<ChildrenProps> = ({ children }) =
     } catch (error) {
       dispatch({ type: CreateContractActionType.SET_ERROR, payload: { error } })
     }
-  }, [localState.currencyType])
+  }, [localState.contractForm.currencyType])
 
   const fetchSchools = useCallback(async () => {
     dispatch({ type: CreateContractActionType.SET_SCHOOLS_LOADING })

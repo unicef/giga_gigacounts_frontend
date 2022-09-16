@@ -3,7 +3,7 @@ import { ICountries, ILtas } from 'src/api/createContract'
 import { IIsp } from 'src/api/isp'
 import { IMetric } from 'src/api/metrics'
 import { ISchool } from 'src/api/school'
-import { ICurrency, IDraft } from 'src/types/general'
+import { ICurrency, ICurrencyTypes, IDraft } from 'src/types/general'
 
 export enum CreateContractActiveTab {
   GeneralTab = 'generalTab',
@@ -91,6 +91,7 @@ export interface ContractForm {
   startDate: string
   endDate: string
   schools: { schools: { id: string }[] }
+  currencyType: ICurrencyTypes
 }
 
 export interface CreateContractState {
@@ -120,5 +121,4 @@ export interface CreateContractState {
     }
   >
   showDialog: boolean
-  currencyType: 'fiat' | 'crypto'
 }

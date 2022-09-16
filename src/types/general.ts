@@ -294,3 +294,8 @@ export interface IISP {
   id: string
   name: string
 }
+
+export enum ICurrencyTypes {
+  fiat = 'fiat',
+  crypto = 'crypto',
+}
