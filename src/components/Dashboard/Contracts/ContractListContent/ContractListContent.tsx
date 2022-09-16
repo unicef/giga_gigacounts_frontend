@@ -6,6 +6,8 @@ import ContractItem from './ContractLtaListItems/ContractItem/ContractItem'
 import { useContractsContext } from '../state/useContractsContext'
 import { useLtas, useOtherContracts, useSelectedContract } from '../state/hooks'
 import { NEW_CONTRACT } from '../state/initial-state'
+import { useRoleCheck } from 'src/state/hooks'
+import { UserRole } from 'src/types/general'
 
 const ContractListContent: React.FC = (): JSX.Element => {
   const {
@@ -24,6 +26,8 @@ const ContractListContent: React.FC = (): JSX.Element => {
 
   const selectedContract = useSelectedContract()
 
+  const showFlag = useRoleCheck(UserRole.ADMIN)
+
   return (
     <ContractListContainer ref={ref}>
       {loading && ltas === undefined && contracts === undefined ? (
@@ -39,10 +43,15 @@ const ContractListContent: React.FC = (): JSX.Element => {
             />
           ))}
           <>
-            {newContract && <ContractItem contract={NEW_CONTRACT} selected />}
+            {newContract && <ContractItem contract={NEW_CONTRACT} selected showFlag={showFlag} />}
             {contracts !== undefined &&
               contracts.map((contract, i) => (
-                <ContractItem key={i} contract={contract} selected={selectedContract?.listId === contract.listId} />
+                <ContractItem
+                  key={i}
+                  contract={contract}
+                  selected={selectedContract?.listId === contract.listId}
+                  showFlag={showFlag}
+                />
               ))}
           </>
         </>

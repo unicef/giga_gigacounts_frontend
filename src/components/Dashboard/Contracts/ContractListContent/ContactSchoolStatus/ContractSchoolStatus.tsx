@@ -7,12 +7,14 @@ interface ISchoolStatusProps {
   contract: IContract
   selected?: boolean
   onToggle?: (contract: IContract) => void
+  showFlag?: boolean
 }
 
 const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
   contract,
-  selected,
   onToggle,
+  selected = false,
+  showFlag = false,
 }: ISchoolStatusProps): JSX.Element => {
   const { isp, numberOfSchools, status, name, country, totalSpent, schoolsConnection } = contract
   const ref = useRef<HTMLDivElement>(null)
@@ -71,7 +73,7 @@ const ContractSchoolStatus: React.FC<ISchoolStatusProps> = ({
   return (
     <SchoolInfo status={status} onClick={handleSelected} selected={selected} ref={ref}>
       <div className="header">
-        {country?.flagUrl && (
+        {showFlag && country?.flagUrl && (
           <img
             src={country.flagUrl}
             width="30"
