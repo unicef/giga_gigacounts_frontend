@@ -563,9 +563,17 @@ input[type='checkbox']:before {
   border-radius: 2px;
   color: var(--color-white);
   background-color: var(--color-white);
+
+  cursor: pointer;
+  margin: auto;
 }
 
 input[type='checkbox']:checked:before {
+  background-color: var(--color-light-blue);
+  content: '\ea1e';
+}
+
+input[type='checkbox']:active:before {
   background-color: var(--color-light-blue);
   content: '\ea1e';
 }
