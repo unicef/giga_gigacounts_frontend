@@ -1,7 +1,7 @@
 import { ICountries } from 'src/api/createContract'
 import { ICurrency } from 'src/types/general'
 import { CONTRACT_FORM_INITIAL_STATE } from './initial-state'
-import { CreateContractAction, CreateContractActionType, CreateContractState } from './types'
+import { CreateContractAction, CreateContractActionType, CreateContractState, MetricId } from './types'
 
 const parseDate = (obj: Record<string, string>, props: string[]) => {
   const prop = props.find((prop) => typeof obj[prop] === 'string' && obj[prop].length > 0)
@@ -228,18 +228,20 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
     case CreateContractActionType.SET_EXPECTED_METRIC: {
       const metricIndex = state.contractForm.expectedMetrics.metrics.findIndex((m) => m.metricId === payload.metricId)
 
+      const value = +payload.metricId === MetricId.uptime ? Math.min(payload.value, 100) : payload.value
+
       const newExpectedMetrics =
         metricIndex >= 0
           ? [
               ...state.contractForm.expectedMetrics.metrics.slice(0, metricIndex),
               {
                 ...state.contractForm.expectedMetrics.metrics[metricIndex],
-                value: payload.value,
+                value: value,
                 metricId: payload.metricId,
               },
               ...state.contractForm.expectedMetrics.metrics.slice(metricIndex + 1),
             ]
-          : [{ value: payload.value, metricId: payload.metricId }, ...state.contractForm.expectedMetrics.metrics]
+          : [{ value: value, metricId: payload.metricId }, ...state.contractForm.expectedMetrics.metrics]
 
       return {
         ...state,

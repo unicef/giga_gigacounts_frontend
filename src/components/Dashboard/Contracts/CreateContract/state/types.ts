@@ -63,6 +63,13 @@ export interface CreateContractAction {
   payload?: any
 }
 
+export enum MetricId {
+  uptime = 1,
+  latency = 2,
+  downloadSpeed = 3,
+  uploadSpeed = 4,
+}
+
 export interface IQualityService {
   selectedValue: string
   metricId: number
