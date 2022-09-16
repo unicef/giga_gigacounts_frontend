@@ -1,6 +1,11 @@
 import { useEffect, useCallback, useState, useRef, useMemo } from 'react'
 import * as XLSX from 'xlsx'
 import images from 'src/assets/images'
+import Message, { MessageType } from 'src/components/common/Message/Message'
+import Loader from 'src/components/common/Loader'
+import { useCreateContractContext } from '../state/useCreateContractContext'
+import { CreateContractActionType } from '../state/types'
+import { useSelectedSchoolIds } from '../state/hooks'
 import {
   SchoolsContainer,
   UploadContainer,
@@ -18,10 +23,6 @@ import {
   UploadFormatError,
 } from './styles'
 import SchoolTable from './SchoolTable'
-import { useCreateContractContext } from '../state/useCreateContractContext'
-import { CreateContractActionType } from '../state/types'
-import Message, { MessageType } from 'src/components/common/Message/Message'
-import Loader from 'src/components/common/Loader'
 
 const SchoolsTab: React.FC = (): JSX.Element => {
   const {
@@ -38,6 +39,8 @@ const SchoolsTab: React.FC = (): JSX.Element => {
   const [schoolsNotFound, setSchoolsNotFound] = useState<number>(0)
   const [fileName, setFileName] = useState<string>()
   const [invalidFormat, setInvalidFormat] = useState<boolean>()
+
+  const selectedSchoolIds = useSelectedSchoolIds()
 
   useEffect(() => {
     if (!state.schools.loading) {
@@ -191,7 +194,7 @@ const SchoolsTab: React.FC = (): JSX.Element => {
               <SchoolTable
                 onSelect={handleSchoolSelection}
                 schools={filteredSchools}
-                selectedSchools={state.contractForm.schools.schools}
+                selectedSchoolsIds={selectedSchoolIds}
               />
             )
           )}

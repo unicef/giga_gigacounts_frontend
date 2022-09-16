@@ -196,9 +196,16 @@ export const reducer = (state: CreateContractState, action: CreateContractAction
         }
       }
 
+      if (payload?.error?.response) {
+        return {
+          ...state,
+          error: new Error(payload?.error?.response?.data || 'Something went wrong!'),
+        }
+      }
+
       return {
         ...state,
-        error: new Error(payload?.error?.response?.data || 'Something went wrong!'),
+        error: new Error(payload?.error?.message),
       }
     }
 

@@ -1,4 +1,5 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useMemo } from 'react'
+import { ISchool } from 'src/api/school'
 import {
   SchoolsTableHeader,
   NameHeaderLabel,
@@ -10,16 +11,19 @@ import {
   MainContainer,
   SchoolTableContent,
 } from './styles'
-import { ISchool } from 'src/api/school'
+import { sortSchools } from './utils'
 
 interface SchoolTableProps {
   schools: ISchool[]
   onSelect: (id: string) => void
-  selectedSchools: { id: string }[]
+  selectedSchoolsIds: string[]
 }
 
-const SchoolTable = ({ schools, onSelect, selectedSchools }: SchoolTableProps) => {
-  const inputRef = useRef<HTMLInputElement>(null)
+const SchoolTable = ({ schools, onSelect, selectedSchoolsIds }: SchoolTableProps) => {
+  const sortedSchools = useMemo(
+    () => schools.map((school) => ({ ...school, selected: selectedSchoolsIds.includes(school.id) })).sort(sortSchools),
+    [schools, selectedSchoolsIds],
+  )
 
   const onButtonSelect = useCallback(
     (id: string) => () => {
@@ -28,10 +32,6 @@ const SchoolTable = ({ schools, onSelect, selectedSchools }: SchoolTableProps) =
     [onSelect],
   )
 
-  const isSelected = (id: string) => {
-    return selectedSchools.findIndex((school) => school.id === id) >= 0
-  }
-
   return (
     <MainContainer>
       <SchoolsTableHeader>
@@ -39,13 +39,12 @@ const SchoolTable = ({ schools, onSelect, selectedSchools }: SchoolTableProps) =
         <IdHeaderLabel>ID</IdHeaderLabel>
       </SchoolsTableHeader>
       <SchoolTableContent>
-        {schools.map((school) => (
+        {sortedSchools.map((school) => (
           <TableRow key={school.id}>
             <SelectButton
               type="checkbox"
-              ref={inputRef}
               onChange={onButtonSelect(school.id)}
-              checked={isSelected(school.id)}
+              checked={school.selected}
               value={school.id}
             />
             <SchoolNameContainer>{school.name}</SchoolNameContainer>
