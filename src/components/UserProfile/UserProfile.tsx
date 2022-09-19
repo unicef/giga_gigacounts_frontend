@@ -23,9 +23,10 @@ import {
 } from './styles'
 import { UserRole } from 'src/types/general'
 import { SmallLink } from '../common/SmallLink'
+import { SELECTED_NETWORK } from 'src/web3/consts'
 
 const UserProfile = () => {
-  const { chain, disconnect, account } = useWeb3Context()
+  const { disconnect, account } = useWeb3Context()
 
   const navigate = useNavigate()
 
@@ -119,7 +120,12 @@ const UserProfile = () => {
           <UserProfileBalance>
             <h5>Gigacounts crypto balance</h5>
             {description}
-            <Wallet label="Account Safe" chainLabel={chain?.label} address={safe?.address ?? ''} icon={images.safe} />
+            <Wallet
+              label="Account Safe"
+              chainLabel={SELECTED_NETWORK.label}
+              address={safe?.address ?? ''}
+              icon={images.safe}
+            />
             {safe?.address && <EthBalance account={safe.address} />}
 
             {showWithdrawButton && <button className="btn-blue">Withdraw Funds</button>}
