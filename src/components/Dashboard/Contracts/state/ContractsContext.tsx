@@ -92,7 +92,9 @@ export const ContractsProvider: FC<ChildrenProps> = ({ children }) => {
 
   const fetchContract = useCallback(
     async (id: string) => {
-      const contract = localState.contracts?.find((contract) => contract.id === id)
+      const contract = localState.contracts?.find(
+        (contract) => contract.id === id && contract.status !== ContractStatus.Draft,
+      )
 
       if (contract === undefined) {
         return
