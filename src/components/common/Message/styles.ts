@@ -27,6 +27,7 @@ export const MessageContainer = styled.div`
   & div {
     display: flex;
     gap: 4px;
+    justify-content: flex-end;
 
     p {
       margin-top: 1px;

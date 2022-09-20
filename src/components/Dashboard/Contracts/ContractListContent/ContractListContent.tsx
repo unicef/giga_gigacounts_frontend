@@ -8,6 +8,7 @@ import { useLtas, useOtherContracts, useSelectedContract } from '../state/hooks'
 import { NEW_CONTRACT } from '../state/initial-state'
 import { useRoleCheck } from 'src/state/hooks'
 import { UserRole } from 'src/types/general'
+import Message from 'src/components/common/Message/Message'
 
 const ContractListContent: React.FC = (): JSX.Element => {
   const {
@@ -34,6 +35,7 @@ const ContractListContent: React.FC = (): JSX.Element => {
         <ContractLoader />
       ) : (
         <>
+          {!ltas?.length && !contracts?.length && <Message description="No contracts found" showCloseBtn={false} />}
           {ltas?.map((lta, i) => (
             <ContractLtaListItems
               key={i}
