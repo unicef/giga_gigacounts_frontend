@@ -39,16 +39,27 @@ Create a .env file running the command in terminal
 touch .env
 ```
 
-For variable add these values to the env file:
+### Environment variables
+
+The environment variables bellow needs to be set in the .env file when project is running locally and in
+/.github/workflows/azure-static-web-app-deploy.yml when project is deployed to Azure.
 
 ```sh
 SKIP_PREFLIGHT_CHECK=true
 REACT_APP_BACKEND_URL=https://unicef-giga-backend-dev.azurewebsites.net
 # REACT_APP_BACKEND_URL=https://unicef-giga-backend-stage.azurewebsites.net
 # REACT_APP_BACKEND_URL=http://127.0.0.1:3333
+REACT_APP_COINGECKO_API=https://api.coingecko.com/api/v3/simple/price
+REACT_APP_INFURA_ID=INFURA_API_KEY
+REACT_APP_NETWORK=CHAIN_ID
 ```
 
-- comment or uncomment the recommended BE url
+Variable description:
+
+- REACT_APP_BACKEND_URL - represents the url for the connection to the database - set the url of the server api to connect to a specific database
+- REACT_APP_INFURA_ID - INFURA_API_KEY is used to obtain data from Ethereum blockchain, and it is set in infura dashboard - create a project
+- REACT_APP_NETWORK - CHAIN_ID is a property of the chain managed by the node. e.g (Ethereum mainnet: CHAIN_ID = 1, Rinkeby testnet: CHAIN_ID = 4)
+- REACT_APP_COINGECKO_API - represents the url for receiving crypto data such as live prices, trading volume, exchange volumes
 
 ### Start app
 
