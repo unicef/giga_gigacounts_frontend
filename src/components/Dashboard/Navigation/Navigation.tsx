@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { ContractStatus, UserRole } from 'src/types/general'
 import logos from 'src/assets/logos'
 import { useUser, useContractCounts } from 'src/state/hooks'
@@ -56,12 +56,17 @@ const Navigation: React.FC = (): JSX.Element => {
   }
 
   useEffect(() => {
-    const { activeNavItem } = (location.state ?? {}) as { activeNavItem?: NavItemType }
-    if (activeNavItem) {
-      setActiveNavItem(activeNavItem)
-      navigate(location.pathname, { replace: true })
+    const { pathname } = location
+    if (matchPath({ path: '/dashboard', end: false }, pathname)) {
+      const { activeNavItem: newActiveNavItem } = (location.state ?? {}) as { activeNavItem?: NavItemType }
+      if (newActiveNavItem) {
+        setActiveNavItem(newActiveNavItem)
+        navigate(location.pathname, { replace: true })
+      }
+    } else if (activeNavItem) {
+      setActiveNavItem()
     }
-  }, [location.pathname, location.state, navigate, setActiveNavItem])
+  }, [activeNavItem, location, location.pathname, location.state, navigate, setActiveNavItem])
 
   return (
     <StyledNav onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} expanded={hovered}>

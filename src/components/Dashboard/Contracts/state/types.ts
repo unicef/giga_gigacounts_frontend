@@ -35,7 +35,7 @@ export interface ContractsState {
     contractId?: string
   }
   schoolsQos: Record<string, DataState<SchoolsQos[], true>>
-  activeNavItem: NavItemType
+  activeNavItem?: NavItemType
   error?: Error
   loading?: boolean
   newContract?: {
