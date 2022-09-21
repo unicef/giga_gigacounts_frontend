@@ -2,18 +2,6 @@
 
 # Gigacounts FE
 
-## _Getting started_
-
-Clone the project from this url: https://github.com/protofire/Unicef-Giga-App-FE.git
-
-(please check if you have rights to clone the project. If you have already set an ssh key you can use the second command)
-
-```sh
-git clone https://github.com/protofire/Unicef-Giga-App-FE.git
-git clone git@github.com:protofire/Unicef-Giga-App-FE.git
-cd Unicef-Giga-App-FE
-```
-
 ## Installation
 
 App requires:
