@@ -1,49 +1,59 @@
-import instance from './init'
 import {
-  IContractDraft,
-  IContractsData,
+  Contract,
+  ContractCreationError,
+  ContractTeamMemberForm,
   IContractDetails,
+  IContractDraft,
   IContractSchools,
-  IPendingContractDetails,
-} from 'src/types/general'
-import { ContractForm } from 'src/components/Dashboard/Contracts/CreateContract/state/types'
+  IContractsData,
+  IPendingContractDetails
+} from 'src/@types'
+import { Translation } from 'src/locales'
+import instance from './init'
 
-export const getContracts = async (status?: string | (string | null)[] | null): Promise<IContractsData | Error> => {
+export const getContracts = async (
+  status?: string | (string | null)[] | null
+): Promise<IContractsData | Error> => {
   const response = await instance.get('/contract')
   if (response.status === 200) return response.data
   throw new Error('Failed to get the contracts')
 }
 
-export const createContractDraft = async (contract: ContractForm): Promise<IContractDraft | Error> => {
-  const response = await instance.post('/contract/draft', {
-    ...contract,
-  })
-  if (response.status === 200) return response.data
-  throw new Error('Failed to save the contract draft')
-}
-
-export const updateContractDraft = async (contract: ContractForm) => {
+export const createContractDraft = async (contract: Contract): Promise<IContractDraft> => {
   try {
-    const response = await instance.put('/contract/draft', {
-      ...contract,
+    const response = await instance.post('/contract/draft', {
+      ...contract
     })
-    if (response.status === 200) return response.data
-  } catch (error: any) {
-    if (error.response.status === 422) {
-      throw new Error('Validation failed')
-    }
-    throw new Error('Failed to update the contract draft')
+    return response.data
+  } catch (err) {
+    if (err && err.errors && err.errors.some((error: any) => error.field && error.rule)) {
+      throw err.errors.map(
+        (error: any) =>
+          new ContractCreationError(
+            `field_errors.${error.rule}` as Translation,
+            error.field,
+            error.rule
+          )
+      )
+    } else throw err
   }
 }
 
-export const publishContractDraft = async (contract: ContractForm, draftId?: string) => {
-  const { id, ...contractForm } = contract
+export const updateContractDraft = async (contract: Contract) => {
+  const response = await instance.put('/contract/draft', {
+    ...contract
+  })
+  return response.data
+}
+
+export const publishContractDraft = async (contract: Contract, draftId?: string) => {
+  const { ...contractForm } = contract
   const body = {
     draftId,
-    ...contractForm,
+    ...contractForm
   }
   const response = await instance.post(`/contract`, {
-    ...body,
+    ...body
   })
   if (response.status === 200) return response.data
   throw new Error('Failed to publish the contract draft')
@@ -79,10 +89,17 @@ export const getContract = async (contractId: string): Promise<IPendingContractD
   throw new Error('Failed to get the contract')
 }
 
-export const publishContractToCompleted = async (contractId: string) => {
-  const response = await instance.post('/contract/change-status', {
-    contract_id: contractId,
-    status: 5,
+export const publishContract = async (contractId: string) => {
+  const response = await instance.post('/contract/publish', {
+    contract_id: contractId
+  })
+  if (response.status === 200) return response.data
+  throw new Error('Failed to change the contract status')
+}
+
+export const approveContract = async (contractId: string) => {
+  const response = await instance.post('/contract/approve', {
+    contract_id: contractId
   })
   if (response.status === 200) return response.data
   throw new Error('Failed to change the contract status')
@@ -92,4 +109,51 @@ export const getContractAvailablePayments = async <T>(contractId: string): Promi
   const response = await instance.get<T>(`/contract/available-payments/${contractId}`)
   if (response.status === 200) return response.data
   throw new Error('Failed to get available payments')
+}
+
+export const duplicateContract = async (contractId: string) => {
+  const response = await instance.post(`/contract/duplicate/${contractId}`)
+  return response.data
+}
+
+export const generateSignContractRandomString = async (contractId: string) => {
+  const response = await instance.post(`/contract/generate-sign-random-string`, {
+    contract_id: contractId
+  })
+  if (response.status === 200) return response.data
+  throw new Error(`Could not generate random string to sign contract`)
+}
+
+export const signContractWithWallet = async <T>(
+  contractId: string,
+  address: string,
+  signatureHash: string
+): Promise<T> => {
+  try {
+    const response = await instance.post(`/contract/sign-with-wallet`, {
+      contract_id: contractId,
+      address,
+      signatureHash
+    })
+    if (response.status === 200) return response.data
+    throw new Error(`Could not sign contract with wallet`)
+  } catch (ex) {
+    throw new Error(ex.mesage)
+  }
+}
+
+export const addNewTeamMember = (
+  teamMemberForm: ContractTeamMemberForm,
+  contractId: string
+): Promise<ContractTeamMemberForm> => {
+  console.log(teamMemberForm, contractId)
+  return new Promise(() => {})
+}
+
+export const deleteTeamMember = (
+  email: string,
+  contractId: string
+): Promise<ContractTeamMemberForm> => {
+  console.log(email, contractId)
+  return new Promise(() => {})
 }

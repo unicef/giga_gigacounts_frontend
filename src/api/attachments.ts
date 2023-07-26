@@ -1,9 +1,9 @@
-import { IFileUpload } from 'src/types/general'
+import { IFileUpload } from 'src/@types'
 import instance from './init'
 
 export const uploadAttachment = async (file: IFileUpload) => {
   const response = await instance.post('/attachments/upload', {
-    ...file,
+    ...file
   })
   if (response.status === 200) return response.data
   throw new Error('Failed to upload attachment file')

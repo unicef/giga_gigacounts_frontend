@@ -1,0 +1,112 @@
+@use '../colors/common.scss' as *;
+
+@use '@carbon/themes/scss/generated/tag-tokens' with (
+  $tag-background-warm-gray: (
+    white-theme: #e5e0df,
+    g-90: #e5e0df
+  ),
+  $tag-color-warm-gray: (
+    white-theme: #171414,
+    g-90: #171414
+  ),
+  $tag-hover-warm-gray: (
+    white-theme: #d8d0cf,
+    g-90: #d8d0cf
+  ),
+  $tag-background-cool-gray: (
+    white-theme: #cdd3da,
+    g-90: #cdd3da
+  ),
+  $tag-color-cool-gray: (
+    white-theme: $giga-dark-grey,
+    g-90: $giga-dark-grey
+  ),
+  $tag-hover-cool-gray: (
+    white-theme: #c4c9d1,
+    g-90: #c4c9d1
+  ),
+  $tag-background-cyan: (
+    white-theme: #bae6ff,
+    g-90: #bae6ff
+  ),
+  $tag-color-cyan: (
+    white-theme: #00539a,
+    g-90: #00539a
+  ),
+  $tag-hover-cyan: (
+    white-theme: #99daff,
+    g-90: #99daff
+  ),
+  $tag-background-purple: (
+    white-theme: #e8daff,
+    g-90: #e8daff
+  ),
+  $tag-color-purple: (
+    white-theme: #6929c4,
+    g-90: #6929c4
+  ),
+  $tag-hover-purple: (
+    white-theme: #dcc7ff,
+    g-90: #dcc7ff
+  ),
+  $tag-background-green: (
+    white-theme: #a7f0ba,
+    g-90: #a7f0ba
+  ),
+  $tag-color-green: (
+    white-theme: #0e6027,
+    g-90: #0e6027
+  ),
+  $tag-hover-green: (
+    white-theme: #74e792,
+    g-90: #74e792
+  ),
+  $tag-background-teal: (
+    white-theme: #cde3e1,
+    g-90: #cde3e1
+  ),
+  $tag-color-teal: (
+    white-theme: $giga-dark-grey,
+    g-90: $giga-dark-grey
+  ),
+  $tag-hover-teal: (
+    white-theme: #93dede,
+    g-90: #93dede
+  ),
+  $tag-background-red: (
+    white-theme: #ffd7d9,
+    g-90: #ffd7d9
+  ),
+  $tag-color-red: (
+    white-theme: #a2191f,
+    g-90: #a2191f
+  ),
+  $tag-hover-red: (
+    white-theme: #ffc2c5,
+    g-90: #ffc2c5
+  ),
+  $tag-background-blue: (
+    white-theme: $primary-light,
+    g-90: $primary-light
+  ),
+  $tag-hover-blue: (
+    white-theme: #b8d3ff,
+    g-90: #b8d3ff
+  ),
+  $tag-color-blue: (
+    white-theme: $giga-dark-grey,
+    g-90: $giga-dark-grey
+  ),
+  $tag-background-magenta: (
+    white-theme: $warning-light,
+    g-90: $warning-light
+  ),
+  $tag-color-magenta: (
+    white-theme: $giga-dark-grey,
+    g-90: $giga-dark-grey
+  ),
+  $tag-hover-magenta: (
+    white-theme: #f1d5ba,
+    g-90: #f1d5ba
+  )
+);

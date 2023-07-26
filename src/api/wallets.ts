@@ -9,8 +9,8 @@ export const getWalletRandomString = async () => {
 export const attachWallet = async (address: string, message: string) => {
   const response = await instance.post(`/user/attach-wallet`, {
     address,
-    message,
+    message
   })
   if (response.status === 200) return response.data
-  throw new Error(`Could not obtain verification message`)
+  throw new Error(`Could not Attach wallet`)
 }

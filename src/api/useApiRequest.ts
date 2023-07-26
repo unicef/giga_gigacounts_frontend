@@ -30,7 +30,7 @@ const useApiRequest = (): {
 
       const res = await axiosInstance[method](url, {
         ...requestConfig,
-        signal: ctrl.signal,
+        signal: ctrl.signal
       })
 
       setResponse(res.data)
@@ -42,9 +42,7 @@ const useApiRequest = (): {
     }
   }
 
-  useEffect(() => {
-    return () => controller && controller.abort()
-  }, [controller])
+  useEffect(() => () => controller && controller.abort(), [controller])
 
   return { response, errors, loading, axiosFetch }
 }
