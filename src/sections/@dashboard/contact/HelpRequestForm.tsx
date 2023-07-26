@@ -1,0 +1,142 @@
+import { Clean, SendAlt } from '@carbon/icons-react'
+import { Button, TextArea } from '@carbon/react'
+import { useEffect, useState } from 'react'
+import {
+  HelpRequestForm as HelpRequestFormType,
+  HelpRequestFunctionality,
+  HelpRequestPossibleValue
+} from 'src/@types'
+import {
+  getHelpRequestFunctionalities,
+  getHelpRequestPossibleValues,
+  sendHelpRequest
+} from 'src/api/help-request'
+import { RHFSelect } from 'src/components/hook-form'
+import FormProvider from 'src/components/hook-form/FormProvider'
+import { Stack } from 'src/components/stack'
+import { useSnackbar } from 'src/hooks/useSnackbar'
+import { Translation, useLocales } from 'src/locales'
+import { useTheme } from 'src/theme'
+import { capitalizeFirstLetter } from 'src/utils/strings'
+import { useHelpRequestSchema } from 'src/validations/help-request'
+
+export default function HelpRequestForm() {
+  const { translate } = useLocales()
+  const { spacing } = useTheme()
+  const { pushSuccess, pushError } = useSnackbar()
+
+  const [possibleValues, setPossibleValues] = useState<HelpRequestPossibleValue[]>([])
+  const [possibleFunctionalities, setPossibleFunctionalities] = useState<
+    HelpRequestFunctionality[]
+  >([])
+  const [selectedCode, setSelectedCode] = useState('bug')
+  const [selectedType, setSelectedTyp] = useState('display')
+
+  useEffect(() => {
+    getHelpRequestFunctionalities().then(setPossibleFunctionalities)
+    getHelpRequestPossibleValues().then(setPossibleValues)
+  }, [])
+
+  const methods = useHelpRequestSchema()
+  const { setValue, resetField, handleSubmit, reset, watch } = methods
+
+  const handleReset = () => reset()
+
+  const handlePost = (ticket: HelpRequestFormType) => {
+    if (!ticket.code || !ticket.type) return
+    sendHelpRequest(ticket)
+      .then(() => pushSuccess('push.sent_help_request'))
+      .catch(() => pushError('push.sent_help_request_error'))
+
+    handleReset()
+  }
+
+  return (
+    <FormProvider style={{ width: '100%' }} methods={methods} onSubmit={handleSubmit(handlePost)}>
+      <Stack orientation="vertical" gap={spacing.xl}>
+        <RHFSelect
+          id="help request code selection"
+          options={possibleValues.map((t) => ({
+            label: capitalizeFirstLetter(translate(`help_request.${t.code}` as Translation)),
+            value: t.code
+          }))}
+          onChange={(e) => {
+            if (e.target.value !== selectedCode) resetField('type')
+            setValue('code', e.target.value)
+            setSelectedCode(e.target.value)
+          }}
+          name="code"
+          label={translate('ticket.code')}
+        />
+
+        <RHFSelect
+          id="feedback type selection"
+          options={
+            !selectedCode || selectedCode === 'other'
+              ? []
+              : (possibleValues.find((t) => t.code === selectedCode)?.option ?? []).map((t) => ({
+                  label: capitalizeFirstLetter(translate(`help_request.types.${t}` as Translation)),
+                  value: t
+                }))
+          }
+          onChange={(e) => {
+            if (!selectedType || selectedType === 'new_feature') resetField('functionality')
+            setValue('type', e.target.value)
+            setSelectedTyp(e.target.value)
+          }}
+          name="type"
+          label={translate('ticket.type')}
+          disabled={!selectedCode || selectedCode === 'other'}
+        />
+
+        <RHFSelect
+          disabled={!selectedType || selectedType === 'new_feature'}
+          id="help request functionality select"
+          options={possibleFunctionalities.map((f) => ({
+            label: translate(`functionalities.${f.code}` as Translation),
+            value: f.code
+          }))}
+          name="functionality"
+          label={translate('functionality')}
+        />
+
+        <TextArea
+          labelText=""
+          name="description"
+          placeholder={translate('ticket.description.placeholder')}
+          rows={4}
+          onChange={(e) => {
+            setValue('description', e.target.value)
+          }}
+          value={watch().description}
+          maxCount={5000}
+          enableCounter
+        />
+        <Stack orientation="horizontal" gap={0}>
+          <Button
+            style={{ width: '50%' }}
+            className="btn-max-width-limit"
+            size="sm"
+            renderIcon={Clean}
+            iconDescription={capitalizeFirstLetter(translate('clean_form'))}
+            kind="secondary"
+            onClick={handleReset}
+          >
+            {capitalizeFirstLetter(translate('clean_form'))}
+          </Button>
+          <Button
+            disabled={!selectedCode || !selectedType}
+            className="btn-max-width-limit"
+            style={{ width: '50%' }}
+            size="sm"
+            renderIcon={SendAlt}
+            iconDescription={capitalizeFirstLetter(translate('send'))}
+            type="submit"
+          >
+            {capitalizeFirstLetter(translate('send'))}
+          </Button>
+        </Stack>
+      </Stack>
+    </FormProvider>
+  )
+}

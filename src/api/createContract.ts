@@ -1,23 +1,7 @@
-import { ICurrency } from 'src/types/general'
+import { ICountry, ICurrency, ILta } from 'src/@types'
 import instance from './init'
 
-export interface ICountries {
-  id: string
-  name: string
-  code: string
-  flag_url: string
-}
-
-export interface ILtas {
-  id: string
-  name: string
-  created_by: string
-  created_at: string
-  updated_at: string
-  country_id: string
-}
-
-export const getCountries = async (): Promise<ICountries | Error> => {
+export const getCountries = async (): Promise<ICountry[] | Error> => {
   const response = await instance.get('/country')
 
   if (response.status === 200) {
@@ -27,13 +11,18 @@ export const getCountries = async (): Promise<ICountries | Error> => {
   throw new Error('Failed to get the contracts')
 }
 
-export const getCurrencies = async (type?: string): Promise<ICurrency | Error> => {
+export const getCurrencies = async (
+  countryId?: string,
+  type?: string,
+  networkId?: number
+): Promise<ICurrency[] | Error> => {
   const response = await instance.get('/currency', {
     params: {
       type,
-    },
+      networkId,
+      countryId
+    }
   })
-
   if (response.status === 200) {
     return response.data
   }
@@ -41,11 +30,11 @@ export const getCurrencies = async (type?: string): Promise<ICurrency | Error> =
   throw new Error('Failed to get the currencies')
 }
 
-export const getLtas = async (countryId?: string): Promise<ILtas | Error> => {
+export const getLtas = async (countryId?: string): Promise<ILta[]> => {
   const response = await instance.get('/lta', {
     params: {
-      countryId,
-    },
+      countryId
+    }
   })
 
   if (response.status === 200) {

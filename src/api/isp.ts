@@ -13,8 +13,8 @@ export const getIsp = async (countryId?: string, ltaId?: string): Promise<IIsp[]
     const response = await instance.get(ENDPOINT_URL, {
       params: {
         countryId,
-        ltaId,
-      },
+        ltaId
+      }
     })
 
     if (response.status === 200) {

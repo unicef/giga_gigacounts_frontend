@@ -1,0 +1,31 @@
+@use '../colors/common.scss' as *;
+
+@use '@carbon/themes/scss/generated/button-tokens' with (
+  $button-primary: (
+    white-theme: $primary-main,
+    g-90: $primary-main
+  ),
+  $button-primary-active: (
+    white-theme: $primary-dark,
+    g-90: $primary-dark
+  ),
+  $button-primary-hover: (
+    white-theme: rgba($primary-main, 0.8),
+    g-90: rgba($primary-main, 0.8)
+  ),
+  $button-danger-primary: (
+    white-theme: $error-main,
+    g-90: $error-main
+  ),
+  $button-danger-active: (
+    white-theme: $error-dark,
+    g-90: $error-dark
+  ),
+  $button-danger-hover: (
+    white-theme: rgba($error-main, 0.8),
+    g-90: rgba($error-main, 0.8)
+  )
+);
+.btn-max-width-limit {
+  max-width: none !important;
+}

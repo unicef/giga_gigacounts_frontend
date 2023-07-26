@@ -1,4 +1,26 @@
-node_modules
-.DS_Store
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
 /build
-.env
+
+# misc
+.DS_Store
+.[Dd][s]S_[Ss]tore
+/.env
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+
+.eslintcache
+package-lock.json
+.husky

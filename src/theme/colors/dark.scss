@@ -1,0 +1,20 @@
+@use 'common';
+@use 'sass:map';
+
+$text-primary: common.$white;
+$text-secondary: common.$grey-200;
+$text-disabled: common.$grey-550;
+$background-paper: common.$giga-dark-grey;
+$background-default: common.$giga-black;
+$background-neutral: rgba(common.$grey-500, 0.16);
+$action-active: common.$grey-550;
+
+:export {
+  text-primary: $text-primary;
+  text-secondary: $text-secondary;
+  text-disabled: $text-disabled;
+  background-paper: $background-paper;
+  background-default: $background-default;
+  background-neutral: $background-neutral;
+  action-active: $action-active;
+}
