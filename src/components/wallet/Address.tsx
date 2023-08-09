@@ -1,13 +1,13 @@
 // locales
+import { Button, Link, Tooltip } from '@carbon/react'
 import { useLocales } from 'src/locales'
 // hooks
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
 // components
-import { Copy, Wallet } from '@carbon/icons-react'
-import { Button, Link, Tooltip } from '@carbon/react'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
 // style
+import { ICONS } from 'src/constants'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useTheme } from 'src/theme'
 
@@ -48,7 +48,7 @@ export default function Address({
   if (address) {
     return (
       <Stack orientation="horizontal" alignItems="center" justifyContent="flex-start">
-        <Wallet />
+        <ICONS.Wallet />
         <Tooltip label={translate('wallet.view_explorer')} align="right">
           <Link href={addressExplorer} target="_blank">
             <Typography
@@ -64,7 +64,7 @@ export default function Address({
           onClick={handleCopy}
           hasIconOnly
           iconDescription={translate('wallet.copy_wallet')}
-          renderIcon={Copy}
+          renderIcon={ICONS.Copy}
           tooltipPosition="right"
         />
       </Stack>

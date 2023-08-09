@@ -42,8 +42,7 @@ touch .env
 
 ## Environment variables
 
-The environment variables bellow needs to be set in the .env file when project is running locally and in
-/.github/workflows/azure-static-web-app-deploy.yml when project is deployed to Azure.
+The environment variables bellow needs to be set in the .env file when project is running locally:
 
 ```sh
 SKIP_PREFLIGHT_CHECK=true
@@ -54,11 +53,13 @@ REACT_APP_BACKEND_URL=http://127.0.0.1:3333
 REACT_APP_DEFAULT_COUNTRY_CODE=US
 REACT_APP_NOTIFICATIONS_REFRESH_INTERVAL_MS=5000
 REACT_APP_KNOWLEDGE_BASE_URL=https://dappsar.github.io/jekyll-g
-REACT_APP_INFURA_ID=INFURA_PROJECT_ID
-REACT_APP_ALCHEMY_ID=ALCHEMY_API_KEY
 REACT_APP_WALLET_CONNECT_PROJECT_ID=(Project id defined in https://cloud.walletconnect.com/)
-REACT_APP_NETWORK=80001
-REACT_APP_GIGACOUNTS_TOKEN_ADR=0xba5e2af09e39cc36dfbc9530c4d4c89d5c44d323
+REACT_APP_NETWORK_ID=80001
+REACT_APP_NODE_PROVIDER_URL=https://polygon-mumbai.g.alchemy.com/v2/
+REACT_APP_NODE_PROVIDER_KEY=NODE_PROVIDER_API_KEY
+REACT_APP_GIGACOUNTS_OWNER_ADR=
+REACT_APP_GIGACOUNTS_TOKEN_ADR=
+REACT_APP_GIGACOUNTS_CONTRACTS_HANDLER_ADR=
 ```
 
 Some Variable description:
@@ -67,10 +68,11 @@ Some Variable description:
 - REACT_APP_DEFAULT_COUNTRY_CODE: Reprepsents the default country id if users country is not in the country list
 - REACT_APP_NOTIFICATIONS_REFRESH_INTERVAL_MS: Represents the interval to refresh notificacions (list and avatar)
 - REACT_APP_KNOWLEDGE_BASE_URL: External Knowledge Base URL
-- REACT_APP_INFURA_ID: Is used to obtain data from Ethereum blockchain, and it is set in infura dashboard - create a project
 - REACT_APP_WALLET_CONNECT_PROJECT_ID: Is used to connect wallet with Wallet Connect Protocol
-- REACT_APP_NETWORK: Is a property of the chain managed by the node. e.g (Polygon Mumbai Testnet = 80001)
+- REACT_APP_NETWORK_ID: Is a property of the chain managed by the node. e.g (Polygon Mumbai Testnet = 80001)
+- REACT_APP_GIGACOUNTS_OWNER_ADR=Deployer Owner
 - REACT_APP_GIGACOUNTS_TOKEN_ADR: Smart Contract address of Gigacounts Tokens
+- REACT_APP_GIGACOUNTS_CONTRACTS_HANDLER_ADR: Smart contract address of Gigacounts Contracts Handler
 ## Start app
 
 ```sh

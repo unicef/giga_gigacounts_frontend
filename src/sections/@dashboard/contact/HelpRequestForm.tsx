@@ -1,10 +1,10 @@
-import { Clean, SendAlt } from '@carbon/icons-react'
 import { Button, TextArea } from '@carbon/react'
 import { useEffect, useState } from 'react'
 import {
   HelpRequestForm as HelpRequestFormType,
   HelpRequestFunctionality,
-  HelpRequestPossibleValue
+  HelpRequestPossibleValue,
+  Translation
 } from 'src/@types'
 import {
   getHelpRequestFunctionalities,
@@ -14,8 +14,9 @@ import {
 import { RHFSelect } from 'src/components/hook-form'
 import FormProvider from 'src/components/hook-form/FormProvider'
 import { Stack } from 'src/components/stack'
+import { ICONS } from 'src/constants'
 import { useSnackbar } from 'src/hooks/useSnackbar'
-import { Translation, useLocales } from 'src/locales'
+import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 import { useHelpRequestSchema } from 'src/validations/help-request'
@@ -61,9 +62,9 @@ export default function HelpRequestForm() {
             value: t.code
           }))}
           onChange={(e) => {
-            if (e.target.value !== selectedCode) resetField('type')
-            setValue('code', e.target.value)
-            setSelectedCode(e.target.value)
+            if (e.selectedItem?.value !== selectedCode) resetField('type')
+            setValue('code', e.selectedItem?.value ?? 'bug')
+            setSelectedCode(e.selectedItem?.value ?? 'bug')
           }}
           name="code"
           label={translate('ticket.code')}
@@ -81,8 +82,8 @@ export default function HelpRequestForm() {
           }
           onChange={(e) => {
             if (!selectedType || selectedType === 'new_feature') resetField('functionality')
-            setValue('type', e.target.value)
-            setSelectedTyp(e.target.value)
+            setValue('type', e.selectedItem?.value ?? 'display')
+            setSelectedTyp(e.selectedItem?.value ?? 'display')
           }}
           name="type"
           label={translate('ticket.type')}
@@ -109,7 +110,7 @@ export default function HelpRequestForm() {
             setValue('description', e.target.value)
           }}
           value={watch().description}
-          maxCount={5000}
+          maxCount={1000}
           enableCounter
         />
         <Stack orientation="horizontal" gap={0}>
@@ -117,7 +118,7 @@ export default function HelpRequestForm() {
             style={{ width: '50%' }}
             className="btn-max-width-limit"
             size="sm"
-            renderIcon={Clean}
+            renderIcon={ICONS.Clean}
             iconDescription={capitalizeFirstLetter(translate('clean_form'))}
             kind="secondary"
             onClick={handleReset}
@@ -129,7 +130,7 @@ export default function HelpRequestForm() {
             className="btn-max-width-limit"
             style={{ width: '50%' }}
             size="sm"
-            renderIcon={SendAlt}
+            renderIcon={ICONS.Send}
             iconDescription={capitalizeFirstLetter(translate('send'))}
             type="submit"
           >

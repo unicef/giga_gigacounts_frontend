@@ -1,6 +1,5 @@
-import { AttachmentsList } from 'src/components/attachment-list'
-// @ts-ignore
 import { FileUploaderDropContainer } from '@carbon/react'
+import { AttachmentsList } from 'src/components/attachment-list'
 import { useTheme } from 'src/theme'
 
 type Props = {

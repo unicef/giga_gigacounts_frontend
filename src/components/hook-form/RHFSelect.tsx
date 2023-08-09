@@ -1,20 +1,27 @@
+import { Dropdown, OnChangeData } from '@carbon/react'
+import { CSSProperties } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-// @ts-ignore
-import { Select, SelectItem } from '@carbon/react'
 
-type RHFSelectProps = {
+type RHFSelectProps<T> = {
   id: string
   name: string
   native?: boolean
   maxHeight?: boolean | number
   label: string
-  options: { value: string; label: string }[]
+  options: { value: T; label: string }[]
   onBlur?: () => void
   disabled?: boolean
-  onChange?: (e: any) => void
+  selectedItem?: { value: T; label: string }
+  onChange?: (
+    e: OnChangeData<{
+      value: T
+      label: string
+    }>
+  ) => void
+  style?: CSSProperties
 }
 
-export function RHFSelect({ name, native, label, options, id, ...other }: RHFSelectProps) {
+export function RHFSelect<T>({ name, native, label, options, id, ...other }: RHFSelectProps<T>) {
   const { control } = useFormContext()
 
   return (
@@ -22,20 +29,22 @@ export function RHFSelect({ name, native, label, options, id, ...other }: RHFSel
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <Select
-          {...field}
+        <Dropdown
           id={id}
-          labelText={label}
+          items={options}
+          titleText={label}
+          label={options.find((o) => o.value === field.value)?.label ?? ''}
+          itemToString={(item) => item.label}
+          {...field}
           {...other}
-          onChange={(e: any) => {
-            field.onChange(e)
+          onChange={(e) => {
+            field.onChange(e.selectedItem?.value)
             if (other.onChange) other.onChange(e)
           }}
-        >
-          {options.map((o: { value: string; label: string }) => (
-            <SelectItem key={o.value} value={o.value} text={o.label} />
-          ))}
-        </Select>
+          invalid={Boolean(error)}
+          invalidText={error?.message}
+          disabled={other.disabled || options.length <= 1}
+        />
       )}
     />
   )

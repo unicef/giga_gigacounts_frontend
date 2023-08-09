@@ -1,4 +1,3 @@
-// @ts-ignore
 import { SideNavDivider } from '@carbon/react'
 import { useEffect } from 'react'
 import { useBusinessContext } from 'src/context/BusinessContext'

@@ -1,36 +1,22 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import * as Yup from 'yup'
 import { IContractPayment, PaymentForm, PaymentStatus } from 'src/@types'
 import { useLocales } from 'src/locales'
-import * as Yup from 'yup'
 
 export const usePaymentSchema = (payment?: IContractPayment) => {
   const { replaceTranslated } = useLocales()
 
-  const getDefaultValues = (pendingPayment?: IContractPayment) => {
-    const isMonthly = !pendingPayment || !pendingPayment.paidDate?.day
-    const getDate = (monthly: boolean) => {
-      try {
-        if (!pendingPayment) return '-'
-        return monthly
-          ? `${pendingPayment.paidDate.month}-${pendingPayment.paidDate.year}`
-          : `${pendingPayment.paidDate.day}-${pendingPayment.paidDate.month}-${pendingPayment.paidDate.year}`
-      } catch (ex) {
-        console.error(ex)
-        return '-'
-      }
-    }
-
-    return {
-      status: PaymentStatus.OnHold,
-      description: pendingPayment?.description ?? '',
-      amount: pendingPayment?.amount ?? 0,
-      payment: getDate(isMonthly)
-    }
-  }
+  const getDefaultValues = (pendingPayment?: IContractPayment) => ({
+    status: pendingPayment?.status ?? PaymentStatus.OnHold,
+    description: pendingPayment?.description ?? '',
+    amount: pendingPayment?.amount ?? 0,
+    payment: pendingPayment?.paidDate ?? { month: 0, year: 0 }
+  })
 
   const [defaultValues, setDefaultValues] = useState<PaymentForm>(getDefaultValues(payment))
+
   useEffect(() => {
     setDefaultValues(getDefaultValues(payment))
   }, [payment])
@@ -46,9 +32,7 @@ export const usePaymentSchema = (payment?: IContractPayment) => {
         .nullable()
         .transform((_, val) => (val ? Number(val) : null))
         .required(replaceTranslated('field_errors.required', '{{field}}', 'amount')),
-      payment: Yup.string()
-        .trim()
-        .required(replaceTranslated('field_errors.required', '{{field}}', 'payment'))
+      payment: Yup.object()
     })
   )
 

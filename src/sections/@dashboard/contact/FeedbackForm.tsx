@@ -1,17 +1,9 @@
-import {
-  Clean,
-  FaceActivated,
-  FaceCool,
-  FaceDissatisfied,
-  FaceNeutral,
-  FaceSatisfied,
-  SendAlt
-} from '@carbon/icons-react'
 import { Button, TextArea } from '@carbon/react'
 import { FeedbackForm as FeedbackFormType } from 'src/@types'
 import { sendFeedback } from 'src/api/feedback'
 import FormProvider from 'src/components/hook-form/FormProvider'
 import { Stack } from 'src/components/stack'
+import { ICONS } from 'src/constants'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
@@ -38,28 +30,28 @@ export default function FeedbackForm() {
   const buttons = [
     {
       value: 1,
-      icon: FaceDissatisfied,
-      iconDescription: 'I feel dissatisfied'
+      icon: ICONS.FeedbackVeryLowRating,
+      iconDescription: translate('fedback_rating.1')
     },
     {
       value: 2,
-      icon: FaceNeutral,
-      iconDescription: 'It could be better'
+      icon: ICONS.FeedbackLowRating,
+      iconDescription: translate('fedback_rating.2')
     },
     {
       value: 3,
-      icon: FaceSatisfied,
-      iconDescription: 'I like it'
+      icon: ICONS.FeedbackNeutralRating,
+      iconDescription: translate('fedback_rating.3')
     },
     {
       value: 4,
-      icon: FaceActivated,
-      iconDescription: 'I like it a lot'
+      icon: ICONS.FeedbackHighRating,
+      iconDescription: translate('fedback_rating.4')
     },
     {
       value: 5,
-      icon: FaceCool,
-      iconDescription: 'I love it'
+      icon: ICONS.FeedbackVeryHighRating,
+      iconDescription: translate('fedback_rating.5')
     }
   ]
 
@@ -95,7 +87,7 @@ export default function FeedbackForm() {
           onChange={(e) => {
             setValue('comment', e.target.value)
           }}
-          maxCount={5000}
+          maxCount={1000}
           enableCounter
         />
         <Stack orientation="horizontal" gap={0}>
@@ -103,7 +95,7 @@ export default function FeedbackForm() {
             style={{ width: '50%' }}
             className="btn-max-width-limit"
             size="sm"
-            renderIcon={Clean}
+            renderIcon={ICONS.Clean}
             iconDescription={capitalizeFirstLetter(translate('clean_form'))}
             kind="secondary"
             onClick={handleReset}
@@ -114,7 +106,7 @@ export default function FeedbackForm() {
             className="btn-max-width-limit"
             style={{ width: '50%' }}
             size="sm"
-            renderIcon={SendAlt}
+            renderIcon={ICONS.Send}
             iconDescription={capitalizeFirstLetter(translate('send'))}
             type="submit"
           >

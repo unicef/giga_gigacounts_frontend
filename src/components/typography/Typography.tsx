@@ -13,6 +13,7 @@ type TypographyProps = {
     | 'error'
     | 'disabled'
     | 'textSecondary'
+    | 'textTertiary'
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span'
   style?: CSSProperties
   onClick?: () => void
@@ -30,6 +31,7 @@ const Typography = ({
   const colors: { [k in TypographyProps['variant'] as string]: string } = {
     default: palette.text.primary,
     textSecondary: palette.text.secondary,
+    textTertiary: palette.text.tertiary,
     primary: palette.primary.main,
     secondary: palette.secondary.main,
     info: palette.info.main,

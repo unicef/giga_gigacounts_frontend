@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { Translation } from 'src/locales'
+import { Translation } from './translations'
 import { IDraft } from './general'
 
 export class ParseError extends Error {

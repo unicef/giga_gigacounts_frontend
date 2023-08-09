@@ -1,31 +1,45 @@
-import { View } from '@carbon/icons-react'
-import { Button, TableCell, TableRow } from '@carbon/react'
+import { Button, DataTableRow, TableCell, TableRow } from '@carbon/react'
 import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
 import { useEffect, useState } from 'react'
-import { ISchoolMeasures } from 'src/@types'
+import { ISchoolContact, ISchoolMeasures } from 'src/@types'
 import { getSchoolMeasures } from 'src/api/school'
+import { ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import ConnectivityDetailsDrawer from '../form/ConnectivityDetailsDrawer'
+import { getOrderedFromCells } from 'src/utils/table'
+import { ConnectivityDetailsDrawer } from '../form'
 
 type Props = {
-  row: any
+  row: DataTableRow
   rowProps: TableRowProps
-  contractId: string
+  contractId?: string
+  budget?: string
+  currencyCode?: string
+  contactInformation: ISchoolContact
+  expectedValues?: { uptime: number; latency: number; downloadSpeed: number; uploadSpeed: number }
 }
 
-export default function ConnectivityTableRow({ row, contractId, rowProps }: Props) {
+export default function ConnectivityTableRow({
+  row,
+  contractId,
+  rowProps,
+  budget,
+  currencyCode,
+  contactInformation,
+  expectedValues
+}: Props) {
   const { translate } = useLocales()
-  const [name, externalId] = row.cells.map((c: { value: any }) => c.value)
+  const [name, external_id] = getOrderedFromCells(['name', 'external_id'], row.cells)
   const [measures, setMeasures] = useState<ISchoolMeasures[]>([])
   const details = useModal()
 
   useEffect(() => {
-    getSchoolMeasures(row.id, contractId, 'day').then((res) => {
-      if (res instanceof Error) throw res
-      setMeasures(res)
-    })
+    if (contractId)
+      getSchoolMeasures(row.id, contractId, 'day').then((res) => {
+        if (res instanceof Error) throw res
+        setMeasures(res)
+      })
   }, [contractId, row.id])
 
   const getMeasures = (measureName: 'Uptime' | 'Latency' | 'Download speed' | 'Upload speed') => {
@@ -36,7 +50,12 @@ export default function ConnectivityTableRow({ row, contractId, rowProps }: Prop
   return (
     <TableRow {...rowProps}>
       <TableCell>{name}</TableCell>
-      <TableCell>{externalId}</TableCell>
+      <TableCell>{external_id}</TableCell>
+      {budget && currencyCode && (
+        <TableCell>
+          {currencyCode} {budget}
+        </TableCell>
+      )}
 
       <TableCell>{getMeasures('Uptime')}</TableCell>
 
@@ -47,16 +66,18 @@ export default function ConnectivityTableRow({ row, contractId, rowProps }: Prop
 
       <TableCell>
         <Button
+          style={{ margin: 0, padding: 0 }}
           kind="ghost"
           onClick={details.open}
           iconDescription={capitalizeFirstLetter(translate('view'))}
           hasIconOnly
-          renderIcon={View}
+          renderIcon={ICONS.View}
         />
       </TableCell>
       <TableCell>
         <ConnectivityDetailsDrawer
-          item={row}
+          expectedValues={expectedValues}
+          contactInformation={contactInformation}
           measures={measures}
           onClose={details.close}
           open={details.value}

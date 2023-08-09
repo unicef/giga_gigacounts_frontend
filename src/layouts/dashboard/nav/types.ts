@@ -1,6 +1,5 @@
-import { CarbonIconType } from '@carbon/icons-react'
-import { UserRoles } from 'src/constants/authorization'
-import { Translation } from 'src/locales'
+import React from 'react'
+import { Icon, Translation, UserRoles } from 'src/@types'
 
 export type INavItem = {
   item: NavListProps
@@ -16,12 +15,12 @@ export type NavListProps = {
   title: Translation
   badge?: JSX.Element
   path: string
-  icon: CarbonIconType
+  icon: Icon
   info?: React.ReactElement
   caption?: string
   disabled?: boolean
   roles?: readonly UserRoles[]
-  children?: any
+  children?: React.ReactNode
   state?: Record<string, any>
 }
 

@@ -1,8 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
+import * as Yup from 'yup'
 import { HelpRequestForm } from 'src/@types'
 import { useLocales } from 'src/locales'
-import * as Yup from 'yup'
 
 export const useHelpRequestSchema = () => {
   const { replaceTranslated } = useLocales()

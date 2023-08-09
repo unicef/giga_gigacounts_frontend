@@ -1,24 +1,26 @@
-import { useFormContext, Controller } from 'react-hook-form'
-// @ts-ignore
-import { TextInput, RadioButtonGroup, Button } from '@carbon/react'
-import { TextInputProps } from '@carbon/react/lib/components/TextInput/TextInput'
+import { Button, RadioButtonGroup, TextInput } from '@carbon/react'
 import { CSSProperties } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import { useTheme } from 'src/theme'
-import { Stack } from '../stack'
+import { Stack } from 'src/components/stack'
 
-type Props = TextInputProps & {
+type Props<T extends string | number> = {
   name: string
-  options: { label: string; value: string | number }[]
+  options: T[]
+  optionToString: (opt: T) => string
   label?: string
   spacing?: number
   helperText?: React.ReactNode
   direction?: 'horizontal' | 'vertical'
   onBlur: () => void
-  onClick: (value: any) => void
+  onClick: (value: T) => void
   style?: CSSProperties
+  labelText: string
+  id: string
+  type?: string
 }
 
-export default function RHFRadioGroupButtons({
+export default function RHFRadioGroupButtons<T extends string | number>({
   name,
   options,
   spacing,
@@ -26,13 +28,16 @@ export default function RHFRadioGroupButtons({
   direction,
   onClick,
   style,
-  ...other
-}: Props) {
+  optionToString,
+  type,
+  labelText,
+  id
+}: Props<T>) {
   const { control, watch, setValue, clearErrors } = useFormContext()
 
   const { spacing: space } = useTheme()
 
-  const labelledby = other.labelText ? `${name}-${other.labelText}` : ''
+  const labelledby = labelText ? `${name}-${labelText}` : ''
 
   return (
     <Controller
@@ -46,19 +51,21 @@ export default function RHFRadioGroupButtons({
             invalid={Boolean(error)}
             invalidText={error ? error.message : ''}
             helperText={error ? error?.message : helperText}
-            {...other}
+            type={type}
+            id={id}
+            labelText={labelText}
           />
           <RadioButtonGroup {...field} aria-labelledby={labelledby}>
             <Stack orientation={direction} gap={spacing}>
               {options.map((option) => (
                 <Button
-                  onClick={(e: any) => {
+                  onClick={(e) => {
                     e.preventDefault()
-                    if (onClick) onClick(option.value)
-                    setValue(name, option.value)
+                    if (onClick) onClick(option)
+                    setValue(name, option)
                     clearErrors(name)
                   }}
-                  kind={Number(watch()[name]) === Number(option.value) ? 'primary' : 'tertiary'}
+                  kind={Number(watch()[name]) === Number(option) ? 'primary' : 'tertiary'}
                   size="sm"
                   style={{
                     marginBlock: space.xs,
@@ -67,9 +74,9 @@ export default function RHFRadioGroupButtons({
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}
-                  key={option.value}
+                  key={option}
                 >
-                  {option.label}
+                  {optionToString(option)}
                 </Button>
               ))}
             </Stack>

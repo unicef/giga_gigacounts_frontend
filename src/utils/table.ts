@@ -1,4 +1,12 @@
-export function emptyRows(page: number, rowsPerPage: number, arrayLength: number) {
+import { DataTableCell } from '@carbon/react'
+
+export function emptyRows(
+  page: number,
+  rowsPerPage: number,
+  arrayLength: number,
+  isNotFound: boolean
+) {
+  if (isNotFound) return rowsPerPage - 1
   return Math.max(0, page * rowsPerPage - arrayLength)
 }
 
@@ -20,3 +28,10 @@ export function getComparator<Key extends keyof any>(
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
+
+export const getOrderedFromCells = (keys: string[], cells: DataTableCell[]) =>
+  keys.map((key) => {
+    const cell = cells.find((c) => c.info.header === key)
+    if (!cell) return null
+    return cell.value as any
+  })

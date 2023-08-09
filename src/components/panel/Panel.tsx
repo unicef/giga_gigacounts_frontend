@@ -1,18 +1,18 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { capitalizeFirstLetter } from 'src/utils/strings'
 import { useState } from 'react'
-import { ChevronDown, ChevronUp } from '@carbon/icons-react'
+import { SectionTitle } from 'src/components/typography'
+import { ICONS } from 'src/constants'
 import { useTheme } from 'src/theme'
-import { SectionTitle } from '../typography'
 
 interface PanelProps {
   children: JSX.Element
   label: string
   defaultExpanded?: boolean
+  required?: boolean
 }
 
-export default function Panel({ label, children, defaultExpanded = true }: PanelProps) {
+export default function Panel({ label, children, defaultExpanded = true, required }: PanelProps) {
   const [expanded, setExpanded] = useState(defaultExpanded)
   const { palette, spacing } = useTheme()
   return (
@@ -28,12 +28,12 @@ export default function Panel({ label, children, defaultExpanded = true }: Panel
         }}
         onClick={() => setExpanded((prev) => !prev)}
       >
-        <SectionTitle label={capitalizeFirstLetter(label)} />
+        <SectionTitle label={label} required={required} />
         <div>
           {expanded ? (
-            <ChevronUp size={20} style={{ color: palette.primary.main }} />
+            <ICONS.ChevronUp size={20} style={{ color: palette.primary.main }} />
           ) : (
-            <ChevronDown size={20} style={{ color: palette.primary.main }} />
+            <ICONS.ChevronDown size={20} style={{ color: palette.primary.main }} />
           )}
         </div>
       </div>

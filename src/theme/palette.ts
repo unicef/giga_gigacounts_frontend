@@ -122,6 +122,7 @@ export default function palette(themeMode: 'white' | 'g90' | 'g100' | 'g10' | un
     text: {
       primary: lightColors['text-primary'],
       secondary: lightColors['text-secondary'],
+      tertiary: lightColors['text-tertiary'],
       disabled: lightColors['text-disabled']
     },
     background: {
@@ -141,6 +142,7 @@ export default function palette(themeMode: 'white' | 'g90' | 'g100' | 'g10' | un
     text: {
       primary: darkColors['text-primary'],
       secondary: darkColors['text-secondary'],
+      tertiary: lightColors['text-tertiary'],
       disabled: darkColors['text-disabled']
     },
     background: {

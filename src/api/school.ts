@@ -1,4 +1,4 @@
-import { ISchool, ISchoolMeasures } from 'src/@types'
+import { ISchool, ISchoolMeasures, ISchoolMeasuresExtended } from 'src/@types'
 import instance from './init'
 
 const ENDPOINT_URL = `/school`
@@ -20,17 +20,22 @@ export const getSchoolMeasures = async (
   schoolId: string,
   contractId: string,
   interval: string
-): Promise<ISchoolMeasures[] | Error> => {
+): Promise<ISchoolMeasures[]> => {
   const response = await instance.post(`${ENDPOINT_URL}/measures`, {
     schoolId,
     contractId,
     interval
   })
-  if (response.status === 200) {
-    return response.data
-  }
+  return response.data
+}
 
-  throw new Error('Failed to get the schools measures')
+export const getAllSchoolMeasures = async (
+  interval: string
+): Promise<ISchoolMeasuresExtended[]> => {
+  const response = await instance.post(`${ENDPOINT_URL}/measures/all`, {
+    interval
+  })
+  return response.data
 }
 
 export const setReliability = async (id: string, newReliability: boolean) => {

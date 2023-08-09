@@ -1,4 +1,5 @@
-import { useLocales, Translation } from 'src/locales'
+import { Translation } from 'src/@types'
+import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 
 export default function UploadError({ message }: { message: Translation | '' }) {

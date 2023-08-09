@@ -1,4 +1,3 @@
-import { CarbonIconType } from '@carbon/icons-react'
 import {
   Button,
   DataTable,
@@ -15,6 +14,7 @@ import {
   TableToolbarContent
 } from '@carbon/react'
 import React, { Dispatch, ElementType, SetStateAction } from 'react'
+import { Icon, Translation } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { TableEmptyRows, TableNoData, TablePaginationCustom, emptyRows } from 'src/components/table'
 import { capitalizeFirstLetter } from 'src/utils/strings'
@@ -32,7 +32,7 @@ type CustomDataTableProps<T extends { id: string }> = {
       | 'danger--tertiary'
       | 'tertiary'
     label: string
-    renderIcon?: CarbonIconType
+    renderIcon?: Icon
     hasIconOnly?: boolean
     onClick?: (e: any) => void
   }[]
@@ -40,21 +40,21 @@ type CustomDataTableProps<T extends { id: string }> = {
   getRowComponentProps?: (row: T) => any
   isNotFound: boolean
   isSelectable?: boolean
-  isSortable: boolean
-  onSelectAll?: React.MouseEventHandler<HTMLInputElement>
+  isSortable?: boolean
+  onSelectAll?: (rows: T[], checked: boolean) => void
+  onSelectRow?: (row: T, checked: boolean) => void
   page: number
   RowComponent: ElementType
   rowsPerPage: number
   setPage: Dispatch<SetStateAction<number>>
-  setSelected?: Dispatch<SetStateAction<string[]>>
   setRowsPerPage: Dispatch<SetStateAction<number>>
   tableHead: { key: string; header: React.ReactNode }[]
   tableName: string
   title?: string
-  allChecked?: boolean
-  ToolbarContent: React.ReactNode
-  getKey?: (row: T) => any
-  batchActions?: { icon: CarbonIconType; title: string; onClick: (selectedRows: any[]) => void }[]
+  ToolbarContent?: React.ReactNode
+  batchActions?: { icon: Icon; title: string; onClick: (selectedRows: any[]) => void }[]
+  selection?: string[]
+  noDataText: Translation
 }
 
 export default function CustomDataTable<T extends { id: string }>({
@@ -63,21 +63,21 @@ export default function CustomDataTable<T extends { id: string }>({
   getRowComponentProps,
   isNotFound,
   isSelectable = false,
-  isSortable,
+  isSortable = false,
   onSelectAll,
+  onSelectRow,
   page,
   RowComponent,
   rowsPerPage,
   setPage,
-  setSelected,
   setRowsPerPage,
   tableHead,
   tableName,
   title,
   ToolbarContent,
-  allChecked,
-  getKey,
-  batchActions
+  batchActions,
+  selection,
+  noDataText
 }: CustomDataTableProps<T>) {
   return (
     <>
@@ -92,7 +92,8 @@ export default function CustomDataTable<T extends { id: string }>({
           getBatchActionProps,
           getSelectionProps,
           getTableContainerProps,
-          selectedRows
+          selectedRows,
+          selectRow
         }: {
           rows: any[]
           headers: { key: string; header: React.ReactNode }[]
@@ -104,115 +105,133 @@ export default function CustomDataTable<T extends { id: string }>({
           getTableContainerProps: any
           getSelectionProps: any
           selectedRows: any[]
-        }) => (
-          <TableContainer
-            style={{ paddingTop: 0 }}
-            id={`tour-${tableName}-table`}
-            {...getTableContainerProps()}
-          >
-            <TableToolbar
-              id={`${tableName}-table`}
-              title={title}
-              {...getToolbarProps()}
-              aria-label="contract table toolbar"
+          selectRow: any
+        }) => {
+          if (selection) {
+            selection.forEach((id) => {
+              if (selectedRows.map((r) => r.id).includes(id)) return
+              selectRow(id)
+            })
+            selectedRows
+              .map((r) => r.id)
+              .forEach((id) => {
+                if (selection.includes(id)) return
+                selectRow(id)
+              })
+          }
+          return (
+            <TableContainer
+              id={`${tableName}-table-container`}
+              style={{ paddingTop: 0 }}
+              {...getTableContainerProps()}
             >
-              {batchActions && isSelectable && (
-                <TableBatchActions
-                  {...getBatchActionProps()}
-                  onCancel={() => {
-                    if (setSelected) setSelected([])
-                    getBatchActionProps().onCancel()
-                  }}
+              {ToolbarContent && (
+                <TableToolbar
+                  id={`${tableName}-table-toolbar`}
+                  title={title}
+                  {...getToolbarProps()}
+                  aria-label="contract table toolbar"
                 >
-                  {batchActions.map((action) => (
-                    <TableBatchAction
-                      key={action.title}
-                      tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                      renderIcon={action.icon}
-                      onClick={() => action.onClick(selectedRows)}
-                    >
-                      {action.title}
-                    </TableBatchAction>
-                  ))}
-                </TableBatchActions>
-              )}
-              <TableToolbarContent>
-                {ToolbarContent}
-                {buttonsProps && (
-                  <Stack orientation="horizontal">
-                    {buttonsProps.map((p) => (
-                      <span key={p.label}>
-                        <Button
-                          disabled={p.disabled}
-                          onClick={p.onClick}
-                          kind={p.kind}
-                          renderIcon={p.renderIcon}
-                          iconDescription={p.label}
-                          hasIconOnly={p.hasIconOnly}
+                  {batchActions && isSelectable && (
+                    <TableBatchActions {...getBatchActionProps()}>
+                      {batchActions.map((action) => (
+                        <TableBatchAction
+                          key={action.title}
+                          tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
+                          renderIcon={action.icon}
+                          onClick={() => action.onClick(selectedRows)}
                         >
-                          {p.label}
-                        </Button>
-                      </span>
-                    ))}
-                  </Stack>
-                )}
-              </TableToolbarContent>
-            </TableToolbar>
-            <Table {...getTableProps()} size="xl">
-              <TableHead>
-                <TableRow>
-                  {isSelectable && data.length > 0 && (
-                    <TableSelectAll
-                      {...getSelectionProps()}
-                      checked={allChecked}
-                      onSelect={(e) => {
-                        getSelectionProps().onSelect(e)
-                        if (onSelectAll) onSelectAll(e)
-                      }}
-                    />
+                          {action.title}
+                        </TableBatchAction>
+                      ))}
+                    </TableBatchActions>
                   )}
-                  {headers.map((header: { key: string; header: React.ReactNode }) => (
-                    <TableHeader
-                      {...getHeaderProps({ header })}
-                      isSortable={header.key !== '' && header.key !== '-'}
-                      key={header.key}
-                    >
-                      {typeof header.header === 'string'
-                        ? capitalizeFirstLetter(header.header)
-                        : header.header}
-                    </TableHeader>
-                  ))}
-                </TableRow>
-              </TableHead>
-              {data && (
-                <TableBody>
-                  {rows
-                    .slice((page - 1) * rowsPerPage)
-                    .slice(0, rowsPerPage)
-                    .map((row, i) => (
-                      <RowComponent
-                        selectionProps={{ ...getSelectionProps({ row }) }}
-                        rowProps={{ ...getRowProps({ row }) }}
-                        key={getKey ? getKey(data[i]) : row.id}
-                        row={row}
-                        {...(getRowComponentProps ? getRowComponentProps(data[i]) : {})}
-                      />
-                    ))}
-                  {emptyRows(page, rowsPerPage, data.length) !== rowsPerPage && (
-                    <TableEmptyRows
-                      emptyRows={emptyRows(page, rowsPerPage, data.length)}
-                      cols={9}
-                    />
-                  )}
-                  <TableNoData isNotFound={isNotFound} cols={9} />
-                </TableBody>
+                  <TableToolbarContent id={`${tableName}-table-toolbar-content`}>
+                    {ToolbarContent}
+                    {buttonsProps && (
+                      <Stack orientation="horizontal">
+                        {buttonsProps.map((p) => (
+                          <span key={p.label}>
+                            <Button
+                              disabled={p.disabled}
+                              onClick={p.onClick}
+                              kind={p.kind}
+                              renderIcon={p.renderIcon}
+                              iconDescription={p.label}
+                              hasIconOnly={p.hasIconOnly}
+                            >
+                              {p.label}
+                            </Button>
+                          </span>
+                        ))}
+                      </Stack>
+                    )}
+                  </TableToolbarContent>
+                </TableToolbar>
               )}
-            </Table>
-          </TableContainer>
-        )}
+              <Table {...getTableProps()} size="xl">
+                <TableHead id={`${tableName}-table-head`}>
+                  <TableRow>
+                    {isSelectable && data.length > 0 && (
+                      <TableSelectAll
+                        {...getSelectionProps()}
+                        onSelect={(e) => {
+                          getSelectionProps().onSelect(e)
+                          // @ts-ignore
+                          if (onSelectAll) onSelectAll(data, e.target.checked)
+                        }}
+                      />
+                    )}
+                    {headers.map((header: { key: string; header: React.ReactNode }) => (
+                      <TableHeader
+                        {...getHeaderProps({ header })}
+                        isSortable={header.key !== '' && header.key !== '-'}
+                        key={header.key}
+                      >
+                        {typeof header.header === 'string'
+                          ? capitalizeFirstLetter(header.header)
+                          : header.header}
+                      </TableHeader>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                {data && (
+                  <TableBody id={`${tableName}-table-body`}>
+                    {rows
+                      .slice((page - 1) * rowsPerPage)
+                      .slice(0, rowsPerPage)
+                      .map((row, i) => (
+                        <RowComponent
+                          selectionProps={{
+                            ...getSelectionProps({
+                              row,
+                              // @ts-ignore
+                              onClick: (e) =>
+                                onSelectRow ? onSelectRow(data[i], e.target.checked) : null
+                            })
+                          }}
+                          rowProps={{ ...getRowProps({ row }) }}
+                          key={row.id}
+                          row={row}
+                          {...(getRowComponentProps ? getRowComponentProps(data[i]) : {})}
+                        />
+                      ))}
+                    <TableNoData text={noDataText} isNotFound={isNotFound} cols={9} />
+                    {emptyRows(page, rowsPerPage, data.length, isNotFound) !== rowsPerPage && (
+                      <TableEmptyRows
+                        emptyRows={emptyRows(page, rowsPerPage, data.length, isNotFound)}
+                        cols={9}
+                      />
+                    )}
+                  </TableBody>
+                )}
+              </Table>
+            </TableContainer>
+          )
+        }}
       </DataTable>
       <TablePaginationCustom
-        id={`tour-${tableName}-pagination`}
+        id={`${tableName}-table-pagination`}
         count={data.length}
         page={page}
         onChangePagination={(pageInfo) => {

@@ -1,14 +1,8 @@
-import { CarbonIconType } from '@carbon/icons-react'
+import { Icon } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { useTheme } from 'src/theme'
 
-export default function NavIcon({
-  CarbonIcon,
-  isActive
-}: {
-  CarbonIcon: CarbonIconType
-  isActive: boolean
-}) {
+export default function NavIcon({ CarbonIcon, isActive }: { CarbonIcon: Icon; isActive: boolean }) {
   const { spacing, palette } = useTheme()
 
   return (
@@ -16,7 +10,7 @@ export default function NavIcon({
       alignItems="center"
       justifyContent="center"
       style={{
-        color: isActive ? palette.primary.main : palette.text.primary,
+        color: isActive ? palette.text.primary : palette.text.tertiary,
         width: 28,
         height: 28,
         backgroundColor: palette.grey[300],

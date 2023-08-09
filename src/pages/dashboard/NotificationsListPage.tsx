@@ -1,12 +1,11 @@
-import { Checkmark, TrashCan } from '@carbon/icons-react'
-// @ts-ignore
 import { Modal } from '@carbon/react'
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { INotification } from 'src/@types'
 import { Banner } from 'src/components/banner'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
-import { getComparator, useTable } from 'src/components/table'
+import { useTable } from 'src/components/table'
+import { ICONS, KEY_DEFAULTS } from 'src/constants'
 import { useBusinessContext } from 'src/context/BusinessContext'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
@@ -16,18 +15,8 @@ import {
 } from 'src/sections/@dashboard/user/notifications'
 
 export default function NotificationsListPage() {
-  const {
-    page,
-    order,
-    orderBy,
-    rowsPerPage,
-    setPage,
-    selected,
-    setSelected,
-    onSelectRow,
-    onSelectAllRows,
-    setRowsPerPage
-  } = useTable()
+  const { page, rowsPerPage, setPage, setRowsPerPage, selected, onSelectAllRows, onSelectRow } =
+    useTable()
 
   const {
     notifications,
@@ -47,22 +36,22 @@ export default function NotificationsListPage() {
     { key: 'title', header: translate('title') },
     { key: 'status', header: translate('status') },
     { key: 'message', header: translate('message') },
-    { key: '', header: '' },
-    { key: '-', header: '' }
+    { key: KEY_DEFAULTS[0], header: '' },
+    { key: KEY_DEFAULTS[1], header: '' }
   ]
 
-  const dataFiltered = applyFilter({
-    inputData: notifications,
-    comparator: getComparator(order, orderBy),
-    filterSearch
-  })
+  const dataFiltered = notifications
+    ? applyFilter({
+        inputData: notifications,
+        filterSearch
+      })
+    : []
 
   const dataInPage = dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-  const isNotFound = !notifications.length || (!dataFiltered.length && !!filterSearch)
+  const isNotFound = !notifications || (!dataFiltered.length && !!filterSearch)
 
   const handleDeleteRow = (id: string) => {
     discardNotification(id).finally(refetchNotifications)
-    setSelected([])
 
     if (page > 0) {
       if (dataInPage.length < 2) {
@@ -72,11 +61,8 @@ export default function NotificationsListPage() {
   }
 
   const handleDeleteRows = (selectedRows: string[]) => {
+    if (!notifications) return
     discardManyNotifications(selectedRows).finally(refetchNotifications)
-    // discardManyNotifications(selectedRows)
-    // const deleteRows = notifications.filter((row) => !selectedRows.includes(row.id))
-    // setTableData(deleteRows)
-    // setTableData(refetchNotifications)
 
     if (page > 0) {
       if (selectedRows.length === dataInPage.length) {
@@ -95,8 +81,6 @@ export default function NotificationsListPage() {
   const handleReadRows = (selectedRows: { id: string }[]) =>
     readManyNotifications(selectedRows.map((n) => n.id)).finally(refetchNotifications)
 
-  // const handleResetFilter = () => setFilterSearch('')
-
   return (
     <>
       <Helmet>
@@ -106,32 +90,29 @@ export default function NotificationsListPage() {
       <CustomDataTable
         isSortable
         isSelectable
-        setSelected={setSelected}
+        onSelectAll={(rows, checked) =>
+          onSelectAllRows(
+            checked,
+            rows.map((r) => r.id)
+          )
+        }
+        onSelectRow={(row) => onSelectRow(row.id)}
         batchActions={[
           {
-            icon: Checkmark,
+            icon: ICONS.Success,
             title: translate('mark_as_read'),
             onClick: handleReadRows
           },
           {
-            icon: TrashCan,
+            icon: ICONS.Delete,
             title: translate('delete'),
             onClick: confirm.open
           }
         ]}
-        onSelectAll={(e) =>
-          onSelectAllRows(
-            // @ts-ignore
-            e.target.checked,
-            dataFiltered.map((row) => row.id)
-          )
-        }
         RowComponent={NotificationTableRow}
-        getRowComponentProps={(row) => ({
-          selected: selected.includes(row.id),
-          handleSelectRow: onSelectRow,
-          onReadRow: () => handleReadRow(row.id),
-          onDeleteRow: () => handleDeleteRow(row.id)
+        getRowComponentProps={() => ({
+          handleReadRow,
+          handleDeleteRow
         })}
         ToolbarContent={
           <NotificationTableToolbar setFilterSearch={setFilterSearch} setPage={setPage} />
@@ -144,22 +125,9 @@ export default function NotificationsListPage() {
         setRowsPerPage={setRowsPerPage}
         tableHead={TABLE_HEAD}
         tableName="notifications"
+        noDataText="table_no_data.notifications"
         title="Notifications table"
-        allChecked={selected.length > 0}
       />
-
-      {/* <Stack direction="row">
-              <Tooltip title="Mark all selected as Read">
-                <IconButton color="primary" onClick={() => handleReadRows(selected)}>
-                  <Iconify icon="eva:done-all-outline" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete all selected">
-                <IconButton color="primary" onClick={handleOpenConfirm}>
-                  <Iconify icon="eva:trash-2-outline" />
-                </IconButton>
-              </Tooltip>
-            </Stack> */}
 
       <Modal
         open={confirm.value}
@@ -171,7 +139,6 @@ export default function NotificationsListPage() {
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{
               __html: translate('delete_confirm_items').replace(
-                /* eslint-disble-line */
                 '{{number}}',
                 String(selected.length)
               )
@@ -191,31 +158,18 @@ export default function NotificationsListPage() {
 
 function applyFilter({
   inputData,
-  comparator,
   filterSearch
 }: {
   inputData: INotification[]
-  comparator: (a: any, b: any) => number
   filterSearch: string
 }) {
-  const stabilizedThis = inputData.map((el, index) => [el, index] as const)
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  inputData = stabilizedThis.map((el) => el[0])
-
-  if (filterSearch) {
+  if (filterSearch)
     inputData = inputData.filter(({ title, message }) => {
       const flatContract = { title, message }
       return Object.values(flatContract).some((value) =>
         value.toLowerCase().includes(filterSearch.toLowerCase())
       )
     })
-  }
 
   return inputData
 }

@@ -1,8 +1,8 @@
 import { useSnackbar as notistackHook, type OptionsObject } from 'notistack'
 import React from 'react'
-import { Translation } from 'src/locales'
+import { Translation } from 'src/@types'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import useLocales from '../locales/useLocales'
+import useLocales from 'src/locales/useLocales'
 
 type Variant = 'success' | 'warning' | 'error' | 'info'
 

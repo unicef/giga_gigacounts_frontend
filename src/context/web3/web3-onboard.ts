@@ -1,19 +1,16 @@
-import icon from 'src/assets/logos/gigacounts-color.svg'
-import { WALLET_CONNECT_PROJECT_ID } from 'src/config-global'
-import { ENV_SUPPORTED_NETWORK } from 'src/constants/web3'
-import brLocales from 'src/locales/langs/br'
-import enLocales from 'src/locales/langs/en'
-import esLocales from 'src/locales/langs/es'
-import frLocales from 'src/locales/langs/fr'
-
+import coinbaseModule from '@web3-onboard/coinbase'
 import gas from '@web3-onboard/gas'
 import gnosisModule from '@web3-onboard/gnosis'
 import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets'
 import { init } from '@web3-onboard/react'
 import trustModule from '@web3-onboard/trust'
 import walletConnectModule, { WalletConnectOptions } from '@web3-onboard/walletconnect'
-// @ts-ignore
-import coinbaseModule from '@web3-onboard/coinbase'
+import icon from 'src/assets/logos/gigacounts-color.svg'
+import { WALLET_CONNECT_PROJECT_ID, ENV_SUPPORTED_NETWORK } from 'src/constants'
+import brLocales from 'src/locales/langs/br'
+import enLocales from 'src/locales/langs/en'
+import esLocales from 'src/locales/langs/es'
+import frLocales from 'src/locales/langs/fr'
 
 // https://www.programcreek.com/typescript/?api=@web3-react/walletconnect-connector.WalletConnectConnector
 const wcV1InitOptions: WalletConnectOptions = {
@@ -29,8 +26,6 @@ const wcV2InitOptions: WalletConnectOptions = {
   version: 2,
   // Project ID associated with [WalletConnect account](https://cloud.walletconnect.com)
   projectId: WALLET_CONNECT_PROJECT_ID || '' // ,
-  // Optional function to handle WalletConnect URI when it becomes available
-  // handleUri: (uri: string) => console.log(uri)
 }
 
 // initialize the module with options

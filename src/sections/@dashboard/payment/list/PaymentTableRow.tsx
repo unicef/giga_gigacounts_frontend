@@ -1,47 +1,46 @@
-import { CarbonIconType, CheckmarkOutline, Close, Edit, View } from '@carbon/icons-react'
-import {
-  Button,
-  // @ts-ignore
-  Modal,
-  TableCell,
-  TableRow,
-  // @ts-ignore
-  Tag
-} from '@carbon/react'
+import { Button, DataTableRow, Modal, TableCell, TableRow, Tag } from '@carbon/react'
 import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
-import { useState } from 'react'
 import {
   ContractStatus,
   IContractPayment,
+  ICurrency,
   IFrequency,
   ISchoolsConnections,
-  PaymentStatus
+  Icon,
+  PaymentStatus,
+  Translation
 } from 'src/@types'
 import { changePaymentStatus } from 'src/api/payments'
+import { InfoToggletip } from 'src/components/info-toggletip'
 import PercentageBar from 'src/components/percentage-bar/PercentageBar'
-import { Views } from 'src/constants/authorization'
-import { PAYMENT_STATUS_COLORS } from 'src/constants/status'
+import { Stack } from 'src/components/stack'
+import { ICONS, PAYMENT_STATUS_COLORS, Views } from 'src/constants'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
-import { Translation, useLocales } from 'src/locales'
+import { useLocales } from 'src/locales'
+import { useTheme } from 'src/theme'
 import { getContractSchoolDistribution } from 'src/utils/contracts'
 import { parsePaymentStatus } from 'src/utils/status'
 import { capitalizeFirstLetter } from 'src/utils/strings'
+import { getOrderedFromCells } from 'src/utils/table'
 import PaymentDetailsDrawer from '../form/PaymentDetailsDrawer'
+import PaymentViewDrawer from '../form/PaymentViewDrawer'
 
 type Props = {
-  row: any
+  row: DataTableRow
   rowProps: TableRowProps
   refetchPayments: () => void
   contractId: string
   contractFrequency: IFrequency['name']
   contractStatus: ContractStatus
-  currencyCode?: string
+  currency?: ICurrency
   contractAutomatic: boolean
   metrics: ISchoolsConnections
   paidDate: { month: number; year: number }
-  payment?: IContractPayment
+  payment: IContractPayment
+  dateFrom: string
+  contractNumberOfSchools: number
 }
 
 export default function PaymentTableRow({
@@ -49,29 +48,29 @@ export default function PaymentTableRow({
   rowProps,
   refetchPayments,
   contractId,
-  metrics,
   contractFrequency,
-  currencyCode,
+  currency,
   contractAutomatic,
   payment,
   contractStatus,
-  paidDate
+  contractNumberOfSchools
 }: Props) {
   const { canAdd } = useAuthorization()
   const { translate } = useLocales()
   const { pushSuccess, pushError } = useSnackbar()
-  const [, dateFrom, amount, status, , contractName, contractCountryName] = row.cells.map(
-    (c: { value: any }) => c.value
+  const { spacing } = useTheme()
+  const [, dateTo, amount, status, , contractName, contractCountryName] = getOrderedFromCells(
+    ['id', 'dateTo', 'amount', 'status', 'connections', 'contractName', 'contractCountryName'],
+    row.cells
   )
-
   const parsedStatus = parsePaymentStatus(status)
   const canChangeStatus =
     canAdd(Views.payment) && parsedStatus === PaymentStatus.OnHold && !contractAutomatic
 
-  const [viewOnly, setViewOnly] = useState(false)
   const approve = useModal()
   const reject = useModal()
-  const details = useModal()
+  const edit = useModal()
+  const view = useModal()
 
   const handleApprove = () => {
     if (parsedStatus !== PaymentStatus.OnHold || !canChangeStatus) return
@@ -93,40 +92,47 @@ export default function PaymentTableRow({
       })
       .catch(() => pushError('push.reject_payment_error'))
   }
-  const handleView = () => {
-    details.open()
-    setViewOnly(true)
-  }
-  const handleEdit = () => {
-    details.open()
-    setViewOnly(false)
-  }
 
-  const options: { icon: CarbonIconType; label: Translation; onClick: () => void }[] = [
+  const options: { icon: Icon; label: Translation; onClick: () => void }[] = [
     {
-      icon: View,
+      icon: ICONS.View,
       label: 'view',
-      onClick: handleView
+      onClick: view.open
     }
   ]
   if (canChangeStatus) {
-    options.push({ icon: Edit, label: 'edit', onClick: handleEdit })
-    options.push({ icon: CheckmarkOutline, label: 'approve', onClick: approve.open })
-    options.push({ icon: Close, label: 'decline', onClick: reject.open })
+    options.push({ icon: ICONS.Edit, label: 'edit', onClick: edit.open })
+    options.push({ icon: ICONS.SuccessOutline, label: 'approve', onClick: approve.open })
+    options.push({ icon: ICONS.Close, label: 'decline', onClick: reject.open })
   }
-
   return (
     <TableRow {...rowProps}>
       <TableCell>{row.id}</TableCell>
-      <TableCell>{dateFrom}</TableCell>
-      <TableCell>{`${currencyCode} ${amount}`}</TableCell>
+      <TableCell>
+        {payment.dateFrom} {translate('to')} {dateTo}
+      </TableCell>
+      <TableCell>{`${currency?.code} ${amount}`}</TableCell>
       <TableCell>
         <Tag type={PAYMENT_STATUS_COLORS[parsedStatus]}>
           {capitalizeFirstLetter(translate(`constant_status.payment.${parsedStatus}`))}
         </Tag>
       </TableCell>
       <TableCell>
-        <PercentageBar width={240} data={getContractSchoolDistribution(metrics)} />
+        <Stack
+          orientation="horizontal"
+          gap={spacing.md}
+          alignItems="center"
+          justifyContent="flex-start"
+        >
+          <InfoToggletip
+            title={`${contractNumberOfSchools * payment.metrics.allEqualOrAboveAvg} ${translate(
+              'schools_connected_out_of'
+            )} ${contractNumberOfSchools} ${translate('during')} ${payment.dateFrom} ${translate(
+              'to'
+            )} ${dateTo}`}
+          />
+          <PercentageBar width={240} data={getContractSchoolDistribution(payment.metrics)} />
+        </Stack>
       </TableCell>
 
       {contractName && <TableCell>{contractName}</TableCell>}
@@ -135,6 +141,7 @@ export default function PaymentTableRow({
       <TableCell>
         {options.map((opt) => (
           <Button
+            style={{ margin: 0, padding: 0 }}
             key={row.id + opt.label}
             kind="ghost"
             onClick={opt.onClick}
@@ -146,13 +153,24 @@ export default function PaymentTableRow({
       </TableCell>
       <TableCell>
         <PaymentDetailsDrawer
+          openView={view.open}
           paymentFrequency={contractFrequency}
-          availablePayments={[paidDate]}
-          viewOnly={viewOnly}
+          availablePayments={[payment.paidDate]}
           refetchPayments={refetchPayments}
+          contract={{ id: contractId, status: contractStatus, automatic: contractAutomatic, currency }}
+          onClose={edit.close}
+          open={edit.value}
+          payment={payment}
+        />
+        <PaymentViewDrawer
+          handleEdit={() => {
+            view.close()
+            edit.open()
+          }}
+          paymentFrequency={contractFrequency}
           contract={{ id: contractId, status: contractStatus, automatic: contractAutomatic }}
-          onClose={details.close}
-          open={details.value}
+          onClose={view.close}
+          open={view.value}
           payment={payment}
         />
         <Modal

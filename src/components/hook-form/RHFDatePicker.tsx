@@ -1,6 +1,5 @@
-import { useFormContext, Controller } from 'react-hook-form'
-// @ts-ignore
 import { DatePicker, DatePickerInput } from '@carbon/react'
+import { Controller, useFormContext } from 'react-hook-form'
 
 type Props = {
   helperText?: string
@@ -28,7 +27,11 @@ export default function RHFDatePicker({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <DatePicker onChange={(value) => field.onChange(value[0])} datePickerType="single">
+        <DatePicker
+          value={field.value}
+          onChange={(value) => field.onChange(value[0])}
+          datePickerType="single"
+        >
           <DatePickerInput
             helperText={helperText}
             invalid={!!error}

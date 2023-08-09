@@ -1,7 +1,4 @@
-import {
-  // @ts-ignore
-  Modal
-} from '@carbon/react'
+import { Modal } from '@carbon/react'
 import { useLocales } from 'src/locales'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 

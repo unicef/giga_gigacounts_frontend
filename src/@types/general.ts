@@ -1,6 +1,6 @@
 import { ActionType } from './action-types'
-import { ContactPersonForm, ContractTeamMemberForm } from './forms'
 import { ContractStatus, PaymentStatus } from './status'
+import { UserRoles } from './user'
 
 export interface ICountry {
   id: string
@@ -16,7 +16,7 @@ export interface ISafe {
 }
 
 export interface IRole {
-  code: string
+  code: UserRoles
   name: string
   permissions: string[]
 }
@@ -24,8 +24,7 @@ export interface IRole {
 export interface IUser {
   id: string
   name: string
-  lastName: string
-  displayName: string
+  last_name: string
   email: string
   about: string
   zipCode: string
@@ -82,10 +81,17 @@ export interface IDraft {
   automatic: boolean
   isp: IISP | null
   lta?: ILta
-  schools: any[]
+  schools: (ISchool & { budget: string })[]
   notes: string
-  contactPeople?: ContactPersonForm[]
-  contractTeam?: ContractTeamMemberForm[]
+  ispContacts?: IUser[]
+  stakeholders?: IUser[]
+  breakingRules: string
+  paymentReceiver?: {
+    id: number
+    name: string
+    email: string
+    lastName: string
+  }
 }
 
 export interface IBudget {
@@ -164,6 +170,8 @@ export interface IContractDetails {
   notes: string
   frequency: IFrequency
   automatic: boolean
+  breakingRules: string
+  cashback?: number
 }
 
 export interface IPendingContractDetails {
@@ -225,20 +233,34 @@ export interface IContractSchoolsConnection {
   latency: number
 }
 
+export interface ISchoolContact {
+  contactPerson: string
+  email: string
+  phoneNumber: string
+}
 export interface IContractSchools {
   id: string
+  education_level: EducationLevel
   name: string
   externalId: string
   locations: string
   connection: IContractSchoolsConnection
   budget: string
+  contactInformation: ISchoolContact
 }
 
 export interface ISchoolMeasures {
+  measure_id: string
   date: string
   metric_name: string
   unit: string
   median_value: number
+}
+export interface ISchoolMeasuresExtended extends ISchoolMeasures {
+  contract_name: string
+  school_name: string
+  school_education_level: EducationLevel
+  school_external_id: string
 }
 
 export interface IContractTotalSpent {
@@ -267,9 +289,10 @@ export interface IPaymentForm {
 export interface IContractPayment {
   id: string
   contractId: string
+  contractName?: string
   contractStatus: ContractStatus
   contractFrequency: IFrequency['name']
-  contractAutomatic?: boolean | false
+  contractAutomatic?: boolean
   paidDate: {
     month: number
     year: number
@@ -280,6 +303,7 @@ export interface IContractPayment {
   description: string
   currency: ICurrency
   amount: number
+  discount?: number
   status: PaymentStatus
   metrics: IPaymentMetrics
   invoice?: IPaymentAttachment
@@ -385,14 +409,17 @@ export type Contract = {
   endDate: string
   launchDate: string
   schools: {
-    schools: any[]
+    schools: (ISchool & { budget: string })[]
   }
   currencyId?: string
   currencyType?: string
   notes: string
   automatic: boolean
   frequencyId?: string
-  contactPeople?: ContactPersonForm[]
+  ispContacts?: IUser[]
+  breakingRules: string
+  paymentReceiverId?: string
+  cashback?: number
 }
 
 export interface INotification {
@@ -420,7 +447,7 @@ export interface ISchool {
   location2: string
   location3: string
   location4: string
-  education_level: string
+  education_level: EducationLevel
   geopoint: string
   email: string
   phone_number: string
@@ -443,3 +470,20 @@ export type MetricName =
   | 'Download speed'
   | 'Latency'
   | 'Upload speed'
+
+export type EducationLevel = 'High school' | 'Primary' | 'Secondary'
+
+export interface IDashboardSchools {
+  id: number
+  external_id: string
+  name: string
+  address: string
+  education_level: string
+  country_id: number
+  lat: string
+  lng: string
+  avg_uptime: number
+  avg_latency: number
+  avg_dspeed: number
+  avg_uspeed: number
+}

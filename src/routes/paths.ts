@@ -76,11 +76,14 @@ export const ROUTES = {
       demoEdit: createRoute('/user/reece-chung/edit', { root: ROOTS_DASHBOARD })
     },
     schoolReliability: {
-      root: createRoute('/school-reliability', { root: ROOTS_DASHBOARD, name: 'user' })
+      root: createRoute('/school-reliability', { root: ROOTS_DASHBOARD, name: 'schoolReliability' })
     },
-    dummy: {
-      root: createRoute('/dummy', { root: ROOTS_DASHBOARD, name: 'file' }),
-      manager: createRoute('/dummy/manager', { root: ROOTS_DASHBOARD })
+    users: {
+      root: createRoute('/users', {
+        name: 'users',
+        root: ROOTS_DASHBOARD,
+        lastChild: 'users'
+      })
     },
     contact: {
       root: createRoute('/contact', { root: ROOTS_DASHBOARD, name: 'contact' }),

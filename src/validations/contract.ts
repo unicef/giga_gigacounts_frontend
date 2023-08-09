@@ -1,10 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import * as Yup from 'yup'
 import { ContractForm, ContractStep, IDraft } from 'src/@types'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { useLocales } from 'src/locales'
-import * as Yup from 'yup'
 
 export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | null) => {
   const { user } = useAuthContext()
@@ -32,17 +32,18 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
       uploadSpeed: Number(
         draft?.expectedMetrics?.find((metric) => metric.name === 'Upload speed')?.value ?? ''
       ),
-      contractTeam: [],
       currency: draft?.currency?.id ?? '',
       budget: Number(draft?.budget ?? 0),
       notes: draft?.notes ?? '',
       automatic: draft?.automatic ?? false,
+      breakingRules: draft?.breakingRules ?? '',
       bypass: false,
       frequencyId: draft?.frequency?.id ?? '',
+      paymentReceiverId: String(draft?.paymentReceiver?.id ?? ''),
       addLaunchDate:
         Boolean(draft?.launchDate) &&
         Boolean(draft?.startDate) &&
-        draft?.startDate === draft?.launchDate
+        draft?.startDate !== draft?.launchDate
     }),
     [user]
   )
@@ -165,7 +166,8 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
       automatic: Yup.boolean(),
       bypass: Yup.boolean(),
       frequencyId: Yup.string(),
-      addLaunchDate: Yup.boolean()
+      addLaunchDate: Yup.boolean(),
+      paymentReceiverId: Yup.string()
     })
   )
 

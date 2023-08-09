@@ -3,6 +3,7 @@
 
 $text-primary: common.$white;
 $text-secondary: common.$grey-200;
+$text-tertiary: common.$grey-400;
 $text-disabled: common.$grey-550;
 $background-paper: common.$giga-dark-grey;
 $background-default: common.$giga-black;
@@ -12,6 +13,7 @@ $action-active: common.$grey-550;
 :export {
   text-primary: $text-primary;
   text-secondary: $text-secondary;
+  text-tertiary: $text-tertiary;
   text-disabled: $text-disabled;
   background-paper: $background-paper;
   background-default: $background-default;

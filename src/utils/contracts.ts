@@ -1,7 +1,14 @@
 import { isBoolean } from 'lodash'
-import { Contract, ContractForm, ICurrency, IDraft, ISchool, ISchoolsConnections } from 'src/@types'
-import { Translation } from 'src/locales'
-import { ContractSchoolsAndAttachments } from 'src/sections/@dashboard/contract/form/types'
+import {
+  Contract,
+  ContractForm,
+  ICurrency,
+  IDraft,
+  ISchool,
+  ISchoolsConnections,
+  Translation
+} from 'src/@types'
+import { ContractSchoolsAndAttachments } from 'src/sections/@dashboard/contract/edit/types'
 import { formatDate } from './date'
 
 const getPublishErrors = (draft: Contract | null | undefined) => {
@@ -29,6 +36,11 @@ const getPublishErrors = (draft: Contract | null | undefined) => {
       check: Number(draft?.schools?.schools?.length) > 0,
       message: 'field_errors.required_plural',
       field: 'schools'
+    },
+    {
+      check: draft?.automatic ? Boolean(draft?.paymentReceiverId) : true,
+      message: 'field_errors.required',
+      field: 'payment_receiver'
     }
   ]
 
@@ -50,7 +62,8 @@ const getContractFromDraft = (draftForm: IDraft): Contract => ({
   expectedMetrics: { metrics: draftForm.expectedMetrics },
   notes: draftForm.notes,
   automatic: draftForm.automatic,
-  frequencyId: draftForm.frequency?.id
+  frequencyId: draftForm.frequency?.id,
+  breakingRules: draftForm.breakingRules
 })
 
 const getDraftFromForm = (
@@ -75,7 +88,9 @@ const getDraftFromForm = (
     ltaId,
     automatic,
     frequencyId,
-    addLaunchDate
+    addLaunchDate,
+    breakingRules,
+    paymentReceiverId
   }: ContractForm & ContractSchoolsAndAttachments
 ) => {
   const getLaunchDate = () => {
@@ -87,19 +102,21 @@ const getDraftFromForm = (
     id,
     name,
     notes,
-    startDate: startDate ? formatDate(startDate) : '',
-    endDate: endDate ? formatDate(endDate) : '',
+    startDate: formatDate(startDate ?? ''),
+    endDate: formatDate(endDate ?? ''),
     launchDate: getLaunchDate(),
     budget: budget ? String(budget) : '0',
     schools: {
-      schools: schools.map((s) => {
-        const countrySchool = countrySchools.find((cs) => s.id === cs.external_id)
+      schools: schools.map((s: any) => {
+        const countrySchool = countrySchools.find((cs) => s.id === cs.external_id) as ISchool
         return { ...countrySchool, budget: s.budget }
       })
     },
     expectedMetrics: { metrics: [] },
-    automatic
+    automatic,
+    breakingRules
   }
+  if (automatic) newDraft.paymentReceiverId = paymentReceiverId
   if (ltaId) newDraft.ltaId = ltaId
   if (isp) newDraft.ispId = isp
   if (country) newDraft.countryId = country

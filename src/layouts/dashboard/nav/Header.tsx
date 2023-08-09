@@ -1,22 +1,16 @@
-import { Help, MailAll } from '@carbon/icons-react'
 import {
-  // @ts-ignore
   Header as CarbonHeader,
-  // @ts-ignore
   HeaderGlobalAction,
-  // @ts-ignore
   HeaderGlobalBar,
-  // @ts-ignore
   HeaderMenuButton,
-  // @ts-ignore
   HeaderName,
-  // @ts-ignore
   SkipToContent,
   Theme
 } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
 import { useNavigate } from 'react-router'
 import { Typography } from 'src/components/typography'
+import { ICONS } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { ROUTES } from 'src/routes/paths'
 import { useTheme } from 'src/theme'
@@ -57,33 +51,22 @@ export default function Header({
       <HeaderGlobalBar>
         <LanguagePopover />
         <Typography
-          onClick={() => navigate(ROUTES.dashboard.contact.feedback.route)}
-          style={{ alignSelf: 'center', padding: spacing.xs }}
-        >
-          {translate('send_feedback')}
-        </Typography>
-        <HeaderGlobalAction
-          onClick={() => navigate(ROUTES.dashboard.contact.feedback.route)}
-          aria-label={translate('functionalities.feedback')}
-        >
-          <MailAll />
-        </HeaderGlobalAction>
-        <Typography
           onClick={() => navigate(ROUTES.dashboard.contact.helpRequest.route)}
           style={{ alignSelf: 'center', padding: spacing.xs }}
         >
           {translate('functionalities.help_request')}
         </Typography>
         <HeaderGlobalAction
+          id="help-request-link"
           onClick={() => navigate(ROUTES.dashboard.contact.helpRequest.route)}
           aria-label={translate('help')}
         >
-          <Help />
+          <ICONS.Help />
         </HeaderGlobalAction>
         <NotificationPopover />
       </HeaderGlobalBar>
       <Theme theme="white">
-        <NavBar expanded={isSideNavExpanded} />
+        <NavBar expanded={isSideNavExpanded} setExpanded={setIsSideNavExpanded} />
       </Theme>
     </CarbonHeader>
   )

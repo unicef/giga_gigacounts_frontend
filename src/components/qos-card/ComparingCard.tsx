@@ -1,20 +1,31 @@
 import { CSSProperties } from 'react'
-import { STRING_DEFAULT } from 'src/constants/display-defaults'
+import { STRING_DEFAULT } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { getMetricLabel } from 'src/utils/metrics'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import { Stack } from '../stack'
-import { Typography } from '../typography'
+import { Stack } from 'src/components/stack'
+import { Typography } from 'src/components/typography'
 
 type Props = {
   width?: CSSProperties['width']
   name: 'uptime' | 'latency' | 'upload_speed' | 'download_speed'
-  value: number
+  value?: number
   expectedValue: number
+  hideExpected?: boolean
+  hideLabel?: boolean
+  style?: CSSProperties
 }
 
-export default function QosCard({ width, name, value, expectedValue }: Props) {
+export default function ComparingCard({
+  width,
+  name,
+  value,
+  expectedValue,
+  hideExpected = false,
+  hideLabel = false,
+  style
+}: Props) {
   const label = getMetricLabel(name)
   const { translate } = useLocales()
   const { spacing, palette } = useTheme()
@@ -29,20 +40,24 @@ export default function QosCard({ width, name, value, expectedValue }: Props) {
 
   return (
     <Stack
-      style={{ width, padding: spacing.md, backgroundColor: palette.background.neutral }}
+      style={{ width, padding: spacing.md, backgroundColor: palette.background.neutral, ...style }}
       gap={spacing.lg}
       orientation="vertical"
     >
       <Typography as="h5">{capitalizeFirstLetter(translate(name))}</Typography>
       <Stack orientation="horizontal">
-        <Stack orientation="vertical" style={{ padding: spacing.xs }}>
-          <Typography style={{ marginBlockEnd: spacing.md }} as="h6">
-            {capitalizeFirstLetter(translate('agreement'))}
-          </Typography>
-          <Typography as="h3">
-            {expectedValue ? `${expectedValue}${label}` : STRING_DEFAULT}
-          </Typography>
-        </Stack>
+        {!hideExpected && (
+          <Stack orientation="vertical" style={{ padding: spacing.xs }}>
+            {!hideLabel && (
+              <Typography style={{ marginBlockEnd: spacing.md }} as="h6">
+                {capitalizeFirstLetter(translate('agreement'))}
+              </Typography>
+            )}
+            <Typography as="h3">
+              {expectedValue ? `${expectedValue}${label}` : STRING_DEFAULT}
+            </Typography>
+          </Stack>
+        )}
         <Stack
           orientation="vertical"
           style={{
@@ -52,9 +67,11 @@ export default function QosCard({ width, name, value, expectedValue }: Props) {
             borderLeftStyle: 'solid'
           }}
         >
-          <Typography style={{ marginBlockEnd: spacing.md }} as="h6">
-            {capitalizeFirstLetter(translate('current_delivery'))}
-          </Typography>
+          {!hideLabel && (
+            <Typography style={{ marginBlockEnd: spacing.md }} as="h6">
+              {capitalizeFirstLetter(translate('current_delivery'))}
+            </Typography>
+          )}
           <Typography
             as="h3"
             variant={value ? getComparisonVariant(value, expectedValue) : 'default'}

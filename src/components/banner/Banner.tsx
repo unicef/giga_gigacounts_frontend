@@ -1,13 +1,11 @@
-import { CarbonIconProps, CarbonIconType } from '@carbon/icons-react'
-// @ts-ignore
 import { Tag, Theme } from '@carbon/react'
-import { TagColor } from 'src/@types'
+import { IconProps, Icon as IconType, TagColor } from 'src/@types'
+import { Stack } from 'src/components/stack'
+import { Typography } from 'src/components/typography'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import { Stack } from '../stack'
-import { Typography } from '../typography'
 
-type Item = { Icon?: CarbonIconType; label?: string; iconProps?: CarbonIconProps; title?: string }
+type Item = { Icon?: IconType; label?: string; iconProps?: IconProps; title?: string }
 
 type BannerProps = {
   title: string

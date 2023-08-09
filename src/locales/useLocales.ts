@@ -1,8 +1,9 @@
+import { TOptionsBase } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import localStorageAvailable from 'src/utils/localStorageAvailable'
-import { replaceTranslated, replaceTwoTranslated } from '../utils/translation'
+import { Translation } from 'src/@types'
+import { replaceTranslated, replaceTwoTranslated } from 'src/utils/translation'
 import { allLangs, defaultLang } from './config-lang'
-import { Translation } from './types'
 
 export default function useLocales() {
   const { i18n, t: translate } = useTranslation()
@@ -19,7 +20,8 @@ export default function useLocales() {
 
   return {
     onChangeLang: handleChangeLanguage,
-    translate: (text: Translation, options?: any) => String(translate(text, options)),
+    translate: (text: Translation, options?: TOptionsBase & object & { defaultValue: string }) =>
+      options ? String(translate(text, options)) : String(translate(text)),
     currentLang,
     allLangs,
     replaceTranslated: (message: Translation, replace: string, value: Translation) =>

@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router'
 import { useAuthContext } from 'src/auth/useAuthContext'
-import { useLocales, Translation } from 'src/locales'
+import { Translation } from 'src/@types'
+import { useLocales } from 'src/locales'
 import { ROUTES } from 'src/routes/paths'
 import { applyToEveryWord, capitalizeFirstLetter } from 'src/utils/strings'
 
@@ -20,21 +21,28 @@ const parsePath = (route: Route, options: Options) => {
   return route
 }
 
-const getRootElement = (map: any, path: string, previous: string): Path | undefined => {
+const getRootElement = (
+  map: null | Record<string, any>,
+  path: string,
+  previous: string
+): Path | undefined => {
   if (map === null) return undefined
   // replaced - by _: because route has '-' and in route definition we could put only '_'
   return map[path.replace('-', '_')]?.root ?? getRootElement(map[previous] ?? null, path, previous)
 }
 
-const getPathElement = (map: any, path: string): Path | undefined => {
+const getPathElement = (
+  map: string | Path | Record<string, any>,
+  path: string
+): Path | undefined => {
   if (typeof map !== 'object') return undefined
-  if (map.route === path) return map
+  if (map.route === path) return map as Path
   const keys = Object.keys(map)
 
   let element
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[i]
-    element = getPathElement(map[key], path)
+    element = getPathElement((map as Record<string, any>)[key], path)
     if (element) break
   }
 

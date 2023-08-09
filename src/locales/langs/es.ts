@@ -1,4 +1,4 @@
-import { TranslationObject } from '../types'
+import { TranslationObject } from 'src/@types'
 
 const es: TranslationObject = {
   demo: {
@@ -82,7 +82,8 @@ const es: TranslationObject = {
   autosave: {
     saving: 'Guardando...',
     saved: 'Guardado',
-    created: 'Contrato aún no creado. Ingresa un nombre de contrato para iniciar.'
+    created: 'Contrato aún no creado. Ingresa un nombre de contrato para iniciar.',
+    unsaved_changes: 'Tiene cambios sin guardar'
   },
   push: {
     knowledge_base_error: 'Base de conocimiento para esta página aún no implementada',
@@ -102,8 +103,18 @@ const es: TranslationObject = {
     deleted_contract_error: 'Ha ocurrido un error eliminando el contrato',
     approve_contract: 'El contrato ha sido aprobado',
     approve_contract_error: 'Ha ocurrido un error aprobando el contrato',
+    fund_contract: 'El contrato ha sido fondeado',
+    fund_contract_error: 'Ha ocurrido un error fondeando el contrato',
+    fund_wallet: 'La billetera ha sido fondeado',
+    fund_wallet_error: 'Ha ocurrido un error fondeando la billetera',
     approve_automatic_contract_invalid_wallet:
       'El contrato no puede ser aprobado. Verifica tener conectada una billetera y que sea la misma que verificaste en tu perfil.',
+    fund_automatic_contract_invalid_wallet:
+      'El contrato no puede ser fondeado. Asegúrate de tener una billetera conectada y que sea la misma que has verificado en tu perfil.',
+    fund_wallet_invalid_wallet:
+      'No se puede realizar la transferencia de fondos. Asegúrate de tener una billetera conectada y que sea la misma que has verificado en tu perfil.',
+    fund_automatic_contract_low_balance:
+      'Balance insuficiente de tokens para transferir al contrato.',
     added_payment: 'El pago ha sido agregado',
     added_payment_error: 'Ha ocurrido un error agregando el pago',
     updated_payment: 'El pago ha sido actualizado',
@@ -131,10 +142,46 @@ const es: TranslationObject = {
     title: 'Estás a punto de aprobar el contrato automático.',
     content: '¿Estás seguro de que deseas aprobar este contrato automático?'
   },
-  approve_contract_without_walllet: {
-    title: 'El contrato no puede ser aprobado',
-    content:
-      'Para aprobar un contrato automático, debes tener una billetera verificada. Por favor, configura una en tu perfil.'
+  fund_wallet: {
+    title: 'Fondear Billetera',
+    transfer_amount_error1: 'La monto debe ser menor o igual que el saldo de su billetera',
+    info: 'Quédese atento a las solicitudes de firma de transacciones que aparecerán en su wallet, para permitir la transferencia de fondos. El proceso puede demorar varios segundos.',
+    field_user_name: 'Usuario',
+    field_wallet_from: 'Billetera Origen',
+    field_wallet_to: 'Billetera Destino',
+    field_wallet_from_balance: 'Balance actual',
+    field_wallet_to_balance: 'Balance actual',
+    view_in_explorer: 'Ver en explorador de blockchain'
+  },
+  fund_automatic_contract: {
+    title: 'Estás a punto de transferir fondos al contrato automático.',
+    content: '¿Estás seguro de que deseas transferir fondos a este contrato automático?',
+    info: 'Quédese atento a las solicitudes de firma de transacciones que aparecerán en su wallet, para permitir la transferencia de fondos al contrato. El proceso puede demorar varios segundos. Al finalizar podrá ver las transacciones realizadas en el detalle del contrato.',
+    data: 'Datos del fondeo',
+    contract_current_balance: 'Balance actual del contrato',
+    contract_budget: 'Presupuesto del Contrato',
+    transfer_amount: 'Monto a Transferir al Contrato',
+    transfer_amount_error1: 'El monto debe ser menor o igual al presupuesto del contrato',
+    transfer_amount_error2:
+      'El monto que se quiere transferir supera el monto pendiente de transferir'
+  },
+  transactions_tab: {
+    detail: 'Detalle de la Transacción',
+    increase_allowance: 'Increase Allowance',
+    fund_contract: 'Fondeo de Contracto',
+    fund_wallet: 'Fondeo de Billetera',
+    transaction_hash: 'Hash Transacción',
+    transaction_type: 'Tipo de Transacción',
+    transaction_network: 'Red'
+  },
+  without_walllet: {
+    title: 'no se puede proceder sin una billetera conectada y verificada',
+    to_approve:
+      'Para aprobar un contrato automático debes tener una billetera verificada y conectada. Por favor, configura una en tu perfil.',
+    to_fund_contract:
+      'Para transferir fondos a un contrato automático debes tener una billetera verificada y conectada. Por favor, configura una en tu perfil.',
+    to_fund_Wallet:
+      'Para transferir fondos a otra billetera debes tener una verificada y conectada. Por favor, configura una en tu perfil.'
   },
   publish_contract_modal: {
     title: 'Estás a punto de publicar el contrato.',
@@ -265,6 +312,8 @@ const es: TranslationObject = {
   contract_team: 'Equipo de contrato',
   documents_and_attachments: 'Documentos y archivos adjuntos',
   add_any_document: 'Agregue cualquier documento relacionado con este contrato',
+  add_the_general_details: 'Agregue los detalles del contrato general',
+  add_the_contract_managers: 'Agregar gerentes de contrato, monitores de contrato y otros',
   publish_error: 'No se puede publicar',
   government_behalf: 'Government behalf',
   metrics: 'Métricas',
@@ -343,7 +392,7 @@ const es: TranslationObject = {
   region: 'region',
   lta_name: 'nombre de lta',
   generated: 'generado',
-  add_an_isp: 'agregar una persona de contacto de ISP',
+  add_an_isp: 'Agregar ontactos del ISP',
   add_a_team_member: 'Agregar un miembro del equipo de contrato',
   add_team_member: 'Agregar miembro del equipo',
   team_member_saved: 'Miembro del equipo guardado',
@@ -456,8 +505,13 @@ const es: TranslationObject = {
   view: 'Ver',
   download: 'descargar',
   add_payment: 'Agregar pago',
+  update_payment: 'Actualizar pago',
   payment_detail: 'Detalles del pago',
   approve: 'Aprobar',
+  fund: 'Fondear',
+  funds: 'Fondos',
+  cashback: 'Reembolso',
+  discount: 'Descuento',
   decline: 'Rechazar',
   find_the_invoice:
     'Adjunte la factura aquí. Recuerda que este es un documento legal que respalda el pago creado.',
@@ -466,6 +520,10 @@ const es: TranslationObject = {
   payment_cancel_modal: {
     title: 'Cancelar creación de pago',
     content: '¿Está seguro de que desea cancelar la creación de su pago? Su pago será descartado.'
+  },
+  payment_created_modal: {
+    title: '¡Su pago fue creado con éxito!',
+    content: 'Encuentre su pago en la lista de pagos'
   },
   payment_approve_modal: {
     title: 'Aprobación de pago',
@@ -515,6 +573,8 @@ const es: TranslationObject = {
       'plugin en su navegador y actualice la página. Asegúrese de haber iniciado sesión o cree una nueva cuenta de MetaMask. Alternativamente, puede conectar su billetera con',
     wallet_connect: 'Billetera Conectada',
     wallet_metamask: 'Billetera MetaMask',
+    wallet_trust: 'Billetera Trust',
+    wallet_coinbase: 'Billetera Coinbase',
     connect: 'Conectar',
     disconnect: 'Desconectar',
     wallet_not_verified: 'Billetera no verificada',
@@ -527,6 +587,7 @@ const es: TranslationObject = {
     verify_msg: 'La billetera conectada no coincide con su billetera verificada en Gigacounts.',
     verify_msg_choose:
       'Verificar billetera conectada o elige WALLET_ADDRESS en tu proveedor de billetera.',
+    verify_msg_choose_wtihout_wallet: 'La billetera conectada no está verificada en Gigacounts.',
     gigacounts_crypto_balance: 'Saldo criptográfico de Gigacounts',
     wallet_this_is: 'Esto es un',
     gnosis_explain_1:
@@ -699,7 +760,7 @@ const es: TranslationObject = {
   add_contact: 'Agregar contacto',
   payment_period: 'Periodo de pago',
   receipt: 'Recibo',
-  home: 'Home',
+  home: 'Inicio',
   more: 'más',
   overview: 'descripción general',
   size: 'tamaño',
@@ -742,6 +803,10 @@ const es: TranslationObject = {
     notification: {
       SENT: 'nueva',
       READ: 'leída'
+    },
+    web_transaction: {
+      OK: 'Ok',
+      ERROR: 'Error'
     }
   },
   payment_status: 'estado de pago',
@@ -764,7 +829,58 @@ const es: TranslationObject = {
   drag_and_drop_pdf_singular: 'Arrastre y suelte los archivos .pdf aquí o haga clic para cargar',
   drag_and_drop_csv_singular: 'Arrastre y suelte el archivo .csv aquí o haga clic para cargar',
   drag_and_drop_csv_multiple: 'Arrastre y suelte los archivos .csv aquí o haga clic para cargar',
-  knowledge_base: 'Base de conocimiento'
+  knowledge_base: 'Base de conocimiento',
+  contact_information: 'Información del contacto',
+  education_level: 'Nivel de Educación',
+  no_breaking_rules: 'No se agregaron reglas de ruptura para este contrato',
+  schools_connected_out_of: 'escuelas conectadas de',
+  during: 'durante',
+  web3_transcations: 'Transactiones Automáticas',
+  search_isp_contacts: 'Buscar contactos del ISP',
+  search_contract_team: 'Buscar miembros del equipo de contrato disponibles',
+  onboard_steps: {
+    home: {
+      account_nav_information: 'En esta sección puede editar su información personal',
+      notifications_popover: 'Puede ver y administrar sus notificaciones',
+      feedback_link: 'Aquí puede compartir su experiencia con la aplicación GIGACounts',
+      language_popover: 'Aquí puede seleccionar el idioma de la aplicación'
+    },
+    contracts: {
+      table_container: 'Aquí puede ver los contratos que puede administrar'
+    }
+  },
+  next: 'siguiente',
+  skip: 'saltar',
+  open: 'abrir',
+  last: 'último',
+  payment_receiver: 'Receptor de pago de ISP',
+  table_no_data: {
+    contracts: 'Sin contratos',
+    measures: 'Sin medidas',
+    notifications: 'Sin notificaciones',
+    payments: 'Sin pagos',
+    schools: 'Sin escuelas',
+    users: 'Sin usuarios',
+    attachments: 'Sin adjuntos',
+    transactions: 'Sin transacciones'
+  },
+  fedback_rating: {
+    1: 'Me siento insatisfecho',
+    2: 'Podría ser mejor',
+    3: 'Me gusta',
+    4: 'Me gusta mucho',
+    5: 'Me encanta'
+  },
+  education_levels: {
+    high_school: 'Escuela secundaria',
+    primary: 'Primaria',
+    secondary: 'Secundaria'
+  },
+  payment_receiver_warning:
+    'El usuario seleccionado no tiene una billetera configurada. No podrá recibir los pagos automáticos hasta que no configure una en su perfil.',
+  payment_details: 'Detalles del pago',
+  no_wallet_address: 'Sin dirección de billetera',
+  isp_contacts: 'Contactos ISP'
 }
 
 export default es
