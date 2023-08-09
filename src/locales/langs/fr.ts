@@ -1,4 +1,4 @@
-import { TranslationObject } from '../types'
+import { TranslationObject } from 'src/@types'
 
 const fr: TranslationObject = {
   demo: {
@@ -81,7 +81,8 @@ const fr: TranslationObject = {
   autosave: {
     saving: 'Enregistrement...',
     saved: 'Enregistré',
-    created: "Aucun contrat n'a encore été créé. Entrez un nom de contrat pour commencer."
+    created: "Aucun contrat n'a encore été créé. Entrez un nom de contrat pour commencer.",
+    unsaved_changes: 'A des changements sans économiser'
   },
   push: {
     knowledge_base_error: 'Base de connaissances pour cette page non encore mise en œuvre',
@@ -102,8 +103,17 @@ const fr: TranslationObject = {
     deleted_contract_error: "Une erreur s'est produite en éliminant le contrat",
     approve_contract: 'Le contrat a été approuvé',
     approve_contract_error: "Une erreur s'est produite lors de l'approbation du contrat",
+    fund_contract: 'Le contrat a été financé',
+    fund_contract_error: "Une erreur s'est produite lors du financement du contrat.",
+    fund_wallet: 'Le portefeuille a été financé',
+    fund_wallet_error: "Une erreur s'est produite lors du financement du portefeuille.",
     approve_automatic_contract_invalid_wallet:
       "Le contrat ne peut pas être approuvé. Assurez-vous d'avoir un portefeuille connecté, et que c'est le même que celui que vous avez vérifié dans votre profil.",
+    fund_automatic_contract_invalid_wallet:
+      "Le contrat ne peut pas être financé. Assurez-vous d'avoir un portefeuille connecté, et qu'il est le même que celui que vous avez vérifié dans votre profil.",
+    fund_wallet_invalid_wallet:
+      "Impossible de transférer des fonds. Assurez-vous d'avoir un portefeuille connecté et qu'il s'agit du même que celui que vous avez vérifié dans votre profil.",
+    fund_automatic_contract_low_balance: 'Solde de jetons insuffisant pour transférer au contrat.',
     added_payment: 'Le paiement a été ajouté',
     added_payment_error: "Une erreur s'est produite lors de l'ajout du paiement",
     updated_payment: 'Le paiement a été mis à jour',
@@ -132,10 +142,46 @@ const fr: TranslationObject = {
     title: "Vous êtes sur le point d'approuver le contrat automatique.",
     content: 'Êtes-vous sûr de vouloir approuver ce contrat automatique?'
   },
-  approve_contract_without_walllet: {
-    title: 'Le contrat ne peut pas être approuvé',
-    content:
-      'Pour approuver un contrat automatique, vous devez avoir un portefeuille vérifié. Veuillez en configurer un dans votre profil.'
+  fund_wallet: {
+    title: 'Recharger portefeuille',
+    transfer_amount_error1: 'Le montant doit être inférieur ou égal au solde de votre portefeuille',
+    info: "Restez à l'écoute des demandes de signature qui apparaîtront dans votre portefeuille, pour autoriser le transfert de fonds. Le processus peut prendre plusieurs secondes.",
+    field_user_name: "Nom d'utilisateur",
+    field_wallet_from: 'Portefeuille de',
+    field_wallet_to: 'Portefeuille à',
+    field_wallet_from_balance: 'Solde actuel',
+    field_wallet_to_balance: 'Solde actuel',
+    view_in_explorer: "Afficher dans l'explorateur blockchain"
+  },
+  fund_automatic_contract: {
+    title: 'Vous êtes sur le point de transférer des fonds au contrat automatique.',
+    content: 'Êtes-vous sûr de vouloir transférer des fonds à ce contrat automatique?',
+    info: "Restez à l'écoute des demandes de signature qui apparaîtront dans votre portefeuille, pour autoriser le transfert de fonds vers le contrat. Le processus peut prendre plusieurs secondes. À la fin, vous pourrez voir les transactions effectuées dans les détails du contrat.",
+    data: 'Données du Fonds',
+    contract_current_balance: 'Solde du contrat en cours',
+    contract_budget: 'Budget du Contrat',
+    transfer_amount: 'Montant à Transférer au Contrat',
+    transfer_amount_error1: 'Le montant doit être inférieur ou égal au budget du contrat',
+    transfer_amount_error2:
+      'Le montant que vous souhaitez transférer dépasse le montant en attente de transfert'
+  },
+  transactions_tab: {
+    detail: 'Détail de la transaction',
+    increase_allowance: "Augmenter l'allocation",
+    fund_contract: 'Financement du contrat',
+    fund_wallet: 'Financement du portefeuille',
+    transaction_hash: 'Hachage de la transaction',
+    transaction_type: 'Type de transaction',
+    transaction_network: 'Réseau'
+  },
+  without_walllet: {
+    title: 'no se puede proceder sin una billetera conectada y verificada',
+    to_approve:
+      'Pour approuver un contrat automatique, vous devez avoir un portefeuille vérifié et connecté. Veuillez en configurer un dans votre profil.',
+    to_fund_contract:
+      'Pour transférer des fonds vers un contrat automatique, vous devez avoir un portefeuille vérifié et connecté. Veuillez en configurer un dans votre profil.',
+    to_fund_Wallet:
+      'Pour transférer des fonds vers un autre portefeuille, vous devez avoir un portefeuille vérifié et connecté. Veuillez en configurer un dans votre profil.'
   },
   publish_contract_modal: {
     title: 'Vous êtes sur le point de publier le contrat.',
@@ -151,7 +197,7 @@ const fr: TranslationObject = {
     title:
       'Votre contrat a été créé avec succès! Vous recevrez une notification lorsque @ISP signera.',
     content:
-      "Le nouveau contrat a été envoyé au FAI, il sera en cours. Nous vous informerons lorsqu'il sera prêt ou s'il y a des observations."
+      "Le nouveau contrat a été envoyé au ISP, il sera en cours. Nous vous informerons lorsqu'il sera prêt ou s'il y a des observations."
   },
   contract_cancel_modal: {
     title: 'Annuler la création du contrat',
@@ -204,6 +250,9 @@ const fr: TranslationObject = {
   add_the_total_budget:
     'Ajoutez le budget total du contrat.Vous pouvez sélectionner dans Fiat ou Crypto Devise.',
   total_budget_of_the_contract: 'Total budget of the contract',
+  add_the_general_details: 'Ajouter les détails du contrat général',
+  add_the_contract_managers:
+    'Ajouter les gestionnaires des contrats, les moniteurs de contrat et autres',
   schools_list: 'Liste des écoles',
   add_the_list_of_schools:
     'Ajoutez la liste des écoles qui seront couvertes par ce contrat.Vous pouvez sélectionner manuellement les écoles ou télécharger un fichier CSV de référence.Une fois que vous avez ajouté les écoles, vous pouvez personnaliser le budget à chaque école.',
@@ -213,7 +262,7 @@ const fr: TranslationObject = {
   add_the_terms_agreed: 'Add the terms agreed upon between you and the ISP in the contract.',
   contract_breaking_rules: 'contract breaking rules',
   add_rules_and_guidelines:
-    'Ajoutez des règles et des directives à suivre pour le moment où les FAI ne respectent pas les conditions du contrat.',
+    'Ajoutez des règles et des directives à suivre pour le moment où les ISP ne respectent pas les conditions du contrat.',
   payment_settings: 'Paramètres de paiement',
   add_payment_intervals: 'Ajouter des intervalles de paiement pour ce contrat.',
   payment_interval: 'Intervalle de paiement',
@@ -240,7 +289,7 @@ const fr: TranslationObject = {
     contract_creation: 'Création de contrat',
     contract_viewing: 'Affichage des contrats',
     dashboard: 'Home',
-    feedback: 'Feedback',
+    feedback: 'Retour',
     help_request: `Demande d'aide`,
     login: 'Login',
     other: 'Autre',
@@ -346,11 +395,11 @@ const fr: TranslationObject = {
   region: 'région',
   lta_name: 'nom du lta',
   generated: 'généré',
-  add_an_isp: 'ajouter une personne de contact ISP',
+  add_an_isp: 'Sjouter des contacts ISP',
   add_a_team_member: "Ajouter un membre de l'équipe contractuelle",
   add_team_member: "Ajouter un membre de l'équipe",
   team_member_saved: "Membre de l'équipe sauvé",
-  enable_bypass: 'activer la confirmation du FAI de contournement',
+  enable_bypass: 'activer la confirmation du ISP de contournement',
   important: 'importante',
   add_a_contract_launch_day:
     'ajouter une date de lancement du contrat (si la date de lancement est différente de la date de début, ajoutez-le ici)',
@@ -459,8 +508,13 @@ const fr: TranslationObject = {
   view: 'voir',
   download: 'télécharger',
   add_payment: 'Ajouter paiement',
+  update_payment: 'Mettre à jour le paiement',
   payment_detail: 'Détails de paiement',
   approve: 'Approuver',
+  fund: 'Fonder',
+  funds: 'Fonds',
+  cashback: 'Remboursement',
+  discount: 'Rabais',
   decline: 'Déclin',
   find_the_invoice: `Retrouvez la facture ici. N'oubliez pas qu'il s'agit d'un document légal qui prend en charge le paiement créé.`,
   find_the_receipt: `Retrouvez le reçu ici. N'oubliez pas qu'il s'agit d'un document légal qui atteste que le paiement a été effectué avec succès.`,
@@ -468,6 +522,10 @@ const fr: TranslationObject = {
     title: 'Annuler la création du paiement',
     content:
       'Voulez-vous vraiment annuler la création de votre paiement? Votre paiement sera rejeté.'
+  },
+  payment_created_modal: {
+    title: 'Votre paiement a été créé avec succès!',
+    content: 'Trouvez votre paiement sur la liste de paiement'
   },
   payment_approve_modal: {
     title: 'Approbation du paiement',
@@ -517,6 +575,8 @@ const fr: TranslationObject = {
       'plugin dans votre navigateur et veuillez actualiser la page. Assurez-vous que vous êtes connecté ou créez un nouveau compte MetaMask. Alternativement, vous pouvez connecter votre portefeuille avec',
     wallet_connect: 'Wallet Connect',
     wallet_metamask: 'Portefeuille MetaMask',
+    wallet_trust: 'Portefeuille Trust',
+    wallet_coinbase: 'Portefeuille Coinbase',
     connect: 'Se connecter',
     disconnect: 'Déconnecter',
     wallet_not_verified: 'Portefeuille non vérifié',
@@ -531,6 +591,7 @@ const fr: TranslationObject = {
       'Le portefeuille connecté ne correspond pas à votre portefeuille vérifié sur Gigacounts.',
     verify_msg_choose:
       'Vérifier le portefeuille connecté ou choisissez WALLET_ADDRESS dans votre fournisseur de portefeuille.',
+    verify_msg_choose_wtihout_wallet: "Le portefeuille connecté n'est pas vérifié sur Gigacounts.",
     gigacounts_crypto_balance: 'Solde de chiffrement Gigacounts',
     wallet_this_is: 'Ceci est un',
     gnosis_explain_1:
@@ -691,8 +752,8 @@ const fr: TranslationObject = {
   page_number: 'Numéro de page',
   address_copied: 'Adresse copiée!',
   account_safe: 'Coffre-fort de compte',
-  send_feedback: 'Envoyer feedback',
-  send_us_feedback: 'Envoyez-nous feedback',
+  send_feedback: 'envoyer des commentaires',
+  send_us_feedback: 'envoyez-nous vos commentaires',
   flag: 'drapeau',
   personal_info: 'Informations personnelles',
   role: 'rôle',
@@ -748,6 +809,10 @@ const fr: TranslationObject = {
     notification: {
       SENT: 'nouvelle',
       READ: 'lire'
+    },
+    web_transaction: {
+      OK: 'Ok',
+      ERROR: 'Erreur'
     }
   },
   payment_status: 'statut de paiement',
@@ -774,7 +839,59 @@ const fr: TranslationObject = {
     'Faites glisser et relâchez le fichier .csv ici ou cliquez pour charger',
   drag_and_drop_csv_multiple:
     'Faites glisser et relâchez les fichiers .csv ici ou cliquez pour charger',
-  knowledge_base: 'Base de connaissances'
+  knowledge_base: 'Base de connaissances',
+  contact_information: 'Coordonnées',
+  education_level: "Niveau d'éducation",
+  no_breaking_rules: 'Aucune règle de rupture ajoutée pour ce contrat',
+  schools_connected_out_of: 'écoles connectées à partir de',
+  during: 'pendant',
+  web3_transcations: 'Transactions automatiques',
+  search_isp_contacts: 'Trouver des contacts ISP',
+  search_contract_team: "Trouvez des membres de l'équipe contractuelle disponibles",
+  onboard_steps: {
+    home: {
+      account_nav_information:
+        'Dans cette section, vous pouvez modifier vos informations personnelles',
+      notifications_popover: 'Vous pouvez afficher et gérer vos notifications',
+      feedback_link: "Ici, vous pouvez partager votre expérience avec l'application Gigacounts",
+      language_popover: "Ici, vous pouvez sélectionner la langue de l'application"
+    },
+    contracts: {
+      table_container: 'Ici, vous pouvez voir les contrats que vous pouvez gérer'
+    }
+  },
+  next: 'suivante',
+  skip: 'sauter',
+  open: 'ouvrir',
+  last: 'dernière',
+  payment_receiver: 'Récepteur de paiement des ISP',
+  table_no_data: {
+    contracts: 'Aucun contrat',
+    measures: 'Sans mesures',
+    notifications: 'Aucune notification',
+    payments: 'Aucun paiement',
+    schools: 'Sans écoles',
+    users: "Pas d'utilisateurs",
+    attachments: 'Sans attachements',
+    transactions: 'Aucune transaction'
+  },
+  fedback_rating: {
+    1: 'Je me sens insatisfait',
+    2: 'Il pourrait être meilleur',
+    3: "Je l'aime bien",
+    4: "Je l'aime beaucoup",
+    5: "Je l'aime"
+  },
+  education_levels: {
+    high_school: 'Lycée',
+    primary: 'Primaire',
+    secondary: 'Secondaire'
+  },
+  payment_receiver_warning:
+    "L'utilisateur sélectionné n'a pas de portefeuille configuré. Ils ne pourront pas recevoir de paiements automatiques tant qu'ils n'en configurent pas un dans leur profil.",
+  payment_details: 'Détails de paiement',
+  no_wallet_address: 'Aucune adresse de portefeuille',
+  isp_contacts: 'Contacts ISP'
 }
 
 export default fr

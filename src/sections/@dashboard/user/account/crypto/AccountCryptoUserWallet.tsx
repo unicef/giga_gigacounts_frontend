@@ -1,5 +1,4 @@
 // react
-import { Add, Checkmark, Subtract } from '@carbon/icons-react'
 import { Button, Link, Toggle } from '@carbon/react'
 import { useEffect, useState } from 'react'
 // locales, theme, utils
@@ -11,12 +10,11 @@ import { useAuthContext } from 'src/auth/useAuthContext'
 import { useWeb3Context } from 'src/hooks/useWeb3Context'
 // components
 import { Stack } from 'src/components/stack'
-import { Typography } from 'src/components/typography'
-import SectionTitle from 'src/components/typography/SectionTitle'
+import { SectionTitle, Typography } from 'src/components/typography'
 import Wallet from 'src/components/wallet/Wallet'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 // permissions
-import { Views } from 'src/constants/authorization'
+import { ICONS, Views } from 'src/constants'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 // api
 import { settingAutomaticContracts } from 'src/api/user'
@@ -45,9 +43,11 @@ export default function AccountCryptoUserWallet() {
   const [automaticContracts, setAutomaticContracts] = useState(
     user?.automaticContractsEnabled || false
   )
-  const [hasAttachedWallet] = useState(Boolean(user?.walletAddress))
+  const [hasAttachedWallet, setHasAttachedWallet] = useState(Boolean(user?.walletAddress))
   const [wrongAddress, setWrongAddress] = useState(
-    hasAttachedWallet && account?.toLocaleLowerCase() !== user?.walletAddress?.toLocaleLowerCase()
+    !user?.walletAddress ||
+      (hasAttachedWallet &&
+        account?.toLocaleLowerCase() !== user?.walletAddress?.toLocaleLowerCase())
   )
   const [isVerified, setIsVerified] = useState(hasAttachedWallet && !wrongAddress)
   const [updating, setUpdating] = useState(false)
@@ -71,12 +71,24 @@ export default function AccountCryptoUserWallet() {
       name: translate('wallet.wallet_connect'),
       icon: '/assets/icons/wallet/ic_wallet_connect_logo.svg'
     }
+    const trustWallet = {
+      name: translate('wallet.wallet_trust'),
+      icon: '/assets/icons/wallet/ic_trust_logo.svg'
+    }
+    const coinbaseWallet = {
+      name: translate('wallet.wallet_coinbase'),
+      icon: '/assets/icons/wallet/ic_coinbase_logo.svg'
+    }
 
     switch (walletConnectedLabel.toLowerCase()) {
       case 'metamask':
         return defaultWallet
       case 'walletconnect':
         return walletConnect
+      case 'trust wallet':
+        return trustWallet
+      case 'coinbase wallet':
+        return coinbaseWallet
       default:
         return defaultWallet
     }
@@ -121,6 +133,7 @@ export default function AccountCryptoUserWallet() {
       if (user && result) {
         user.walletAddress = account
         setWrongAddress(false)
+        setHasAttachedWallet(true)
         setIsVerified(true)
         pushSuccess('wallet.wallet_verified')
       } else {
@@ -172,17 +185,21 @@ export default function AccountCryptoUserWallet() {
         id="toggle automatic contracts"
         onClick={() => handleUpdateSettingAutomaticContracts()}
       />
-      <SectionTitle label={translate('wallet.attached_wallet')} />
-      <Typography>
-        {translate('wallet.wallet_explain_1')}{' '}
-        <Link target="blank" href="https://metamask.io/download/">
-          {translate('wallet.metamask')}
-        </Link>{' '}
-        {translate('wallet.wallet_explain_2')}{' '}
-        <Link target="blank" href="https://walletconnect.com/">
-          {translate('wallet.wallet_connect')}.
-        </Link>{' '}
-      </Typography>
+      {canEdit(Views.wallet) && (
+        <>
+          <SectionTitle label="wallet.attached_wallet" />
+          <Typography>
+            {translate('wallet.wallet_explain_1')}{' '}
+            <Link target="blank" href="https://metamask.io/download/">
+              {translate('wallet.metamask')}
+            </Link>{' '}
+            {translate('wallet.wallet_explain_2')}{' '}
+            <Link target="blank" href="https://walletconnect.com/">
+              {translate('wallet.wallet_connect')}.
+            </Link>{' '}
+          </Typography>
+        </>
+      )}
 
       {automaticContracts && wallet && (
         <>
@@ -197,16 +214,22 @@ export default function AccountCryptoUserWallet() {
             chainSupported={chain?.id === supportedChain?.id}
             balances={balances}
           />
-          {wrongAddress && (
+          {(wrongAddress || !hasAttachedWallet) && (
             <>
-              <Typography variant="error">{translate('wallet.verify_msg')}</Typography>
+              <Typography variant="error">
+                {hasAttachedWallet
+                  ? translate('wallet.verify_msg')
+                  : translate('wallet.verify_msg_choose_wtihout_wallet')}
+              </Typography>
               <Stack orientation="horizontal" gap={spacing.xs}>
-                <Typography variant="info">
-                  {translate('wallet.verify_msg_choose').replace(
-                    'WALLET_ADDRESS',
-                    `${user?.walletAddress}`
-                  )}
-                </Typography>
+                {hasAttachedWallet && (
+                  <Typography variant="info">
+                    {translate('wallet.verify_msg_choose').replace(
+                      'WALLET_ADDRESS',
+                      `${user?.walletAddress}`
+                    )}
+                  </Typography>
+                )}
               </Stack>
             </>
           )}
@@ -215,19 +238,23 @@ export default function AccountCryptoUserWallet() {
       {automaticContracts && (
         <Stack orientation="horizontal" gap={spacing.md}>
           {!wallet && canEdit(Views.wallet) && (
-            <Button disabled={updating} renderIcon={Add} onClick={() => connectWallet()}>
+            <Button disabled={updating} renderIcon={ICONS.Add} onClick={() => connectWallet()}>
               {translate('wallet.connect')}
             </Button>
           )}
           {wallet && canEdit(Views.wallet) && (
-            <Button disabled={updating} renderIcon={Subtract} onClick={() => disconnectWallet()}>
+            <Button
+              disabled={updating}
+              renderIcon={ICONS.Subtract}
+              onClick={() => disconnectWallet()}
+            >
               {translate('wallet.disconnect')}
             </Button>
           )}
-          {wallet && wrongAddress && (
+          {wallet && (wrongAddress || !hasAttachedWallet) && (
             <Button
               disabled={updating}
-              renderIcon={Checkmark}
+              renderIcon={ICONS.Success}
               className="bx--btn--field"
               onClick={() => verify()}
             >

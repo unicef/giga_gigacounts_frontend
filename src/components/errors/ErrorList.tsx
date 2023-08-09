@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import { ChevronDown, ChevronUp } from '@carbon/icons-react'
 import { useState } from 'react'
 import { Typography } from 'src/components/typography'
+import { ICONS } from 'src/constants'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 
@@ -33,7 +33,13 @@ export default function ErrorList({
           <Typography as="h6" variant="error">
             {capitalizeFirstLetter(title)}
           </Typography>
-          <div>{expanded ? <ChevronUp /> : <ChevronDown />}</div>
+          <div>
+            {expanded ? (
+              <ICONS.ChevronUp color={palette.error.main} />
+            ) : (
+              <ICONS.ChevronDown color={palette.error.main} />
+            )}
+          </div>
         </div>
       )}
       {expanded && errorMessages.map((error) => <Typography variant="error">{error}</Typography>)}

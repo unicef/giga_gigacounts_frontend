@@ -1,11 +1,8 @@
-import { SettingsValueProps } from 'src/components/settings/types'
+import { Settings } from 'src/@types'
 
-export const defaultSettings: SettingsValueProps = {
-  toursEnabled: true,
-  individualTourEnabled: [
-    {
-      name: 'contracts',
-      enabled: false
-    }
-  ]
+export const defaultSettings: Settings = {
+  tours: {
+    home: true,
+    contracts: true
+  }
 }

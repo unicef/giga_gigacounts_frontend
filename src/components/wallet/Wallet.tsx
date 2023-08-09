@@ -1,13 +1,9 @@
-import { useTheme } from 'src/theme'
-import { useLocales } from 'src/locales'
-// components
-// @ts-ignore
 import { Tag, Theme, Tooltip } from '@carbon/react'
+import { WalletProps } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
-// types
-import { WalletProps } from 'src/@types'
-// internal
+import { useLocales } from 'src/locales'
+import { useTheme } from 'src/theme'
 import Address from './Address'
 
 export default function Wallet({

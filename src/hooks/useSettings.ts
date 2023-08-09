@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useAuthContext } from 'src/auth/useAuthContext'
-import { UserSettings } from 'src/constants/settings'
+import { UserSettings } from 'src/constants'
 
 export function useSettings() {
   const { user } = useAuthContext()

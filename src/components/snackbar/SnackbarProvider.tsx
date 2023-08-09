@@ -1,12 +1,6 @@
-import {
-  CheckmarkFilled,
-  Close,
-  ErrorFilled,
-  InformationFilled,
-  WarningFilled
-} from '@carbon/icons-react'
 import { SnackbarProvider as NotistackProvider, SnackbarKey } from 'notistack'
 import { useRef } from 'react'
+import { ICONS } from 'src/constants'
 import SnackbarNotification from './SnackbarNotification'
 
 declare module 'notistack' {
@@ -49,12 +43,12 @@ export default function SnackbarProvider({ children }: Props) {
       variant="success"
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       iconVariant={{
-        success: <CheckmarkFilled />,
-        error: <ErrorFilled />,
-        info: <InformationFilled />,
-        warning: <WarningFilled />
+        success: <ICONS.SuccessFilled />,
+        error: <ICONS.ErrorFilled />,
+        info: <ICONS.InformationFilled />,
+        warning: <ICONS.WarningFilled />
       }}
-      action={(key) => <Close style={{ cursor: 'pointer' }} onClick={onClose(key)} />}
+      action={(key) => <ICONS.Close style={{ cursor: 'pointer' }} onClick={onClose(key)} />}
     >
       {children}
     </NotistackProvider>

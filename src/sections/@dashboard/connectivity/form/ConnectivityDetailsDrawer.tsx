@@ -1,44 +1,80 @@
-import { Button } from '@carbon/react'
+import { Button, Dropdown, TextInput } from '@carbon/react'
 import { months } from 'moment'
 import { useState } from 'react'
-import { IContractSchools, ISchoolMeasures } from 'src/@types'
+import { ISchoolContact, ISchoolMeasures } from 'src/@types'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import Drawer from 'src/components/drawer/Drawer'
-import { getComparator, useTable } from 'src/components/table'
-import { Typography } from 'src/components/typography'
-import SectionTitle from 'src/components/typography/SectionTitle'
+import { ComparingCard } from 'src/components/qos-card'
+import { Stack } from 'src/components/stack'
+import { useTable } from 'src/components/table'
+import { SectionTitle, Typography } from 'src/components/typography'
 import { useLocales } from 'src/locales'
-import { MeasureTableRow, MeasureTableToolbar } from 'src/sections/@dashboard/measures/list'
+import { MeasureTableRow } from 'src/sections/@dashboard/measures/list'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 
 interface Props {
-  item: IContractSchools
   measures: ISchoolMeasures[]
+  expectedValues?: {
+    uptime: number
+    uploadSpeed: number
+    downloadSpeed: number
+    latency: number
+  }
   onClose: VoidFunction
   open: boolean
+  contactInformation: ISchoolContact
 }
 
-export default function ConnectivityDetailsDrawer({ item, open, measures, onClose }: Props) {
+export default function ConnectivityDetailsDrawer({
+  open,
+  measures,
+  onClose,
+  contactInformation,
+  expectedValues
+}: Props) {
   const { translate } = useLocales()
   const { spacing } = useTheme()
+  const MONTH_LIST = Array.from(
+    new Set(
+      measures.map(
+        (m) => `${months(new Date(m.date).getMonth())}-${new Date(m.date).getFullYear()}`
+      )
+    )
+  )
   const [filterMonth, setFilterMonth] = useState('')
-  const handleCancel = () => onClose()
+  const handleCancel = () => {
+    onClose()
+    setFilterMonth('')
+  }
+  const handleFilterMonth = (month: string | null) => {
+    setFilterMonth(month ?? '')
+    setPage(1)
+  }
 
   const TABLE_HEAD = [
     { key: 'date', header: translate('day') },
-    { key: 'median_value', header: translate('median_value') },
-    { key: 'metric_name', header: translate('metric_name') }
+    { key: 'metric_name', header: translate('metric_name') },
+    { key: 'median_value', header: translate('median_value') }
   ]
 
-  const { page, order, orderBy, rowsPerPage, setPage, setRowsPerPage } = useTable({
+  const { page, rowsPerPage, setPage, setRowsPerPage } = useTable({
     defaultOrderBy: 'date'
   })
   const dataFiltered = applyFilter({
     inputData: measures,
-    comparator: getComparator(order, orderBy),
     filterMonth
   })
+
+  const medians = Object.fromEntries(
+    ['Uptime', 'Latency', 'Upload speed', 'Download speed'].map((name) => {
+      const specificMeasure = dataFiltered
+        .filter((m) => m.metric_name === name)
+        .map((m) => m.median_value)
+      return [name, specificMeasure.reduce((prev, curr) => prev + curr, 0) / specificMeasure.length]
+    })
+  )
+
   const isNotFound = !dataFiltered.length
 
   return (
@@ -47,17 +83,67 @@ export default function ConnectivityDetailsDrawer({ item, open, measures, onClos
       handleClose={handleCancel}
       content={
         <>
-          <SectionTitle label={translate('qos_summary')} />
-          <Typography style={{ marginBlock: spacing.xxs }}>
+          <SectionTitle label="qos_summary" />
+          <Typography style={{ marginTop: spacing.xxs, marginBottom: spacing.lg }}>
             {translate('qos_description')}
           </Typography>
+
+          <Dropdown
+            onChange={(data) => handleFilterMonth(data.selectedItem)}
+            id="month-selection"
+            items={MONTH_LIST}
+            label="Month"
+            selectedItem={filterMonth}
+          />
+          {expectedValues && (
+            <Stack orientation="horizontal" gap={spacing.md}>
+              <ComparingCard
+                style={{ marginBlock: spacing.md, padding: spacing.xs }}
+                width={200}
+                hideExpected
+                hideLabel
+                name="uptime"
+                value={parseInt(String(medians.Uptime), 10)}
+                expectedValue={expectedValues.uptime}
+              />
+              <ComparingCard
+                style={{ marginBlock: spacing.md, padding: spacing.xs }}
+                hideExpected
+                width={200}
+                hideLabel
+                name="upload_speed"
+                value={parseInt(String(medians['Upload speed']), 10)}
+                expectedValue={expectedValues.uploadSpeed}
+              />
+              <ComparingCard
+                style={{ marginBlock: spacing.md, padding: spacing.xs }}
+                hideExpected
+                width={200}
+                hideLabel
+                name="download_speed"
+                value={parseInt(String(medians['Download speed']), 10)}
+                expectedValue={expectedValues.downloadSpeed}
+              />
+              <ComparingCard
+                style={{ marginBlock: spacing.md, padding: spacing.xs }}
+                hideExpected
+                width={200}
+                hideLabel
+                name="latency"
+                value={parseInt(String(medians.Latency), 10)}
+                expectedValue={expectedValues.latency}
+              />
+            </Stack>
+          )}
           <CustomDataTable
             isSortable
             RowComponent={MeasureTableRow}
-            ToolbarContent={
-              <MeasureTableToolbar setFilterSearch={setFilterMonth} setPage={setPage} />
-            }
-            data={dataFiltered.map((s, i) => ({ ...s, id: String(i) }))}
+            data={dataFiltered.map((m) => ({
+              ...m,
+              id: m.measure_id,
+              school_name: null,
+              school_external_id: null
+            }))}
             page={page}
             setPage={setPage}
             isNotFound={isNotFound}
@@ -65,8 +151,35 @@ export default function ConnectivityDetailsDrawer({ item, open, measures, onClos
             setRowsPerPage={setRowsPerPage}
             tableHead={TABLE_HEAD}
             tableName="measures"
+            noDataText="table_no_data.measures"
             title="Measures table"
           />
+
+          {contactInformation && (
+            <Stack style={{ marginTop: spacing.lg }} orientation="vertical">
+              <SectionTitle label="contact_information" />
+              <Stack orientation="horizontal" gap={spacing.md}>
+                <TextInput
+                  labelText={capitalizeFirstLetter(translate('name'))}
+                  id="school-contact-name"
+                  value={contactInformation.contactPerson}
+                  disabled
+                />
+                <TextInput
+                  labelText={capitalizeFirstLetter(translate('phone_number'))}
+                  id="school-contact-phone-number"
+                  value={contactInformation.phoneNumber}
+                  disabled
+                />
+              </Stack>
+              <TextInput
+                labelText={capitalizeFirstLetter(translate('email'))}
+                id="school-contact-email"
+                value={contactInformation.email}
+                disabled
+              />
+            </Stack>
+          )}
         </>
       }
       footer={
@@ -85,28 +198,17 @@ export default function ConnectivityDetailsDrawer({ item, open, measures, onClos
 
 function applyFilter({
   inputData,
-  comparator,
   filterMonth
 }: {
   inputData: ISchoolMeasures[]
-  comparator: (a: any, b: any) => number
   filterMonth: string
 }) {
-  const stabilizedThis = inputData.map((el, index) => [el, index] as const)
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  inputData = stabilizedThis.map((el) => el[0])
-
-  if (filterMonth !== '') {
+  if (filterMonth !== '')
     inputData = inputData.filter(
-      (school) => filterMonth === months(new Date(school.date).getMonth())
+      (m) =>
+        filterMonth.toLowerCase() ===
+        `${months(new Date(m.date).getMonth())}-${new Date(m.date).getFullYear()}`.toLowerCase()
     )
-  }
 
   return inputData
 }

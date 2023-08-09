@@ -1,24 +1,17 @@
-import { CheckmarkOutline, PreviousOutline } from '@carbon/icons-react'
 import { Invoice } from '@carbon/pictograms-react'
-import {
-  Button,
-  // @ts-ignore
-  Modal,
-  // @ts-ignore
-  ProgressIndicator,
-  // @ts-ignore
-  ProgressStep
-} from '@carbon/react'
+import { Button, Modal, ProgressIndicator, ProgressStep } from '@carbon/react'
 import { useEffect, useState } from 'react'
 import {
   ContractDetails,
   ContractStatus,
   IContractPayment,
+  ICurrency,
   IFileUpload,
   IFrequency,
   IPaymentForm,
   PaymentForm,
-  PaymentStep
+  PaymentStep,
+  Translation
 } from 'src/@types'
 import { getContractDetails } from 'src/api/contracts'
 import { getDraft } from 'src/api/drafts'
@@ -28,9 +21,10 @@ import Drawer from 'src/components/drawer/Drawer'
 import FormProvider from 'src/components/hook-form/FormProvider'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
+import { ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
-import { Translation, useLocales } from 'src/locales'
+import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { applyToEveryWord, capitalizeFirstLetter } from 'src/utils/strings'
 import { usePaymentSchema } from 'src/validations/payment'
@@ -40,12 +34,14 @@ import Step2 from './Step2'
 interface Props {
   paymentFrequency: IFrequency['name']
   refetchPayments?: () => void
-  contract: ContractDetails | { id: string; status: ContractStatus; automatic: boolean }
+  contract:
+    | ContractDetails
+    | { id: string; status: ContractStatus; automatic: boolean; currency?: ICurrency }
   payment?: IContractPayment
   onClose: VoidFunction
   open: boolean
   availablePayments: { month: number; year: number; day?: number }[]
-  viewOnly?: boolean
+  openView: () => void
 }
 
 export default function PaymentDetailsDrawer({
@@ -55,27 +51,24 @@ export default function PaymentDetailsDrawer({
   payment,
   onClose,
   availablePayments,
-  viewOnly = false,
-  paymentFrequency
+  paymentFrequency,
+  openView
 }: Props) {
   const { spacing } = useTheme()
   const { pushSuccess, pushError } = useSnackbar()
   const { translate } = useLocales()
 
   const [activeStep, setActiveStep] = useState<PaymentStep>(0)
-
   const methods = usePaymentSchema(payment)
   const { setValue, reset, handleSubmit, trigger, formState } = methods
 
   const [item, setItem] = useState<ContractDetails | null>(null)
 
   const unsaved = useModal()
-  const notCreated = useModal()
   const published = useModal()
 
   const [unsavedChanges, setUnsavedChanges] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [created, setCreated] = useState(Boolean(payment))
 
   const [invoiceFile, setInvoiceFile] = useState<IFileUpload | null>(null)
   const [receiptFile, setReceiptFile] = useState<IFileUpload | null>(null)
@@ -91,16 +84,8 @@ export default function PaymentDetailsDrawer({
   }, [contract])
 
   useEffect(() => {
-    if (availablePayments.length === 1) {
-      if (paymentFrequency === 'Monthly')
-        setValue('payment', `${availablePayments[0].month}-${availablePayments[0].year}`)
-      else
-        setValue(
-          'payment',
-          `${availablePayments[0].day} ${availablePayments[0].month}-${availablePayments[0].year}`
-        )
-    }
-  }, [availablePayments, setValue, paymentFrequency])
+    if (availablePayments.length === 1) setValue('payment', availablePayments[0])
+  }, [availablePayments, setValue])
 
   useEffect(() => {
     if (invoiceUploadError.length > 0) setTimeout(() => setInvoiceUploadError(''), 5000)
@@ -124,49 +109,35 @@ export default function PaymentDetailsDrawer({
     setUnsavedChanges(true)
   }
 
-  const getDayMonthYear = (date: string) => {
-    if (paymentFrequency === 'Monthly')
-      return {
-        month: Number(date.split('-')[0]),
-        year: Number(date.split('-')[1])
-      }
-    return {
-      day: Number(date.split('-')[0]),
-      month: Number(date.split('-')[1]),
-      year: Number(date.split('-')[2])
-    }
-  }
-
-  const handlePost = async (invoiceForm: PaymentForm): Promise<boolean> => {
+  const handlePost = async (paymentForm: PaymentForm): Promise<boolean> => {
     if (saving || !(await trigger()) || Object.keys(formState.errors).length > 0) return false
-    const date = getDayMonthYear(invoiceForm.payment)
+
     try {
       setSaving(true)
       if (payment) {
         const updatedPayment: Partial<IPaymentForm> = {
           contractId: item?.id ?? '',
-          amount: invoiceForm.amount,
-          description: invoiceForm.description
+          amount: paymentForm.amount,
+          description: paymentForm.description
         }
         if (invoiceFile?.file) updatedPayment.invoice = invoiceFile
         if (receiptFile?.file) updatedPayment.receipt = receiptFile
         await updatePayment(payment.id, updatedPayment)
-        await changePaymentStatus(payment.id, invoiceForm.status)
-        setCreated(true)
+        await changePaymentStatus(payment.id, paymentForm.status)
         pushSuccess('push.updated_payment')
       } else {
         const newPayment: IPaymentForm = {
           contractId: item?.id ?? '',
-          amount: invoiceForm.amount,
-          description: invoiceForm.description,
-          year: date.year,
-          month: date.month
+          amount: paymentForm.amount,
+          description: paymentForm.description,
+          year: paymentForm.payment.year,
+          month: paymentForm.payment.month
         }
-        if (date.day) newPayment.day = date.day
+        if (paymentForm.payment.day) newPayment.day = paymentForm.payment.day
         if (invoiceFile?.file) newPayment.invoice = invoiceFile
         if (receiptFile?.file) newPayment.receipt = receiptFile
         const createdPayment = (await createPayment(newPayment)) as { id: string }
-        await changePaymentStatus(createdPayment.id, invoiceForm.status)
+        await changePaymentStatus(createdPayment.id, paymentForm.status)
         pushSuccess('push.added_payment')
       }
       handleReset()
@@ -183,21 +154,19 @@ export default function PaymentDetailsDrawer({
   }
 
   const handleCancel = () => {
-    if (!created) notCreated.open()
-    else if (unsavedChanges) unsaved.open()
+    if (unsavedChanges) unsaved.open()
     else handleReset()
   }
 
   const handleReset = () => {
     reset()
     if (refetchPayments) refetchPayments()
-    setCreated(Boolean(payment))
     unsaved.close()
     setUnsavedChanges(false)
-    notCreated.close()
     setInvoiceFile(null)
     setReceiptFile(null)
     setSaving(false)
+    setActiveStep(0)
     setInvoiceUploadError('')
     setReceiptUploadError('')
     onClose()
@@ -212,36 +181,30 @@ export default function PaymentDetailsDrawer({
     <Step1
       paymentFrequency={paymentFrequency}
       availablePayments={availablePayments}
-      viewOnly={viewOnly}
+      currencyCode={contract.currency?.code || ''}
       fields={{ invoice: invoiceFile, receipt: receiptFile }}
       uploadAttachment={handleUploadAttachments}
       receiptUploadError={receiptUploadError}
       invoiceUploadError={invoiceUploadError}
       setUploadErrorMessage={handleUploadError}
     />,
-    <Step2 contract={item} viewOnly={viewOnly} />
+    <Step2 contract={item} />
   ]
   const lastStep = stepComponents.length - 1
   const isFirstStep = activeStep === 0
   const isLastStep = activeStep === lastStep
 
-  const handleNext = async (paymentForm: PaymentForm) => {
-    const posted = await handlePost(paymentForm)
-    if (posted) setActiveStep((prev) => (prev + 1) as PaymentStep)
+  const handleNext = () => {
+    setActiveStep((prev) => (prev + 1) as PaymentStep)
   }
 
   const handleBack = () => {
     if (!isFirstStep) setActiveStep((prev) => (prev - 1) as PaymentStep)
   }
 
-  const handleCreateAnotherPayment = () => {
-    handleReset()
-    published.close()
-  }
-
   return (
     <>
-      <FormProvider methods={methods} onSubmit={handleSubmit(handleNext)}>
+      <FormProvider methods={methods} onSubmit={handleSubmit(handlePost)}>
         <Drawer
           open={open}
           header={
@@ -251,27 +214,31 @@ export default function PaymentDetailsDrawer({
                 justifyContent="center"
                 alignItems="center"
                 style={{
-                  padding: spacing.xl,
-                  minHeight: '10dvh'
+                  padding: spacing.xl
                 }}
               >
-                <h4 style={{ wordBreak: 'break-all' }}>
-                  {applyToEveryWord('new payment', (w) =>
-                    capitalizeFirstLetter(translate(w as Translation))
-                  )}
-                </h4>
+                <Typography as="h4" variant="primary" style={{ wordBreak: 'break-all' }}>
+                  {payment?.description
+                    ? payment.description
+                    : applyToEveryWord('new payment', (w) =>
+                        capitalizeFirstLetter(translate(w as Translation))
+                      )}
+                </Typography>
               </Stack>
 
               <ProgressIndicator spaceEqually currentIndex={activeStep}>
-                {[{ label: 'payment_details' }, { label: 'final_review' }].map((step, index) => (
+                {[
+                  { label: '1', secondaryLabel: 'payment_details' },
+                  { label: '2', secondaryLabel: 'connectivity_quality_check' }
+                ].map((step, index) => (
                   <ProgressStep
                     key={step.label}
                     current={activeStep === index}
                     complete={activeStep > index}
                     label={capitalizeFirstLetter(translate(step.label as Translation))}
-                    // secondaryLabel={capitalizeFirstLetter(
-                    //   translate(item.secondaryLabel as Translation)
-                    // )}
+                    secondaryLabel={capitalizeFirstLetter(
+                      translate(step.secondaryLabel as Translation)
+                    )}
                   />
                 ))}
               </ProgressIndicator>
@@ -281,66 +248,46 @@ export default function PaymentDetailsDrawer({
           content={stepComponents[activeStep]}
           footer={
             <Stack orientation="horizontal">
-              {!viewOnly && (
-                <>
-                  <Button
-                    className="btn-max-width-limit"
-                    style={{ width: '50%' }}
-                    kind="secondary"
-                    renderIcon={PreviousOutline}
-                    iconDescription={capitalizeFirstLetter(translate('back'))}
-                    onClick={handleBack}
-                    disabled={isFirstStep}
-                  >
-                    {capitalizeFirstLetter(translate('back'))}
-                  </Button>
-                  {!isLastStep ? (
-                    <Button
-                      className="btn-max-width-limit"
-                      style={{ width: '50%' }}
-                      renderIcon={CheckmarkOutline}
-                      iconDescription={capitalizeFirstLetter(translate('continue'))}
-                      kind="primary"
-                      type="submit"
-                    >
-                      {capitalizeFirstLetter(translate('continue'))}
-                    </Button>
-                  ) : (
-                    <Button
-                      style={{ width: '50%' }}
-                      kind="primary"
-                      renderIcon={CheckmarkOutline}
-                      className="btn-max-width-limit"
-                      type="submit"
-                      iconDescription={capitalizeFirstLetter(translate('add_payment'))}
-                    >
-                      {capitalizeFirstLetter(translate('add_payment'))}
-                    </Button>
+              <Button
+                className="btn-max-width-limit"
+                style={{ width: '50%' }}
+                kind="secondary"
+                renderIcon={ICONS.Back}
+                iconDescription={capitalizeFirstLetter(translate('back'))}
+                onClick={handleBack}
+                disabled={isFirstStep}
+              >
+                {capitalizeFirstLetter(translate('back'))}
+              </Button>
+              {!isLastStep ? (
+                <Button
+                  className="btn-max-width-limit"
+                  style={{ width: '50%' }}
+                  renderIcon={ICONS.SuccessOutline}
+                  iconDescription={capitalizeFirstLetter(translate('continue'))}
+                  kind="primary"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleNext()
+                  }}
+                >
+                  {capitalizeFirstLetter(translate('continue'))}
+                </Button>
+              ) : (
+                <Button
+                  style={{ width: '50%' }}
+                  kind="primary"
+                  renderIcon={ICONS.SuccessOutline}
+                  className="btn-max-width-limit"
+                  type="submit"
+                  iconDescription={capitalizeFirstLetter(
+                    translate(`${payment?.description ? 'update_payment' : 'add_payment'}`)
                   )}
-                </>
-              )}
-              {viewOnly && (
-                <>
-                  <Button
-                    style={{ width: '50%' }}
-                    className="btn-max-width-limit"
-                    kind="secondary"
-                    onClick={handleCancel}
-                  >
-                    {capitalizeFirstLetter(translate('close'))}
-                  </Button>
-                  <Button
-                    className="btn-max-width-limit"
-                    style={{ width: '50%' }}
-                    renderIcon={CheckmarkOutline}
-                    iconDescription={capitalizeFirstLetter(translate('continue'))}
-                    kind="primary"
-                    disabled={isLastStep}
-                    onClick={() => setActiveStep((prev) => (prev + 1) as PaymentStep)}
-                  >
-                    {capitalizeFirstLetter(translate('continue'))}
-                  </Button>
-                </>
+                >
+                  {capitalizeFirstLetter(
+                    translate(`${payment?.description ? 'update_payment' : 'add_payment'}`)
+                  )}
+                </Button>
               )}
             </Stack>
           }
@@ -350,13 +297,6 @@ export default function PaymentDetailsDrawer({
       <CancelDialog
         title={translate('payment_cancel_modal.title')}
         content={translate('payment_cancel_modal.content')}
-        open={notCreated.value}
-        onCancel={handleReset}
-        onDismiss={notCreated.close}
-      />
-      <CancelDialog
-        title={translate('contract_discard_changes_modal.title')}
-        content={translate('contract_discard_changes_modal.content')}
         open={unsaved.value}
         onCancel={handleReset}
         onDismiss={unsaved.close}
@@ -369,17 +309,19 @@ export default function PaymentDetailsDrawer({
         }}
         onRequestSubmit={() => {
           published.close()
+          openView()
         }}
-        onSecondarySubmit={handleCreateAnotherPayment}
-        modalLabel={translate('contract_published_modal.title')}
-        modalHeading={translate('contract_published_modal.content')}
-        primaryButtonText={capitalizeFirstLetter(translate('view_contract'))}
-        secondaryButtonText={capitalizeFirstLetter(translate('create_another_contract'))}
+        onSecondarySubmit={() => {
+          published.close()
+          handleReset()
+        }}
+        primaryButtonText={capitalizeFirstLetter(translate('view_payment'))}
+        secondaryButtonText={capitalizeFirstLetter(translate('close'))}
       >
         <Stack alignItems="center" justifyContent="center" gap={spacing.lg}>
           <Invoice width={84} height={84} />
-          <Typography as="h4">{translate('contract_published_modal.title')}</Typography>
-          <Typography as="h6">{translate('contract_published_modal.content')}</Typography>
+          <Typography as="h4">{translate('payment_created_modal.title')}</Typography>
+          <Typography as="h6">{translate('payment_created_modal.content')}</Typography>
         </Stack>
       </Modal>
     </>

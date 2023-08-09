@@ -79,7 +79,8 @@ const en = {
   autosave: {
     saving: 'Saving...',
     saved: 'Saved',
-    created: 'Not created yet. Enter a contract name to auto-save'
+    created: 'Not created yet. Enter a contract name to auto-save',
+    unsaved_changes: 'You have unsaved changes'
   },
   push: {
     knowledge_base_error: 'Knowledge base for this page not yet implemented',
@@ -99,8 +100,17 @@ const en = {
     deleted_contract_error: 'There was an error deleting the contract',
     approve_contract: 'The contract has been approved',
     approve_contract_error: 'There was an error approving the contract',
+    fund_contract: 'The contract has been funded',
+    fund_contract_error: 'There was an error funding the contract',
+    fund_wallet: 'The wallet has been funded',
+    fund_wallet_error: 'There was an error funding the wallet',
     approve_automatic_contract_invalid_wallet:
       "Contract cannot be approved. Make sure you have a connected wallet, and it's the same one you verified in your profile",
+    fund_automatic_contract_invalid_wallet:
+      "Contract cannot be funded. Make sure you have a connected wallet, and it's the same one you verified in your profile",
+    fund_wallet_invalid_wallet:
+      'Unable to transfer funds. Make sure you have a connected wallet and that it is the same one you have verified in your profile.',
+    fund_automatic_contract_low_balance: 'Insufficient token balance to transfer to the contract.',
     added_payment: 'The payment has been added',
     added_payment_error: 'There was an error adding the payment',
     updated_payment: 'The payment has been updated',
@@ -128,10 +138,45 @@ const en = {
     title: 'You are about to approve the automatic contract.',
     content: 'Are you sure you want to approve this automatic contract?'
   },
-  approve_contract_without_walllet: {
-    title: 'Contract cannot be approved',
-    content:
-      'To approve an automatic contract you must have a verified wallet. Please, set up one in your profile.'
+  fund_wallet: {
+    title: 'Fund Wallet',
+    transfer_amount_error1: 'The amount must be less than or equal that your wallet balance',
+    info: 'Stay tuned for signature requests that will appear in your wallet, to allow the transfer of funds. The process may take several seconds.',
+    field_user_name: 'User Name',
+    field_wallet_from: 'Wallet From',
+    field_wallet_to: 'Wallet To',
+    field_wallet_from_balance: 'Current Balance',
+    field_wallet_to_balance: 'Current Balance',
+    view_in_explorer: 'View in blockchain explorer'
+  },
+  fund_automatic_contract: {
+    title: 'You are about to transfer funds to the automatic contract.',
+    content: 'Are you sure you want to transfer funds to this automatic contract?',
+    info: 'Stay tuned for signature requests that will appear in your wallet, to allow the transfer of funds to the contract. The process may take several seconds. Upon completion, you can see the transactions made in the contract details.',
+    data: 'Fund Data',
+    contract_current_balance: 'Current Contract Balance',
+    contract_budget: 'Contract Budget',
+    transfer_amount: 'Amount to Transfer to Contract',
+    transfer_amount_error1: 'The amount must be less than or equal to the contract budget',
+    transfer_amount_error2: 'The amount you want to transfer exceeds the amount pending to transfer'
+  },
+  transactions_tab: {
+    detail: 'Transaction Detail',
+    increase_allowance: 'Increase Allowance',
+    fund_contract: 'Contract Funding',
+    fund_wallet: 'Wallet Funding',
+    transaction_hash: 'Transaction Hash',
+    transaction_type: 'Transaction Type',
+    transaction_network: 'Network'
+  },
+  without_walllet: {
+    title: 'cannot proceed without connected and verified wallet',
+    to_approve:
+      'To approve an automatic contract, you must have a verified and connected wallet. Please set one up in your profile.',
+    to_fund_contract:
+      'To transfer funds to an automatic contract, you must have a verified and connected wallet. Please set one up in your profile.',
+    to_fund_Wallet:
+      'To transfer funds to another wallet, you must have a verified and connected wallet. Please set one up in your profile.'
   },
   publish_contract_modal: {
     title: 'You are about to publish the contract.',
@@ -256,6 +301,8 @@ const en = {
   add_payment_intervals: 'Add payment intervals for this contract.',
   payment_interval: 'Payment interval',
   add_contract_terms: 'add contract terms',
+  add_the_general_details: 'Add the general contract details',
+  add_the_contract_managers: 'Add contract managers, contract monitors and others',
   review_and_save: 'review and save',
   contract_team: 'Contract team',
   documents_and_attachments: 'Documents and attachments',
@@ -337,7 +384,7 @@ const en = {
   region: 'region',
   lta_name: 'lta name',
   generated: 'generated',
-  add_an_isp: 'add an ISP contact person',
+  add_an_isp: 'Add ISP Contacts',
   add_a_team_member: 'add a contract team member',
   add_team_member: 'add team member',
   team_member_saved: 'team member saved',
@@ -450,8 +497,13 @@ const en = {
   due: 'Due',
   amount: 'Amount',
   add_payment: 'Add payment',
+  update_payment: 'update payment',
   payment_detail: 'payment details',
   approve: 'Approve',
+  fund: 'Fund',
+  funds: 'Funds',
+  cashback: 'Cashback',
+  discount: 'Discount',
   decline: 'Decline',
   find_the_invoice:
     'Find the invoice here. Remember that this is a legal document that supports the payment created.',
@@ -462,9 +514,13 @@ const en = {
     content:
       'Are you sure you want to cancel your payment creation? Your payment will be discarded.'
   },
+  payment_created_modal: {
+    title: 'Your payment was created successfully!',
+    content: 'Find your payment in the list of payments'
+  },
   payment_approve_modal: {
     title: 'Payment approval',
-    content: 'Ar,e you sure you want to approve this payment?'
+    content: 'Are you sure you want to approve this payment?'
   },
   payment_reject_modal: {
     title: 'Payment rejection',
@@ -510,6 +566,8 @@ const en = {
       'plugin in your browser and please refresh the page. Make sure that you are logged in or create a new MetaMask account. Alternatively, you can connect your wallet with',
     wallet_connect: 'Wallet Connect',
     wallet_metamask: 'MetaMask Wallet',
+    wallet_trust: 'Trust Wallet',
+    wallet_coinbase: 'Coinbase Wallet',
     connect: 'Connect',
     disconnect: 'Disconnect',
     wallet_not_verified: 'Wallet not verified',
@@ -521,6 +579,7 @@ const en = {
     verify: 'Verify connected wallet',
     verify_msg: "Connected wallet doesn't match your verified wallet on Gigacounts.",
     verify_msg_choose: 'Verify connected wallet or choose WALLET_ADDRESS in your wallet provider.',
+    verify_msg_choose_wtihout_wallet: 'The connected wallet is not verified on Gigacounts.',
     gigacounts_crypto_balance: 'Gigacounts Crypto Balance',
     wallet_this_is: 'This is a',
     gnosis_explain_1:
@@ -735,6 +794,10 @@ const en = {
     notification: {
       SENT: 'new',
       READ: 'read'
+    },
+    web_transaction: {
+      OK: 'Ok',
+      ERROR: 'Error'
     }
   },
   payment_status: 'payment status',
@@ -757,7 +820,58 @@ const en = {
   drag_and_drop_pdf_singular: 'Drag and drop .pdf files here or click to upload',
   drag_and_drop_csv_singular: 'Drag and drop .csv file here or click to upload',
   drag_and_drop_csv_multiple: 'Drag and drop .csv files here or click to upload',
-  knowledge_base: 'Knowledge base'
+  knowledge_base: 'Knowledge base',
+  contact_information: 'contact infomation',
+  education_level: 'Education level',
+  no_breaking_rules: 'No breaking rules added for this contract',
+  schools_connected_out_of: 'schools connected out of',
+  during: 'during',
+  web3_transcations: 'Automatic Transactions',
+  search_isp_contacts: 'Search for ISP contacts',
+  search_contract_team: 'Search for available contract team members',
+  onboard_steps: {
+    home: {
+      account_nav_information: 'In this section you can edit your personal information',
+      notifications_popover: 'You can view and manage your notifications',
+      feedback_link: 'Here you can share your experience with the GIGACounts application',
+      language_popover: 'Here you can select the language of the application'
+    },
+    contracts: {
+      table_container: 'Here you can see the contracts that you can manage'
+    }
+  },
+  next: 'next',
+  skip: 'skip',
+  open: 'open',
+  last: 'last',
+  payment_receiver: 'ISP payment receiver',
+  table_no_data: {
+    contracts: 'No contracts',
+    measures: 'No measures',
+    notifications: 'No notifications',
+    payments: 'No payments',
+    schools: 'No schools',
+    users: 'No users',
+    attachments: 'No attachments',
+    transactions: 'No transactions'
+  },
+  fedback_rating: {
+    1: 'I feel dissatisfied',
+    2: 'It could be better',
+    3: 'I like it',
+    4: 'I like it a lot',
+    5: 'I love it'
+  },
+  education_levels: {
+    high_school: 'High school',
+    primary: 'Primary',
+    secondary: 'Secondary'
+  },
+  payment_receiver_warning:
+    'The selected user does not have a configured wallet. They will not be able to receive automatic payments until they configure one in their profile.',
+  payment_details: 'Payment details',
+  no_wallet_address: 'No wallet address',
+  isp_contacts: 'ISP contacts'
 }
 
 export default en

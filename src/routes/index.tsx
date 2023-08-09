@@ -1,24 +1,25 @@
 import { Navigate, useRoutes } from 'react-router-dom'
-import { Web3ContextProvider } from 'src/context/web3/Web3Context'
 import AuthGuard from 'src/auth/AuthGuard'
 import GuestGuard from 'src/auth/GuestGuard'
-import { PATH_AFTER_LOGIN } from 'src/config-global'
+import { PATH_AFTER_LOGIN } from 'src/constants'
+import { Web3ContextProvider } from 'src/context/web3/Web3Context'
 import DashboardLayout from 'src/layouts/dashboard'
 import {
-  ConnectivityListPage,
   ContractDetailsPage,
   ContractsListPage,
   FeedbackPage,
   GeneralAppPage,
   HelpRequestPage,
   LoginPage,
+  MeasuresListPage,
   NotificationsListPage,
   Page403,
   Page404,
   Page500,
   PaymentListPage,
   SchoolReliabilityPage,
-  UserAccountPage
+  UserAccountPage,
+  UsersPage
 } from './elements'
 
 export default function Router() {
@@ -51,10 +52,32 @@ export default function Router() {
         { path: 'app', element: <GeneralAppPage /> },
         { path: 'school-reliability', element: <SchoolReliabilityPage /> },
         {
+          path: 'users',
+          element: (
+            <Web3ContextProvider>
+              <UsersPage />
+            </Web3ContextProvider>
+          )
+        },
+        {
           path: 'contract',
           children: [
-            { path: '', element: <ContractsListPage automatic={false} /> },
-            { path: 'view', element: <ContractDetailsPage /> }
+            {
+              path: '',
+              element: (
+                <Web3ContextProvider>
+                  <ContractsListPage automatic={false} />
+                </Web3ContextProvider>
+              )
+            },
+            {
+              path: 'view/:contractStatus/:contractId',
+              element: (
+                <Web3ContextProvider>
+                  <ContractDetailsPage />
+                </Web3ContextProvider>
+              )
+            }
           ]
         },
         {
@@ -68,7 +91,14 @@ export default function Router() {
                 </Web3ContextProvider>
               )
             },
-            { path: 'view', element: <ContractDetailsPage /> }
+            {
+              path: 'view/:contractStatus/:contractId',
+              element: (
+                <Web3ContextProvider>
+                  <ContractDetailsPage />
+                </Web3ContextProvider>
+              )
+            }
           ]
         },
         {
@@ -82,7 +112,7 @@ export default function Router() {
           path: 'connectivity',
           children: [
             { element: <Navigate to="/dashboard/connectivity/list" replace />, index: true },
-            { path: 'list', element: <ConnectivityListPage /> }
+            { path: 'list', element: <MeasuresListPage /> }
           ]
         },
         {

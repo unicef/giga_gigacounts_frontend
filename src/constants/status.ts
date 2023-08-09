@@ -1,4 +1,10 @@
-import { ContractStatus, NotificationStatus, PaymentStatus, TagColor } from 'src/@types'
+import {
+  ContractStatus,
+  NotificationStatus,
+  PaymentStatus,
+  TagColor,
+  Web3TransactionStatus
+} from 'src/@types'
 
 export const CONTRACT_STATUS_COLORS: { [Key in ContractStatus]: TagColor } = {
   [ContractStatus.Draft]: 'warm-gray',
@@ -23,3 +29,8 @@ export const NOTIFICATION_STATUS_COLORS: { [Key in NotificationStatus]: TagColor
 
 export const SCHOOL_RELIABILITY_COLOR = (isReliable: boolean): TagColor =>
   isReliable ? 'green' : 'red'
+
+export const WEB3_TRANSACTION_STATUS_COLORS: { [Key in Web3TransactionStatus]: TagColor } = {
+  [Web3TransactionStatus.OK]: 'green',
+  [Web3TransactionStatus.ERROR]: 'red'
+}

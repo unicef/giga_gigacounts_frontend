@@ -1,17 +1,16 @@
-// @ts-ignore
 import { Tag } from '@carbon/react'
-import { ContactPersonForm } from 'src/@types'
-import { Stack } from '../stack'
+import { IUser } from 'src/@types'
+import { Stack } from 'src/components/stack'
 
 type Props = {
-  users: ContactPersonForm[]
-  onDelete: (email: string) => void
+  users: IUser[]
+  onDelete: (id: string) => void
 }
 export default function UserList({ users, onDelete }: Props) {
   return (
     <Stack orientation="horizontal">
       {users.map((u) => (
-        <Tag key={u.email} filter type="blue" onClose={() => onDelete(u.email)}>
+        <Tag key={u.id} filter type="blue" onClose={() => onDelete(u.id)}>
           {u.name}
         </Tag>
       ))}

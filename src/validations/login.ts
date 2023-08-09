@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
-import { useLocales } from 'src/locales'
 import * as Yup from 'yup'
+import { useLocales } from 'src/locales'
 
 export const useLoginSchema = () => {
   const { translate } = useLocales()

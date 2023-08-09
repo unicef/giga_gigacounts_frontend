@@ -1,54 +1,43 @@
-import { CheckmarkOutline, TrashCan } from '@carbon/icons-react'
-// @ts-ignore
-import { Button, Modal, TableCell, Tag } from '@carbon/react'
+import { Button, DataTableRow, Modal, TableCell, Tag } from '@carbon/react'
 import TableRow, { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
 import TableSelectRow, {
   TableSelectRowProps
 } from '@carbon/react/lib/components/DataTable/TableSelectRow'
 import { NotificationStatus } from 'src/@types'
-import { NOTIFICATION_STATUS_COLORS } from 'src/constants/status'
+import { ICONS, NOTIFICATION_STATUS_COLORS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import { parseNotificationStatus } from 'src/utils/status'
 import { capitalizeFirstLetter } from 'src/utils/strings'
+import { getOrderedFromCells } from 'src/utils/table'
 
 type Props = {
-  row: any
+  row: DataTableRow
   status: string
-  selected: boolean
   rowProps: TableRowProps
   selectionProps: TableSelectRowProps
-  handleReadRow: VoidFunction
-  handleDeleteRow: VoidFunction
-  handleSelectRow: (row: any) => void
+  handleReadRow: (id: string) => void
+  handleDeleteRow: (id: string) => void
 }
 
 export default function NotificationsTableRow({
   row,
-  selected,
   handleReadRow,
   handleDeleteRow,
-  handleSelectRow,
   rowProps,
   selectionProps
 }: Props) {
   const { translate } = useLocales()
 
-  const [title, status, message] = row.cells.map((c: { value: any }) => c.value)
+  const [title, status, message] = getOrderedFromCells(['title', 'status', 'message'], row.cells)
+
   const confirm = useModal()
 
   const parsedStatus = parseNotificationStatus(status)
 
   return (
     <TableRow {...rowProps}>
-      <TableSelectRow
-        {...selectionProps}
-        checked={selected}
-        onSelect={(e) => {
-          selectionProps.onSelect(e)
-          handleSelectRow(row.id)
-        }}
-      />
+      <TableSelectRow {...selectionProps} />
 
       <TableCell>{title}</TableCell>
       <TableCell>
@@ -62,20 +51,22 @@ export default function NotificationsTableRow({
       <TableCell>
         {parsedStatus !== NotificationStatus.READ && (
           <Button
+            style={{ margin: 0, padding: 0 }}
             kind="ghost"
             hasIconOnly
-            renderIcon={CheckmarkOutline}
+            renderIcon={ICONS.Success}
             iconDescription={capitalizeFirstLetter(translate('read'))}
-            onClick={handleReadRow}
+            onClick={() => handleReadRow(row.id)}
           />
         )}
 
         <Button
+          style={{ margin: 0, padding: 0 }}
           kind="ghost"
           hasIconOnly
-          renderIcon={TrashCan}
+          renderIcon={ICONS.Delete}
           iconDescription={capitalizeFirstLetter(translate('delete'))}
-          onClick={confirm.open}
+          onClick={() => confirm.open()}
         />
       </TableCell>
       <TableCell>
@@ -88,7 +79,7 @@ export default function NotificationsTableRow({
           primaryButtonText={translate('delete')}
           secondaryButtonText={translate('cancel')}
           onRequestSubmit={() => {
-            handleDeleteRow()
+            handleDeleteRow(row.id)
             confirm.close()
           }}
         />

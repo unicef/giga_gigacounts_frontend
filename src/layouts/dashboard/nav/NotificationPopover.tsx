@@ -1,38 +1,38 @@
-import { ArrowRight, Notification, NotificationNew } from '@carbon/icons-react'
 import {
   Button,
   ClickableTile,
-  // @ts-ignore
   HeaderGlobalAction,
   Popover,
   PopoverContent,
-  // @ts-ignore
   Tag
 } from '@carbon/react'
+import { groupBy } from 'lodash'
 import moment from 'moment'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { INotification, NotificationStatus } from 'src/@types'
+import { INotification, NotificationStatus, Translation } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
-import { NOTIFICATION_STATUS_COLORS } from 'src/constants/status'
+import { ICONS, NOTIFICATION_STATUS_COLORS } from 'src/constants'
 import { useBusinessContext } from 'src/context/BusinessContext'
 import { useModal } from 'src/hooks/useModal'
-import { Translation, useLocales } from 'src/locales'
+import { useLocales } from 'src/locales'
 import { ROUTES } from 'src/routes/paths'
 import { useTheme } from 'src/theme'
+import { formatDate } from 'src/utils/date'
 import { parseNotificationStatus } from 'src/utils/status'
 import { capitalizeFirstLetter, threeDots } from 'src/utils/strings'
 
 export default function NotificationsPanel() {
   const { translate } = useLocales()
   const navigate = useNavigate()
-  const { spacing } = useTheme()
+  const { spacing, palette } = useTheme('g90')
   const popover = useModal()
 
   const { notifications, refetchNotifications, readManyNotifications } = useBusinessContext()
 
   const handleMarkAllAsRead = () => {
+    if (!notifications) return
     const ids: string[] = notifications.map((notification: INotification) => notification.id)
     readManyNotifications(ids).finally(refetchNotifications)
   }
@@ -46,86 +46,92 @@ export default function NotificationsPanel() {
     const interval = setInterval(() => {
       refetchNotifications()
     }, parseInt(process.env.REACT_APP_NOTIFICATIONS_REFRESH_INTERVAL_MS || '10000', 10))
-    return () => {
-      window.clearInterval(interval)
-    }
+    return () => window.clearInterval(interval)
   }, [notifications, refetchNotifications])
 
-  const now = moment()
   const yesterdaysMidNight = moment().startOf('day')
   const previousMidNight = moment().startOf('day').subtract(1, 'day')
 
-  const todayNotifications = notifications.filter(
-    (n) => moment(n.sent_at).diff(now) < 0 && moment(n.sent_at).diff(yesterdaysMidNight) > 0
-  )
-  const yesterdayNotifications = notifications.filter(
-    (n) =>
-      moment(n.sent_at).diff(yesterdaysMidNight) < 0 && moment(n.sent_at).diff(previousMidNight) > 0
-  )
-  const olderNotifications = notifications.filter(
-    (n) =>
-      todayNotifications.every((tn) => tn.id !== n.id) &&
-      yesterdayNotifications.every((yn) => yn.id !== n.id)
-  )
+  const getListTitle = (date: string) => {
+    if (moment(date).diff(yesterdaysMidNight) === 0) return 'today'
+    if (moment(date).diff(previousMidNight) === 0) return 'yesterday'
+    return formatDate(date, '/')
+  }
 
-  const hasNotifications = notifications.length > 0
+  const hasNotifications = notifications && notifications.length > 0
   const hasUnreadNotifications =
-    notifications.filter((n) => n.status === NotificationStatus.SENT).length > 0
+    notifications && notifications.filter((n) => n.status === NotificationStatus.SENT).length > 0
+
+  const notificationsByDay = groupBy(notifications, (n) => moment(n.sent_at).startOf('day'))
 
   return (
-    <>
-      <Typography style={{ alignSelf: 'center', padding: spacing.xs }}>
-        {translate('notifications')}
-      </Typography>
-      <Popover isTabTip onRequestClose={popover.close} open={popover.value} align="bottom-right">
-        <Stack orientation="horizontal">
-          <HeaderGlobalAction
-            tooltipAlignment="end"
-            aria-label={translate('notifications')}
-            isActive={popover.value}
-            onClick={popover.toggle}
-          >
-            {hasUnreadNotifications ? <NotificationNew /> : <Notification />}
-          </HeaderGlobalAction>
-        </Stack>
-        <PopoverContent>
-          <div style={{ padding: spacing.md, height: '500px', width: '500px', overflow: 'scroll' }}>
-            <Stack alignItems="center" justifyContent="space-between" orientation="horizontal">
-              <Typography as="span">{translate('notifications')}</Typography>
-              {hasNotifications && (
-                <Button size="sm" kind="ghost" onClick={handleMarkAllAsRead}>
-                  {capitalizeFirstLetter(translate('notifications_popover.dismiss_all'))}
-                </Button>
-              )}
-            </Stack>
-
+    <Popover isTabTip onRequestClose={popover.close} open={popover.value} align="bottom-right">
+      <Stack orientation="horizontal">
+        <Typography onClick={popover.toggle} style={{ alignSelf: 'center', padding: spacing.xs }}>
+          {translate('notifications')}
+        </Typography>
+        <HeaderGlobalAction
+          id="notifications-popover"
+          tooltipAlignment="end"
+          aria-label={translate('notifications')}
+          isActive={popover.value}
+          onClick={popover.toggle}
+        >
+          {hasUnreadNotifications ? <ICONS.NotificationNew /> : <ICONS.Notification />}
+        </HeaderGlobalAction>
+      </Stack>
+      <PopoverContent>
+        <div
+          style={{
+            paddingTop: spacing.md,
+            paddingInline: spacing.md,
+            height: '500px',
+            width: '500px',
+            overflow: 'scroll'
+          }}
+        >
+          <Stack alignItems="center" justifyContent="space-between" orientation="horizontal">
+            <Typography as="span">{translate('notifications')}</Typography>
+            {hasNotifications && (
+              <Button size="sm" kind="ghost" onClick={handleMarkAllAsRead}>
+                {capitalizeFirstLetter(translate('notifications_popover.dismiss_all'))}
+              </Button>
+            )}
+          </Stack>
+          {Object.entries(notificationsByDay).map(([key, value]) => (
             <NotificationList
-              list={todayNotifications}
-              title="today"
+              key={key}
+              list={value}
+              title={getListTitle(key)}
               handleClosePopover={popover.close}
             />
-            <NotificationList
-              list={yesterdayNotifications}
-              title="yesterday"
-              handleClosePopover={popover.close}
-            />
-            <NotificationList
-              list={olderNotifications}
-              title="older"
-              handleClosePopover={popover.close}
-            />
-            <Button
-              style={{ position: 'absolute', right: spacing.md, bottom: spacing.md }}
-              renderIcon={ArrowRight}
-              kind="ghost"
-              onClick={handleViewAll}
+          ))}
+          {hasNotifications ? (
+            <Stack
+              style={{
+                width: '100%',
+                minHeight: '10%',
+                bottom: 0,
+                backgroundColor: palette.background.default,
+                paddingBlock: spacing.sm,
+                position: 'sticky'
+              }}
+              alignItems="flex-end"
+              justifyContent="flex-end"
+              orientation="horizontal"
             >
-              {capitalizeFirstLetter(translate('notifications_popover.view_all'))}
-            </Button>
-          </div>
-        </PopoverContent>
-      </Popover>
-    </>
+              <Button renderIcon={ICONS.Continue} kind="ghost" onClick={handleViewAll}>
+                {capitalizeFirstLetter(translate('notifications_popover.view_all'))}
+              </Button>
+            </Stack>
+          ) : (
+            <Typography style={{ marginBlock: spacing.lg }}>
+              {translate('notifications_popover.empty')}
+            </Typography>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
 
@@ -173,7 +179,7 @@ const NotificationList = ({
 }: {
   handleClosePopover: () => void
   list: INotification[]
-  title: Translation
+  title: string
 }) => {
   const { spacing, palette } = useTheme()
   const { translate } = useLocales()
@@ -188,17 +194,15 @@ const NotificationList = ({
         as="h6"
         variant="textSecondary"
       >
-        {capitalizeFirstLetter(translate(title))}
+        {capitalizeFirstLetter(translate(title as Translation))}
       </Typography>
 
-      {list.length > 0 ? (
+      {list.length > 0 && (
         <Stack gap={spacing.xs}>
           {list.map((n) => (
             <NotificationItem handleClosePopover={handleClosePopover} key={n.id} notification={n} />
           ))}
         </Stack>
-      ) : (
-        <Typography as="span">{translate('notifications_popover.empty')}</Typography>
       )}
     </Stack>
   )

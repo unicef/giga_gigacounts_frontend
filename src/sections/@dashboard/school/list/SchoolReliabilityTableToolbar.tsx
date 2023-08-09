@@ -1,33 +1,32 @@
-import { Filter } from '@carbon/icons-react'
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  // @ts-ignore
-  Select,
-  // @ts-ignore
-  SelectItem,
-  TableToolbarSearch
-} from '@carbon/react'
+import { Button, Popover, PopoverContent, TableToolbarSearch } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
+import { FILTER_ALL_DEFAULT, ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import { capitalizeFirstLetter } from 'src/utils/strings'
+import { EducationLevel } from 'src/@types'
+import SchoolReliabilityTableFilters from './SchoolReliabilityTableFilters'
 
 type Props = {
-  countryName: string
   setFilterSearch: Dispatch<SetStateAction<string>>
   setPage: Dispatch<SetStateAction<number>>
   setFilterCountry: (countryName: string) => void
-  regionOptions: string[]
+  countryOptions: string[]
+  countryName: string
+  educationLevelOptions: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
+  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
+  setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
 }
 
 export default function SchoolReliabilityTableToolbar({
   setPage,
   setFilterSearch,
   setFilterCountry,
+  countryOptions,
   countryName,
-  regionOptions
+  educationLevelOptions,
+  filterEducationLevel,
+  setFilterEducationLevel
 }: Props) {
   const { translate } = useLocales()
   const popover = useModal()
@@ -36,38 +35,32 @@ export default function SchoolReliabilityTableToolbar({
     setPage(1)
     setFilterSearch(value)
   }
-  const handleFilterCountry = (country: string) => {
-    setPage(1)
-    setFilterCountry(country)
-  }
 
   return (
     <>
-      <TableToolbarSearch onChange={(e: any) => handleFilterName(e.target.value)} persistent />
+      <TableToolbarSearch onChange={(e: any) => handleFilterName(e.target.value)} />
       <Popover open={popover.value} isTabTip onRequestClose={popover.close} align="bottom-right">
         <Button
           kind="ghost"
           onClick={popover.toggle}
-          renderIcon={Filter}
+          renderIcon={ICONS.Filter}
           tooltipPosition="bottom"
           tooltipAlignment="end"
           iconDescription={capitalizeFirstLetter(translate('filter'))}
           hasIconOnly
         />
         <PopoverContent>
-          <Select
-            defaultValue={countryName}
-            id="school-region-select"
-            labelText={translate('country')}
-            onChange={(e: any) => {
-              handleFilterCountry(e.target.value)
-              popover.close()
-            }}
-          >
-            {regionOptions.map((r) => (
-              <SelectItem key={r} value={r} text={r} />
-            ))}
-          </Select>
+          <SchoolReliabilityTableFilters
+            countryName={countryName}
+            closePopover={popover.close}
+            educationLevelOptions={educationLevelOptions}
+            filterEducationLevel={filterEducationLevel}
+            setFilterEducationLevel={setFilterEducationLevel}
+            countryOptions={countryOptions}
+            setFilterCountry={setFilterCountry}
+            setFilterSearch={setFilterSearch}
+            setPage={setPage}
+          />
         </PopoverContent>
       </Popover>
     </>

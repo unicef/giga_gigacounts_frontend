@@ -1,11 +1,9 @@
-// @ts-ignore
 import { Pagination } from '@carbon/react'
 import { useLocales } from 'src/locales'
 
 type Props = {
   id: string
   count: number
-  minimal?: boolean
   page?: number
   rowsPerPage?: number
   onChangePagination: (e: any) => void
@@ -15,7 +13,6 @@ type Props = {
 export default function TablePaginationCustom({
   id,
   count,
-  minimal,
   rowsPerPageOptions = [5, 10, 25],
   onChangePagination,
   page,

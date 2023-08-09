@@ -1,7 +1,7 @@
-import { Close } from '@carbon/icons-react'
 import { Button } from '@carbon/react'
 import Drawer from 'react-modern-drawer'
 import 'react-modern-drawer/dist/index.css'
+import { ICONS } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 
@@ -10,13 +10,15 @@ export default function DrawerContainer({
   content,
   footer,
   open,
-  handleClose
+  handleClose,
+  closeDisabled
 }: {
   header?: React.ReactNode
   content: React.ReactNode
   footer: React.ReactNode
   open: boolean
   handleClose: () => void
+  closeDisabled?: boolean | false
 }) {
   const { palette, spacing } = useTheme()
   const { translate } = useLocales()
@@ -36,15 +38,15 @@ export default function DrawerContainer({
             minHeight: '17dvh',
             padding: spacing.xl,
             backgroundColor: palette.background.neutral,
-            zIndex: 2
+            zIndex: 9101
           }}
         >
           <span
             style={{
               display: 'inline-block',
               position: 'absolute',
-              right: spacing.xl,
-              top: spacing.xl,
+              right: spacing.md,
+              top: spacing.xxs,
               width: 'auto',
               height: 'auto'
             }}
@@ -52,9 +54,11 @@ export default function DrawerContainer({
             <Button
               kind="ghost"
               hasIconOnly
-              renderIcon={Close}
+              tooltipPosition="bottom"
+              renderIcon={ICONS.Close}
               iconDescription={translate('cancel')}
               onClick={handleClose}
+              disabled={closeDisabled}
             />
           </span>
           {header}
@@ -64,7 +68,7 @@ export default function DrawerContainer({
         <div style={{ padding: spacing.xl, minHeight: header ? '83dvh' : '100dvh' }}>{content}</div>
         <div
           style={{
-            zIndex: 2,
+            zIndex: 9101,
             bottom: 0,
             backgroundColor: palette.background.default,
             padding: 0,

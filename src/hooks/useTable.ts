@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { TableProps } from 'src/components/table/types'
 
 type ReturnType = TableProps

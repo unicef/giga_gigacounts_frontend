@@ -1,10 +1,11 @@
+import { useFormContext } from 'react-hook-form'
 import { ContractDetails, PaymentStatus } from 'src/@types'
 import { RHFSelect } from 'src/components/hook-form'
+import { InfoToggletip } from 'src/components/info-toggletip'
 import { PercentageBar } from 'src/components/percentage-bar'
 import { ComparingCard } from 'src/components/qos-card'
 import Stack from 'src/components/stack/Stack'
-import { Typography } from 'src/components/typography'
-import SectionTitle from 'src/components/typography/SectionTitle'
+import { SectionHeading, SectionTitle, Typography } from 'src/components/typography'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { getContractSchoolDistribution } from 'src/utils/contracts'
@@ -12,12 +13,12 @@ import { capitalizeFirstLetter } from 'src/utils/strings'
 
 type Step2Props = {
   contract: ContractDetails | null
-  viewOnly: boolean
 }
 
-export default function Step2({ contract, viewOnly }: Step2Props) {
+export default function Step2({ contract }: Step2Props) {
   const { translate } = useLocales()
   const { spacing } = useTheme()
+  const { getValues } = useFormContext()
 
   const expectedMetrics = ['Uptime', 'Upload speed', 'Latency', 'Download speed'].map((name) =>
     contract && contract.isContract
@@ -33,19 +34,28 @@ export default function Step2({ contract, viewOnly }: Step2Props) {
 
   return (
     <Stack gap={spacing.xl}>
-      <SectionTitle label={translate('connectivity_quality_check')} />
+      <SectionTitle label="connectivity_quality_check" />
       {contract && contract.isContract && (
         <>
-          <Typography as="h5">
-            {capitalizeFirstLetter(translate('connectivity_status_distribution'))}
-          </Typography>
-          <PercentageBar
-            width={600}
-            data={getContractSchoolDistribution(contract.schoolsConnection)}
-          />
+          <Stack orientation="horizontal" gap={spacing.md} alignItems="center">
+            <InfoToggletip title="" />
+            <Typography as="h5">
+              {capitalizeFirstLetter(translate('connectivity_status_distribution'))}
+            </Typography>
+          </Stack>
+          <Stack orientation="horizontal" gap={spacing.md} alignItems="center">
+            <InfoToggletip title="" />
+            <PercentageBar
+              width={600}
+              data={getContractSchoolDistribution(contract.schoolsConnection)}
+            />
+          </Stack>
         </>
       )}
-      <Typography as="h5">{capitalizeFirstLetter(translate('quality_of_service'))}</Typography>
+      <Stack orientation="horizontal" gap={spacing.md} alignItems="center">
+        <InfoToggletip title="" />
+        <Typography as="h5">{capitalizeFirstLetter(translate('quality_of_service'))}</Typography>
+      </Stack>
       <Stack orientation="horizontal" gap={spacing.xl} justifyContent="center" alignItems="center">
         <Stack orientation="vertical" gap={spacing.xl}>
           <ComparingCard
@@ -71,18 +81,23 @@ export default function Step2({ contract, viewOnly }: Step2Props) {
             expectedValue={Number(expectedMetrics[3]?.value ?? null)}
           />
         </Stack>
+        <SectionHeading heading="set_payment_status" />
+        <RHFSelect
+          selectedItem={{
+            value: getValues('status'),
+            label: capitalizeFirstLetter(
+              translate(`constant_status.payment.${getValues('status') as PaymentStatus}`)
+            )
+          }}
+          id="payment status select"
+          name="status"
+          label={capitalizeFirstLetter(`${translate('payment_status')}`)}
+          options={Object.values(PaymentStatus).map((p) => ({
+            value: p,
+            label: capitalizeFirstLetter(translate(`constant_status.payment.${p}`))
+          }))}
+        />
       </Stack>
-      <Typography as="h5">{capitalizeFirstLetter(translate('set_payment_status'))}</Typography>
-      <RHFSelect
-        disabled={viewOnly}
-        id="payment status select"
-        name="status"
-        label={capitalizeFirstLetter(`${translate('payment_status')}`)}
-        options={Object.values(PaymentStatus).map((p) => ({
-          value: p,
-          label: capitalizeFirstLetter(translate(`constant_status.payment.${p}`))
-        }))}
-      />
     </Stack>
   )
 }

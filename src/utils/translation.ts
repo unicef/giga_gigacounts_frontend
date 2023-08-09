@@ -1,4 +1,4 @@
-import { Translation } from 'src/locales/types'
+import { Translation } from 'src/@types'
 import { capitalizeFirstLetter } from './strings'
 
 export const replaceTranslated = (

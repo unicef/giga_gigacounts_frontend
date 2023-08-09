@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { BACKEND_URL } from 'src/config-global'
+import { BACKEND_URL } from 'src/constants'
 
 const axiosInstance = axios.create({ baseURL: BACKEND_URL })
 

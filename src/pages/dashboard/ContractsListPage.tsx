@@ -1,20 +1,18 @@
-import { Add } from '@carbon/icons-react'
-import { Link } from '@carbon/react'
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router'
-import { ContractStatus, IContract } from 'src/@types'
+import { ContractStatus, IContract, MinMax, Translation } from 'src/@types'
 import { Banner } from 'src/components/banner'
 import CustomJoyride from 'src/components/custom-joyride'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
-import { getComparator, useTable } from 'src/components/table'
-import { Views } from 'src/constants/authorization'
+import { useTable } from 'src/components/table'
+import { FILTER_ALL_DEFAULT, ICONS, KEY_DEFAULTS, Views } from 'src/constants'
 import { useBusinessContext } from 'src/context/BusinessContext'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
-import { Translation, useLocales } from 'src/locales'
-import ContractDetailsDrawer from 'src/sections/@dashboard/contract/form/ContractDetailsDrawer'
+import { useLocales } from 'src/locales'
+import { ContractDetailsDrawer } from 'src/sections/@dashboard/contract/edit/ContractDetailsDrawer'
 import { ContractTableRow, ContractTableToolbar } from 'src/sections/@dashboard/contract/list'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 
@@ -24,35 +22,40 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
   const userCanAdd = canAdd(Views.contract)
   const { pushSuccess, pushError } = useSnackbar()
 
-  const { page, order, orderBy, rowsPerPage, setPage, setRowsPerPage } = useTable()
+  const { page, rowsPerPage, setPage, setRowsPerPage } = useTable()
 
   const { contracts, refetchContracts, deleteContract } = useBusinessContext()
   const { translate } = useLocales()
 
   const [filterSearch, setFilterSearch] = useState('')
-  const [filterRegion, setFilterRegion] = useState('all')
-  const [filterStatus, setFilterStatus] = useState<ContractStatus | 'all'>('all')
-  const [filterBudget, setFilterBudget] = useState({ min: '', max: '' })
-  const [filterSchools, setFilterSchools] = useState({ min: '', max: '' })
+  const [filterIsp, setFilterIsp] = useState(FILTER_ALL_DEFAULT)
+  const [filterRegion, setFilterRegion] = useState(FILTER_ALL_DEFAULT)
+  const [filterStatus, setFilterStatus] = useState<ContractStatus | typeof FILTER_ALL_DEFAULT>(
+    FILTER_ALL_DEFAULT
+  )
+  const [filterBudget, setFilterBudget] = useState<MinMax>({ min: '', max: '' })
+  const [filterSchools, setFilterSchools] = useState<MinMax>({ min: '', max: '' })
 
   const details = useModal(state?.new ?? false)
 
-  const contractsFiltered = applyFilter({
-    inputData: contracts
-      .filter((c) => c.automatic === automatic)
-      .map((c) => ({
-        ...c,
-        ltaName: c.lta?.name ?? '',
-        countryName: c.country?.name ?? ''
-      })),
-    comparator: getComparator(order, orderBy),
-    filterSearch,
-    filterStatus,
-    filterRegion,
-    filterBudget,
-    filterSchools,
-    translate
-  })
+  const contractsFiltered = contracts
+    ? applyFilter({
+        inputData: contracts
+          .filter((c) => c.automatic === automatic)
+          .map((c) => ({
+            ...c,
+            ltaName: c.lta?.name ?? '',
+            countryName: c.country?.name ?? ''
+          })),
+        filterSearch,
+        filterStatus,
+        filterRegion,
+        filterIsp,
+        filterBudget,
+        filterSchools,
+        translate
+      })
+    : []
 
   useEffect(() => {
     if (state?.new !== undefined) details.set(state.new)
@@ -66,12 +69,18 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
     { key: 'countryName', header: translate('country') },
     { key: 'numberOfSchools', header: translate('number_of_schools') },
     { key: 'budget', header: translate('budget') },
-    { key: '', header: '' },
-    { key: '-', header: '' }
+    { key: KEY_DEFAULTS[0], header: '' },
+    { key: KEY_DEFAULTS[1], header: '' }
   ]
 
   const regionOptions = Array.from(
-    new Set(['all', ...contracts.map((r) => r.country?.name ?? 'all')])
+    new Set([
+      FILTER_ALL_DEFAULT,
+      ...contractsFiltered.map((r) => r.country?.name ?? FILTER_ALL_DEFAULT)
+    ])
+  )
+  const ispOptions = Array.from(
+    new Set([FILTER_ALL_DEFAULT, ...contractsFiltered.map((r) => r.isp ?? FILTER_ALL_DEFAULT)])
   )
 
   const dataInPage = contractsFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -80,9 +89,7 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
   const handleDeleteRow = (id: string) => {
     deleteContract(id)
       .then(() => {
-        pushSuccess('push.deleted_contract', {
-          link: <Link onClick={() => {}}>{capitalizeFirstLetter(translate('undo'))}</Link>
-        })
+        pushSuccess('push.deleted_contract')
       })
       .catch(() => {
         pushError('push.deleted_contract_error')
@@ -95,19 +102,17 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
       }
     }
   }
-
   return (
     <>
       <Helmet>
         <title>Contracts | Gigacounts</title>
       </Helmet>
-      <CustomJoyride name="contract" />
+      <CustomJoyride name="contracts" run={!state || !state.new} />
       <Banner
         title={automatic ? translate('automatic_contracts_list') : translate('contracts_list')}
       />
       <CustomDataTable
         isSortable
-        getKey={(row) => row.name}
         RowComponent={ContractTableRow}
         getRowComponentProps={(row) => ({
           onDeleteRow: (id: string) => handleDeleteRow(id),
@@ -116,11 +121,15 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
         })}
         ToolbarContent={
           <ContractTableToolbar
+            filterIsp={filterIsp}
+            filterRegion={filterRegion}
             filterBudget={filterBudget}
             filterSchools={filterSchools}
             regionOptions={regionOptions}
+            ispOptions={ispOptions}
             setFilterBudget={setFilterBudget}
             setFilterRegion={setFilterRegion}
+            setFilterIsp={setFilterIsp}
             setFilterSchools={setFilterSchools}
             setFilterSearch={setFilterSearch}
             setFilterStatus={setFilterStatus}
@@ -135,6 +144,7 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
         setRowsPerPage={setRowsPerPage}
         tableHead={TABLE_HEAD}
         tableName="contracts"
+        noDataText="table_no_data.contracts"
         title="Contract table"
         buttonsProps={
           userCanAdd
@@ -142,7 +152,7 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
                 {
                   kind: 'primary',
                   onClick: details.open,
-                  renderIcon: Add,
+                  renderIcon: ICONS.Add,
                   label: capitalizeFirstLetter(translate('contract'))
                 }
               ]
@@ -161,34 +171,24 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
 
 function applyFilter({
   inputData,
-  comparator,
   filterSearch,
   filterStatus,
   filterRegion,
   filterBudget,
+  filterIsp,
   filterSchools,
   translate
 }: {
-  inputData: Array<IContract & { ltaName: string }>
-  comparator: (a: any, b: any) => number
+  inputData: Array<IContract & { ltaName: string; countryName: string }>
   filterSearch: string
-  filterStatus: ContractStatus | 'all'
+  filterStatus: ContractStatus | typeof FILTER_ALL_DEFAULT
   filterRegion: string
-  filterBudget: { min: string; max: string }
-  filterSchools: { min: string; max: string }
+  filterIsp: string
+  filterBudget: MinMax
+  filterSchools: MinMax
   translate: ReturnType<typeof useLocales>['translate']
 }) {
-  const stabilizedThis = inputData.map((el, index) => [el, index] as const)
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  inputData = stabilizedThis.map((el) => el[0])
-
-  if (filterSearch) {
+  if (filterSearch)
     inputData = inputData.filter(({ country, name, isp, status, lta, id }) => {
       const flatContract = { country: country?.name, name, isp, status, id, lta: lta?.name ?? '' }
       const translatedKeys = ['status']
@@ -200,50 +200,47 @@ function applyFilter({
         return value?.toLowerCase().includes(filterSearch.toLowerCase())
       })
     })
-  }
 
-  if (filterStatus !== 'all') {
+  if (filterStatus !== FILTER_ALL_DEFAULT)
     inputData = inputData.filter((contract) => contract.status === filterStatus)
-  }
 
-  if (filterRegion !== 'all') {
-    inputData = inputData.filter((contract) => contract.country?.name === filterRegion)
-  }
+  if (filterRegion !== FILTER_ALL_DEFAULT)
+    inputData = inputData.filter(
+      (contract) => contract.country && contract.country.name === filterRegion
+    )
 
-  if (
-    filterBudget.min &&
-    filterBudget.max &&
-    Number(filterBudget.max) >= Number(filterBudget.min)
-  ) {
+  if (filterIsp !== FILTER_ALL_DEFAULT)
+    inputData = inputData.filter((contract) => contract.isp && contract.isp === filterIsp)
+
+  if (filterBudget.min && filterBudget.max && Number(filterBudget.max) >= Number(filterBudget.min))
     inputData = inputData.filter(
       (contract) =>
         Number(contract.budget) >= Number(filterBudget.min) &&
         Number(contract.budget) <= Number(filterBudget.max)
     )
-  } else if (filterBudget.min) {
+  else if (filterBudget.min)
     inputData = inputData.filter((contract) => Number(contract.budget) >= Number(filterBudget.min))
-  } else if (filterBudget.max) {
+  else if (filterBudget.max)
     inputData = inputData.filter((contract) => Number(contract.budget) <= Number(filterBudget.max))
-  }
 
   if (
     filterSchools.min &&
     filterSchools.max &&
     Number(filterSchools.max) >= Number(filterSchools.min)
-  ) {
+  )
     inputData = inputData.filter(
       (contract) =>
         Number(contract.numberOfSchools) >= Number(filterSchools.min) &&
         Number(contract.numberOfSchools) <= Number(filterSchools.max)
     )
-  } else if (filterSchools.min) {
+  else if (filterSchools.min)
     inputData = inputData.filter(
       (contract) => Number(contract.numberOfSchools) >= Number(filterSchools.min)
     )
-  } else if (filterSchools.max) {
+  else if (filterSchools.max)
     inputData = inputData.filter(
       (contract) => Number(contract.numberOfSchools) <= Number(filterSchools.max)
     )
-  }
+
   return inputData
 }

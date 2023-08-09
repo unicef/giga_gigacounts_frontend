@@ -1,7 +1,4 @@
-import {
-  // @ts-ignore
-  BreadcrumbItem
-} from '@carbon/react'
+import { BreadcrumbItem } from '@carbon/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { useTheme } from 'src/theme'
 import { BreadcrumbsLinkProps } from './types'
@@ -38,8 +35,10 @@ export default function BreadcrumbsLink({ link, activeLast, disabled }: Props) {
   }
 
   return (
-    <div style={styles}>
-      {icon} {name}
-    </div>
+    <BreadcrumbItem>
+      <div style={styles}>
+        {icon} {name}
+      </div>
+    </BreadcrumbItem>
   )
 }

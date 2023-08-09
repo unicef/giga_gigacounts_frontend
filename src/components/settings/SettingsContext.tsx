@@ -1,11 +1,11 @@
 import { createContext, useContext, useMemo, useCallback } from 'react'
 import useLocalStorage from 'src/hooks/useLocalStorage'
-import { defaultSettings } from 'src/constants/default-settings'
-import { SettingsContextProps } from './types'
+import { defaultSettings } from 'src/constants'
+import { SettingsContextProps, TourName } from 'src/@types'
 
 const initialState: SettingsContextProps = {
   ...defaultSettings,
-  onToggleTours: () => {},
+  completeTour: () => {},
   onResetSetting: () => {}
 }
 
@@ -29,18 +29,22 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
     setSettings(defaultSettings)
   }, [setSettings])
 
-  const onToggleTours = useCallback(() => {
-    const toursEnabled = !settings.toursEnabled
-    setSettings({ ...settings, toursEnabled })
-  }, [setSettings, settings])
+  const completeTour = useCallback(
+    (name: TourName) =>
+      setSettings({
+        ...settings,
+        tours: { ...settings.tours, [name]: false }
+      }),
+    [settings, setSettings]
+  )
 
-  const memoizedValue = useMemo(
+  const memoizedValue = useMemo<SettingsContextProps>(
     () => ({
       ...settings,
-      onToggleTours,
+      completeTour,
       onResetSetting
     }),
-    [settings, onToggleTours, onResetSetting]
+    [settings, completeTour, onResetSetting]
   )
 
   return <SettingsContext.Provider value={memoizedValue}>{children}</SettingsContext.Provider>

@@ -31,7 +31,11 @@ export const changePaymentStatus = async <T>(paymentId: string, status: PaymentS
 
 export const getPayments = async () => {
   const response = await instance.get<
-    (IContractPayment & { contractName: string; contractId: string })[]
+    (IContractPayment & {
+      contractName: string
+      contractId: string
+      contractNumberOfSchools: number
+    })[]
   >(ENDPOINT_URL)
   if (response.status === 200) return response.data
   throw new Error('Failed to get payments')

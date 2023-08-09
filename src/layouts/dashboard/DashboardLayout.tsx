@@ -1,12 +1,12 @@
-import { useState } from 'react'
-import { LAYOUT_SIDEBAR_WIDTH } from 'src/constants/layout'
-import { Outlet } from 'react-router-dom'
 import { Theme } from '@carbon/react'
+import { useState } from 'react'
+import { Outlet } from 'react-router-dom'
+import { LAYOUT_SIDEBAR_WIDTH } from 'src/constants'
 import { useTheme } from 'src/theme'
 import Header from './nav/Header'
 
 export default function DashboardLayout() {
-  const [isSideNavExpanded, setIsSideNavExpanded] = useState(false)
+  const [isSideNavExpanded, setIsSideNavExpanded] = useState(true)
   const { spacing } = useTheme()
   return (
     <>

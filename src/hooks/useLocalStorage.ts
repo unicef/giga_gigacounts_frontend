@@ -1,14 +1,26 @@
 import { useState, useEffect } from 'react'
-
 import localStorageAvailable from 'src/utils/localStorageAvailable'
 
-export default function useLocalStorage<ValueType>(key: string, defaultValue: ValueType) {
+export default function useLocalStorage<ValueType extends {}>(
+  key: string,
+  defaultValue: ValueType
+) {
   const storageAvailable = localStorageAvailable()
 
   const [value, setValue] = useState(() => {
     const storedValue = storageAvailable ? localStorage.getItem(key) : null
+    if (!storedValue) return defaultValue
+    const parsedValue = JSON.parse(storedValue)
+    if (typeof parsedValue !== 'object' || parsedValue instanceof Array) return parsedValue
 
-    return storedValue === null ? defaultValue : JSON.parse(storedValue)
+    const finalValue = Object.fromEntries(
+      Object.entries(defaultValue).map(([k, v]) => {
+        if (k in parsedValue) return [k, parsedValue[k]]
+        return [k, v]
+      })
+    )
+
+    return finalValue
   })
 
   useEffect(() => {
@@ -36,5 +48,5 @@ export default function useLocalStorage<ValueType>(key: string, defaultValue: Va
     })
   }
 
-  return [value, setValueInLocalStorage]
+  return [value, setValueInLocalStorage] as [ValueType, (value: ValueType) => void]
 }

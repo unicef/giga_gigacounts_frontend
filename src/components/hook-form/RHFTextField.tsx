@@ -4,10 +4,26 @@ import { TextInputProps } from '@carbon/react/lib/components/TextInput/TextInput
 
 type Props = TextInputProps & {
   name: string
+  helperTextLinkText?: string | undefined
 }
 
-export default function RHFTextField({ name, helperText, ...other }: Props) {
+export default function RHFTextField({ name, helperText, helperTextLinkText, ...other }: Props) {
   const { control } = useFormContext()
+
+  const renderHelperText = () => {
+    if (
+      helperText &&
+      typeof helperText === 'string' &&
+      (helperText.startsWith('http://') || helperText.startsWith('https://'))
+    ) {
+      return (
+        <a href={helperText} target="_blank" rel="noopener noreferrer">
+          {helperTextLinkText ?? helperText}
+        </a>
+      )
+    }
+    return helperText
+  }
 
   return (
     <Controller
@@ -15,7 +31,7 @@ export default function RHFTextField({ name, helperText, ...other }: Props) {
       control={control}
       render={({ field, fieldState: { error } }) => (
         <TextInput
-          helperText={helperText}
+          helperText={renderHelperText()}
           {...field}
           value={typeof field.value === 'number' && field.value === 0 ? '' : field.value}
           invalid={!!error}

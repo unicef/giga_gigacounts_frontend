@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
-import { ICountry, ISchool } from 'src/@types'
+import { EducationLevel, ICountry, ISchool } from 'src/@types'
 import { getSchools } from 'src/api/school'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { Banner } from 'src/components/banner'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
-import { getComparator, useTable } from 'src/components/table'
+import { useTable } from 'src/components/table'
+import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants'
 import { useBusinessContext } from 'src/context/BusinessContext'
 import { useLocales } from 'src/locales'
 import {
@@ -14,14 +15,16 @@ import {
 } from 'src/sections/@dashboard/school/list'
 
 export default function SchoolReliabilityPage() {
-  const { page, order, orderBy, rowsPerPage, setPage, setRowsPerPage, selected, onSelectRow } =
-    useTable()
+  const { page, rowsPerPage, setPage, setRowsPerPage, selected, onSelectRow } = useTable()
   const { user } = useAuthContext()
   const { countries } = useBusinessContext()
 
   const [countryId, setCountryId] = useState(user?.country.id)
   const [tableData, setTableData] = useState<ISchool[]>([])
   const [filterName, setFilterName] = useState('')
+  const [filterEducationLevel, setFilterEducationLevel] = useState<
+    EducationLevel | typeof FILTER_ALL_DEFAULT
+  >(FILTER_ALL_DEFAULT)
 
   const { translate } = useLocales()
 
@@ -30,7 +33,7 @@ export default function SchoolReliabilityPage() {
     { key: 'name', header: translate('name') },
     { key: 'location1', header: translate('region') },
     { key: 'reliable_measures', header: translate('has_reliable_measure_data') },
-    { key: '', header: '' }
+    { key: KEY_DEFAULTS[0], header: '' }
   ]
 
   useEffect(() => {
@@ -39,8 +42,8 @@ export default function SchoolReliabilityPage() {
 
   const dataFiltered = applyFilter({
     inputData: tableData,
-    comparator: getComparator(order, orderBy),
-    filterName
+    filterName,
+    filterEducationLevel
   })
 
   const isNotFound = !dataFiltered.length
@@ -49,6 +52,10 @@ export default function SchoolReliabilityPage() {
     const selectedCountry = countries.find((c) => c.name === countryName) as ICountry
     setCountryId(selectedCountry.id)
   }
+
+  const educationLevelOptions = Array.from(
+    new Set([FILTER_ALL_DEFAULT, ...tableData.map((s) => s.education_level)])
+  ) as (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
 
   return (
     <>
@@ -67,11 +74,14 @@ export default function SchoolReliabilityPage() {
         RowComponent={SchoolReliabilityTableRow}
         ToolbarContent={
           <SchoolReliabilityTableToolbar
+            educationLevelOptions={educationLevelOptions}
+            filterEducationLevel={filterEducationLevel}
+            setFilterEducationLevel={setFilterEducationLevel}
             countryName={countries.find((c) => c.id === countryId)?.name ?? ''}
             setFilterCountry={handleFilterCountry}
             setFilterSearch={setFilterName}
             setPage={setPage}
-            regionOptions={countries.map((c) => c.name)}
+            countryOptions={countries.map((c) => c.name)}
           />
         }
         data={dataFiltered}
@@ -82,6 +92,7 @@ export default function SchoolReliabilityPage() {
         setRowsPerPage={setRowsPerPage}
         tableHead={TABLE_HEAD}
         tableName="schools-reliability"
+        noDataText="table_no_data.schools"
         title="Schools reliability table"
       />
     </>
@@ -90,28 +101,20 @@ export default function SchoolReliabilityPage() {
 
 function applyFilter({
   inputData,
-  comparator,
-  filterName
+  filterName,
+  filterEducationLevel
 }: {
   inputData: ISchool[]
-  comparator: (a: any, b: any) => number
   filterName: string
+  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
 }) {
-  const stabilizedThis = inputData.map((el, index) => [el, index] as const)
-
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0])
-    if (order !== 0) return order
-    return a[1] - b[1]
-  })
-
-  inputData = stabilizedThis.map((el) => el[0])
-
-  if (filterName) {
+  if (filterName)
     inputData = inputData.filter(
       (school) => school.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     )
-  }
+
+  if (filterEducationLevel !== FILTER_ALL_DEFAULT)
+    inputData = inputData.filter((s) => s.education_level === filterEducationLevel)
 
   return inputData
 }

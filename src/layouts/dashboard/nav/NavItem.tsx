@@ -1,9 +1,8 @@
-import { NavListProps } from 'src/layouts/dashboard/nav/types'
-// @ts-ignore
 import { SideNavLink } from '@carbon/react'
 import { useNavigate } from 'react-router'
 import { Typography } from 'src/components/typography'
 import useActiveLink from 'src/hooks/useActiveLink'
+import { NavListProps } from 'src/layouts/dashboard/nav/types'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
@@ -19,17 +18,16 @@ export default function NavItem({ data, tabIndex, isActive = true }: NavListRoot
   const navigate = useNavigate()
   const { translate } = useLocales()
   const { active } = useActiveLink(data.path)
-  const { spacing } = useTheme('g90')
+  const { spacing } = useTheme()
 
   return (
     <SideNavLink
-      tabIndex={tabIndex}
       isActive={isActive && active}
       large
       renderIcon={() => <NavIcon CarbonIcon={data.icon} isActive={isActive && active} />}
       onClick={() => navigate(data.path, { state: data.state })}
     >
-      <Typography as="span" variant={isActive && active ? 'primary' : 'textSecondary'}>
+      <Typography as="span" variant={isActive && active ? 'default' : 'textTertiary'}>
         {capitalizeFirstLetter(translate(data.title))}
       </Typography>
       <div

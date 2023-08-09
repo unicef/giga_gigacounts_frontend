@@ -1,5 +1,5 @@
 import { useTheme } from 'src/theme'
-import { Stack } from '../stack'
+import { Stack } from 'src/components/stack'
 
 type PercentageBarProps = {
   data: readonly { percentage: number; color: 'error' | 'info' | 'warning' | 'success' }[]

@@ -12,20 +12,6 @@ export type FeedbackForm = {
   comment: string
 }
 
-export type ContractTeamMemberForm = {
-  name: string
-  email: string
-  phoneNumber: string
-  description: string
-}
-
-export type ContactPersonForm = {
-  name: string
-  email: string
-  phoneNumber: string
-  description: string
-}
-
 export type ContractForm = {
   id: string
   ltaId: string
@@ -39,7 +25,6 @@ export type ContractForm = {
   downloadSpeed: number
   latency: number
   uploadSpeed: number
-  contractTeam: ContractTeamMemberForm[]
   currency: string
   budget: number
   notes: string
@@ -47,11 +32,30 @@ export type ContractForm = {
   bypass: boolean
   frequencyId: string
   addLaunchDate: boolean
+  breakingRules: string
+  paymentReceiverId: string
 }
 
 export type PaymentForm = {
   status: PaymentStatus
   description: string
   amount: number
-  payment: string
+  payment: { month: number; day?: number; year: number }
+}
+
+export type ContractFundForm = {
+  currency: string
+  balance: number
+  budget: number
+  amount: number
+}
+
+export type WalletFundForm = {
+  name: string
+  currency: string
+  amount: number
+  walletFrom: string
+  balanceFrom: number
+  walletTo: string
+  balanceTo: number
 }

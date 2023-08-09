@@ -24,3 +24,8 @@ export enum NotificationStatus {
   SENT = 'SENT',
   READ = 'READ'
 }
+
+export enum Web3TransactionStatus {
+  OK = 'OK',
+  ERROR = 'ERROR'
+}

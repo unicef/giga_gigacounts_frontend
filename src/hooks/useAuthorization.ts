@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { useAuthContext } from 'src/auth/useAuthContext'
-import { UserRoles, Views } from 'src/constants/authorization'
+import { Views } from 'src/constants'
+import { UserRoles } from 'src/@types'
 
 export function useAuthorization() {
   const { user } = useAuthContext()
@@ -12,38 +13,6 @@ export function useAuthorization() {
     user?.role?.permissions.includes(`${viewName}.write`) || false
   const canView = (viewName: Views): boolean =>
     user?.role?.permissions.includes(`${viewName}.read`) || false
-
-  /*
-
-  const canAdd = useCallback((viewName: Views) : boolean => {
-    if (!user) {
-      return false
-    }
-    return user?.role?.permissions.includes(`${viewName}.write`)
-  }, [user])
-
-  const canEdit = useCallback((viewName: Views) : boolean => {
-    if (!user) {
-      return false
-    }
-    return user?.role?.permissions.includes(`${viewName}.write`)
-  }, [user])
-
-  const canDelete = useCallback((viewName: Views) : boolean => {
-    if (!user) {
-      return false
-    }
-    return user?.role?.permissions.includes(`${viewName}.write`)
-  }, [user])
-
-  const canView = useCallback((viewName: Views) : boolean => {
-    if (!user) {
-      return false
-    }
-    return user?.role?.permissions.includes(`${viewName}.read`)
-  }, [user])
-
-  */
 
   const hasSomeRole = useCallback(
     (rolesToHave: UserRoles[]): boolean => {

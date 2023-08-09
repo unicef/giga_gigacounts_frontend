@@ -1,10 +1,10 @@
 import { createContext, useEffect, useReducer, useCallback, useMemo } from 'react'
 import { ethers } from 'ethers'
-import { UserRoles } from 'src/constants/authorization'
 import instance from 'src/api/init'
 import { getUserProfile } from 'src/api/user'
 import axios from 'src/utils/axios'
 import localStorageAvailable from 'src/utils/localStorageAvailable'
+import { UserRoles } from 'src/@types'
 import { isValidToken, setSession, jwtDecode } from './utils'
 import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './types'
 

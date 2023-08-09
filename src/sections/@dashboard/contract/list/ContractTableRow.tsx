@@ -1,44 +1,28 @@
-import {
-  CarbonIconType,
-  CheckmarkOutline,
-  Edit,
-  Replicate,
-  TrashCan,
-  View
-} from '@carbon/icons-react'
-import {
-  Button,
-  Link,
-  // @ts-ignore
-  Modal,
-  TableCell,
-  TableRow,
-  // @ts-ignore
-  Tag
-} from '@carbon/react'
+import { Button, DataTableRow, Link, Modal, TableCell, TableRow, Tag } from '@carbon/react'
 import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { ContractStatus, IDraft } from 'src/@types'
+import { ContractStatus, IDraft, Icon, Translation, UserRoles } from 'src/@types'
 import { approveContract, duplicateContract, publishContractDraft } from 'src/api/contracts'
 import { duplicateDraft, getDraft } from 'src/api/drafts'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { Typography } from 'src/components/typography'
-import { Views } from 'src/constants/authorization'
-import { CONTRACT_STATUS_COLORS } from 'src/constants/status'
+import { CONTRACT_STATUS_COLORS, ICONS, Views } from 'src/constants'
 import { useBusinessContext } from 'src/context/BusinessContext'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useWeb3Context } from 'src/hooks/useWeb3Context'
-import { Translation, useLocales } from 'src/locales'
-import { ContractDetailsDrawer } from 'src/sections/@dashboard/contract/form'
+import { useLocales } from 'src/locales'
+import { ContractDetailsDrawer } from 'src/sections/@dashboard/contract/edit'
+import { ContractFundDrawer } from 'src/sections/@dashboard/contract/fund'
 import { getContractFromDraft, getPublishErrors } from 'src/utils/contracts'
 import { parseContractStatus } from 'src/utils/status'
 import { capitalizeFirstLetter } from 'src/utils/strings'
+import { getOrderedFromCells } from 'src/utils/table'
 
 type Props = {
-  row: any
+  row: DataTableRow
   rowProps: TableRowProps
   onDeleteRow: (id: string) => void
   currencyCode: string
@@ -61,22 +45,36 @@ export default function ContractTableRow({
   const duplicate = useModal()
   const approve = useModal()
   const approveWithWallet = useModal()
-  const withoutVerifiedWallet = useModal()
+  const fundWithWallet = useModal()
+  const withoutVerifiedWalletToApprove = useModal()
+  const withoutVerifiedWalletToFund = useModal()
   const details = useModal()
   const publish = useModal()
 
   const [draft, setDraft] = useState<IDraft | null>(null)
 
-  const [name, status, ltaName, countryName, numberOfSchools, budget] = row.cells.map(
-    (c: { value: any }) => c.value
+  const [name, status, ltaName, countryName, numberOfSchools, budget] = getOrderedFromCells(
+    ['name', 'status', 'ltaName', 'countryName', 'numberOfSchools', 'budget'],
+    row.cells
   )
   const parsedStatus = parseContractStatus(status)
-  const { canAdd, canEdit } = useAuthorization()
+  const { canAdd, canEdit, hasSomeRole } = useAuthorization()
   const canEditContract = canEdit(Views.contract) && parsedStatus === ContractStatus.Draft
   const canApproveContract = canEdit(Views.contract) && parsedStatus === ContractStatus.Sent
   const canApproveWithWalletContract =
-    canEdit(Views.contract) && parsedStatus === ContractStatus.Sent
+    hasSomeRole([
+      UserRoles.GIGA_ADMIN,
+      UserRoles.COUNTRY_SUPER_ADMIN,
+      UserRoles.ISP_CONTRACT_MANAGER
+    ]) && parsedStatus === ContractStatus.Sent
   const canAddContract = canAdd(Views.contract)
+  const canFundContractWithWallet =
+    hasSomeRole([
+      UserRoles.GIGA_ADMIN,
+      UserRoles.COUNTRY_ACCOUNTANT,
+      UserRoles.COUNTRY_SUPER_ADMIN
+    ]) &&
+    (parsedStatus === ContractStatus.Confirmed || parsedStatus === ContractStatus.Ongoing)
 
   const { user } = useAuthContext()
   const { account, error, resetError, signContract, connect } = useWeb3Context()
@@ -99,27 +97,22 @@ export default function ContractTableRow({
 
   const handleApproveWithWalletRow = async () => {
     approveWithWallet.close()
-
     if (user && user.walletAddress) {
-      /* user must have a verified wallet to sign with it */
       try {
         setUpdating(true)
-        await resetError()
-
+        resetError()
         if (!account) {
           await connect()
         }
-
         if (account?.toLocaleLowerCase() !== user.walletAddress.toLocaleLowerCase()) {
           pushWarning('push.approve_automatic_contract_invalid_wallet')
           setUpdating(false)
           return
         }
-
         const result = await signContract(row.id)
         if (result) {
           await approveContract(row.id)
-          await refetchContracts()
+          refetchContracts()
           pushSuccess('push.approve_contract')
         } else {
           console.error('error', error)
@@ -130,22 +123,21 @@ export default function ContractTableRow({
         pushError('push.approve_contract_error')
       }
       setUpdating(false)
-    } /* else: validated using modal withoutVerifiedWallet */
+    }
   }
 
   const handlePublish = async () => {
     publish.close()
     if (!draft) return pushError('push.published_contract_error')
     const newContract = getContractFromDraft(draft)
-    if (getPublishErrors(newContract).length === 0) {
-      try {
-        await publishContractDraft(newContract, draft.id)
-        await refetchContracts()
-        return pushSuccess('push.published_contract')
-      } catch (ex) {
-        return pushError('push.published_contract_error')
-      }
-    } else {
+    if (getPublishErrors(newContract).length !== 0)
+      return pushError('push.published_contract_error')
+
+    try {
+      await publishContractDraft(newContract, draft.id)
+      refetchContracts()
+      return pushSuccess('push.published_contract')
+    } catch (ex) {
       return pushError('push.published_contract_error')
     }
   }
@@ -169,32 +161,48 @@ export default function ContractTableRow({
   }
 
   const handleView = () =>
-    navigate(isAutomatic ? '/dashboard/automatic-contract/view' : '/dashboard/contract/view', {
-      state: { contractId: row.id, contractStatus: parsedStatus }
-    })
+    navigate(
+      isAutomatic
+        ? `/dashboard/automatic-contract/view/${parsedStatus}/${row.id}`
+        : `/dashboard/contract/view/${parsedStatus}/${row.id}`
+    )
 
-  const options: { icon: CarbonIconType; label: Translation; onClick: () => void }[] = [
+  const options: { icon: Icon; label: Translation; onClick: () => void }[] = [
     {
-      icon: View,
+      icon: ICONS.View,
       label: 'view_contract',
       onClick: handleView
     }
   ]
-  if (canAddContract) options.push({ icon: Replicate, label: 'duplicate', onClick: duplicate.open })
+  if (canAddContract)
+    options.push({ icon: ICONS.Duplicate, label: 'duplicate', onClick: duplicate.open })
   if (canEditContract && draft && getPublishErrors(getContractFromDraft(draft)).length === 0)
-    options.push({ icon: CheckmarkOutline, label: 'publish', onClick: publish.open })
+    options.push({ icon: ICONS.SuccessOutline, label: 'publish', onClick: publish.open })
   if (canEditContract) {
-    options.push({ icon: Edit, label: 'edit', onClick: details.open })
-    options.push({ icon: TrashCan, label: 'delete', onClick: confirm.open })
+    options.push({ icon: ICONS.Edit, label: 'edit', onClick: details.open })
+    options.push({ icon: ICONS.Delete, label: 'delete', onClick: confirm.open })
   }
   if (canApproveContract && !isAutomatic)
-    options.push({ icon: CheckmarkOutline, label: 'approve', onClick: approve.open })
+    options.push({ icon: ICONS.SuccessOutline, label: 'approve', onClick: approve.open })
 
   if (canApproveWithWalletContract && isAutomatic)
     options.push({
-      icon: CheckmarkOutline,
+      icon: ICONS.SuccessOutline,
       label: 'approve',
-      onClick: user && user.walletAddress ? approveWithWallet.open : withoutVerifiedWallet.open
+      onClick:
+        user && user.walletAddress && account
+          ? approveWithWallet.open
+          : withoutVerifiedWalletToApprove.open
+    })
+
+  if (canFundContractWithWallet && isAutomatic)
+    options.push({
+      icon: ICONS.Fund,
+      label: 'fund',
+      onClick:
+        user && user.walletAddress && account
+          ? fundWithWallet.open
+          : withoutVerifiedWalletToFund.open
     })
 
   return (
@@ -217,6 +225,7 @@ export default function ContractTableRow({
       <TableCell>
         {options.map((opt) => (
           <Button
+            style={{ margin: 0, padding: 0 }}
             key={name + opt.label}
             kind="ghost"
             onClick={opt.onClick}
@@ -234,6 +243,15 @@ export default function ContractTableRow({
             item={draft}
             open={details.value}
             onClose={details.close}
+          />
+        )}
+        {row && (
+          <ContractFundDrawer
+            id={row.id}
+            name={name}
+            budget={budget}
+            open={fundWithWallet.value}
+            onClose={fundWithWallet.close}
           />
         )}
         <Modal
@@ -267,12 +285,20 @@ export default function ContractTableRow({
           onRequestSubmit={handleApproveWithWalletRow}
         />
         <Modal
-          open={withoutVerifiedWallet.value}
-          modalLabel={translate('approve_contract_without_walllet.title')}
-          modalHeading={translate('approve_contract_without_walllet.content')}
+          open={withoutVerifiedWalletToApprove.value}
+          modalLabel={translate('without_walllet.title')}
+          modalHeading={translate('without_walllet.to_approve')}
           primaryButtonText={translate('close')}
-          onRequestClose={withoutVerifiedWallet.close}
-          onRequestSubmit={withoutVerifiedWallet.close}
+          onRequestClose={withoutVerifiedWalletToApprove.close}
+          onRequestSubmit={withoutVerifiedWalletToApprove.close}
+        />
+        <Modal
+          open={withoutVerifiedWalletToFund.value}
+          modalLabel={translate('without_walllet.title')}
+          modalHeading={translate('without_walllet.to_fund_contract')}
+          primaryButtonText={translate('close')}
+          onRequestClose={withoutVerifiedWalletToFund.close}
+          onRequestSubmit={withoutVerifiedWalletToFund.close}
         />
         <Modal
           open={duplicate.value}

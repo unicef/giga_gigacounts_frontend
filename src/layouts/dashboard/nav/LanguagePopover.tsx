@@ -1,14 +1,7 @@
-import { CaretDown } from '@carbon/icons-react'
-import {
-  // @ts-ignore
-  HeaderGlobalAction,
-  // @ts-ignore
-  MenuItem,
-  Popover,
-  PopoverContent
-} from '@carbon/react'
+import { HeaderGlobalAction, MenuItem, Popover, PopoverContent } from '@carbon/react'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
+import { ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
@@ -25,16 +18,24 @@ export default function LanguagePopover() {
           {capitalizeFirstLetter(currentLang.value)}
         </Typography>
         <HeaderGlobalAction
+          id="language-popover"
           aria-label={translate('change_lang')}
           isActive={popover.value}
           onClick={popover.toggle}
         >
-          <CaretDown />
+          <ICONS.CaretDown />
         </HeaderGlobalAction>
       </Stack>
       <PopoverContent>
         {allLangs.map((lang) => (
-          <MenuItem key={lang.value} onClick={() => onChangeLang(lang.value)} label={lang.label} />
+          <MenuItem
+            key={lang.value}
+            onClick={() => {
+              onChangeLang(lang.value)
+              popover.close()
+            }}
+            label={lang.label}
+          />
         ))}
       </PopoverContent>
     </Popover>

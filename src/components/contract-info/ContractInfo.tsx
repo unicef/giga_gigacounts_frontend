@@ -1,10 +1,10 @@
 import { Link } from '@carbon/react'
 import { CSSProperties } from 'react'
-import { STRING_DEFAULT } from 'src/constants/display-defaults'
+import { STRING_DEFAULT } from 'src/constants'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter, threeDots } from 'src/utils/strings'
-import { Stack } from '../stack'
-import { Typography } from '../typography'
+import { Stack } from 'src/components/stack'
+import { Typography } from 'src/components/typography'
 
 type Props = {
   title?: string

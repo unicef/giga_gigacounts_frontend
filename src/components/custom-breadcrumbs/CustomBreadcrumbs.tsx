@@ -1,11 +1,8 @@
-import {
-  // @ts-ignore
-  Breadcrumb,
-  Link
-} from '@carbon/react'
+import { Breadcrumb, Link } from '@carbon/react'
+import { useParams } from 'react-router'
 import { useRoutesCustom } from 'src/hooks/useRoutesCustom'
 import { useTheme } from 'src/theme'
-import { Stack } from '../stack'
+import { Stack } from 'src/components/stack'
 import LinkItem from './LinkItem'
 import { CustomBreadcrumbsProps } from './types'
 
@@ -16,21 +13,24 @@ export default function CustomBreadcrumbs({
   ...other
 }: CustomBreadcrumbsProps) {
   const { links } = useRoutesCustom()
-  const lastLink = links[links.length - 1]?.name ?? ''
+  const params = useParams()
   const { spacing } = useTheme()
+
+  const paramsLinks = Object.values(params).map((p) => ({ name: p }))
+  const allLinks = [...links, ...paramsLinks]
 
   return (
     <div style={{ paddingBlock: spacing.md }}>
       <Stack orientation="horizontal">
         <div style={{ flexGrow: 1 }}>
-          {links.length && (
-            <Breadcrumb {...other}>
-              {links.map((link) => (
+          {allLinks.length && (
+            <Breadcrumb noTrailingSlash {...other}>
+              {allLinks.map((link) => (
                 <LinkItem
                   key={link.name || ''}
                   link={link}
                   activeLast={activeLast}
-                  disabled={link.name === lastLink}
+                  disabled={!('href' in link)}
                 />
               ))}
             </Breadcrumb>

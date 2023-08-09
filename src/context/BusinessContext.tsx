@@ -1,24 +1,27 @@
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react'
 import { IContract, ICountry, ICurrency, IISP, ILta, INotification, ISchool } from 'src/@types'
-import { deleteContractDraft, getContracts } from 'src/api/contracts'
-import { getCountries, getCurrencies, getLtas } from 'src/api/createContract'
+import {
+  deleteContractDraft,
+  getContracts,
+  getCountries,
+  getCurrencies,
+  getLtas
+} from 'src/api/contracts'
 import { getIsp } from 'src/api/isp'
 import { discardNotification, getNotifications, readNotification } from 'src/api/notifications'
 import { getSchools } from 'src/api/school'
 import { useAuthContext } from 'src/auth/useAuthContext'
-import { DEFAULT_COUNTRY_CODE } from 'src/config-global'
-import { CURRENCIES_TYPES } from 'src/constants/currencies'
-import { ENV_SUPPORTED_NETWORK_ID } from 'src/constants/web3'
+import { DEFAULT_COUNTRY_CODE, CURRENCIES_TYPES, ENV_SUPPORTED_NETWORK_ID } from 'src/constants'
 import { parseContractStatus } from 'src/utils/status'
 
 const initialState: {
   currencies: ICurrency[]
   countries: ICountry[]
   internetProviders: IISP[]
-  contracts: IContract[]
+  contracts: IContract[] | null
   ltas: ILta[]
-  schools: ISchool[]
-  notifications: INotification[]
+  schools: ISchool[] | null
+  notifications: INotification[] | null
   refetchNotifications: () => void
   refetchContracts: () => void
   refetchSchools: (countryId: string) => Promise<ISchool[] | Error> | undefined
@@ -38,10 +41,10 @@ const initialState: {
   currencies: [],
   countries: [],
   internetProviders: [],
-  contracts: [],
+  contracts: null,
   ltas: [],
-  schools: [],
-  notifications: [],
+  schools: null,
+  notifications: null,
   refetchNotifications: () => {},
   refetchContracts: () => {},
   refetchSchools: (countryId: string) => new Promise(() => {}),
@@ -68,10 +71,10 @@ export const useBusinessContext = () => {
 export function BusinessProvider({ children }: { children: React.ReactNode }) {
   const [countries, setCountries] = useState<ICountry[]>([])
   const [internetProviders, setInternetProviders] = useState<IISP[]>([])
-  const [contracts, setContracts] = useState<IContract[]>([])
+  const [contracts, setContracts] = useState<IContract[] | null>(null)
   const [ltas, setLtas] = useState<ILta[]>([])
-  const [schools, setSchools] = useState<ISchool[]>([])
-  const [notifications, setNotifications] = useState<INotification[]>([])
+  const [schools, setSchools] = useState<ISchool[] | null>(null)
+  const [notifications, setNotifications] = useState<INotification[] | null>(null)
   const [currencies, setCurrencies] = useState<ICurrency[]>([])
   const { user, isAuthenticated, isAdmin } = useAuthContext()
 
@@ -96,7 +99,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         getContracts().then((response) => {
           if (response instanceof Error) throw response
           setContracts(
-            response.contracts.map((c) => ({
+            response.map((c) => ({
               ...c,
               status: parseContractStatus(c.status)
             }))
@@ -167,7 +170,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     getContracts().then((response) => {
       if (response instanceof Error) throw response
       setContracts(
-        response.contracts.map((c) => ({
+        response.map((c) => ({
           ...c,
           status: parseContractStatus(c.status)
         }))

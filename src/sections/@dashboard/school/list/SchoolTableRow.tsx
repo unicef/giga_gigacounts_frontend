@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react'
 
-import { TableCell, TableRow, TextInput } from '@carbon/react'
+import { DataTableRow, TableCell, TableRow, TextInput } from '@carbon/react'
 
 import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
 import TableSelectRow, {
   TableSelectRowProps
 } from '@carbon/react/lib/components/DataTable/TableSelectRow'
+import { getOrderedFromCells } from 'src/utils/table'
 
 type Props = {
-  row: any
+  row: DataTableRow
   selected: boolean
   rowProps: TableRowProps
   selectionProps: TableSelectRowProps
   onChangeBudget: (external_id: string, newBudget: string) => void
-  onSelectRow: (row: any) => void
 }
 
 export default function SchoolTableRow({
@@ -21,11 +21,14 @@ export default function SchoolTableRow({
   selected,
   rowProps,
   selectionProps,
-  onSelectRow,
   onChangeBudget
 }: Props) {
-  const [external_id, name, initialBudget] = row.cells.map((c: { value: any }) => c.value)
-  const [budget, setBudget] = useState(initialBudget)
+  const [external_id, name, initialBudget] = getOrderedFromCells(
+    ['external_id', 'name', 'budget'],
+    row.cells
+  )
+
+  const [budget, setBudget] = useState(initialBudget ?? 0)
 
   useEffect(() => {
     setBudget(initialBudget)
@@ -35,14 +38,7 @@ export default function SchoolTableRow({
 
   return (
     <TableRow {...rowProps}>
-      <TableSelectRow
-        {...selectionProps}
-        checked={selected}
-        onSelect={(e) => {
-          selectionProps.onSelect(e)
-          onSelectRow(row.id)
-        }}
-      />
+      <TableSelectRow {...selectionProps} />
       <TableCell>{external_id}</TableCell>
 
       <TableCell>{name}</TableCell>
@@ -56,9 +52,8 @@ export default function SchoolTableRow({
             type="number"
             value={budget}
             onChange={(e) => {
-              if (selected) {
-                setBudget(e.target.value)
-              }
+              if (selected) setBudget(e.target.value)
+
               if (Number(e.target.value) > 0) onChangeBudget(external_id, e.target.value)
             }}
           />

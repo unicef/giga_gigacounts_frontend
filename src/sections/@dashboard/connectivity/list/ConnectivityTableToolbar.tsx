@@ -1,81 +1,66 @@
-import { TableToolbarSearch } from '@carbon/react'
+import { Button, Popover, PopoverContent, TableToolbarSearch } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
-import { ConnectivityStatus } from 'src/@types'
+import { EducationLevel, MinMax } from 'src/@types'
+import { FILTER_ALL_DEFAULT, ICONS } from 'src/constants'
+import { useModal } from 'src/hooks/useModal'
+import { useLocales } from 'src/locales'
+import ConnectivityTableFilters from './ConnectivityTableFilters'
 
 type Props = {
-  setFilterStatus: Dispatch<SetStateAction<ConnectivityStatus | 'all'>>
+  filterBudget?: MinMax
+  setFilterBudget?: Dispatch<SetStateAction<MinMax>>
   setFilterSearch: Dispatch<SetStateAction<string>>
   setPage: Dispatch<SetStateAction<number>>
+  educationLevelOptions: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
+  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
+  setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
 }
 
 export default function ConnectivityTableToolbar({
-  setFilterStatus,
+  filterBudget,
+  setFilterBudget,
   setPage,
-  setFilterSearch
+  setFilterSearch,
+  educationLevelOptions,
+  filterEducationLevel,
+  setFilterEducationLevel
 }: Props) {
-  // const { translate } = useLocales()
-  // const popover = useModal()
-  // const statusOptions = ['all', ...Object.values(ConnectivityStatus)]
+  const { translate } = useLocales()
+  const popover = useModal()
 
   const handleFilterSearch = (value: string) => {
     setPage(1)
     setFilterSearch(value)
   }
 
-  // const handleResetFilter = () => {
-  //   popover.close()
-  //   setPage(1)
-  //   setFilterSearch('')
-  //   setFilterStatus('all')
-  // }
-
   return (
     <>
-      <TableToolbarSearch onChange={(e: any) => handleFilterSearch(e.target.value)} persistent />
-      {/* <Popover
-        open={popover.value}
-        isTabTip
-        onRequestClose={popover.close}
-        align="bottom-right"
-      >
+      <TableToolbarSearch
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFilterSearch(e.target.value)}
+      />
+
+      <Popover open={popover.value} isTabTip onRequestClose={popover.close} align="bottom-right">
         <Button
           kind="ghost"
-          onClick={popover.toggle()}
-          renderIcon={Filter}
-              tooltipPosition="bottom"
+          onClick={popover.toggle}
+          renderIcon={ICONS.Filter}
+          hasIconOnly
+          iconDescription={translate('filter')}
+          tooltipPosition="bottom"
           tooltipAlignment="end"
-
         />
         <PopoverContent>
-          <div style={{ padding: 16 }}>
-            <Stack orientation="vertical">
-              <Typography as="h6">{capitalizeFirstLetter(translate('status'))}</Typography>
-              <Stack orientation="horizontal">
-                {statusOptions.map((opt) => (
-                  <Tag
-                    key={opt}
-                    style={{ border: 'none' }}
-                    onClick={() => setFilterStatus(opt)}
-                    type={CONNECTIVITY_STATUS_COLORS[opt]}
-                  >
-                    {capitalizeFirstLetter(translate(opt as Translation))}
-                  </Tag>
-                ))}
-              </Stack>
-
-              <Stack orientation="horizontal">
-                <Button
-                  style={{ justifySelf: 'flex-end', alignSelf: 'center' }}
-                  kind="danger"
-                  onClick={handleResetFilter}
-                >
-                  {capitalizeFirstLetter(translate('clear'))}
-                </Button>
-              </Stack>
-            </Stack>
-          </div>
+          <ConnectivityTableFilters
+            closePopover={popover.close}
+            educationLevelOptions={educationLevelOptions}
+            filterEducationLevel={filterEducationLevel}
+            setFilterEducationLevel={setFilterEducationLevel}
+            filterBudget={filterBudget}
+            setFilterBudget={setFilterBudget}
+            setPage={setPage}
+          />
         </PopoverContent>
-      </Popover> */}
+      </Popover>
     </>
   )
 }
