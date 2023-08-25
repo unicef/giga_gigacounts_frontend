@@ -1,33 +1,21 @@
+import { IDashboardSchools } from 'src/@types'
 import { MiniList } from 'src/components/mini-list'
 import { WidgetWrapper } from 'src/components/widgets'
-import { ICONS } from 'src/constants'
-import { useBusinessContext } from 'src/context/BusinessContext'
 import { useLocales } from 'src/locales'
-import { useTheme } from 'src/theme'
 
-export function SchoolsIssuesWidget() {
+export function SchoolsIssuesWidget({ schools }: { schools?: IDashboardSchools[] }) {
   const { translate } = useLocales()
-  const { schools } = useBusinessContext() 
-  const { palette } = useTheme()
 
   const headers = [
     { label: `${translate('name')}`, key: 'name' },
     { label: translate('education_level'), key: 'education_level' }
   ] as const
 
-  const filteredSchools = schools
-
   return (
-    <WidgetWrapper
-      Icon={ICONS.Education}
-      iconColor={palette.error.main}
-      title="Schools with SLA issues"
-      width="33%"
-      height="50%"
-    >
+    <WidgetWrapper title={translate('widgets.school_issues.title')} width="100%" height="50dvh">
       <MiniList
-        noDataText="No schools have SLA issues"
-        data={filteredSchools?.sort((a, b) => a.name.localeCompare(b.name))}
+        noDataText={translate('widgets.school_issues.no_data')}
+        data={schools?.sort((a, b) => a.name.localeCompare(b.name))}
         headers={headers}
       />
     </WidgetWrapper>

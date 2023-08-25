@@ -3,7 +3,7 @@ import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
 import { useEffect, useState } from 'react'
 import { ISchoolContact, ISchoolMeasures } from 'src/@types'
 import { getSchoolMeasures } from 'src/api/school'
-import { ICONS } from 'src/constants'
+import { ICONS, STRING_DEFAULT } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import { capitalizeFirstLetter } from 'src/utils/strings'
@@ -31,20 +31,21 @@ export default function ConnectivityTableRow({
 }: Props) {
   const { translate } = useLocales()
   const [name, external_id] = getOrderedFromCells(['name', 'external_id'], row.cells)
-  const [measures, setMeasures] = useState<ISchoolMeasures[]>([])
+  const [measures, setMeasures] = useState<ISchoolMeasures[] | null>(null)
   const details = useModal()
 
   useEffect(() => {
     if (contractId)
-      getSchoolMeasures(row.id, contractId, 'day').then((res) => {
-        if (res instanceof Error) throw res
-        setMeasures(res)
-      })
+      getSchoolMeasures(row.id, contractId, 'day')
+        .then(setMeasures)
+        .catch(() => setMeasures([]))
   }, [contractId, row.id])
 
   const getMeasures = (measureName: 'Uptime' | 'Latency' | 'Download speed' | 'Upload speed') => {
+    if (!measures) return STRING_DEFAULT
     const measure = measures.find((m) => m.metric_name === measureName)
-    return `${measure?.median_value ?? ''} ${measure?.unit ?? ''}`
+    if (!measure || !measure.median_value || !measure.unit) return STRING_DEFAULT
+    return `${measure.median_value ?? ''} ${measure.unit ?? ''}`
   }
 
   return (
@@ -76,6 +77,8 @@ export default function ConnectivityTableRow({
       </TableCell>
       <TableCell>
         <ConnectivityDetailsDrawer
+          schoolId={external_id}
+          schoolName={name}
           expectedValues={expectedValues}
           contactInformation={contactInformation}
           measures={measures}

@@ -1,8 +1,8 @@
 // Full token list: https://github.com/carbon-design-system/carbon/blob/main/packages/themes/docs/sass.md#api
 @use '@carbon/styles/scss/config' with (
-  $use-flexbox-grid: true,
   $css--body: false
 );
+
 @use '@carbon/type/scss/scale';
 @use '@carbon/type/scss/styles' with (
   $body-compact-01: (
@@ -151,5 +151,7 @@ $white: themes.$light-theme;
 }
 :root {
   @include reset.reset($body-font-family: 'Open Sans');
-  background-color: common.$grey-200;
+}
+#root {
+  background-color: common.$grey-200 !important;
 }

@@ -5,8 +5,10 @@ import * as Yup from 'yup'
 import { IContractPayment, PaymentForm, PaymentStatus } from 'src/@types'
 import { useLocales } from 'src/locales'
 
+const MAX_AMOUNT = 1000000000000000000
+
 export const usePaymentSchema = (payment?: IContractPayment) => {
-  const { replaceTranslated } = useLocales()
+  const { replaceTranslated, replaceTwoTranslated } = useLocales()
 
   const getDefaultValues = (pendingPayment?: IContractPayment) => ({
     status: pendingPayment?.status ?? PaymentStatus.OnHold,
@@ -29,6 +31,16 @@ export const usePaymentSchema = (payment?: IContractPayment) => {
         .required(replaceTranslated('field_errors.required', '{{field}}', 'description')),
       amount: Yup.number()
         .min(0, replaceTranslated('field_errors.positive', '{{field}}', 'amount'))
+        .max(
+          MAX_AMOUNT,
+          replaceTwoTranslated(
+            'field_errors.less_than',
+            '{{field}}',
+            '{{number}}',
+            'amount',
+            MAX_AMOUNT
+          )
+        )
         .nullable()
         .transform((_, val) => (val ? Number(val) : null))
         .required(replaceTranslated('field_errors.required', '{{field}}', 'amount')),

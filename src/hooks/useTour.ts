@@ -23,6 +23,7 @@ export default function useTour(name: TourName) {
     locale: Object.fromEntries(
       Object.entries(locale).map(([key, value]) => [key, capitalizeFirstLetter(translate(value))])
     ),
-    disableBeacon: true
+    disableBeacon: true,
+    disableScrolling: true
   }))
 }

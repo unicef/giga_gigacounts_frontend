@@ -19,6 +19,6 @@ export const allLangs = [
     value: 'br',
     icon: '/assets/icons/flags/BR.svg'
   }
-]
+] as const
 
 export const defaultLang = allLangs[0]

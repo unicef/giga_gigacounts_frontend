@@ -1,5 +1,5 @@
-import { useFormContext, Controller } from 'react-hook-form'
 import { Checkbox } from '@carbon/react'
+import { Controller, useFormContext } from 'react-hook-form'
 
 interface RHFCheckboxProps {
   name: string

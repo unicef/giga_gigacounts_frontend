@@ -1,8 +1,11 @@
-import Joyride, { CallBackProps, STATUS } from 'react-joyride'
-import { useTheme } from 'src/theme'
-import useTour from 'src/hooks/useTour'
+import { useMemo } from 'react'
+import Joyride, { ACTIONS, CallBackProps, STATUS } from 'react-joyride'
 import { TourName } from 'src/@types'
 import { useSettingsContext } from 'src/components/settings'
+import { useNavbar } from 'src/context/layout/NavbarContext'
+import useTour from 'src/hooks/useTour'
+import { useLocales } from 'src/locales'
+import { useTheme } from 'src/theme'
 
 export interface CustomJoyrideProps {
   name: TourName
@@ -11,7 +14,16 @@ export interface CustomJoyrideProps {
 
 export default function CustomJoyride({ name, run = true }: CustomJoyrideProps) {
   const { tours, completeTour } = useSettingsContext()
-  const isActive = tours[name]
+  const { setExpanded } = useNavbar()
+  const {
+    currentLang: { value }
+  } = useLocales()
+
+  const isActive = useMemo(
+    () => (name !== 'home' ? tours[name] : tours[`home_${value}`]),
+    [name, tours, value]
+  )
+
   const steps = useTour(name)
 
   const { palette } = useTheme('g90')
@@ -29,7 +41,12 @@ export default function CustomJoyride({ name, run = true }: CustomJoyrideProps) 
   }
 
   const handleFinish = (data: CallBackProps) => {
-    if (data.status === STATUS.FINISHED || data.status === STATUS.SKIPPED) completeTour(name)
+    if (data.status === STATUS.FINISHED || data.status === STATUS.SKIPPED)
+      completeTour(name !== 'home' ? name : `home_${value}`)
+
+    if (data.action === ACTIONS.START && name === 'home' && setExpanded) {
+      setExpanded(true)
+    }
   }
 
   return (

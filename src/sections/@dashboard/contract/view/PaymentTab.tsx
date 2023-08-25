@@ -23,7 +23,7 @@ export default function PaymentTab({ contract }: { contract: ContractDetails }) 
   })
 
   const paymentFrequency = contract.isContract ? contract.frequency.name : 'Monthly'
-  const [tableData, setTableData] = useState<IContractPayment[]>([])
+  const [tableData, setTableData] = useState<IContractPayment[] | null>(null)
   const [filterName, setFilterName] = useState('')
   const [filterStatus, setFilterStatus] = useState<PaymentStatus | typeof FILTER_ALL_DEFAULT>(
     FILTER_ALL_DEFAULT
@@ -57,43 +57,56 @@ export default function PaymentTab({ contract }: { contract: ContractDetails }) 
 
   useEffect(() => {
     if (canAddPayment) {
-      getContractAvailablePayments(contract.id).then((res) => {
-        if (!(res instanceof Array)) return
-        setAvailablePayments(res)
-      })
+      getContractAvailablePayments(contract.id)
+        .then(setAvailablePayments)
+        .catch(() => setAvailablePayments(null))
     }
   }, [contract.id, canAddPayment])
 
   const refetchPayments = () => {
     getContractPayments(contract.id).then(setTableData)
     if (canAddPayment) {
-      getContractAvailablePayments(contract.id).then((res) => {
-        if (!(res instanceof Array)) return
-        setAvailablePayments(res as { month: number; year: number }[])
-      })
+      getContractAvailablePayments(contract.id)
+        .then(setAvailablePayments)
+        .catch(() => setAvailablePayments(null))
     }
   }
 
   useEffect(() => {
-    getContractPayments(contract.id).then(setTableData)
+    getContractPayments(contract.id)
+      .then(setTableData)
+      .catch(() => setTableData([]))
   }, [contract.id])
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    filterName,
-    filterStatus
-  })
+  const dataFiltered = tableData
+    ? applyFilter({
+        inputData: tableData,
+        filterName,
+        filterStatus
+      })
+    : null
 
-  const isNotFound = !dataFiltered.length
+  const isNotFound = Boolean(dataFiltered && !dataFiltered.length)
 
-  const downloadableData = tableData.map((payment) => ({
-    'Payment number': payment.id,
-    'Contract name': contract.name,
-    'Amount': payment.amount,
-    'Date from': payment.dateFrom,
-    'Date to': payment.dateTo,
-    'Status': payment.status
-  }))
+  const downloadableData = tableData
+    ? tableData.map((payment) => ({
+        'Payment number': payment.id,
+        'Contract name': contract.name,
+        'Amount': payment.amount,
+        'Date from': payment.dateFrom,
+        'Date to': payment.dateTo,
+        'Status': payment.status
+      }))
+    : [
+        {
+          'Payment number': '',
+          'Contract name': '',
+          'Amount': '',
+          'Date from': '',
+          'Date to': '',
+          'Status': ''
+        }
+      ]
 
   return (
     <>
@@ -123,9 +136,10 @@ export default function PaymentTab({ contract }: { contract: ContractDetails }) 
           payment: row,
           currency: contract.currency,
           contractAutomatic: contract.automatic,
+          contractStatus: status,
           refetchPayments,
           contractNumberOfSchools: contract.schools.length,
-          contractFrequency: contract.frequency?.name
+          contractFrequency: contract.frequency?.name ?? 'Monthly'
         })}
         ToolbarContent={
           <PaymentTableToolbar

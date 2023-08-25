@@ -1,4 +1,10 @@
-import { ConnectivityStatus, ContractStatus, NotificationStatus, PaymentStatus } from 'src/@types'
+import {
+  ConnectivityStatus,
+  ContractStatus,
+  NotificationStatus,
+  PaymentStatus,
+  StatusParseError
+} from 'src/@types'
 
 const isString = (value: unknown): value is string => {
   if (typeof value === 'string' || value instanceof String) return true
@@ -26,21 +32,21 @@ const isNotificationStatus = (value: unknown): value is NotificationStatus => {
 
 const parseContractStatus = (value: unknown) => {
   if (isContractStatus(value)) return value
-  throw new Error(`${value} is not a valid contract status`)
+  throw new StatusParseError(value, 'is not a valid contract status')
 }
 const parsePaymentStatus = (value: unknown) => {
   if (isPaymentStatus(value)) return value
-  throw new Error(`${value} is not a valid payment status`)
+  throw new StatusParseError(value, 'is not a valid payment status')
 }
 
 const parseConnectivityStatus = (value: unknown) => {
   if (isConnectivityStatus(value)) return value
-  throw new Error(`${value} is not a valid connectivity status`)
+  throw new StatusParseError(value, 'is not a valid connectivity status')
 }
 
 const parseNotificationStatus = (value: unknown) => {
   if (isNotificationStatus(value)) return value
-  throw new Error(`${value} is not a valid notification status`)
+  throw new StatusParseError(value, 'is not a valid notification status')
 }
 
 export { parseConnectivityStatus, parseContractStatus, parseNotificationStatus, parsePaymentStatus }

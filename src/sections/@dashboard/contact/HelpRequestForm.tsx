@@ -1,5 +1,6 @@
 import { Button, TextArea } from '@carbon/react'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import {
   HelpRequestForm as HelpRequestFormType,
   HelpRequestFunctionality,
@@ -17,11 +18,13 @@ import { Stack } from 'src/components/stack'
 import { ICONS } from 'src/constants'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
+import { redirectOnError } from 'src/pages/errors/handlers'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 import { useHelpRequestSchema } from 'src/validations/help-request'
 
 export default function HelpRequestForm() {
+  const navigate = useNavigate()
   const { translate } = useLocales()
   const { spacing } = useTheme()
   const { pushSuccess, pushError } = useSnackbar()
@@ -34,8 +37,14 @@ export default function HelpRequestForm() {
   const [selectedType, setSelectedTyp] = useState('display')
 
   useEffect(() => {
-    getHelpRequestFunctionalities().then(setPossibleFunctionalities)
-    getHelpRequestPossibleValues().then(setPossibleValues)
+    getHelpRequestFunctionalities()
+      .then(setPossibleFunctionalities)
+      .catch((err) => redirectOnError(err, navigate))
+    getHelpRequestPossibleValues()
+      .then(setPossibleValues)
+      .catch((err) => redirectOnError(err, navigate))
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const methods = useHelpRequestSchema()

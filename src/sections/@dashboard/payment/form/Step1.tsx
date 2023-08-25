@@ -1,26 +1,26 @@
-import { FileUploaderDropContainer } from '@carbon/react'
 import { months } from 'moment'
-import { useState } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { Translation } from 'src/@types'
 import { IFileUpload, IFrequency } from 'src/@types/general'
-import { AttachmentsList } from 'src/components/attachment-list/'
 import { UploadError } from 'src/components/errors/'
 import { RHFSelect, RHFTextField } from 'src/components/hook-form'
 import { Stack } from 'src/components/stack'
 import { SectionTitle, Typography } from 'src/components/typography'
+import { UploadBox } from 'src/components/upload-box'
 import { STRING_DEFAULT } from 'src/constants'
-import { Translation } from 'src/@types'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/strings'
 
 type Step1Props = {
   fields: {
-    invoice: IFileUpload | null
-    receipt: IFileUpload | null
+    invoice: (IFileUpload & { status: 'uploading' | 'edit' | 'complete' }) | null
+    receipt: (IFileUpload & { status: 'uploading' | 'edit' | 'complete' }) | null
   }
   paymentFrequency: IFrequency['name']
-  uploadAttachment: (attachment: IFileUpload, key: 'invoice' | 'receipt') => void
+  uploadAttachment: (
+    attachment: IFileUpload & { status: 'uploading' | 'edit' | 'complete' },
+    key: 'invoice' | 'receipt'
+  ) => void
   invoiceUploadError: Translation | ''
   receiptUploadError: Translation | ''
   setUploadErrorMessage: (message: Translation, key: 'invoice' | 'receipt') => void
@@ -40,24 +40,20 @@ export default function Step1({
 }: Step1Props) {
   const { translate } = useLocales()
   const { spacing } = useTheme()
-  const [reading, setReading] = useState(false)
-
-  const { getValues } = useFormContext()
 
   const handleDrop = (acceptedFiles: File[], key: 'invoice' | 'receipt'): void => {
-    setReading(true)
     if (acceptedFiles.length > 1) return setUploadErrorMessage('upload_errors.one_file', key)
     const pdf = acceptedFiles[0]
     if (pdf.name.split('.').pop() !== 'pdf') return setUploadErrorMessage('upload_errors.pdf', key)
     const reader = new FileReader()
-    reader.onloadend = () => setReading(false)
     reader.onload = () => {
-      const fileUpload: IFileUpload = {
+      const fileUpload = {
         name: pdf.name,
         typeId: '',
         type: key,
-        file: reader.result
-      }
+        file: reader.result,
+        status: 'uploading'
+      } as const
       uploadAttachment(fileUpload, key)
     }
     reader.onerror = () => {
@@ -85,10 +81,11 @@ export default function Step1({
           type="string"
           name="currency"
           value={currencyCode}
-          disabled
+          readOnly
           labelText={capitalizeFirstLetter(translate('currency'))}
         />
         <RHFTextField
+          readOnly
           id="amount"
           type="number"
           name="amount"
@@ -108,16 +105,12 @@ export default function Step1({
               translate(uncapitalizeFirstLetter(paymentFrequency ?? STRING_DEFAULT) as Translation)
             )
           }}
-          disabled
+          readOnly
           label={capitalizeFirstLetter(`${translate('payment_frequency')}`)}
           options={[]}
         />
         <RHFSelect
           style={{ width: '50%' }}
-          selectedItem={{
-            value: getValues('payment'),
-            label: getPaymentLabel(getValues('payment'))
-          }}
           id="payment period select"
           disabled={availablePayments.length <= 1}
           name="payment"
@@ -136,42 +129,25 @@ export default function Step1({
           {translate('find_the_invoice')}
         </Typography>
         <UploadError message={invoiceUploadError} />
-        <AttachmentsList
-          status={reading ? 'uploading' : 'complete'}
+        <UploadBox
+          maxSizeMb={20}
+          accept={['.pdf']}
+          handleUpload={(files) => handleDrop(files, 'invoice')}
+          labelText={translate('drag_and_drop_pdf_singular')}
           attachments={fields.invoice ? [fields.invoice] : []}
         />
-        <FileUploaderDropContainer
-          status={reading ? 'uploading' : 'edit'}
-          style={{
-            marginInline: 'auto',
-            marginBlock: spacing.md,
-            maxWidth: '100%'
-          }}
-          multiple={false}
-          onAddFiles={(e: any) => handleDrop(e.target.files[0], 'invoice')}
-          labelText={translate('drag_and_drop_pdf_singular')}
-          accept={['.pdf']}
-        />
+
         <Typography as="h5">{capitalizeFirstLetter(translate('receipt'))}</Typography>
         <Typography as="h6" variant="textSecondary">
           {translate('find_the_receipt')}
         </Typography>
         <UploadError message={receiptUploadError} />
-        <AttachmentsList
-          status={reading ? 'uploading' : 'complete'}
-          attachments={fields.receipt ? [fields.receipt] : []}
-        />
-        <FileUploaderDropContainer
-          status={reading ? 'uploading' : 'edit'}
-          style={{
-            marginInline: 'auto',
-            marginBlock: spacing.md,
-            maxWidth: '100%'
-          }}
-          multiple={false}
-          onAddFiles={(e: any) => handleDrop(e.target.files[0], 'receipt')}
-          labelText={translate('drag_and_drop_pdf_singular')}
+        <UploadBox
+          maxSizeMb={20}
           accept={['.pdf']}
+          handleUpload={(files) => handleDrop(files, 'receipt')}
+          labelText={translate('drag_and_drop_pdf_singular')}
+          attachments={fields.receipt ? [fields.receipt] : []}
         />
       </Stack>
     </>

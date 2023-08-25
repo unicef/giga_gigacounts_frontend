@@ -18,14 +18,14 @@ export const ONBOARD_TOUR_STEPS: Record<
       target: '#notifications-popover'
     },
     {
-      content: 'onboard_steps.home.feedback_link',
-      placement: 'bottom-end',
-      target: '#feedback-link'
-    },
-    {
       content: 'onboard_steps.home.language_popover',
       placement: 'bottom-end',
       target: '#language-popover'
+    },
+    {
+      content: 'onboard_steps.home.feedback_link',
+      placement: 'top',
+      target: '#feedback-link'
     }
     // {
     //   content: 'Here you can connect your wallet for the payment of automatic contracts',
@@ -49,21 +49,39 @@ export const ONBOARD_TOUR_STEPS: Record<
     // }
   ],
   contracts: [
-    // {
-    //   content:
-    //     'To create a contract you must complete the following 4 modules, Add contract details, add budgets and schools, add contract terms, review and save',
-    //   placement: 'bottom-end',
-    //   target: '#new-contract'
-    // },
-    // {
-    //   content: 'Here you can apply certain filters',
-    //   placement: 'bottom-end',
-    //   target: '#filter'
-    // },
+    {
+      content: 'onboard_steps.contracts.new_contract',
+      placement: 'bottom',
+      target: '#new-contract'
+    },
+    {
+      content: 'onboard_steps.contracts.filter',
+      placement: 'bottom',
+      target: '#contract-filter'
+    },
     {
       content: 'onboard_steps.contracts.table_container',
-      placement: 'bottom-end',
+      placement: 'top',
       target: '#contracts-table-container'
+    }
+  ],
+  profile: [
+    {
+      content: 'onboard_steps.profile.wallet',
+      placement: 'left',
+      target: '#connect-wallet'
+    }
+  ],
+  contract_detail: [
+    {
+      content: 'onboard_steps.contract_detail.schools',
+      placement: 'bottom',
+      target: '#schools-tab'
+    },
+    {
+      content: 'onboard_steps.contract_detail.payment',
+      placement: 'bottom',
+      target: '#payment-tab'
     }
   ]
 }

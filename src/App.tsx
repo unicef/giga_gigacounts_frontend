@@ -8,6 +8,7 @@ import './app.scss'
 // lazy image
 import 'react-lazy-load-image-component/src/effects/blur.css'
 
+import { MsalProvider } from '@azure/msal-react'
 import { HelmetProvider } from 'react-helmet-async'
 import { Provider as ReduxProvider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
@@ -24,33 +25,34 @@ import { SettingsProvider } from './components/settings'
 import SnackbarProvider from './components/snackbar'
 
 import { AuthProvider } from './auth/JwtContext'
-import { BusinessProvider } from './context/BusinessContext'
+import msalInstance from './auth/msal'
+import { BusinessProvider } from './context/business/BusinessContext'
 
 export default function App() {
   return (
-    <AuthProvider>
-      <HelmetProvider>
-        <ReduxProvider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            {/* <LocalizationProvider dateAdapter={AdapterDateFns}> */}
-            <SettingsProvider>
-              <BusinessProvider>
-                <BrowserRouter>
-                  <ScrollToTop />
-                  <ThemeProvider>
-                    {/* <ThemeLocalization> */}
-                    <SnackbarProvider>
-                      <Router />
-                    </SnackbarProvider>
-                    {/* </ThemeLocalization> */}
-                  </ThemeProvider>
-                </BrowserRouter>
-              </BusinessProvider>
-            </SettingsProvider>
-            {/* </LocalizationProvider> */}
-          </PersistGate>
-        </ReduxProvider>
-      </HelmetProvider>
-    </AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <HelmetProvider>
+            <ReduxProvider store={store}>
+              <PersistGate loading={null} persistor={persistor}>
+                {/* <LocalizationProvider dateAdapter={AdapterDateFns}> */}
+                <SettingsProvider>
+                  <BusinessProvider>
+                    <ScrollToTop />
+                    <ThemeProvider>
+                      {/* <ThemeLocalization> */}
+                      <SnackbarProvider>
+                        <Router />
+                      </SnackbarProvider>
+                      {/* </ThemeLocalization> */}
+                    </ThemeProvider>
+                  </BusinessProvider>
+                </SettingsProvider>
+                {/* </LocalizationProvider> */}
+              </PersistGate>
+            </ReduxProvider>
+          </HelmetProvider>
+        </AuthProvider>
+      </BrowserRouter>
   )
 }

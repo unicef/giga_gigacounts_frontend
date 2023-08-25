@@ -52,7 +52,7 @@ export default function SchoolReliabilityTableFilters({
       : []
 
   const handleResetFilter = () => {
-    setFilterCountry(user?.country.name)
+    setFilterCountry(user?.country.name ?? '')
     setFilterSearch('')
     setFilterEducationLevel(FILTER_ALL_DEFAULT)
     setPage(1)

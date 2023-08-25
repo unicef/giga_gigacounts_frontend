@@ -1,13 +1,17 @@
-import { FlexGrid, InlineNotification, TextArea } from '@carbon/react'
+import { Button, InlineNotification, TextArea } from '@carbon/react'
 import { ContractDetails } from 'src/@types'
 import { ContractInfo } from 'src/components/contract-info'
 import { ComparingCard } from 'src/components/qos-card'
 import { Stack } from 'src/components/stack'
 import { SectionTitle, Typography } from 'src/components/typography'
-import { STRING_DEFAULT } from 'src/constants'
+import { UserList } from 'src/components/user'
+import { ICONS, STRING_DEFAULT } from 'src/constants'
+import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
+import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { formatDate } from 'src/utils/date'
+import { capitalizeFirstLetter } from '../../../../utils/strings'
 
 type Props = {
   contract: ContractDetails
@@ -16,12 +20,14 @@ type Props = {
 export default function OverviewTab({ contract, expectedValues }: Props) {
   const { translate } = useLocales()
   const { spacing } = useTheme()
+  const { copy } = useCopyToClipboard()
+  const { pushInfo } = useSnackbar()
+
   const {
     name,
     startDate,
     endDate,
     country,
-    lta,
     id,
     budget,
     launchDate,
@@ -53,6 +59,24 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
 
   return (
     <>
+      <Stack
+        orientation="horizontal"
+        style={{ width: '100%' }}
+        alignItems="center"
+        justifyContent="flex-end"
+      >
+        <Button
+          renderIcon={ICONS.Copy}
+          size="sm"
+          kind="tertiary"
+          onClick={() => {
+            copy(window.location.toString())
+            pushInfo('copied_link')
+          }}
+        >
+          {capitalizeFirstLetter(translate('share_contract_details'))}
+        </Button>
+      </Stack>
       <SectionTitle label="contract_details" />
       {contract.automatic && (
         <InlineNotification
@@ -61,6 +85,7 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
           lowContrast
         />
       )}
+
       <Stack orientation="horizontal" style={{ width: '100%' }} gap={spacing.xl}>
         <Stack
           style={{ width: '330px' }}
@@ -75,13 +100,13 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
           />
           <ContractInfo
             style={{ padding: spacing.xs }}
-            title={translate('internet_provider')}
-            value={contract.isContract ? contract.isp : contract.isp?.name ?? STRING_DEFAULT}
+            title={translate('start_date')}
+            value={startDate ? formatDate(startDate) : STRING_DEFAULT}
           />
           <ContractInfo
             style={{ padding: spacing.xs }}
-            title={translate('start_date')}
-            value={startDate ? formatDate(startDate) : STRING_DEFAULT}
+            title={translate('internet_provider')}
+            value={contract.isContract ? contract.isp : contract.isp?.name ?? STRING_DEFAULT}
           />
         </Stack>
         <Stack
@@ -95,11 +120,7 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
             title={translate('contract_id')}
             value={id}
           />
-          <ContractInfo
-            style={{ padding: spacing.xs }}
-            title="ISP contact person"
-            value="Joe johnsons"
-          />
+
           <ContractInfo
             style={{ padding: spacing.xs }}
             title={translate('end_date')}
@@ -117,11 +138,7 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
             title={translate('country')}
             value={country?.name ?? STRING_DEFAULT}
           />
-          <ContractInfo
-            style={{ padding: spacing.xs }}
-            title={translate('lta')}
-            value={lta?.name ?? STRING_DEFAULT}
-          />
+
           <ContractInfo
             style={{ padding: spacing.xs }}
             title={translate('launch_date')}
@@ -160,53 +177,58 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
           />
         </Stack>
       </Stack>
+      <SectionTitle label="isp_contacts" />
+      <UserList users={contract.ispContacts} />
       <SectionTitle label="contract_team" />
-      <Typography as="h4">{translate('no_comments_added')}</Typography>
+      <UserList users={contract.stakeholders} />
+
       <SectionTitle label="schools_and_budget" />
-      <FlexGrid narrow className="remove-gutters-2-columns" orientation="horizontal">
-        <Stack gap={spacing.md}>
-          <Stack
-            orientation="horizontal"
-            gap={spacing.md}
-            justifyContent="flex-start"
-            alignItems="center"
-          >
-            <ContractInfo
-              style={{ width: '330px' }}
-              title={translate('budget')}
-              value={Number(budget) ? `${currency?.code ?? ''} ${budget}` : STRING_DEFAULT}
-            />
-            <ContractInfo
-              style={{ width: '330px' }}
-              title={translate('schools')}
-              value={
-                schools.length > 0
-                  ? `${String(schools.length)} ${translate('schools')}`
-                  : STRING_DEFAULT
-              }
-            />
-          </Stack>
+      <Stack gap={spacing.md}>
+        <Stack
+          orientation="horizontal"
+          gap={spacing.md}
+          justifyContent="flex-start"
+          alignItems="center"
+        >
+          <ContractInfo
+            style={{ width: '330px' }}
+            title={translate('budget')}
+            value={Number(budget) ? `${currency?.code ?? ''} ${budget}` : STRING_DEFAULT}
+          />
+          <ContractInfo
+            style={{ width: '330px' }}
+            title={translate('schools')}
+            value={
+              schools.length > 0
+                ? `${String(schools.length)} ${translate('schools')}`
+                : STRING_DEFAULT
+            }
+          />
         </Stack>
-      </FlexGrid>
+      </Stack>
       <SectionTitle label="comment_section.title" />
       {notes ? (
-        <TextArea value={notes} disabled labelText="" rows={4} maxCount={1000} enableCounter />
+        <TextArea value={notes} readOnly labelText="" rows={4} maxCount={1000} enableCounter />
       ) : (
-        <Typography as="h4">{translate('no_comments_added')}</Typography>
+        <Typography as="span" variant="disabled">
+          {translate('no_comments_added')}
+        </Typography>
       )}
 
       <SectionTitle label="breaking_rules" />
       {breakingRules ? (
         <TextArea
           value={breakingRules}
-          disabled
+          readOnly
           labelText=""
           rows={4}
           maxCount={1000}
           enableCounter
         />
       ) : (
-        <Typography as="h4">{translate('no_breaking_rules')}</Typography>
+        <Typography as="span" variant="disabled">
+          {translate('no_breaking_rules')}
+        </Typography>
       )}
     </>
   )

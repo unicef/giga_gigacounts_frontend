@@ -3,16 +3,16 @@ import { ContractDetails, IBlockchainTransaction, Web3TransactionStatus } from '
 import { getBlockchainTransactions } from 'src/api/blockchainTransactions'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { useTable } from 'src/components/table'
+import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants'
 import { useLocales } from 'src/locales'
 import {
   TransactionTableRow,
   TransactionTableToolbar
 } from 'src/sections/@dashboard/transactions/list'
-import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants'
 
 export default function Web3TransactionsTab({ contract }: { contract: ContractDetails }) {
   const { page, rowsPerPage, setPage, setRowsPerPage } = useTable({})
-  const [tableData, setTableData] = useState<IBlockchainTransaction[]>([])
+  const [tableData, setTableData] = useState<IBlockchainTransaction[] | null>(null)
   const [filterName, setFilterName] = useState('')
   const [filterStatus, setFilterStatus] = useState<
     Web3TransactionStatus | typeof FILTER_ALL_DEFAULT
@@ -31,16 +31,20 @@ export default function Web3TransactionsTab({ contract }: { contract: ContractDe
   ]
 
   useEffect(() => {
-    getBlockchainTransactions(contract.id).then(setTableData)
+    getBlockchainTransactions(contract.id)
+      .then(setTableData)
+      .catch(() => setTableData([]))
   }, [contract.id])
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    filterName,
-    filterStatus
-  })
+  const dataFiltered = tableData
+    ? applyFilter({
+        inputData: tableData,
+        filterName,
+        filterStatus
+      })
+    : null
 
-  const isNotFound = !dataFiltered.length
+  const isNotFound = Boolean(dataFiltered && !dataFiltered.length)
 
   return (
     <CustomDataTable

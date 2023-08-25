@@ -8,7 +8,7 @@ import FormProvider from 'src/components/hook-form/FormProvider'
 import { Stack } from 'src/components/stack'
 import { SectionTitle } from 'src/components/typography'
 import { ICONS } from 'src/constants'
-import { useBusinessContext } from 'src/context/BusinessContext'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useWeb3Context } from 'src/hooks/useWeb3Context'
 import { useLocales } from 'src/locales'
@@ -98,7 +98,7 @@ export function ContractFundDrawer({ id, name, budget, open, onClose }: Props) {
           const tokenBalance = balances.find(
             (item) => item.name.toLocaleLowerCase() === currencyData.code.toLocaleLowerCase()
           )
-          if (tokenBalance && parseFloat(tokenBalance.value) < budget) {
+          if (tokenBalance && parseFloat(tokenBalance.value) < data.amount) {
             pushWarning('push.fund_automatic_contract_low_balance')
             setUpdating(false)
             return false
@@ -167,14 +167,14 @@ export function ContractFundDrawer({ id, name, budget, open, onClose }: Props) {
                   id="budget"
                   type="number"
                   name="budget"
-                  disabled
+                  readOnly
                   labelText={translate('fund_automatic_contract.contract_budget')}
                 />
                 <RHFTextField
                   id="balance"
                   type="number"
                   name="balance"
-                  disabled
+                  readOnly
                   labelText={translate('fund_automatic_contract.contract_current_balance')}
                 />
               </Stack>

@@ -3,18 +3,20 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
 
 import localStorageAvailable from 'src/utils/localStorageAvailable'
-import { defaultLang } from './config-lang'
+import { allLangs, defaultLang } from './config-lang'
+import brLocales from './langs/br'
 import enLocales from './langs/en'
 import esLocales from './langs/es'
 import frLocales from './langs/fr'
-import brLocales from './langs/br'
 
-let lng = defaultLang.value
+type Lang = (typeof allLangs)[number]['value']
+
+let lng: Lang = defaultLang.value
 
 const storageAvailable = localStorageAvailable()
 
 if (storageAvailable) {
-  lng = localStorage.getItem('i18nextLng') || defaultLang.value
+  lng = (localStorage.getItem('i18nextLng') || defaultLang.value) as Lang
 }
 
 i18n

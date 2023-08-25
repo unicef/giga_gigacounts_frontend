@@ -57,7 +57,6 @@ REACT_APP_WALLET_CONNECT_PROJECT_ID=(Project id defined in https://cloud.walletc
 REACT_APP_NETWORK_ID=80001
 REACT_APP_NODE_PROVIDER_URL=https://polygon-mumbai.g.alchemy.com/v2/
 REACT_APP_NODE_PROVIDER_KEY=NODE_PROVIDER_API_KEY
-REACT_APP_GIGACOUNTS_OWNER_ADR=
 REACT_APP_GIGACOUNTS_TOKEN_ADR=
 REACT_APP_GIGACOUNTS_CONTRACTS_HANDLER_ADR=
 ```
@@ -70,7 +69,6 @@ Some Variable description:
 - REACT_APP_KNOWLEDGE_BASE_URL: External Knowledge Base URL
 - REACT_APP_WALLET_CONNECT_PROJECT_ID: Is used to connect wallet with Wallet Connect Protocol
 - REACT_APP_NETWORK_ID: Is a property of the chain managed by the node. e.g (Polygon Mumbai Testnet = 80001)
-- REACT_APP_GIGACOUNTS_OWNER_ADR=Deployer Owner
 - REACT_APP_GIGACOUNTS_TOKEN_ADR: Smart Contract address of Gigacounts Tokens
 - REACT_APP_GIGACOUNTS_CONTRACTS_HANDLER_ADR: Smart contract address of Gigacounts Contracts Handler
 ## Start app

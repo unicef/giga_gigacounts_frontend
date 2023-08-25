@@ -131,7 +131,7 @@ export default function AccountCryptoUserWallet() {
       resetError()
       const result = await verifyWallet()
       if (user && result) {
-        user.walletAddress = account
+        user.walletAddress = account ?? null
         setWrongAddress(false)
         setHasAttachedWallet(true)
         setIsVerified(true)
@@ -167,7 +167,8 @@ export default function AccountCryptoUserWallet() {
       orientation="vertical"
       style={{
         width: '100%',
-        backgroundColor: palette.background.neutral,
+        height: '100%',
+        backgroundColor: palette.background.default,
         paddingInline: spacing.xl,
         paddingBlock: spacing.lg
       }}
@@ -238,7 +239,12 @@ export default function AccountCryptoUserWallet() {
       {automaticContracts && (
         <Stack orientation="horizontal" gap={spacing.md}>
           {!wallet && canEdit(Views.wallet) && (
-            <Button disabled={updating} renderIcon={ICONS.Add} onClick={() => connectWallet()}>
+            <Button
+              id="connect-wallet"
+              disabled={updating}
+              renderIcon={ICONS.Add}
+              onClick={() => connectWallet()}
+            >
               {translate('wallet.connect')}
             </Button>
           )}

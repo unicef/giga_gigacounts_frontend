@@ -1,4 +1,3 @@
-import { useFormContext } from 'react-hook-form'
 import { ContractDetails, PaymentStatus } from 'src/@types'
 import { RHFSelect } from 'src/components/hook-form'
 import { InfoToggletip } from 'src/components/info-toggletip'
@@ -18,7 +17,6 @@ type Step2Props = {
 export default function Step2({ contract }: Step2Props) {
   const { translate } = useLocales()
   const { spacing } = useTheme()
-  const { getValues } = useFormContext()
 
   const expectedMetrics = ['Uptime', 'Upload speed', 'Latency', 'Download speed'].map((name) =>
     contract && contract.isContract
@@ -81,23 +79,18 @@ export default function Step2({ contract }: Step2Props) {
             expectedValue={Number(expectedMetrics[3]?.value ?? null)}
           />
         </Stack>
-        <SectionHeading heading="set_payment_status" />
-        <RHFSelect
-          selectedItem={{
-            value: getValues('status'),
-            label: capitalizeFirstLetter(
-              translate(`constant_status.payment.${getValues('status') as PaymentStatus}`)
-            )
-          }}
-          id="payment status select"
-          name="status"
-          label={capitalizeFirstLetter(`${translate('payment_status')}`)}
-          options={Object.values(PaymentStatus).map((p) => ({
-            value: p,
-            label: capitalizeFirstLetter(translate(`constant_status.payment.${p}`))
-          }))}
-        />
       </Stack>
+      <SectionHeading heading="set_payment_status" />
+      <RHFSelect
+        direction="top"
+        id="payment status select"
+        name="status"
+        label={capitalizeFirstLetter(`${translate('payment_status')}`)}
+        options={Object.values(PaymentStatus).map((p) => ({
+          value: p,
+          label: capitalizeFirstLetter(translate(`constant_status.payment.${p}`))
+        }))}
+      />
     </Stack>
   )
 }

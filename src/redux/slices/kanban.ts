@@ -2,7 +2,7 @@ import { createSlice, Dispatch } from '@reduxjs/toolkit'
 import keyBy from 'lodash/keyBy'
 import omit from 'lodash/omit'
 
-import axios from 'src/utils/axios'
+import axios from 'src/api/init'
 
 import { IKanbanCard, IKanbanColumn, IKanbanState } from 'src/@types'
 

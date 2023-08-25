@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router'
@@ -7,13 +8,14 @@ import CustomJoyride from 'src/components/custom-joyride'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { useTable } from 'src/components/table'
 import { FILTER_ALL_DEFAULT, ICONS, KEY_DEFAULTS, Views } from 'src/constants'
-import { useBusinessContext } from 'src/context/BusinessContext'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
 import { ContractDetailsDrawer } from 'src/sections/@dashboard/contract/edit/ContractDetailsDrawer'
 import { ContractTableRow, ContractTableToolbar } from 'src/sections/@dashboard/contract/list'
+import { removeDuplicates } from 'src/utils/arrays'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 
 export default function ContractsListPage({ automatic }: { automatic: boolean }) {
@@ -33,9 +35,9 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
   const [filterStatus, setFilterStatus] = useState<ContractStatus | typeof FILTER_ALL_DEFAULT>(
     FILTER_ALL_DEFAULT
   )
-  const [filterBudget, setFilterBudget] = useState<MinMax>({ min: '', max: '' })
-  const [filterSchools, setFilterSchools] = useState<MinMax>({ min: '', max: '' })
-
+  const [filterBudget, setFilterBudget] = useState<MinMax<string>>({ min: '', max: '' })
+  const [filterSchools, setFilterSchools] = useState<MinMax<string>>({ min: '', max: '' })
+  const [filterDates, setFilterDates] = useState<MinMax<string>>({ min: '', max: '' })
   const details = useModal(state?.new ?? false)
 
   const contractsFiltered = contracts
@@ -44,7 +46,6 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
           .filter((c) => c.automatic === automatic)
           .map((c) => ({
             ...c,
-            ltaName: c.lta?.name ?? '',
             countryName: c.country?.name ?? ''
           })),
         filterSearch,
@@ -53,9 +54,10 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
         filterIsp,
         filterBudget,
         filterSchools,
+        filterDates,
         translate
       })
-    : []
+    : null
 
   useEffect(() => {
     if (state?.new !== undefined) details.set(state.new)
@@ -65,7 +67,6 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
   const TABLE_HEAD = [
     { key: 'name', header: `${translate('name')} + ID` },
     { key: 'status', header: translate('status') },
-    { key: 'ltaName', header: translate('lta_name') },
     { key: 'countryName', header: translate('country') },
     { key: 'numberOfSchools', header: translate('number_of_schools') },
     { key: 'budget', header: translate('budget') },
@@ -73,18 +74,20 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
     { key: KEY_DEFAULTS[1], header: '' }
   ]
 
-  const regionOptions = Array.from(
-    new Set([
-      FILTER_ALL_DEFAULT,
-      ...contractsFiltered.map((r) => r.country?.name ?? FILTER_ALL_DEFAULT)
-    ])
-  )
-  const ispOptions = Array.from(
-    new Set([FILTER_ALL_DEFAULT, ...contractsFiltered.map((r) => r.isp ?? FILTER_ALL_DEFAULT)])
-  )
+  const regionOptions = contracts
+    ? removeDuplicates([
+        FILTER_ALL_DEFAULT,
+        ...contracts.map((r) => r.country?.name ?? FILTER_ALL_DEFAULT)
+      ])
+    : []
+  const ispOptions = contracts
+    ? removeDuplicates([FILTER_ALL_DEFAULT, ...contracts.map((r) => r.isp ?? FILTER_ALL_DEFAULT)])
+    : []
 
-  const dataInPage = contractsFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-  const isNotFound = !contractsFiltered.length
+  const dataInPage = contractsFiltered
+    ? contractsFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    : []
+  const isNotFound = Boolean(contractsFiltered && !contractsFiltered.length)
 
   const handleDeleteRow = (id: string) => {
     deleteContract(id)
@@ -125,8 +128,10 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
             filterRegion={filterRegion}
             filterBudget={filterBudget}
             filterSchools={filterSchools}
+            filterDates={filterDates}
             regionOptions={regionOptions}
             ispOptions={ispOptions}
+            setFilterDates={setFilterDates}
             setFilterBudget={setFilterBudget}
             setFilterRegion={setFilterRegion}
             setFilterIsp={setFilterIsp}
@@ -151,6 +156,7 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
             ? [
                 {
                   kind: 'primary',
+                  id: 'new-contract',
                   onClick: details.open,
                   renderIcon: ICONS.Add,
                   label: capitalizeFirstLetter(translate('contract'))
@@ -177,20 +183,22 @@ function applyFilter({
   filterBudget,
   filterIsp,
   filterSchools,
+  filterDates,
   translate
 }: {
-  inputData: Array<IContract & { ltaName: string; countryName: string }>
+  inputData: Array<IContract & { countryName: string }>
   filterSearch: string
   filterStatus: ContractStatus | typeof FILTER_ALL_DEFAULT
   filterRegion: string
   filterIsp: string
-  filterBudget: MinMax
-  filterSchools: MinMax
+  filterBudget: MinMax<string>
+  filterSchools: MinMax<string>
+  filterDates: MinMax<string>
   translate: ReturnType<typeof useLocales>['translate']
 }) {
   if (filterSearch)
-    inputData = inputData.filter(({ country, name, isp, status, lta, id }) => {
-      const flatContract = { country: country?.name, name, isp, status, id, lta: lta?.name ?? '' }
+    inputData = inputData.filter(({ country, name, isp, status, id }) => {
+      const flatContract = { country: country?.name, name, isp, status, id }
       const translatedKeys = ['status']
       return Object.entries(flatContract).some(([key, value]) => {
         if (translatedKeys.includes(key))
@@ -240,6 +248,25 @@ function applyFilter({
   else if (filterSchools.max)
     inputData = inputData.filter(
       (contract) => Number(contract.numberOfSchools) <= Number(filterSchools.max)
+    )
+
+  if (
+    filterDates.min &&
+    filterDates.max &&
+    moment(filterDates.min).isBefore(moment(filterDates.max))
+  )
+    inputData = inputData.filter(
+      (contract) =>
+        moment(filterDates.min).isBefore(moment(contract.start_date)) &&
+        moment(filterDates.max).isAfter(moment(contract.end_date))
+    )
+  else if (filterDates.min)
+    inputData = inputData.filter((contract) =>
+      moment(filterDates.min).isBefore(moment(contract.start_date))
+    )
+  else if (filterDates.max)
+    inputData = inputData.filter((contract) =>
+      moment(filterDates.max).isAfter(moment(contract.end_date))
     )
 
   return inputData

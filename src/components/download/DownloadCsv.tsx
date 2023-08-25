@@ -1,11 +1,15 @@
-import { Button, Link } from '@carbon/react'
+import { Button, ButtonKind, Link } from '@carbon/react'
 import { ICONS } from 'src/constants'
+import { useSnackbar } from 'src/hooks/useSnackbar'
+import { useLocales } from 'src/locales'
+import { capitalizeFirstLetter } from 'src/utils/strings'
 
 type Props<T extends Record<string, string | number>> = {
   type: 'button' | 'link'
+  buttonKind?: ButtonKind
   data: T[]
   fileName: string
-  label: string
+  label?: string
   order?: string[]
 }
 
@@ -14,8 +18,11 @@ export default function DownloadCsv<T extends Record<string, string | number>>({
   data,
   fileName,
   label,
+  buttonKind,
   order
 }: Props<T>) {
+  const { pushInfo } = useSnackbar()
+  const { translate } = useLocales()
   const download = () => {
     if (data.length === 0) return
     const keys = order || Object.keys(data[0])
@@ -42,11 +49,18 @@ export default function DownloadCsv<T extends Record<string, string | number>>({
       URL.revokeObjectURL(link.href)
       link.parentNode?.removeChild(link)
     }, 0)
+    pushInfo('the_file_is_downloading')
   }
 
   const types: { [K in typeof type]: JSX.Element } = {
     button: (
-      <Button renderIcon={ICONS.Download} onClick={download}>
+      <Button
+        kind={buttonKind}
+        hasIconOnly={!label}
+        iconDescription={!label ? capitalizeFirstLetter(translate('download')) : ''}
+        renderIcon={ICONS.Download}
+        onClick={download}
+      >
         {label}
       </Button>
     ),

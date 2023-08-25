@@ -2,13 +2,10 @@ import moment from 'moment'
 import { IContractPayment, PaymentStatus } from 'src/@types'
 import { MiniList } from 'src/components/mini-list'
 import { WidgetWrapper } from 'src/components/widgets'
-import { ICONS } from 'src/constants'
 import { useLocales } from 'src/locales'
-import { useTheme } from 'src/theme'
 
 export default function OverduePaymentsWidget({ payments }: { payments?: IContractPayment[] }) {
   const { translate } = useLocales()
-  const { palette } = useTheme()
 
   const headers = [
     { label: `${translate('payment')} #`, key: 'id' },
@@ -23,15 +20,9 @@ export default function OverduePaymentsWidget({ payments }: { payments?: IContra
   )
 
   return (
-    <WidgetWrapper
-      Icon={ICONS.Payment}
-      iconColor={palette.error.main}
-      title="Overdue payments"
-      width="33%"
-      height="50%"
-    >
+    <WidgetWrapper title={translate('widgets.overdue_payment.title')} width="100%" height="50dvh">
       <MiniList
-        noDataText="No overdue payments"
+        noDataText={translate('widgets.overdue_payment.no_data')}
         data={filteredPayments?.sort((a, b) => Number(a.id) - Number(b.id))}
         headers={headers}
       />

@@ -9,11 +9,8 @@ export const getSchools = async (countryId?: string): Promise<ISchool[]> => {
       countryId
     }
   })
-  if (response.status === 200) {
-    return response.data
-  }
 
-  throw new Error('Failed to get the schools')
+  return response.data
 }
 
 export const getSchoolMeasures = async (

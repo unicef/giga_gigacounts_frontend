@@ -7,10 +7,10 @@ import {
   SkipToContent,
   Theme
 } from '@carbon/react'
-import { Dispatch, SetStateAction } from 'react'
 import { useNavigate } from 'react-router'
 import { Typography } from 'src/components/typography'
 import { ICONS } from 'src/constants'
+import { useNavbar } from 'src/context/layout/NavbarContext'
 import { useLocales } from 'src/locales'
 import { ROUTES } from 'src/routes/paths'
 import { useTheme } from 'src/theme'
@@ -18,26 +18,21 @@ import LanguagePopover from './LanguagePopover'
 import NavBar from './NavBar'
 import NotificationPopover from './NotificationPopover'
 
-export default function Header({
-  isSideNavExpanded,
-  setIsSideNavExpanded
-}: {
-  isSideNavExpanded: boolean
-  setIsSideNavExpanded: Dispatch<SetStateAction<boolean>>
-}) {
+export default function Header() {
   const navigate = useNavigate()
   const { translate } = useLocales()
   const { spacing } = useTheme()
+  const { expanded, setExpanded } = useNavbar()
 
   return (
     <CarbonHeader aria-label="header" style={{ zIndex: 1, paddingRight: spacing.xl }}>
       <SkipToContent />
       <HeaderMenuButton
         isCollapsible
-        aria-label={isSideNavExpanded ? 'Close menu' : 'Open menu'}
-        isActive={isSideNavExpanded}
-        onClick={() => setIsSideNavExpanded((prev) => !prev)}
-        aria-expanded={isSideNavExpanded}
+        aria-label={expanded ? 'Close menu' : 'Open menu'}
+        isActive={expanded}
+        onClick={() => (setExpanded ? setExpanded((prev) => !prev) : null)}
+        aria-expanded={expanded}
       />
       <HeaderName
         style={{ cursor: 'pointer' }}
@@ -50,12 +45,7 @@ export default function Header({
       </HeaderName>
       <HeaderGlobalBar>
         <LanguagePopover />
-        <Typography
-          onClick={() => navigate(ROUTES.dashboard.contact.helpRequest.route)}
-          style={{ alignSelf: 'center', padding: spacing.xs }}
-        >
-          {translate('functionalities.help_request')}
-        </Typography>
+
         <HeaderGlobalAction
           id="help-request-link"
           onClick={() => navigate(ROUTES.dashboard.contact.helpRequest.route)}
@@ -66,7 +56,7 @@ export default function Header({
         <NotificationPopover />
       </HeaderGlobalBar>
       <Theme theme="white">
-        <NavBar expanded={isSideNavExpanded} setExpanded={setIsSideNavExpanded} />
+        <NavBar />
       </Theme>
     </CarbonHeader>
   )

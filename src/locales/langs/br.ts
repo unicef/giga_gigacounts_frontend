@@ -121,7 +121,9 @@ const br: TranslationObject = {
     approve_payment: 'O pagamento foi aprovado',
     approve_payment_error: 'Ocorreu um erro aprovando o pagamento',
     reject_payment: 'O pagamento foi rejeitado',
-    reject_payment_error: 'Ocorreu um erro rejeitando o pagamento'
+    reject_payment_error: 'Ocorreu um erro rejeitando o pagamento',
+    pay_payment: 'O pagamento foi marcado como pago',
+    pay_payment_error: 'Ocorreu um erro marcando o pagamento conforme pago'
   },
   duplicate_contract: {
     title: 'Duplicar contrato',
@@ -185,6 +187,11 @@ const br: TranslationObject = {
   publish_contract_modal: {
     title: 'Você está prestes a publicar o contrato.',
     content: 'Tem certeza de que deseja publicar este contrato?'
+  },
+  payment_pay_modal: {
+    title: 'Marque o pagamento conforme pago',
+    content:
+      'Tem certeza de que deseja marcar esse pagamento conforme pago? Essa mudança não pode ser desfeita.'
   },
   contract_draft_modal: {
     title:
@@ -304,9 +311,9 @@ const br: TranslationObject = {
   add_the_terms_agreed: 'Add the terms agreed upon between you and the ISP in the contract.',
   contract_breaking_rules: 'regras de quebra de contrato',
   add_rules_and_guidelines:
-    'Adicione regras e diretrizes a seguir para quando os ISPs não atendem aos termos do contrato.',
+    'Adicione regras e diretrizes a seguir quando os ISPs não cumprem os termos do contrato.',
   payment_settings: 'Configurações de pagamento',
-  add_payment_intervals: 'Adicione intervalos de pagamento para este contrato.',
+  add_payment_frequency: 'Adicione a frequência de pagamento para este contrato.',
   payment_interval: 'Intervalo de pagamento',
   add_contract_terms: 'Adicionar termos de contrato',
   review_and_save: 'Revise e salve',
@@ -375,6 +382,7 @@ const br: TranslationObject = {
   item_by_roles: `item por funções`,
   only_admin_can_see_this_item: `Only admin can see this item`,
   dashboard: 'dashboard',
+  search_country: 'Pesquisar países para mostrar dados',
   users: 'usuários',
   settings: 'configurações',
   account_settings: 'configurações de conta',
@@ -837,7 +845,7 @@ const br: TranslationObject = {
   schools_connected_out_of: 'escolas conectadas de',
   during: 'durante',
   web3_transcations: 'Transações Automáticas',
-  search_isp_contacts: 'Encontre contatos do ISP',
+  search_isp_contacts: 'Selecione contatos do ISP',
   search_contract_team: 'Encontre membros da equipe de contrato disponível',
   onboard_steps: {
     home: {
@@ -847,7 +855,16 @@ const br: TranslationObject = {
       language_popover: 'Aqui você pode selecionar o idioma do aplicativo'
     },
     contracts: {
+      new_contract: 'Este é o botão para criar um novo contrato',
+      filter: 'Aqui você pode aplicar certos filtros',
       table_container: 'Aqui você pode ver os contratos que você pode administrar'
+    },
+    profile: {
+      wallet: 'Aqui você pode conectar sua carteira para o pagamento de contratos automáticos'
+    },
+    contract_detail: {
+      schools: 'Aqui você pode ver a lista de escolas e monitorar o status de sua conectividade',
+      payment: 'Aqui você pode exportar as faturas e adicioná -las'
     }
   },
   next: 'seguindo',
@@ -878,10 +895,75 @@ const br: TranslationObject = {
     secondary: 'Secundário'
   },
   payment_receiver_warning:
-    'O usuário selecionado não possui uma carteira configurada. Eles não poderão receber pagamentos automáticos até configurarem uma em seu perfil.',
+    'O usuário selecionado não possui uma carteira configurada. Ele não poderá receber pagamentos automáticos até que configure um em seu perfil.',
   payment_details: 'Detalhes do pagamento',
   no_wallet_address: 'Sem endereço da carteira',
-  isp_contacts: 'Contatos do ISP'
+  isp_contacts: 'Contatos do ISP',
+  school: 'escola',
+  name_spaces_error: 'O nome não pode conter espaços',
+  budget_exceeds_max_error: 'O orçamento total nas escolas deve ser igual ao orçamento do contrato',
+  uploaded: 'carregado',
+  added_as_contact: 'adicionado como contato',
+  added_as_team_member: 'adicionado como membro da equipe',
+  failed_to_upload: 'não poderia ser carregado',
+  failed_to_add_as_contact: 'não foi possível adicionar como contato',
+  failed_to_add_as_team_member: 'não foi possível adicionar como membro da equipe',
+  file_container_label_accept: 'Os tipos de arquivos compatíveis são {{accept}}',
+  file_container_label_size: 'O tamanho máximo do arquivo é {{size}}mb.',
+  page_error: {
+    403: {
+      title: 'Sem permissão',
+      content:
+        'A página à qual foi tentada acessar tem acesso restrito. Consulte o administrador do seu sistema.'
+    },
+    404: {
+      title: 'Página não encontrada',
+      content:
+        'Sentimos isso, não conseguimos encontrar a página que você está procurando. Verifique se o URL está correto'
+    },
+    500: {
+      title: 'Erro do Servidor Interno',
+      content: 'Houve um erro. Por favor tente novamente mais tarde.'
+    },
+    generic: {
+      title: 'Parece que houve um erro',
+      content: 'Algo deu errado processando sua solicitação. Por favor, tente novamente.'
+    }
+  },
+  widgets: {
+    map: {
+      title: 'Mapa escolar',
+      average_latency: 'Latência média',
+      average_uptime: 'Tempo médio de atividade',
+      average_download_speed: 'Velocidade média de download',
+      average_upload_speed: 'Velocidade média de upload',
+      you_are_here: 'Você está aqui'
+    },
+    contract_issues: {
+      title: 'Contratos com problemas de SLA',
+      no_data: 'Nenhum contrato tem problemas de SLA'
+    },
+    take_action: {
+      title: 'Ações que exigem atenção',
+      no_data: 'Não há medidas para tomar'
+    },
+    school_issues: {
+      title: 'Escolas com problemas de SLA',
+      no_data: 'Nenhuma escola tem problemas de SLA'
+    },
+    upcoming_payments: {
+      title: 'Próximos pagamentos',
+      no_data: 'Sem pagamentos próximos'
+    },
+    overdue_payment: {
+      title: 'Pagamentos atrasados',
+      no_data: 'Sem pagamentos atrasados'
+    }
+  },
+  the_file_is_downloading: 'o arquivo está baixando',
+  copied_link: 'Link copiado',
+  share_contract_details: 'Compartilhar detalhes do contrato',
+  contract_dates: 'Datas do contrato'
 }
 
 export default br

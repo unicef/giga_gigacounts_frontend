@@ -13,7 +13,6 @@ import { getOrderedFromCells } from 'src/utils/table'
 
 type Props = {
   row: DataTableRow
-  status: string
   rowProps: TableRowProps
   selectionProps: TableSelectRowProps
   handleReadRow: (id: string) => void

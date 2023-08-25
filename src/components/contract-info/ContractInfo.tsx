@@ -42,13 +42,8 @@ export default function ContractInfo({
     return ''
   }
   return (
-    <Stack orientation="vertical" gap={spacing.md}>
-      <Stack
-        alignItems="flex-start"
-        justifyContent="flex-start"
-        orientation="vertical"
-        style={style}
-      >
+    <Stack orientation="vertical" gap={spacing.md} style={style}>
+      <Stack alignItems="flex-start" justifyContent="flex-start" orientation="vertical">
         <Typography as="p" variant="disabled" style={{ wordBreak: 'break-all' }}>
           {getTitle()}
         </Typography>

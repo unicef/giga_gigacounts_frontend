@@ -3,42 +3,37 @@ import instance from './init'
 
 const ENDPOINT_URL = '/payment'
 
-export const createPayment = async <T>(payment: IPaymentForm) => {
-  const response = await instance.post<T>(ENDPOINT_URL, {
+export const createPayment = async (payment: IPaymentForm) => {
+  const response = await instance.post(ENDPOINT_URL, {
     ...payment
   })
-  if (response.status === 200) return response.data
-  throw new Error('Failed to create a payment')
+  return response.data
 }
 
 export const getContractPayments = async (contractId: string) => {
   const response = await instance.get<IContractPayment[]>(`${ENDPOINT_URL}/contract/${contractId}`)
-  if (response.status === 200) return response.data
-  throw new Error('Failed to get contract payments')
+  return response.data
 }
 
-export const updatePayment = async <T>(paymentId: string, payment: Partial<IPaymentForm>) => {
-  const response = await instance.put<T>(ENDPOINT_URL, { paymentId, ...payment })
-  if (response.status === 200) return response.data
-  throw new Error('Failed to update payment')
+export const updatePayment = async (paymentId: string, payment: Partial<IPaymentForm>) => {
+  const response = await instance.put(ENDPOINT_URL, { paymentId, ...payment })
+  return response.data
 }
 
-export const changePaymentStatus = async <T>(paymentId: string, status: PaymentStatus) => {
-  const response = await instance.post<T>(`${ENDPOINT_URL}/change-status`, { paymentId, status })
-  if (response.status === 200) return response.data
-  throw new Error('Failed to update payment')
+export const changePaymentStatus = async (paymentId: string, status: PaymentStatus) => {
+  const response = await instance.post(`${ENDPOINT_URL}/change-status`, { paymentId, status })
+  return response.data
 }
 
-export const getPayments = async () => {
+export const getPayments = async (countryId?: string) => {
   const response = await instance.get<
     (IContractPayment & {
       contractName: string
       contractId: string
       contractNumberOfSchools: number
     })[]
-  >(ENDPOINT_URL)
-  if (response.status === 200) return response.data
-  throw new Error('Failed to get payments')
+  >(ENDPOINT_URL, { params: { countryId } })
+  return response.data
 }
 
 export const getFrequencies = async (): Promise<IFrequency[]> => {

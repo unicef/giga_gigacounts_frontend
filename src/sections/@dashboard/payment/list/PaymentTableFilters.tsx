@@ -1,12 +1,12 @@
-import { Button, Tag } from '@carbon/react'
-import { Dispatch, SetStateAction } from 'react'
-import { PaymentStatus } from 'src/@types'
-import { Stack } from 'src/components/stack'
-import { PopoverTitle } from 'src/components/typography'
-import { FILTER_ALL_DEFAULT, PAYMENT_STATUS_COLORS } from 'src/constants'
-import { useLocales } from 'src/locales'
-import { useTheme } from 'src/theme'
-import { capitalizeFirstLetter } from 'src/utils/strings'
+import { Button, Tag } from '@carbon/react';
+import { Dispatch, SetStateAction } from 'react';
+import { PaymentStatus } from 'src/@types';
+import { Stack } from 'src/components/stack';
+import { PopoverTitle } from 'src/components/typography';
+import { FILTER_ALL_DEFAULT, PAYMENT_STATUS_COLORS } from 'src/constants';
+import { useLocales } from 'src/locales';
+import { useTheme } from 'src/theme';
+import { capitalizeFirstLetter } from 'src/utils/strings';
 
 type Props = {
   closePopover: () => void
@@ -33,7 +33,7 @@ export default function PaymentTableFilters({
     setFilterStatus(FILTER_ALL_DEFAULT)
   }
 
-  const handleFilterStatus = (status: PaymentStatus | typeof FILTER_ALL_DEFAULT) => () => {
+  const handleFilterStatus = (status: PaymentStatus | typeof FILTER_ALL_DEFAULT) =>  {
     setPage(1)
     setFilterStatus(status)
   }

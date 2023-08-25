@@ -1,24 +1,27 @@
-import { Button, Dropdown, Tag, TextInput } from '@carbon/react'
+import { Button, DatePicker, DatePickerInput, Dropdown, Tag, TextInput } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
 import { ContractStatus, MinMax } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { PopoverTitle } from 'src/components/typography'
-import { FILTER_ALL_DEFAULT, CONTRACT_STATUS_COLORS } from 'src/constants'
+import { CONTRACT_STATUS_COLORS, FILTER_ALL_DEFAULT } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
+import { formatDate } from 'src/utils/date'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 
 type Props = {
   filterRegion: string
   filterIsp: string
-  filterBudget: MinMax
-  filterSchools: MinMax
+  filterBudget: MinMax<string>
+  filterSchools: MinMax<string>
+  filterDates: MinMax<string>
   setFilterStatus: Dispatch<SetStateAction<ContractStatus | typeof FILTER_ALL_DEFAULT>>
   setFilterSearch: Dispatch<SetStateAction<string>>
   setFilterRegion: Dispatch<SetStateAction<string>>
   setFilterIsp: Dispatch<SetStateAction<string>>
-  setFilterSchools: Dispatch<SetStateAction<MinMax>>
-  setFilterBudget: Dispatch<SetStateAction<MinMax>>
+  setFilterSchools: Dispatch<SetStateAction<MinMax<string>>>
+  setFilterBudget: Dispatch<SetStateAction<MinMax<string>>>
+  setFilterDates: Dispatch<SetStateAction<MinMax<string>>>
   setPage: Dispatch<SetStateAction<number>>
   regionOptions: string[]
   ispOptions: string[]
@@ -39,6 +42,8 @@ export default function ContractTableFilters({
   filterIsp,
   filterSchools,
   filterBudget,
+  filterDates,
+  setFilterDates,
   setFilterSearch,
   closePopover
 }: Props) {
@@ -67,6 +72,10 @@ export default function ContractTableFilters({
 
   const handleFilterStatus = (status: ContractStatus | typeof FILTER_ALL_DEFAULT) =>
     handleFilter(() => setFilterStatus(status))
+  const handleFilterDates = (dates: Date[]) =>
+    handleFilter(() =>
+      setFilterDates({ min: dates.at(0)?.toString() ?? '', max: dates.at(1)?.toString() ?? '' })
+    )
 
   const handleResetFilter = () => {
     closePopover()
@@ -77,6 +86,7 @@ export default function ContractTableFilters({
     setFilterStatus(FILTER_ALL_DEFAULT)
     setFilterBudget({ min: '', max: '' })
     setFilterSchools({ min: '', max: '' })
+    setFilterDates({ min: '', max: '' })
   }
   return (
     <Stack style={{ padding: spacing.md }} orientation="vertical">
@@ -184,6 +194,21 @@ export default function ContractTableFilters({
           }}
         />
       </Stack>
+      <PopoverTitle title="contract_dates" />
+      <DatePicker allowInput={false} onChange={handleFilterDates} datePickerType="range">
+        <DatePickerInput
+          value={formatDate(filterDates.min, '/')}
+          placeholder="yyyy/mm/dd"
+          labelText={translate('start_date')}
+          id="contract-start-date-filter"
+        />
+        <DatePickerInput
+          value={formatDate(filterDates.max, '/')}
+          placeholder="yyyy/mm/dd"
+          labelText={translate('end_date')}
+          id="contract-end-date-filter"
+        />
+      </DatePicker>
 
       <Button
         size="sm"

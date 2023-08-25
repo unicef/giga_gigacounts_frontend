@@ -4,7 +4,8 @@ import {
   HeaderGlobalAction,
   Popover,
   PopoverContent,
-  Tag
+  Tag,
+  Theme
 } from '@carbon/react'
 import { groupBy } from 'lodash'
 import moment from 'moment'
@@ -14,7 +15,7 @@ import { INotification, NotificationStatus, Translation } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
 import { ICONS, NOTIFICATION_STATUS_COLORS } from 'src/constants'
-import { useBusinessContext } from 'src/context/BusinessContext'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import { ROUTES } from 'src/routes/paths'
@@ -26,7 +27,7 @@ import { capitalizeFirstLetter, threeDots } from 'src/utils/strings'
 export default function NotificationsPanel() {
   const { translate } = useLocales()
   const navigate = useNavigate()
-  const { spacing, palette } = useTheme('g90')
+  const { spacing, palette } = useTheme('white')
   const popover = useModal()
 
   const { notifications, refetchNotifications, readManyNotifications } = useBusinessContext()
@@ -67,9 +68,6 @@ export default function NotificationsPanel() {
   return (
     <Popover isTabTip onRequestClose={popover.close} open={popover.value} align="bottom-right">
       <Stack orientation="horizontal">
-        <Typography onClick={popover.toggle} style={{ alignSelf: 'center', padding: spacing.xs }}>
-          {translate('notifications')}
-        </Typography>
         <HeaderGlobalAction
           id="notifications-popover"
           tooltipAlignment="end"
@@ -80,56 +78,59 @@ export default function NotificationsPanel() {
           {hasUnreadNotifications ? <ICONS.NotificationNew /> : <ICONS.Notification />}
         </HeaderGlobalAction>
       </Stack>
+
       <PopoverContent>
-        <div
-          style={{
-            paddingTop: spacing.md,
-            paddingInline: spacing.md,
-            height: '500px',
-            width: '500px',
-            overflow: 'scroll'
-          }}
-        >
-          <Stack alignItems="center" justifyContent="space-between" orientation="horizontal">
-            <Typography as="span">{translate('notifications')}</Typography>
-            {hasNotifications && (
-              <Button size="sm" kind="ghost" onClick={handleMarkAllAsRead}>
-                {capitalizeFirstLetter(translate('notifications_popover.dismiss_all'))}
-              </Button>
-            )}
-          </Stack>
-          {Object.entries(notificationsByDay).map(([key, value]) => (
-            <NotificationList
-              key={key}
-              list={value}
-              title={getListTitle(key)}
-              handleClosePopover={popover.close}
-            />
-          ))}
-          {hasNotifications ? (
-            <Stack
-              style={{
-                width: '100%',
-                minHeight: '10%',
-                bottom: 0,
-                backgroundColor: palette.background.default,
-                paddingBlock: spacing.sm,
-                position: 'sticky'
-              }}
-              alignItems="flex-end"
-              justifyContent="flex-end"
-              orientation="horizontal"
-            >
-              <Button renderIcon={ICONS.Continue} kind="ghost" onClick={handleViewAll}>
-                {capitalizeFirstLetter(translate('notifications_popover.view_all'))}
-              </Button>
+        <Theme theme="white">
+          <div
+            style={{
+              paddingTop: spacing.md,
+              paddingInline: spacing.md,
+              height: '500px',
+              width: '500px',
+              overflow: 'scroll'
+            }}
+          >
+            <Stack alignItems="center" justifyContent="space-between" orientation="horizontal">
+              <Typography as="span">{translate('notifications')}</Typography>
+              {hasNotifications && (
+                <Button size="sm" kind="ghost" onClick={handleMarkAllAsRead}>
+                  {capitalizeFirstLetter(translate('notifications_popover.dismiss_all'))}
+                </Button>
+              )}
             </Stack>
-          ) : (
-            <Typography style={{ marginBlock: spacing.lg }}>
-              {translate('notifications_popover.empty')}
-            </Typography>
-          )}
-        </div>
+            {Object.entries(notificationsByDay).map(([key, value]) => (
+              <NotificationList
+                key={key}
+                list={value}
+                title={getListTitle(key)}
+                handleClosePopover={popover.close}
+              />
+            ))}
+            {hasNotifications ? (
+              <Stack
+                style={{
+                  width: '100%',
+                  minHeight: '10%',
+                  bottom: 0,
+                  backgroundColor: palette.background.default,
+                  paddingBlock: spacing.sm,
+                  position: 'sticky'
+                }}
+                alignItems="flex-end"
+                justifyContent="flex-end"
+                orientation="horizontal"
+              >
+                <Button renderIcon={ICONS.Continue} kind="ghost" onClick={handleViewAll}>
+                  {capitalizeFirstLetter(translate('notifications_popover.view_all'))}
+                </Button>
+              </Stack>
+            ) : (
+              <Typography style={{ marginBlock: spacing.lg }}>
+                {translate('notifications_popover.empty')}
+              </Typography>
+            )}
+          </div>
+        </Theme>
       </PopoverContent>
     </Popover>
   )
@@ -166,8 +167,7 @@ function NotificationItem({
       <Typography variant="textSecondary" style={{ marginBottom: spacing.xxs }}>
         {threeDots(notification.title, 30)}
       </Typography>
-
-      <Typography>{notification.message}</Typography>
+      <Typography>{(() => notification.message)()}</Typography>
     </ClickableTile>
   )
 }
@@ -187,7 +187,7 @@ const NotificationList = ({
     <Stack gap={spacing.xs}>
       <Typography
         style={{
-          backgroundColor: palette.common.black,
+          backgroundColor: palette.background.paper,
           padding: spacing.xxs,
           marginTop: spacing.md
         }}

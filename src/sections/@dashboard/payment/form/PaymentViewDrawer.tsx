@@ -1,6 +1,7 @@
 import { Button, TextInput } from '@carbon/react'
 import { months } from 'moment'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import {
   ContractDetails,
   ContractStatus,
@@ -26,6 +27,7 @@ import {
 import { ICONS, STRING_DEFAULT, Views } from 'src/constants'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useLocales } from 'src/locales'
+import { redirectOnError } from 'src/pages/errors/handlers'
 import { useTheme } from 'src/theme'
 import { getContractSchoolDistribution } from 'src/utils/contracts'
 import { parsePaymentStatus } from 'src/utils/status'
@@ -48,6 +50,7 @@ export default function PaymentViewDrawer({
   paymentFrequency,
   handleEdit
 }: Props) {
+  const navigate = useNavigate()
   const { spacing } = useTheme()
   const { translate } = useLocales()
   const parsedStatus = parsePaymentStatus(payment?.status)
@@ -62,8 +65,14 @@ export default function PaymentViewDrawer({
     if (!contract) return
     if (Object.keys(contract).includes('isContract')) setItem(contract as ContractDetails)
     else if ((contract as { id: string; status: ContractStatus }).status === ContractStatus.Draft)
-      getDraft(contract.id).then((res) => setItem({ ...res, isContract: false }))
-    else getContractDetails(contract.id).then((res) => setItem({ ...res, isContract: true }))
+      getDraft(contract.id)
+        .then((res) => setItem({ ...res, isContract: false }))
+        .catch((err) => redirectOnError(navigate, err))
+    else
+      getContractDetails(contract.id)
+        .then((res) => setItem({ ...res, isContract: true }))
+        .catch((err) => redirectOnError(navigate, err))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contract])
 
   const getPaymentLabel = (p: { month: number; year: number; day?: number }) =>
@@ -82,7 +91,7 @@ export default function PaymentViewDrawer({
       open={open}
       header={
         <Stack orientation="vertical" justifyContent="center" alignItems="center">
-          <SectionTitle label={translate('payment_detail')} />
+          <SectionTitle label={`${payment ? payment.description : translate('payment_detail')}`} />
         </Stack>
       }
       handleClose={onClose}
@@ -92,29 +101,29 @@ export default function PaymentViewDrawer({
           <Stack orientation="horizontal" gap={spacing.xs}>
             <TextInput
               id="payment-description"
-              disabled
+              readOnly
               labelText={capitalizeFirstLetter(translate('description'))}
               value={payment?.description}
             />
           </Stack>
           <Stack orientation="horizontal" gap={spacing.xs} style={{ marginTop: spacing.lg }}>
             <TextInput
-                id="payment-currency"
-                disabled
-                type="text"
-                labelText={capitalizeFirstLetter(translate('currency'))}
-                value={payment?.currency?.code}
-              />
+              id="payment-currency"
+              readOnly
+              type="text"
+              labelText={capitalizeFirstLetter(translate('currency'))}
+              value={payment?.currency?.code}
+            />
             <TextInput
               id="payment-amount"
-              disabled
+              readOnly
               type="number"
               labelText={capitalizeFirstLetter(translate('amount'))}
               value={payment?.amount}
             />
             <TextInput
               id="payment-discount"
-              disabled
+              readOnly
               type="number"
               labelText={capitalizeFirstLetter(translate('discount'))}
               value={payment?.discount}
@@ -125,7 +134,7 @@ export default function PaymentViewDrawer({
             value={capitalizeFirstLetter(
               translate(`constant_status.payment.${payment?.status as PaymentStatus}`)
             )}
-            disabled
+            readOnly
             id="payment status select"
             name="status"
             labelText={capitalizeFirstLetter(`${translate('payment_status')}`)}
@@ -139,27 +148,27 @@ export default function PaymentViewDrawer({
                   uncapitalizeFirstLetter(paymentFrequency ?? STRING_DEFAULT) as Translation
                 )
               )}
-              disabled
+              readOnly
               labelText={capitalizeFirstLetter(`${translate('payment_frequency')}`)}
             />
             <TextInput
               value={payment?.paidDate ? getPaymentLabel(payment?.paidDate) : ''}
               id="payment period select"
-              disabled
+              readOnly
               labelText={capitalizeFirstLetter(`${translate('period')}`)}
             />
           </Stack>
           <SectionHeading heading="invoice" />
           <SectionSubtitle subtitle="find_the_invoice" />
           {payment?.invoice ? (
-            <AttachmentsList attachments={[payment.invoice]} status="complete" />
+            <AttachmentsList attachments={[{ ...payment.invoice, status: 'complete' }]} />
           ) : (
             <Typography variant="disabled">{translate('no_attachments_added')}</Typography>
           )}
           <SectionHeading heading="receipt" />
           <SectionSubtitle subtitle="find_the_receipt" />
           {payment?.receipt ? (
-            <AttachmentsList attachments={[payment.receipt]} status="complete" />
+            <AttachmentsList attachments={[{ ...payment.receipt, status: 'complete' }]} />
           ) : (
             <Typography variant="disabled">{translate('no_attachments_added')}</Typography>
           )}
@@ -169,7 +178,6 @@ export default function PaymentViewDrawer({
             <>
               <Stack orientation="horizontal" gap={spacing.md} alignItems="center">
                 <SectionHeading heading="connectivity_status_distribution" />
-
                 <InfoToggletip title="" />
               </Stack>
               <SectionSubtitle subtitle="connectivity_status_distribution" />

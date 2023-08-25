@@ -1,22 +1,28 @@
 import { Button, Popover, PopoverContent, TableToolbarSearch } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
+import { EducationLevel } from 'src/@types'
 import { FILTER_ALL_DEFAULT, ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
-import { EducationLevel } from 'src/@types'
 import MeasuresTableFilter from './MeasuresTableFilter'
 
 type Props = {
   setFilterSearch: Dispatch<SetStateAction<string>>
   setPage: Dispatch<SetStateAction<number>>
   educationLevelOptions?: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
-  filterEducationLevel?: EducationLevel | typeof FILTER_ALL_DEFAULT
-  setFilterEducationLevel?: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
+  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
+  setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
+  filterRegion: string
+  setFilterRegion: Dispatch<SetStateAction<string>>
+  regionOptions: string[]
 }
 
 export default function MeasureTableToolbar({
   setPage,
   setFilterSearch,
+  setFilterRegion,
+  filterRegion,
+  regionOptions,
   setFilterEducationLevel,
   educationLevelOptions,
   filterEducationLevel
@@ -46,6 +52,9 @@ export default function MeasureTableToolbar({
           <PopoverContent>
             <MeasuresTableFilter
               closePopover={popover.close}
+              setFilterRegion={setFilterRegion}
+              filterRegion={filterRegion}
+              regionOptions={regionOptions}
               educationLevelOptions={educationLevelOptions}
               filterEducationLevel={filterEducationLevel}
               setFilterEducationLevel={setFilterEducationLevel}

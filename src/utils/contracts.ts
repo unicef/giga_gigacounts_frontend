@@ -14,7 +14,6 @@ import { formatDate } from './date'
 const getPublishErrors = (draft: Contract | null | undefined) => {
   const errors: { check: boolean; message: Translation; field?: Translation }[] = [
     { check: Boolean(draft), message: 'field_errors.required' },
-    { check: Boolean(draft?.ltaId), message: 'field_errors.required', field: 'lta' },
     { check: Boolean(draft?.launchDate), message: 'field_errors.required', field: 'launch_date' },
     { check: Boolean(draft?.startDate), message: 'field_errors.required', field: 'start_date' },
     { check: Boolean(draft?.endDate), message: 'field_errors.required', field: 'end_date' },
@@ -52,7 +51,6 @@ const getContractFromDraft = (draftForm: IDraft): Contract => ({
   budget: draftForm.budget as string,
   currencyType: draftForm.currency?.type,
   currencyId: draftForm.currency?.id,
-  ltaId: draftForm.lta?.id,
   launchDate: draftForm.launchDate ? formatDate(draftForm.launchDate) : '',
   endDate: draftForm.endDate ? formatDate(draftForm.endDate) : '',
   startDate: draftForm.startDate ? formatDate(draftForm.startDate) : '',
@@ -85,7 +83,6 @@ const getDraftFromForm = (
     downloadSpeed,
     uploadSpeed,
     notes,
-    ltaId,
     automatic,
     frequencyId,
     addLaunchDate,
@@ -107,7 +104,7 @@ const getDraftFromForm = (
     launchDate: getLaunchDate(),
     budget: budget ? String(budget) : '0',
     schools: {
-      schools: schools.map((s: any) => {
+      schools: schools.map((s: { id: string; budget: string }) => {
         const countrySchool = countrySchools.find((cs) => s.id === cs.external_id) as ISchool
         return { ...countrySchool, budget: s.budget }
       })
@@ -116,8 +113,8 @@ const getDraftFromForm = (
     automatic,
     breakingRules
   }
+
   if (automatic) newDraft.paymentReceiverId = paymentReceiverId
-  if (ltaId) newDraft.ltaId = ltaId
   if (isp) newDraft.ispId = isp
   if (country) newDraft.countryId = country
   if (currency) {

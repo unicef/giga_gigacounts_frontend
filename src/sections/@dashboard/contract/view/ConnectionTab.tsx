@@ -9,6 +9,7 @@ import {
   ConnectivityTableRow,
   ConnectivityTableToolbar
 } from 'src/sections/@dashboard/connectivity/list'
+import { removeDuplicates } from 'src/utils/arrays'
 
 export default function ConnectionTab({
   contract,
@@ -35,30 +36,44 @@ export default function ConnectionTab({
     defaultOrderBy: 'name'
   })
 
-  const [tableData, setTableData] = useState<IContractSchools[]>([])
+  const [tableData, setTableData] = useState<IContractSchools[] | null>(null)
   const [filterName, setFilterName] = useState('')
-  const [filterBudget, setFilterBudget] = useState<MinMax>({ min: '', max: '' })
+  const [filterBudget, setFilterBudget] = useState<MinMax<string>>({ min: '', max: '' })
   const [filterEducationLevel, setFilterEducationLevel] = useState<
     EducationLevel | typeof FILTER_ALL_DEFAULT
   >(FILTER_ALL_DEFAULT)
+  const [filterRegion, setFilterRegion] = useState<string>(FILTER_ALL_DEFAULT)
 
   useEffect(() => {
-    getContractSchools(contract.id).then(setTableData)
+    getContractSchools(contract.id)
+      .then(setTableData)
+      .catch(() => setTableData([]))
   }, [contract.id])
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    filterName,
-    filterBudget,
-    filterEducationLevel
-  })
+  const dataFiltered = tableData
+    ? applyFilter({
+        inputData: tableData,
+        filterName,
+        filterBudget,
+        filterRegion,
+        filterEducationLevel
+      })
+    : null
 
-  const educationLevelOptions = [
-    FILTER_ALL_DEFAULT,
-    ...Array.from(new Set(tableData.map((s) => s.education_level)))
-  ] as (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
+  const regionOptions = tableData
+    ? removeDuplicates([
+        FILTER_ALL_DEFAULT,
+        ...tableData.map((m) => m.locations.split(',').at(0)?.toLowerCase() ?? FILTER_ALL_DEFAULT)
+      ])
+    : []
+  const educationLevelOptions = tableData
+    ? (removeDuplicates([FILTER_ALL_DEFAULT, ...tableData.map((s) => s.educationLevel)]) as (
+        | EducationLevel
+        | typeof FILTER_ALL_DEFAULT
+      )[])
+    : []
 
-  const isNotFound = !dataFiltered.length
+  const isNotFound = Boolean(dataFiltered && !dataFiltered.length)
 
   return (
     <CustomDataTable
@@ -73,6 +88,9 @@ export default function ConnectionTab({
       })}
       ToolbarContent={
         <ConnectivityTableToolbar
+          filterRegion={filterRegion}
+          regionOptions={regionOptions}
+          setFilterRegion={setFilterRegion}
           educationLevelOptions={educationLevelOptions}
           filterEducationLevel={filterEducationLevel}
           setFilterEducationLevel={setFilterEducationLevel}
@@ -82,16 +100,20 @@ export default function ConnectionTab({
           setPage={setPage}
         />
       }
-      data={dataFiltered.map((row) => {
-        const locations = row.locations.split(',')
-        return {
-          ...row,
-          external_id: row.externalId,
-          location_1: locations[0],
-          location_2: locations[1],
-          location_3: locations[3]
-        }
-      })}
+      data={
+        dataFiltered
+          ? dataFiltered.map((row) => {
+              const locations = row.locations.split(',')
+              return {
+                ...row,
+                external_id: row.externalId,
+                location_1: locations[0],
+                location_2: locations[1],
+                location_3: locations[3]
+              }
+            })
+          : null
+      }
       page={page}
       setPage={setPage}
       isNotFound={isNotFound}
@@ -109,11 +131,13 @@ function applyFilter({
   inputData,
   filterName,
   filterBudget,
-  filterEducationLevel
+  filterEducationLevel,
+  filterRegion
 }: {
   inputData: IContractSchools[]
   filterName: string
-  filterBudget: MinMax
+  filterBudget: MinMax<string>
+  filterRegion: string
   filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
 }) {
   if (filterName)
@@ -133,7 +157,12 @@ function applyFilter({
     inputData = inputData.filter((school) => Number(school.budget) <= Number(filterBudget.max))
 
   if (filterEducationLevel !== FILTER_ALL_DEFAULT)
-    inputData = inputData.filter((school) => school.education_level === filterEducationLevel)
+    inputData = inputData.filter((school) => school.educationLevel === filterEducationLevel)
+  if (filterRegion !== FILTER_ALL_DEFAULT)
+    inputData = inputData.filter(
+      (school) =>
+        (school.locations.split(',').at(0)?.toLowerCase() ?? '') === filterRegion.toLowerCase()
+    )
 
   return inputData
 }

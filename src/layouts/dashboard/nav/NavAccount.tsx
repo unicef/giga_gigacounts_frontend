@@ -1,14 +1,14 @@
+import { Button, SkeletonText } from '@carbon/react'
 import { useNavigate } from 'react-router'
-import { Button } from '@carbon/react'
-import { capitalizeFirstLetter, threeDots } from 'src/utils/strings'
+import { useAuthContext } from 'src/auth/useAuthContext'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
-import { useTheme } from 'src/theme'
-import { useAuthContext } from 'src/auth/useAuthContext'
-import { ROUTES } from 'src/routes/paths'
-import { useLocales } from 'src/locales'
-import { ICONS } from 'src/constants'
 import { UserInitials } from 'src/components/user'
+import { ICONS } from 'src/constants'
+import { useLocales } from 'src/locales'
+import { ROUTES } from 'src/routes/paths'
+import { useTheme } from 'src/theme'
+import { capitalizeFirstLetter, threeDots } from 'src/utils/strings'
 
 export default function NavAccount() {
   const { user } = useAuthContext()
@@ -16,24 +16,37 @@ export default function NavAccount() {
   const { spacing } = useTheme()
   const { translate } = useLocales()
   return (
-    <Stack justifyContent="center" orientation="horizontal" gap={spacing.sm} alignItems="center">
-      <UserInitials name={user?.name} lastName={user?.lastName} />
-      <Stack orientation="vertical">
-        <Typography as="h5">
-          {user?.name} {user?.lastName}
-        </Typography>
-        <Typography>{threeDots(user?.role?.name || 'user', 25)}</Typography>
-      </Stack>
-      <Button
-        kind="ghost"
-        hasIconOnly
-        size="sm"
-        tabIndex={0}
-        id="account-nav-information"
-        iconDescription={capitalizeFirstLetter(translate('settings'))}
-        renderIcon={ICONS.Settings}
-        onClick={() => navigate(ROUTES.dashboard.user.account.route)}
-      />
+    <Stack
+      justifyContent="space-evenly"
+      orientation="horizontal"
+      gap={spacing.sm}
+      alignItems="center"
+    >
+      {user ? (
+        <>
+          <UserInitials name={user?.name ?? ''} lastName={user?.lastName ?? ''} />
+          <Stack style={{ width: '50%' }} orientation="vertical">
+            <Typography as="h5">{threeDots(`${user?.name} ${user?.lastName}`, 18)}</Typography>
+            <Typography as="span" style={{ fontSize: '12px' }}>
+              {threeDots(user?.role?.name || 'user', 23)}
+            </Typography>
+          </Stack>
+          <Button
+            kind="ghost"
+            hasIconOnly
+            size="sm"
+            tabIndex={0}
+            id="account-nav-information"
+            iconDescription={capitalizeFirstLetter(translate('settings'))}
+            renderIcon={ICONS.Settings}
+            onClick={() => navigate(ROUTES.dashboard.user.account.route)}
+          />
+        </>
+      ) : (
+        <div style={{ alignSelf: 'center', width: '75%' }}>
+          <SkeletonText lineCount={2} paragraph />
+        </div>
+      )}
     </Stack>
   )
 }

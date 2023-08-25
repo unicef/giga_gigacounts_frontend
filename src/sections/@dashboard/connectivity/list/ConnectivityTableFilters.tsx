@@ -9,13 +9,16 @@ import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/strings'
 
 type Props = {
-  filterBudget?: MinMax
+  filterBudget?: MinMax<string>
   filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
-  setFilterBudget?: Dispatch<SetStateAction<MinMax>>
+  setFilterBudget?: Dispatch<SetStateAction<MinMax<string>>>
   setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
   setPage: Dispatch<SetStateAction<number>>
   closePopover: () => void
   educationLevelOptions: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
+  filterRegion: string
+  setFilterRegion: Dispatch<SetStateAction<string>>
+  regionOptions: string[]
 }
 
 export default function ConnectivityTableFilters({
@@ -25,7 +28,10 @@ export default function ConnectivityTableFilters({
   setFilterEducationLevel,
   setPage,
   closePopover,
-  educationLevelOptions
+  educationLevelOptions,
+  filterRegion,
+  regionOptions,
+  setFilterRegion
 }: Props) {
   const { spacing } = useTheme()
   const { translate } = useLocales()
@@ -46,10 +52,13 @@ export default function ConnectivityTableFilters({
   const handleEducationLevelFilter = (value: EducationLevel | typeof FILTER_ALL_DEFAULT) =>
     handleFilter(() => setFilterEducationLevel(value))
 
+  const handleFilterRegion = (value: string) => handleFilter(() => setFilterRegion(value))
+
   const handleResetFilter = () => {
     closePopover()
     setPage(1)
     setFilterEducationLevel(FILTER_ALL_DEFAULT)
+    setFilterRegion(FILTER_ALL_DEFAULT)
     if (setFilterBudget) setFilterBudget({ min: '', max: '' })
   }
   return (
@@ -81,9 +90,26 @@ export default function ConnectivityTableFilters({
         </>
       )}
 
+      <PopoverTitle title="region" />
+      <Dropdown
+        id="region-measures-filter"
+        items={regionOptions}
+        itemToString={(item) =>
+          item === FILTER_ALL_DEFAULT
+            ? capitalizeFirstLetter(translate(item))
+            : capitalizeFirstLetter(item)
+        }
+        selectedItem={filterRegion}
+        onChange={(data: { selectedItem: string }) =>
+          handleFilterRegion(data.selectedItem ?? FILTER_ALL_DEFAULT)
+        }
+        label={capitalizeFirstLetter(translate(FILTER_ALL_DEFAULT))}
+        disabled={regionOptions.length <= 1}
+      />
+
       <PopoverTitle title="education_level" />
       <Dropdown
-        id="education-level-filter"
+        id="education-level-measures-filter"
         items={educationLevelOptions}
         itemToString={(item) =>
           item === FILTER_ALL_DEFAULT

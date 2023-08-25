@@ -2,12 +2,13 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@carbon/react'
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ContractDetails, ContractStatus } from 'src/@types'
+import { ContractDetails, ContractStatus, Error404 } from 'src/@types'
 import { getContractDetails } from 'src/api/contracts'
 import { getDraft } from 'src/api/drafts'
 import Banner from 'src/components/banner/Banner'
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs'
-import { STRING_DEFAULT, CONTRACT_STATUS_COLORS } from 'src/constants'
+import CustomJoyride from 'src/components/custom-joyride/CustomJoyride'
+import { CONTRACT_STATUS_COLORS, STRING_DEFAULT } from 'src/constants'
 import { useWeb3Context } from 'src/hooks/useWeb3Context'
 import { useLocales } from 'src/locales'
 import {
@@ -31,25 +32,26 @@ export default function ContractDetailsPage() {
   const { getContractBalance } = useWeb3Context()
 
   useEffect(() => {
-    if (!state || !state.contractId || !state.contractStatus) navigate('/404')
+    if (!state || !state.contractId || !state.contractStatus) Error404.redirect(navigate)
 
     try {
       parseContractStatus(state.contractStatus)
     } catch (err) {
-      navigate('/404')
+      Error404.redirect(navigate)
     }
+
     if (state.contractStatus === ContractStatus.Draft)
       getDraft(state.contractId as string)
         .then((res) => setContract({ ...res, isContract: false }))
-        .catch(() => navigate('/404'))
+        .catch(() => Error404.redirect(navigate))
     else
       getContractDetails(state.contractId as string)
         .then((res) => setContract({ ...res, isContract: true }))
-        .catch(() => navigate('/404'))
+        .catch(() => Error404.redirect(navigate))
   }, [state, navigate])
 
   useEffect(() => {
-    if (!state || !state.contractId || !state.contractStatus) navigate('/404')
+    if (!state || !state.contractId || !state.contractStatus) Error404.redirect(navigate)
     if (
       contract &&
       contract.automatic &&
@@ -110,8 +112,14 @@ export default function ContractDetailsPage() {
     ]
 
     if (contract.automatic && contract.isContract) {
-      details.splice(3, 0, { label: `${contract.currency?.code ?? ''} ${contractFunds.toString() || '0'}`,  title: translate('funds') })
-      details.splice(4, 0, { label: `${contract.currency?.code ?? ''} ${contract.cashback?.toString() || '0'}`, title: translate('cashback') })
+      details.splice(3, 0, {
+        label: `${contract.currency?.code ?? ''} ${contractFunds.toString() || '0'}`,
+        title: translate('funds')
+      })
+      details.splice(4, 0, {
+        label: `${contract.currency?.code ?? ''} ${contract.cashback?.toString() || '0'}`,
+        title: translate('cashback')
+      })
     }
 
     return details
@@ -149,7 +157,7 @@ export default function ContractDetailsPage() {
       <Helmet>
         <title> Contract: View | Gigacounts</title>
       </Helmet>
-
+      {contract?.isContract && <CustomJoyride name="contract_detail" />}
       <CustomBreadcrumbs />
       {contract && (
         <>
@@ -184,13 +192,20 @@ export default function ContractDetailsPage() {
           >
             <TabList
               aria-label="schools or payments tab list"
-              title=""
               leftOverflowButtonProps={{}}
               rightOverflowButtonProps={{}}
             >
               <Tab>{capitalizeFirstLetter(translate('overview'))}</Tab>
-              {contract.isContract && <Tab>{capitalizeFirstLetter(translate('schools'))}</Tab>}
-              {contract.isContract && <Tab>{capitalizeFirstLetter(translate('payments'))}</Tab>}
+              {contract.isContract && (
+                <Tab>
+                  <div id="schools-tab">{capitalizeFirstLetter(translate('schools'))}</div>
+                </Tab>
+              )}
+              {contract.isContract && (
+                <Tab>
+                  <div id="payment-tab">{capitalizeFirstLetter(translate('payments'))}</div>
+                </Tab>
+              )}
               <Tab>{capitalizeFirstLetter(translate('attachments'))}</Tab>
               {contract.isContract && contract.automatic && (
                 <Tab>{capitalizeFirstLetter(translate('web3_transcations'))}</Tab>
@@ -211,7 +226,7 @@ export default function ContractDetailsPage() {
                 </TabPanel>
               )}
               <TabPanel>
-                <AttachmentsTab attachments={contract.attachments} />
+                <AttachmentsTab attachments={contract ? contract.attachments : null} />
               </TabPanel>
               {contract.isContract && contract.automatic && (
                 <TabPanel>

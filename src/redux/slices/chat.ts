@@ -1,7 +1,7 @@
 import { createSlice, Dispatch } from '@reduxjs/toolkit'
 import keyBy from 'lodash/keyBy'
 
-import axios from 'src/utils/axios'
+import axios from 'src/api/init'
 
 import { IChatState } from 'src/@types'
 

@@ -10,15 +10,17 @@ type Props = {
 export default function UserInitials({ name, lastName }: Props) {
   const { palette, spacing } = useTheme()
 
-  const nameInitial = capitalizeFirstLetter(name[0] ?? '')
-  const lastNameInitial = capitalizeFirstLetter(lastName[0] ?? '')
+  const nameInitial = name === '' ? '' : capitalizeFirstLetter(name[0])
+  const lastNameInitial = lastName === '' ? '' : capitalizeFirstLetter(lastName[0])
 
   return (
     <Stack
       style={{
         borderRadius: spacing.xs,
-        backgroundColor: palette.background.neutral,
-        padding: spacing.xs
+        backgroundColor: palette.grey[525],
+        padding: spacing.xs,
+        width: spacing.xl + spacing.xs,
+        height: spacing.xl + spacing.xs
       }}
       justifyContent="center"
       alignItems="center"

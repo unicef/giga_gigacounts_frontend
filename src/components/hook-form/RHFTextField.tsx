@@ -1,6 +1,6 @@
-import { useFormContext, Controller } from 'react-hook-form'
 import { TextInput } from '@carbon/react'
 import { TextInputProps } from '@carbon/react/lib/components/TextInput/TextInput'
+import { Controller, useFormContext } from 'react-hook-form'
 
 type Props = TextInputProps & {
   name: string
@@ -34,7 +34,7 @@ export default function RHFTextField({ name, helperText, helperTextLinkText, ...
           helperText={renderHelperText()}
           {...field}
           value={typeof field.value === 'number' && field.value === 0 ? '' : field.value}
-          invalid={!!error}
+          invalid={Boolean(error)}
           invalidText={error ? error?.message : helperText}
           {...other}
         />
