@@ -1,0 +1,9 @@
+@use '../colors/dark.scss';
+
+.leaflet-popup-content-wrapper {
+  background-color: dark.$background-default !important;
+  border-radius: 0 !important;
+}
+.leaflet-popup-tip {
+  background-color: dark.$background-default !important;
+}

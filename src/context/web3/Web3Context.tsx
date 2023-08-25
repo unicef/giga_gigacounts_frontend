@@ -8,24 +8,27 @@ import {
   WalletBalance,
   Web3ActionType
 } from 'src/@types'
-import { generateSignContractRandomString, signContractWithWallet } from 'src/api/contracts'
 import { createBlockchainTransaction } from 'src/api/blockchainTransactions'
-import { attachWallet, getWalletRandomString } from 'src/api/wallets'
+import { generateSignContractRandomString, signContractWithWallet } from 'src/api/contracts'
+import {
+  attachWallet,
+  getGigaTokenOwnerWalletAddress,
+  getWalletRandomString
+} from 'src/api/wallets'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import {
-  GIGACOUNTS_CONTRACT_HANDLER_ADR,
-  GIGACOUNTS_TOKEN_ADR,
-  GIGACOUNTS_OWNER_ADR,
   ENV_SUPPORTED_NETWORK,
   ENV_SUPPORTED_NETWORK_ID,
+  GIGACOUNTS_CONTRACT_HANDLER_ADR,
+  GIGACOUNTS_TOKEN_ADR,
   INITIAL_WEB3_CONTEXT_VALUE,
   INITIAL_WEB3_STATE,
   SUPPORTED_NETWORKS,
   TRANSACTION_TYPE
 } from 'src/constants'
 import { useLocales } from 'src/locales'
-import { abiToken } from './abiToken'
-import { abiHandler } from './abiHandlerv3'
+import { abiHandler } from './abis/abiHandlerv5'
+import { abiToken } from './abis/abiToken'
 import { reducer } from './reducer'
 import { initWeb3Onboard } from './web3-onboard'
 
@@ -348,13 +351,20 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
       let lastTrx = { type: '', hash: '', contractId: '', status: '' }
 
       try {
+        const gigaTokenOwnerWalletAddress = await getGigaTokenOwnerWalletAddress()
+        .then((data) => data.walletAddress )
+        .catch((ex) => {
+          console.error (ex.message)
+          return false
+        })
+
         const provider = getProvider(wallet)
         const signer = provider.getSigner()
 
         // allowance
         const contractToken = new ethers.Contract(GIGACOUNTS_TOKEN_ADR, abiToken, provider)
         let trxAllowance = await contractToken.allowance(
-          GIGACOUNTS_OWNER_ADR,
+          gigaTokenOwnerWalletAddress,
           GIGACOUNTS_CONTRACT_HANDLER_ADR
         )
         const decimals = await contractToken.decimals()
@@ -384,7 +394,7 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
 
           // re-chech allowance
           trxAllowance = await contractToken.allowance(
-            GIGACOUNTS_OWNER_ADR,
+            gigaTokenOwnerWalletAddress,
             GIGACOUNTS_CONTRACT_HANDLER_ADR
           )
           console.log(
@@ -439,7 +449,6 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
         })
         return false
       }
-      return true
     },
     [account, wallet, saveTransactionLog]
   )
@@ -484,7 +493,6 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
         })
         return false
       }
-      return true
     },
     [account, wallet, saveTransactionLog]
   )

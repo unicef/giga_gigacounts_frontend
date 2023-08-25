@@ -1,7 +1,7 @@
-import { createContext, useContext, useMemo, useCallback } from 'react'
-import useLocalStorage from 'src/hooks/useLocalStorage'
-import { defaultSettings } from 'src/constants'
+import { createContext, useCallback, useContext, useMemo } from 'react'
 import { SettingsContextProps, TourName } from 'src/@types'
+import { defaultSettings } from 'src/constants'
+import useLocalStorage from 'src/hooks/useLocalStorage'
 
 const initialState: SettingsContextProps = {
   ...defaultSettings,
@@ -30,7 +30,7 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
   }, [setSettings])
 
   const completeTour = useCallback(
-    (name: TourName) =>
+    (name: Exclude<TourName, 'home'> | 'home_en' | 'home_es' | 'home_fr' | 'home_br') =>
       setSettings({
         ...settings,
         tours: { ...settings.tours, [name]: false }

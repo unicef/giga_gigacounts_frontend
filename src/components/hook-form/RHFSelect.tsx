@@ -19,11 +19,12 @@ type RHFSelectProps<T> = {
     }>
   ) => void
   style?: CSSProperties
+  direction?: 'top' | 'bottom'
+  readOnly?: boolean
 }
 
 export function RHFSelect<T>({ name, native, label, options, id, ...other }: RHFSelectProps<T>) {
   const { control } = useFormContext()
-
   return (
     <Controller
       name={name}
@@ -43,7 +44,7 @@ export function RHFSelect<T>({ name, native, label, options, id, ...other }: RHF
           }}
           invalid={Boolean(error)}
           invalidText={error?.message}
-          disabled={other.disabled || options.length <= 1}
+          disabled={!other.readOnly && (other.disabled || options.length <= 1)}
         />
       )}
     />

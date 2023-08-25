@@ -13,7 +13,6 @@ import { getOrderedFromCells } from 'src/utils/table'
 
 type Props = {
   row: DataTableRow
-  selected: boolean
   rowProps: TableRowProps
   role: IRole
 }

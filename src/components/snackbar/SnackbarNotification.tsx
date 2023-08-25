@@ -14,6 +14,7 @@ const SnackbarNotification = forwardRef<
   return (
     <SnackbarContent ref={ref}>
       <InlineNotification
+        style={{ width: '720px' }}
         kind={variant === 'default' ? 'success' : variant}
         lowContrast
         subtitle={message?.toString() ?? ''}

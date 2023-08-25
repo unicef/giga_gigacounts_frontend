@@ -23,8 +23,8 @@ export default function SchoolTableRow({
   selectionProps,
   onChangeBudget
 }: Props) {
-  const [external_id, name, initialBudget] = getOrderedFromCells(
-    ['external_id', 'name', 'budget'],
+  const [external_id, name, region, initialBudget] = getOrderedFromCells(
+    ['external_id', 'name', 'region', 'budget'],
     row.cells
   )
 
@@ -42,14 +42,14 @@ export default function SchoolTableRow({
       <TableCell>{external_id}</TableCell>
 
       <TableCell>{name}</TableCell>
+      <TableCell>{region}</TableCell>
 
       <TableCell>
         {selected ? (
           <TextInput
             id={`budget ${row.id}`}
             labelText=""
-            invalid={Number(budget) <= 0 || !Number(budget)}
-            type="number"
+            invalid={Number(budget) <= 0 || Number.isNaN(Number(budget))}
             value={budget}
             onChange={(e) => {
               if (selected) setBudget(e.target.value)

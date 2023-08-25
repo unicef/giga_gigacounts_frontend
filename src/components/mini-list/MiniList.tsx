@@ -1,55 +1,84 @@
+import { Renew } from '@carbon/pictograms-react'
 import {
-  StructuredListWrapper,
-  StructuredListHead,
-  StructuredListRow,
-  StructuredListCell,
-  StructuredListBody,
-  StructuredListSkeleton
+  DataTableSkeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@carbon/react'
-import { capitalizeFirstLetter } from 'src/utils/strings'
+import { capitalizeFirstLetter, threeDots } from 'src/utils/strings'
+import { Stack } from '../stack'
+import { TableEmptyRows } from '../table'
 import { Typography } from '../typography'
 
 type Props<T extends { id: string }> = {
   data?: T[]
   headers: readonly { key: keyof T; label: string }[]
   noDataText: string
+  transformData?: { [K in keyof T]?: (data: T[K]) => string }
 }
 
 export default function MiniList<T extends { id: string }>({
   data,
   headers,
-  noDataText
+  noDataText,
+  transformData
 }: Props<T>) {
   return data ? (
     <>
       {data.length > 0 ? (
-        <StructuredListWrapper isCondensed isFlush>
-          <StructuredListHead>
-            <StructuredListRow head>
+        <Table size="xl">
+          <TableHead>
+            <TableRow style={{ position: 'sticky', top: 0 }}>
               {headers.map((h, index) => (
-                <StructuredListCell index={index} head key={`${String(h.key) + index}`}>
+                <TableHeader key={`${String(h.key) + index}`}>
                   {capitalizeFirstLetter(h.label)}
-                </StructuredListCell>
+                </TableHeader>
               ))}
-            </StructuredListRow>
-          </StructuredListHead>
-          <StructuredListBody>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {data.map((d) => (
-              <StructuredListRow>
+              <TableRow key={d.id}>
                 {headers.map((h) => (
-                  <StructuredListCell key={`${String(h.key) + d.id}`}>
-                    {d[h.key]}
-                  </StructuredListCell>
+                  <TableCell key={`${String(h.key) + d.id}`}>
+                    {transformData && h.key in transformData
+                      ? threeDots((transformData[h.key] as Function)(d[h.key]), 40)
+                      : threeDots(String(d[h.key]), 40)}
+                  </TableCell>
                 ))}
-              </StructuredListRow>
+              </TableRow>
             ))}
-          </StructuredListBody>
-        </StructuredListWrapper>
+            {data.length < 5 && (
+              <TableEmptyRows emptyRows={5 - data.length} cols={headers.length} />
+            )}
+          </TableBody>
+        </Table>
       ) : (
-        <Typography>{capitalizeFirstLetter(noDataText)}</Typography>
+        <Stack
+          alignItems="center"
+          justifyContent="center"
+          style={{ width: '100%', height: '100%' }}
+        >
+          <Renew width={32} height={32} />
+          <Typography as="h3" variant="textTertiary">
+            {capitalizeFirstLetter(noDataText)}
+          </Typography>
+        </Stack>
       )}
     </>
   ) : (
-    <StructuredListSkeleton />
+    <DataTableSkeleton
+      className=""
+      columnCount={headers.length}
+      compact={false}
+      headers={headers}
+      showHeader={false}
+      rowCount={6}
+      showToolbar={false}
+      zebra={false}
+    />
   )
 }

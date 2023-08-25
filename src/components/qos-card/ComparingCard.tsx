@@ -1,16 +1,16 @@
 import { CSSProperties } from 'react'
+import { Stack } from 'src/components/stack'
+import { Typography } from 'src/components/typography'
 import { STRING_DEFAULT } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { getMetricLabel } from 'src/utils/metrics'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import { Stack } from 'src/components/stack'
-import { Typography } from 'src/components/typography'
 
 type Props = {
   width?: CSSProperties['width']
   name: 'uptime' | 'latency' | 'upload_speed' | 'download_speed'
-  value?: number
+  value?: number | null
   expectedValue: number
   hideExpected?: boolean
   hideLabel?: boolean
@@ -47,7 +47,17 @@ export default function ComparingCard({
       <Typography as="h5">{capitalizeFirstLetter(translate(name))}</Typography>
       <Stack orientation="horizontal">
         {!hideExpected && (
-          <Stack orientation="vertical" style={{ padding: spacing.xs }}>
+          <Stack
+            orientation="vertical"
+            style={{
+              padding: spacing.xs,
+              borderRightColor: palette.divider,
+              borderRightWidth: '1px',
+              borderRightStyle: 'solid',
+              marginRight: spacing.xs,
+              paddingRight: spacing.xs * 2
+            }}
+          >
             {!hideLabel && (
               <Typography style={{ marginBlockEnd: spacing.md }} as="h6">
                 {capitalizeFirstLetter(translate('agreement'))}
@@ -58,15 +68,7 @@ export default function ComparingCard({
             </Typography>
           </Stack>
         )}
-        <Stack
-          orientation="vertical"
-          style={{
-            padding: spacing.xs,
-            borderLeftColor: palette.divider,
-            borderLeftWidth: '1px',
-            borderLeftStyle: 'solid'
-          }}
-        >
+        <Stack style={{ padding: spacing.xs }} orientation="vertical">
           {!hideLabel && (
             <Typography style={{ marginBlockEnd: spacing.md }} as="h6">
               {capitalizeFirstLetter(translate('current_delivery'))}

@@ -33,6 +33,7 @@ const grey = {
   400: commonColors['grey-400'],
   450: commonColors['grey-450'],
   500: commonColors['grey-500'],
+  525: commonColors['grey-525'],
   550: commonColors['grey-550'],
   600: commonColors['grey-600'],
   650: commonColors['grey-650'],

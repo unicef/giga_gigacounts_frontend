@@ -1,6 +1,6 @@
 import { SideNavDivider } from '@carbon/react'
 import { useEffect } from 'react'
-import { useBusinessContext } from 'src/context/BusinessContext'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import NavItem from './NavItem'
 import { shortcuts } from './config-navigation'

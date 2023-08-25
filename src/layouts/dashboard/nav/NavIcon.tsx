@@ -13,7 +13,6 @@ export default function NavIcon({ CarbonIcon, isActive }: { CarbonIcon: Icon; is
         color: isActive ? palette.text.primary : palette.text.tertiary,
         width: 28,
         height: 28,
-        backgroundColor: palette.grey[300],
         borderRadius: spacing.xxs,
         padding: spacing.xxs
       }}

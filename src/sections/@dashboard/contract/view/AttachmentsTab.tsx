@@ -1,15 +1,15 @@
-import { useState } from 'react'
-import { IAttachment } from 'src/@types'
-import CustomDataTable from 'src/components/data-table/CustomDataTable'
-import { KEY_DEFAULTS } from 'src/constants'
-import useTable from 'src/hooks/useTable'
-import { useLocales } from 'src/locales'
+import { useState } from 'react';
+import { IAttachment } from 'src/@types';
+import CustomDataTable from 'src/components/data-table/CustomDataTable';
+import { KEY_DEFAULTS } from 'src/constants';
+import useTable from 'src/hooks/useTable';
+import { useLocales } from 'src/locales';
 import {
   AttachmentsTableRow,
   AttachmentsTableToolbar
-} from 'src/sections/@dashboard/attachments/list'
+} from 'src/sections/@dashboard/attachments/list';
 
-export default function AttachmentsTab({ attachments }: { attachments: IAttachment[] }) {
+export default function AttachmentsTab({ attachments }: { attachments: IAttachment[] | null }) {
   const { translate } = useLocales()
   const [filterName, setFilterName] = useState('')
 
@@ -20,12 +20,12 @@ export default function AttachmentsTab({ attachments }: { attachments: IAttachme
     { key: KEY_DEFAULTS[0], header: '' }
   ]
 
-  const dataFiltered = applyFilter({
+  const dataFiltered = attachments ? applyFilter({
     inputData: attachments,
     filterName
-  })
+  }) : null
 
-  const isNotFound = !dataFiltered.length
+  const isNotFound = Boolean( dataFiltered && !dataFiltered.length)
 
   return (
     <CustomDataTable

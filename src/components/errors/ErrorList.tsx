@@ -42,7 +42,12 @@ export default function ErrorList({
           </div>
         </div>
       )}
-      {expanded && errorMessages.map((error) => <Typography variant="error">{error}</Typography>)}
+      {expanded &&
+        errorMessages.map((error) => (
+          <Typography key={error} variant="error">
+            {error}
+          </Typography>
+        ))}
     </>
   )
 }

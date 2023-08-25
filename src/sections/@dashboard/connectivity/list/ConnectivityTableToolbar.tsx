@@ -7,13 +7,16 @@ import { useLocales } from 'src/locales'
 import ConnectivityTableFilters from './ConnectivityTableFilters'
 
 type Props = {
-  filterBudget?: MinMax
-  setFilterBudget?: Dispatch<SetStateAction<MinMax>>
+  filterBudget?: MinMax<string>
+  setFilterBudget?: Dispatch<SetStateAction<MinMax<string>>>
   setFilterSearch: Dispatch<SetStateAction<string>>
   setPage: Dispatch<SetStateAction<number>>
   educationLevelOptions: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
   filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
   setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
+  filterRegion: string
+  setFilterRegion: Dispatch<SetStateAction<string>>
+  regionOptions: string[]
 }
 
 export default function ConnectivityTableToolbar({
@@ -23,7 +26,10 @@ export default function ConnectivityTableToolbar({
   setFilterSearch,
   educationLevelOptions,
   filterEducationLevel,
-  setFilterEducationLevel
+  setFilterEducationLevel,
+  filterRegion,
+  regionOptions,
+  setFilterRegion
 }: Props) {
   const { translate } = useLocales()
   const popover = useModal()
@@ -51,6 +57,9 @@ export default function ConnectivityTableToolbar({
         />
         <PopoverContent>
           <ConnectivityTableFilters
+            filterRegion={filterRegion}
+            regionOptions={regionOptions}
+            setFilterRegion={setFilterRegion}
             closePopover={popover.close}
             educationLevelOptions={educationLevelOptions}
             filterEducationLevel={filterEducationLevel}

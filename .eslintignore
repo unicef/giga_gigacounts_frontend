@@ -8,3 +8,4 @@ src/serviceWorkerRegistration.ts
 src/setupTests.ts
 node_modules
 dist
+src/context/web3/abis/*

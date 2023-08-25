@@ -6,9 +6,7 @@ export const getDraft = async (draftId: string): Promise<IDraft> => {
   const response = await instance.get(
     `/contract/draft/${String(Number(draftId) - DRAFT_ID_OFFSET)}`
   )
-  if (response.status === 200)
-    return { ...response.data, id: String(Number(response.data.id) + DRAFT_ID_OFFSET) }
-  throw new Error(`Draft with id=${draftId} not found`)
+  return { ...response.data, id: String(Number(response.data.id) + DRAFT_ID_OFFSET) }
 }
 
 export const duplicateDraft = async (draftId: string) => {

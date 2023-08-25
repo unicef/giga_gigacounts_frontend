@@ -6,6 +6,7 @@ type Props = {
   name: string
   id: string
   onBlur?: () => void
+  onChange?: (date: Date[]) => void
   placeholder?: string
   size: 'sm' | 'md' | 'lg'
   labelText?: string
@@ -18,7 +19,8 @@ export default function RHFDatePicker({
   id,
   placeholder,
   size,
-  labelText
+  labelText,
+  onChange
 }: Props) {
   const { control } = useFormContext()
 
@@ -28,8 +30,13 @@ export default function RHFDatePicker({
       control={control}
       render={({ field, fieldState: { error } }) => (
         <DatePicker
+          onFocus={(e) => e.target.blur()}
+          allowInput={false}
           value={field.value}
-          onChange={(value) => field.onChange(value[0])}
+          onChange={(value) => {
+            field.onChange(value[0])
+            if (onChange) onChange(value)
+          }}
           datePickerType="single"
         >
           <DatePickerInput

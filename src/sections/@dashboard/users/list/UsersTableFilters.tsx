@@ -39,7 +39,7 @@ export default function UsersTableFilters({
       : []
 
   const handleResetFilter = () => {
-    setFilterCountry(user?.country.name)
+    setFilterCountry(user?.country.name ?? '')
     setFilterSearch('')
     setPage(1)
     closePopover()

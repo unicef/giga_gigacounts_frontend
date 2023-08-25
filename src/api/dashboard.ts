@@ -1,13 +1,17 @@
-import { IDashboardSchools } from 'src/@types'
+import { IDashboardContract, IDashboardSchools } from 'src/@types'
 import instance from './init'
 
 const ENDPOINT_URL = `/dashboard`
 
-export const getSchools = async (): Promise<IDashboardSchools[]> => {
-  const response = await instance.get(`${ENDPOINT_URL}/schools`, {})
-  if (response.status === 200) {
-    return response.data
-  }
+export const getSchools = async (countryId: string): Promise<IDashboardSchools[]> => {
+  const response = await instance.get(`${ENDPOINT_URL}/schools`, { params: { countryId } })
 
-  throw new Error('Failed to get the schools')
+  return response.data
+}
+
+export const getContractsWithIssues = async (countryId: string): Promise<IDashboardContract[]> => {
+  const response = await instance.get(`${ENDPOINT_URL}/contracts/not-meets`, {
+    params: { countryId }
+  })
+  return response.data.contracts
 }

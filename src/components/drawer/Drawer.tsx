@@ -11,14 +11,16 @@ export default function DrawerContainer({
   footer,
   open,
   handleClose,
-  closeDisabled
+  closeDisabled = false,
+  wrapHeader = true
 }: {
   header?: React.ReactNode
   content: React.ReactNode
   footer: React.ReactNode
   open: boolean
   handleClose: () => void
-  closeDisabled?: boolean | false
+  closeDisabled?: boolean
+  wrapHeader?: boolean
 }) {
   const { palette, spacing } = useTheme()
   const { translate } = useLocales()
@@ -30,7 +32,7 @@ export default function DrawerContainer({
       onClose={handleClose}
       direction="right"
     >
-      {header && (
+      {header && wrapHeader && (
         <div
           style={{
             top: 0,
@@ -64,6 +66,7 @@ export default function DrawerContainer({
           {header}
         </div>
       )}
+      {header && !wrapHeader && <>{header}</>}
       <div>
         <div style={{ padding: spacing.xl, minHeight: header ? '83dvh' : '100dvh' }}>{content}</div>
         <div

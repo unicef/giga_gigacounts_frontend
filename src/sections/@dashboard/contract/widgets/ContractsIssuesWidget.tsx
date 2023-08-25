@@ -1,15 +1,14 @@
-import { ContractStatus } from 'src/@types'
+import { IDashboardContract } from 'src/@types'
 import { MiniList } from 'src/components/mini-list'
 import { WidgetWrapper } from 'src/components/widgets'
-import { ICONS } from 'src/constants'
-import { useBusinessContext } from 'src/context/BusinessContext'
 import { useLocales } from 'src/locales'
-import { useTheme } from 'src/theme'
 
-export default function ContractsIssuesWidget() {
+export default function ContractsIssuesWidget({
+  contracts
+}: {
+  contracts: IDashboardContract[] | null
+}) {
   const { translate } = useLocales()
-  const { contracts } = useBusinessContext()
-  const { palette } = useTheme()
 
   const headers = [
     { label: `${translate('contract_name')}`, key: 'name' },
@@ -18,21 +17,11 @@ export default function ContractsIssuesWidget() {
     { label: translate('budget'), key: 'budget' }
   ] as const
 
-  const filteredContracts = contracts?.filter((c) => c.status !== ContractStatus.Draft)
-
   return (
-    <WidgetWrapper
-      Icon={ICONS.Contract}
-      iconColor={palette.error.main}
-      title="Contracts with SLA issues"
-      width="33%"
-      height="50%"
-    >
+    <WidgetWrapper title={translate('widgets.contract_issues.title')} width="100%" height="50dvh">
       <MiniList
-        noDataText="No contracts have SLA issues"
-        data={filteredContracts?.sort(
-          (a, b) => Number(b.numberOfSchools) - Number(a.numberOfSchools)
-        )}
+        noDataText={translate('widgets.contract_issues.no_data')}
+        data={contracts?.sort((a, b) => Number(b.numberOfSchools) - Number(a.numberOfSchools))}
         headers={headers}
       />
     </WidgetWrapper>

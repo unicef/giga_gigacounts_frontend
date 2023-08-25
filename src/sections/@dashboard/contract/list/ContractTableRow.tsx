@@ -8,7 +8,7 @@ import { duplicateDraft, getDraft } from 'src/api/drafts'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { Typography } from 'src/components/typography'
 import { CONTRACT_STATUS_COLORS, ICONS, Views } from 'src/constants'
-import { useBusinessContext } from 'src/context/BusinessContext'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
@@ -35,7 +35,7 @@ export default function ContractTableRow({
   onDeleteRow,
   currencyCode,
   isAutomatic
-}: Props) {
+}: Props & JSX.IntrinsicAttributes) {
   const navigate = useNavigate()
   const { translate } = useLocales()
   const { refetchContracts } = useBusinessContext()
@@ -53,8 +53,8 @@ export default function ContractTableRow({
 
   const [draft, setDraft] = useState<IDraft | null>(null)
 
-  const [name, status, ltaName, countryName, numberOfSchools, budget] = getOrderedFromCells(
-    ['name', 'status', 'ltaName', 'countryName', 'numberOfSchools', 'budget'],
+  const [name, status, countryName, numberOfSchools, budget] = getOrderedFromCells(
+    ['name', 'status', 'countryName', 'numberOfSchools', 'budget'],
     row.cells
   )
   const parsedStatus = parseContractStatus(status)
@@ -218,7 +218,6 @@ export default function ContractTableRow({
           {capitalizeFirstLetter(translate(`constant_status.contract.${parsedStatus}`))}
         </Tag>
       </TableCell>
-      <TableCell>{ltaName}</TableCell>
       <TableCell>{capitalizeFirstLetter(countryName ?? '')}</TableCell>
       <TableCell>{numberOfSchools}</TableCell>
       <TableCell>{`${currencyCode ?? ''} ${budget}`}</TableCell>

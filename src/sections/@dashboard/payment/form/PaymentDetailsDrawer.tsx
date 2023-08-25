@@ -1,6 +1,7 @@
 import { Invoice } from '@carbon/pictograms-react'
 import { Button, Modal, ProgressIndicator, ProgressStep } from '@carbon/react'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import {
   ContractDetails,
   ContractStatus,
@@ -25,6 +26,7 @@ import { ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
+import { redirectOnError } from 'src/pages/errors/handlers'
 import { useTheme } from 'src/theme'
 import { applyToEveryWord, capitalizeFirstLetter } from 'src/utils/strings'
 import { usePaymentSchema } from 'src/validations/payment'
@@ -36,7 +38,7 @@ interface Props {
   refetchPayments?: () => void
   contract:
     | ContractDetails
-    | { id: string; status: ContractStatus; automatic: boolean; currency?: ICurrency }
+    | { id: string; status: ContractStatus; automatic: boolean; currency?: ICurrency | null }
   payment?: IContractPayment
   onClose: VoidFunction
   open: boolean
@@ -54,6 +56,7 @@ export default function PaymentDetailsDrawer({
   paymentFrequency,
   openView
 }: Props) {
+  const navigate = useNavigate()
   const { spacing } = useTheme()
   const { pushSuccess, pushError } = useSnackbar()
   const { translate } = useLocales()
@@ -62,7 +65,7 @@ export default function PaymentDetailsDrawer({
   const methods = usePaymentSchema(payment)
   const { setValue, reset, handleSubmit, trigger, formState } = methods
 
-  const [item, setItem] = useState<ContractDetails | null>(null)
+  const [contractDetails, setContractDetails] = useState<ContractDetails | null>(null)
 
   const unsaved = useModal()
   const published = useModal()
@@ -70,17 +73,38 @@ export default function PaymentDetailsDrawer({
   const [unsavedChanges, setUnsavedChanges] = useState(false)
   const [saving, setSaving] = useState(false)
 
-  const [invoiceFile, setInvoiceFile] = useState<IFileUpload | null>(null)
-  const [receiptFile, setReceiptFile] = useState<IFileUpload | null>(null)
+  const [invoiceFile, setInvoiceFile] = useState<
+    (IFileUpload & { status: 'uploading' | 'edit' | 'complete' }) | null
+  >(null)
+  const [receiptFile, setReceiptFile] = useState<
+    (IFileUpload & { status: 'uploading' | 'edit' | 'complete' }) | null
+  >(null)
   const [invoiceUploadError, setInvoiceUploadError] = useState<Translation | ''>('')
   const [receiptUploadError, setReceiptUploadError] = useState<Translation | ''>('')
 
   useEffect(() => {
+    if (contractDetails?.budget && availablePayments) {
+      setValue(
+        'amount',
+        Number((Number(contractDetails.budget ?? '') / availablePayments.length).toFixed(3)) // TODO: Change to info from backend
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contractDetails?.budget, availablePayments])
+
+  useEffect(() => {
     if (!contract) return
-    if (Object.keys(contract).includes('isContract')) setItem(contract as ContractDetails)
+    if (Object.keys(contract).includes('isContract'))
+      setContractDetails(contract as ContractDetails)
     else if ((contract as { id: string; status: ContractStatus }).status === ContractStatus.Draft)
-      getDraft(contract.id).then((res) => setItem({ ...res, isContract: false }))
-    else getContractDetails(contract.id).then((res) => setItem({ ...res, isContract: true }))
+      getDraft(contract.id)
+        .then((res) => setContractDetails({ ...res, isContract: false }))
+        .catch((err) => redirectOnError(navigate, err))
+    else
+      getContractDetails(contract.id)
+        .then((res) => setContractDetails({ ...res, isContract: true }))
+        .catch((err) => redirectOnError(navigate, err))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contract])
 
   useEffect(() => {
@@ -98,12 +122,27 @@ export default function PaymentDetailsDrawer({
   useEffect(() => {
     if (!payment) return
     if (payment.invoice)
-      setInvoiceFile({ file: '', name: payment.invoice.name, type: 'invoice', typeId: '' })
+      setInvoiceFile({
+        file: '',
+        name: payment.invoice.name,
+        type: 'invoice',
+        typeId: '',
+        status: 'complete'
+      })
     if (payment.receipt)
-      setReceiptFile({ file: '', name: payment.receipt.name, type: 'invoice', typeId: '' })
+      setReceiptFile({
+        file: '',
+        name: payment.receipt.name,
+        type: 'invoice',
+        typeId: '',
+        status: 'complete'
+      })
   }, [payment, setValue])
 
-  const handleUploadAttachments = (attachment: IFileUpload, key: 'invoice' | 'receipt') => {
+  const handleUploadAttachments = (
+    attachment: IFileUpload & { status: 'complete' | 'edit' | 'uploading' },
+    key: 'invoice' | 'receipt'
+  ) => {
     if (key === 'invoice') setInvoiceFile(attachment)
     else if (key === 'receipt') setReceiptFile(attachment)
     setUnsavedChanges(true)
@@ -116,7 +155,7 @@ export default function PaymentDetailsDrawer({
       setSaving(true)
       if (payment) {
         const updatedPayment: Partial<IPaymentForm> = {
-          contractId: item?.id ?? '',
+          contractId: contractDetails?.id ?? '',
           amount: paymentForm.amount,
           description: paymentForm.description
         }
@@ -127,7 +166,7 @@ export default function PaymentDetailsDrawer({
         pushSuccess('push.updated_payment')
       } else {
         const newPayment: IPaymentForm = {
-          contractId: item?.id ?? '',
+          contractId: contractDetails?.id ?? '',
           amount: paymentForm.amount,
           description: paymentForm.description,
           year: paymentForm.payment.year,
@@ -188,7 +227,7 @@ export default function PaymentDetailsDrawer({
       invoiceUploadError={invoiceUploadError}
       setUploadErrorMessage={handleUploadError}
     />,
-    <Step2 contract={item} />
+    <Step2 contract={contractDetails} />
   ]
   const lastStep = stepComponents.length - 1
   const isFirstStep = activeStep === 0
@@ -268,7 +307,7 @@ export default function PaymentDetailsDrawer({
                   kind="primary"
                   onClick={(e) => {
                     e.preventDefault()
-                    handleNext()
+                    trigger().then((ok) => (ok ? handleNext() : null))
                   }}
                 >
                   {capitalizeFirstLetter(translate('continue'))}

@@ -1,32 +1,27 @@
 import { MiniList } from 'src/components/mini-list'
 import { WidgetWrapper } from 'src/components/widgets'
-import { ICONS } from 'src/constants'
-import { useBusinessContext } from 'src/context/BusinessContext'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useLocales } from 'src/locales'
-import { useTheme } from 'src/theme'
+import { formatDate } from 'src/utils/date'
 
 export default function TakeActionWidget() {
   const { translate } = useLocales()
   const { notifications } = useBusinessContext()
-  const { palette } = useTheme()
 
   const headers = [
     { label: `${translate('title')}`, key: 'title' },
     { label: translate('date'), key: 'sent_at' }
   ] as const
 
-  const filteredNotifications = notifications
+  const filteredNotifications = notifications?.filter((n) => n.priority === 1)
 
   return (
-    <WidgetWrapper
-      Icon={ICONS.Users}
-      iconColor={palette.error.main}
-      title="Actions requiring attention"
-      width="33%"
-      height="50%"
-    >
+    <WidgetWrapper title={translate('widgets.take_action.title')} width="100%" height="50dvh">
       <MiniList
-        noDataText="No actions to be taken"
+        transformData={{
+          sent_at: (sent_at) => formatDate(sent_at)
+        }}
+        noDataText={translate('widgets.take_action.no_data')}
         data={filteredNotifications?.sort((a, b) => a.sent_at.localeCompare(b.sent_at))}
         headers={headers}
       />

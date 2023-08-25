@@ -1,6 +1,7 @@
 import { InlineNotification, TextInput } from '@carbon/react'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useNavigate } from 'react-router'
 import { ContractForm, EducationLevel, ICurrency, SchoolCell, Translation } from 'src/@types'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
@@ -9,13 +10,15 @@ import { ErrorList, UploadError } from 'src/components/errors'
 import { RHFSelect, RHFTextField } from 'src/components/hook-form'
 import { Stack } from 'src/components/stack'
 import { SectionSubtitle, SectionTitle, Typography } from 'src/components/typography'
-import { useBusinessContext } from 'src/context/BusinessContext'
+import { FILTER_ALL_DEFAULT } from 'src/constants'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
 import useTable from 'src/hooks/useTable'
 import { useLocales } from 'src/locales'
+import { redirectOnError } from 'src/pages/errors/handlers'
 import { SchoolTableRow, SchoolTableToolbar } from 'src/sections/@dashboard/school/list'
 import { useTheme } from 'src/theme'
+import { removeDuplicates } from 'src/utils/arrays'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import { FILTER_ALL_DEFAULT } from 'src/constants'
 import UploadSchoolFile from './UploadSchoolFile'
 import { ContractSchoolsAndAttachments } from './types'
 
@@ -26,8 +29,11 @@ type Step2Props = {
   currencies: ICurrency[]
 }
 
+const regionKey = 'location1'
+
 export default function Step2({ onChange, fields, handlePost, currencies }: Step2Props) {
-  const { schools, refetchSchools } = useBusinessContext()
+  const navigate = useNavigate()
+  const { schools, refetchSchools, setSchools } = useBusinessContext()
   const { spacing, palette } = useTheme()
   const { isAdmin } = useAuthContext()
   const { translate } = useLocales()
@@ -43,18 +49,20 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
 
   useEffect(() => {
     if (!isAdmin || !countryId) return
-    refetchSchools(countryId)?.then((rs) => {
-      if (rs instanceof Error) throw rs
-      setTableData(
-        rs.map((sch) => ({
-          ...sch,
-          budget: fields.schools.find((row) => row.id === sch.external_id)?.budget ?? ''
-        }))
-      )
-    })
+    refetchSchools(countryId)
+      ?.then((rs) => {
+        setSchools(rs)
+        setTableData(
+          rs.map((sch) => ({
+            ...sch,
+            budget: fields.schools.find((row) => row.id === sch.external_id)?.budget ?? ''
+          }))
+        )
+      })
+      .catch((err) => redirectOnError(navigate, err))
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAdmin, countryId, refetchSchools])
+  }, [isAdmin, countryId])
 
   const { page, rowsPerPage, setPage, selected, onSelectRow, onSelectAllRows, setRowsPerPage } =
     useTable({
@@ -74,7 +82,6 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
     setTableData((prev) => {
       const newTableData = [...prev]
       newTableData[indexToReplace] = newRow
-
       return newTableData
     })
   }
@@ -84,7 +91,7 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
 
     selected.forEach((id) => {
       const { external_id, budget } = tableData.find((s) => s.id === id) as SchoolCell
-      newSchools.push({ id: external_id as string, budget: budget ?? 0 })
+      newSchools.push({ id: external_id, budget: budget ?? 0 })
     })
 
     if (
@@ -114,17 +121,18 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
   const TABLE_HEAD = [
     { key: 'external_id', header: 'Id' },
     { key: 'name', header: translate('name') },
+    { key: 'region', header: translate('region') },
     { key: 'budget', header: translate('budget') }
   ]
 
-  const REGION_OPTIONS = [
+  const REGION_OPTIONS = removeDuplicates([
     FILTER_ALL_DEFAULT,
-    ...Array.from(new Set(tableData.map((s) => s.location1)))
-  ]
-  const EDUCATION_LEVEL_OPTIONS = [
+    ...tableData.map((s) => s[regionKey])
+  ])
+  const EDUCATION_LEVEL_OPTIONS = removeDuplicates([
     FILTER_ALL_DEFAULT,
-    ...Array.from(new Set(tableData.map((s) => s.education_level)))
-  ] as (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
+    ...tableData.map((s) => s.education_level)
+  ]) as (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
 
   const [filterEducationLevel, setFilterEducationLevel] = useState<
     EducationLevel | typeof FILTER_ALL_DEFAULT
@@ -178,7 +186,6 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
         />
         <RHFTextField
           id="total budget"
-          type="number"
           onBlur={() => handlePost(getValues())}
           name="budget"
           labelText={capitalizeFirstLetter(translate('total_budget_of_the_contract'))}
@@ -243,7 +250,7 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
             setPage={setPage}
           />
         }
-        data={dataFiltered}
+        data={dataFiltered.map((s) => ({ ...s, region: s[regionKey] }))}
         page={page}
         setPage={setPage}
         isNotFound={isNotFound}
@@ -254,7 +261,7 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
         noDataText="table_no_data.schools"
         title="School table"
       />
-      {Number(contractBudget) && selected.length > 0 ? (
+      {selected.length > 0 ? (
         <Stack
           orientation="horizontal"
           style={{
@@ -270,7 +277,7 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
             id="total-budget"
             labelText=""
             value={totalBudget}
-            disabled
+            readOnly
           />
         </Stack>
       ) : (
@@ -300,7 +307,7 @@ function applyFilter({
     })
 
   if (filterRegion !== FILTER_ALL_DEFAULT)
-    inputData = inputData.filter((school) => school.location1 === filterRegion)
+    inputData = inputData.filter((school) => school[regionKey] === filterRegion)
 
   if (filterEducationLevel !== FILTER_ALL_DEFAULT)
     inputData = inputData.filter((s) => s.education_level === filterEducationLevel)

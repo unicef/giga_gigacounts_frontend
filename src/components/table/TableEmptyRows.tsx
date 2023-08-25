@@ -1,12 +1,11 @@
 import { TableCell, TableRow } from '@carbon/react'
 
 type Props = {
-  height?: number
   cols?: number
   emptyRows: number
 }
 
-export default function TableEmptyRows({ emptyRows, cols, height }: Props) {
+export default function TableEmptyRows({ emptyRows, cols }: Props) {
   const ret = new Array(emptyRows).fill(null)
 
   return (

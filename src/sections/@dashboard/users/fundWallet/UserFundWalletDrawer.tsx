@@ -1,5 +1,6 @@
 import { Button, InlineNotification } from '@carbon/react'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { ICurrency, WalletBalance } from 'src/@types'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import Drawer from 'src/components/drawer/Drawer'
@@ -8,10 +9,11 @@ import FormProvider from 'src/components/hook-form/FormProvider'
 import { Stack } from 'src/components/stack'
 import { SectionTitle } from 'src/components/typography'
 import { ENV_SUPPORTED_NETWORK_ID, ICONS, SUPPORTED_NETWORKS } from 'src/constants'
-import { useBusinessContext } from 'src/context/BusinessContext'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useWeb3Context } from 'src/hooks/useWeb3Context'
 import { useLocales } from 'src/locales'
+import { redirectOnError } from 'src/pages/errors/handlers'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 import { UserFundWalletSchema } from './UserFundWalletSchema'
@@ -25,6 +27,7 @@ interface Props {
 
 export function UserFundWalletDrawer({ name, walletAddress, open, onClose }: Props) {
   const methods = UserFundWalletSchema()
+  const navigate = useNavigate()
   const { spacing } = useTheme()
   const [updating, setUpdating] = useState(false)
   const { pushSuccess, pushWarning, pushError } = useSnackbar()
@@ -46,24 +49,30 @@ export function UserFundWalletDrawer({ name, walletAddress, open, onClose }: Pro
     const data = getValues()
     const currencyData = currencies.filter((c) => c.id === data.currency)[0]
     if (!currencyData) return
-    getWalletBalance(data.walletFrom, currencyData.contractAddress).then(
-      (walletBalance: WalletBalance[] | undefined) => {
-        setValue('balanceFrom', walletBalance && walletBalance.length > 0 ? walletBalance[0].balance : 0)
-      }
-    )
-    getWalletBalance(data.walletTo, currencyData.contractAddress).then(
-      (walletBalance: WalletBalance[] | undefined) => {
-        setValue('balanceTo', walletBalance && walletBalance.length > 0 ? walletBalance[0].balance : 0)
-      }
-    )
+    getWalletBalance(data.walletFrom, currencyData.contractAddress)
+      .then((walletBalance: WalletBalance[] | undefined) => {
+        setValue(
+          'balanceFrom',
+          walletBalance && walletBalance.length > 0 ? walletBalance[0].balance : 0
+        )
+      })
+      .catch((err) => redirectOnError(navigate, err))
+    getWalletBalance(data.walletTo, currencyData.contractAddress)
+      .then((walletBalance: WalletBalance[] | undefined) => {
+        setValue(
+          'balanceTo',
+          walletBalance && walletBalance.length > 0 ? walletBalance[0].balance : 0
+        )
+      })
+      .catch((err) => redirectOnError(navigate, err))
   }
 
   useEffect(() => {
     const setInitialData = () => {
       setUpdating(true)
-      setValue('walletFrom', user?.walletAddress)
+      setValue('walletFrom', user?.walletAddress ?? '')
       setValue('walletTo', walletAddress)
-      setWalletFromHelpText(walletFromHelpText.replace('WALLET_ADDRESS', user?.walletAddress))
+      setWalletFromHelpText(walletFromHelpText.replace('WALLET_ADDRESS', user?.walletAddress ?? ''))
       setWalletToHelpText(walletToHelpText.replace('WALLET_ADDRESS', walletAddress))
       setValue('balanceFrom', 0)
       setValue('balanceTo', 0)
@@ -177,7 +186,7 @@ export function UserFundWalletDrawer({ name, walletAddress, open, onClose }: Pro
                   id="userName"
                   type="string"
                   name="userName"
-                  disabled
+                  readOnly
                   value={name}
                   labelText={translate('fund_wallet.field_user_name')}
                 />
@@ -190,14 +199,14 @@ export function UserFundWalletDrawer({ name, walletAddress, open, onClose }: Pro
                   id="walletFrom"
                   type="string"
                   name="walletFrom"
-                  disabled
+                  readOnly
                   labelText={translate('fund_wallet.field_wallet_from')}
                 />
                 <RHFTextField
                   id="balanceFrom"
                   type="number"
                   name="balanceFrom"
-                  disabled
+                  readOnly
                   labelText={translate('fund_wallet.field_wallet_from_balance')}
                 />
               </Stack>
@@ -209,14 +218,14 @@ export function UserFundWalletDrawer({ name, walletAddress, open, onClose }: Pro
                   id="walletTo"
                   type="string"
                   name="walletTo"
-                  disabled
+                  readOnly
                   labelText={translate('fund_wallet.field_wallet_to')}
                 />
                 <RHFTextField
                   id="balanceTo"
                   type="number"
                   name="balanceTo"
-                  disabled
+                  readOnly
                   labelText={translate('fund_wallet.field_wallet_to_balance')}
                 />
               </Stack>

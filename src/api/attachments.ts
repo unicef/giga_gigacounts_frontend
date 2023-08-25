@@ -1,22 +1,23 @@
 import { IFileUpload } from 'src/@types'
+import { DRAFT_ID_OFFSET } from 'src/constants'
 import instance from './init'
 
-export const uploadAttachment = async (file: IFileUpload) => {
+export const uploadAttachment = async (
+  file: IFileUpload
+): Promise<IFileUpload & { id: string }> => {
   const response = await instance.post('/attachments/upload', {
-    ...file
+    ...file,
+    typeId: String(Number(file.typeId) - DRAFT_ID_OFFSET)
   })
-  if (response.status === 200) return response.data
-  throw new Error('Failed to upload attachment file')
+  return response.data
 }
 
 export const getAttachment = async (attachmentId: string) => {
   const response = await instance.get(`/attachments/${attachmentId}`)
-  if (response.status === 200) return response.data
-  throw new Error('Attachment not found')
+  return response.data
 }
 
 export const deleteAttachment = async (attachmentId: string) => {
   const response = await instance.delete(`/attachments/${attachmentId}`)
-  if (response.status === 200) return response.data
-  throw new Error('Failed to delete attachment file')
+  return response.data
 }

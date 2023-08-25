@@ -32,7 +32,7 @@ export interface IUser {
   phoneNumber: string
   photoUrl: string
   role: IRole
-  country?: ICountry
+  country: ICountry
   safe?: ISafe
   walletAddress: string | null
   isp?: IISP
@@ -83,8 +83,8 @@ export interface IDraft {
   lta?: ILta
   schools: (ISchool & { budget: string })[]
   notes: string
-  ispContacts?: IUser[]
-  stakeholders?: IUser[]
+  ispContacts: IUser[]
+  stakeholders: IUser[]
   breakingRules: string
   paymentReceiver?: {
     id: number
@@ -172,6 +172,8 @@ export interface IContractDetails {
   automatic: boolean
   breakingRules: string
   cashback?: number
+  ispContacts: IUser[]
+  stakeholders: IUser[]
 }
 
 export interface IPendingContractDetails {
@@ -223,6 +225,8 @@ export interface IContract<Status extends ContractStatus = ContractStatus> {
   listId?: string
   currencyCode: string
   automatic: boolean
+  start_date: string | null
+  end_date: string | null
 }
 
 export interface IContractSchoolsConnection {
@@ -240,7 +244,7 @@ export interface ISchoolContact {
 }
 export interface IContractSchools {
   id: string
-  education_level: EducationLevel
+  educationLevel: EducationLevel
   name: string
   externalId: string
   locations: string
@@ -261,6 +265,7 @@ export interface ISchoolMeasuresExtended extends ISchoolMeasures {
   school_name: string
   school_education_level: EducationLevel
   school_external_id: string
+  school_location1: string
 }
 
 export interface IContractTotalSpent {
@@ -422,22 +427,6 @@ export type Contract = {
   cashback?: number
 }
 
-export interface INotification {
-  id: string
-  email: string | null
-  config_id: string
-  user_id: string | null
-  status: string
-  title: string
-  message: string
-  sub_message: string | null
-  created_at: string
-  sent_at: string
-  viewed_at: string | null
-  type: string | null
-  avatar: string | null
-}
-
 export interface ISchool {
   id: string
   external_id: string
@@ -472,18 +461,3 @@ export type MetricName =
   | 'Upload speed'
 
 export type EducationLevel = 'High school' | 'Primary' | 'Secondary'
-
-export interface IDashboardSchools {
-  id: number
-  external_id: string
-  name: string
-  address: string
-  education_level: string
-  country_id: number
-  lat: string
-  lng: string
-  avg_uptime: number
-  avg_latency: number
-  avg_dspeed: number
-  avg_uspeed: number
-}

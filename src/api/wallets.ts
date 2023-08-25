@@ -1,9 +1,8 @@
 import instance from './init'
 
 export const getWalletRandomString = async () => {
-  const response = await instance.get(`/wallet-random-string`)
-  if (response.status === 200) return response.data
-  throw new Error(`Could not obtain verification message`)
+  const response = await instance.get(`/user/wallet-random-string`)
+  return response.data
 }
 
 export const attachWallet = async (address: string, message: string) => {
@@ -11,6 +10,10 @@ export const attachWallet = async (address: string, message: string) => {
     address,
     message
   })
-  if (response.status === 200) return response.data
-  throw new Error(`Could not Attach wallet`)
+  return response.data
+}
+
+export const getGigaTokenOwnerWalletAddress = async () => {
+  const response = await instance.get(`/user/giga-token-owner-wallet-address`)
+  return response.data
 }

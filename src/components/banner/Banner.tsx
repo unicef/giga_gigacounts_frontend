@@ -13,16 +13,25 @@ type BannerProps = {
   subtitle?: string
   details?: Item[]
   topThreeDetails?: [Item, Item, Item] | [Item, Item] | [Item]
+  variant?: 'sm' | 'lg'
 }
 
-export default function Banner({ title, details, subtitle, topThreeDetails, label }: BannerProps) {
+export default function Banner({
+  title,
+  details,
+  subtitle,
+  topThreeDetails,
+  label,
+  variant = 'lg'
+}: BannerProps) {
   const { spacing } = useTheme('g90')
+  const isSmall = variant === 'sm'
   return (
     <Theme theme="g90">
       <Stack
         style={{
           padding: spacing.md,
-          paddingBottom: spacing.lg
+          paddingBottom: isSmall ? spacing.md : spacing.lg
         }}
       >
         <Stack orientation="horizontal" alignItems="center" justifyContent="space-between">
@@ -33,14 +42,14 @@ export default function Banner({ title, details, subtitle, topThreeDetails, labe
               justifyContent="center"
               gap={spacing.md}
             >
-              <Typography as="h2" variant="default">
+              <Typography as={isSmall ? 'h4' : 'h2'} variant="default">
                 {capitalizeFirstLetter(title)}
               </Typography>
               {label && <Tag type={label.color}>{label.text}</Tag>}
             </Stack>
             {subtitle && (
-              <Typography as="h5" variant="default">
-                {subtitle}
+              <Typography as={isSmall ? 'h6' : 'h5'} variant="default">
+                {capitalizeFirstLetter(subtitle)}
               </Typography>
             )}
           </Stack>

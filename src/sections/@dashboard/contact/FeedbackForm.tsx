@@ -30,27 +30,27 @@ export default function FeedbackForm() {
   const buttons = [
     {
       value: 1,
-      icon: ICONS.FeedbackVeryLowRating,
+      Icon: ICONS.FeedbackVeryLowRating,
       iconDescription: translate('fedback_rating.1')
     },
     {
       value: 2,
-      icon: ICONS.FeedbackLowRating,
+      Icon: ICONS.FeedbackLowRating,
       iconDescription: translate('fedback_rating.2')
     },
     {
       value: 3,
-      icon: ICONS.FeedbackNeutralRating,
+      Icon: ICONS.FeedbackNeutralRating,
       iconDescription: translate('fedback_rating.3')
     },
     {
       value: 4,
-      icon: ICONS.FeedbackHighRating,
+      Icon: ICONS.FeedbackHighRating,
       iconDescription: translate('fedback_rating.4')
     },
     {
       value: 5,
-      icon: ICONS.FeedbackVeryHighRating,
+      Icon: ICONS.FeedbackVeryHighRating,
       iconDescription: translate('fedback_rating.5')
     }
   ]
@@ -68,14 +68,17 @@ export default function FeedbackForm() {
           {buttons.map((b) => (
             <Button
               className="btn-max-width-limit"
-              renderIcon={b.icon}
               kind={watch().rate === b.value ? 'primary' : 'tertiary'}
               key={b.value}
               onClick={() => setValue('rate', b.value)}
               size="xl"
-              style={{ width: '20%' }}
+              style={{
+                width: '20%'
+              }}
               iconDescription={b.iconDescription}
-            />
+            >
+              <b.Icon size={32} />
+            </Button>
           ))}
         </Stack>
         <TextArea

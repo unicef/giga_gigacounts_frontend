@@ -2,15 +2,15 @@ import { Button, Tag } from '@carbon/react'
 import { IBlockchainTransaction } from 'src/@types'
 import Drawer from 'src/components/drawer/Drawer'
 import FormProvider, { RHFTextField } from 'src/components/hook-form'
-import { WEB3_TRANSACTION_STATUS_COLORS } from 'src/constants/status'
-import { ENV_SUPPORTED_NETWORK_ID, SUPPORTED_NETWORKS } from 'src/constants/web3'
-import { ICONS } from 'src/constants'
 import { Stack } from 'src/components/stack'
 import { SectionTitle, Typography } from 'src/components/typography'
+import { ICONS } from 'src/constants'
+import { WEB3_TRANSACTION_STATUS_COLORS } from 'src/constants/status'
+import { ENV_SUPPORTED_NETWORK_ID, SUPPORTED_NETWORKS } from 'src/constants/web3'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import { TransactionSchema } from './TransactionSchema'
+import { useTransacitionSchema } from 'src/validations/transaction'
 
 interface Props {
   transaction: IBlockchainTransaction
@@ -20,7 +20,7 @@ interface Props {
 }
 
 export default function TransactionViewDrawer({ transaction, hasError, open, onClose }: Props) {
-  const methods = TransactionSchema()
+  const methods = useTransacitionSchema()
   const { translate } = useLocales()
   const { spacing } = useTheme()
   const handleCLose = () => {
@@ -56,7 +56,7 @@ export default function TransactionViewDrawer({ transaction, hasError, open, onC
                 id="createdAt"
                 type="string"
                 name="createdAt"
-                disabled
+                readOnly
                 value={transaction.createdAt}
                 labelText={translate('date')}
               />
@@ -81,7 +81,7 @@ export default function TransactionViewDrawer({ transaction, hasError, open, onC
                 id="userDisplayName"
                 type="string"
                 name="userDisplayName"
-                disabled
+                readOnly
                 value={transaction.userDisplayName}
                 labelText={translate('user')}
               />
@@ -89,7 +89,7 @@ export default function TransactionViewDrawer({ transaction, hasError, open, onC
                 id="userEmail"
                 type="string"
                 name="userEmail"
-                disabled
+                readOnly
                 value={transaction.userEmail}
                 labelText={translate('email')}
               />
@@ -98,7 +98,7 @@ export default function TransactionViewDrawer({ transaction, hasError, open, onC
               id="contractName"
               type="string"
               name="contractName"
-              disabled
+              readOnly
               value={transaction.contractName}
               labelText={translate('contract')}
             />
@@ -107,7 +107,7 @@ export default function TransactionViewDrawer({ transaction, hasError, open, onC
                 id="networkName"
                 type="string"
                 name="networkName"
-                disabled
+                readOnly
                 value={transaction.networkName}
                 labelText={translate('transactions_tab.transaction_network')}
               />
@@ -115,7 +115,7 @@ export default function TransactionViewDrawer({ transaction, hasError, open, onC
                 id="transactionType"
                 type="string"
                 name="transactionType"
-                disabled
+                readOnly
                 value={transaction.transactionType}
                 labelText={translate('transactions_tab.transaction_type')}
               />
@@ -126,7 +126,7 @@ export default function TransactionViewDrawer({ transaction, hasError, open, onC
               id="walletAddress"
               type="string"
               name="walletAddress"
-              disabled
+              readOnly
               value={transaction.walletAddress}
               labelText={translate('wallet.label')}
             />
@@ -136,7 +136,7 @@ export default function TransactionViewDrawer({ transaction, hasError, open, onC
               helperTextLinkText={translate('fund_wallet.view_in_explorer')}
               type="string"
               name="transactionHash"
-              disabled
+              readOnly
               value={transaction.transactionHash}
               labelText={translate('transactions_tab.transaction_hash')}
             />

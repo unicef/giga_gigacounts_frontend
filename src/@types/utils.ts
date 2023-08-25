@@ -10,7 +10,7 @@ export type NonEmptyArray<T> = {
   0: T
 } & Array<T>
 
-export type MinMax = { min: string; max: string }
+export type MinMax<T> = { min: T; max: T }
 
 export type SortableKeys<T extends {}> = Exclude<
   {

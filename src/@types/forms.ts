@@ -14,7 +14,7 @@ export type FeedbackForm = {
 
 export type ContractForm = {
   id: string
-  ltaId: string
+  ltaId?: string
   name: string
   country: string
   isp: string

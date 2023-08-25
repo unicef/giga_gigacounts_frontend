@@ -118,7 +118,9 @@ const en = {
     approve_payment: 'The payment has been approved',
     approve_payment_error: 'There was an error approving the payment',
     reject_payment: 'The payment has been rejected',
-    reject_payment_error: 'There was an error rejecting the payment'
+    reject_payment_error: 'There was an error rejecting the payment',
+    pay_payment: 'The payment has been marked as paid',
+    pay_payment_error: 'There was an error marking the payment as paid'
   },
   duplicate_contract: {
     title: 'Duplicate contract',
@@ -201,6 +203,10 @@ const en = {
     title: 'Discard changes',
     content:
       'Are you sure you want to cancel your contract creation? Any unsaved changes will be discarded.'
+  },
+  payment_pay_modal: {
+    title: 'Mark payment as paid',
+    content: 'Are you sure you want to mark this payment as paid? This change cannot be undone.'
   },
   comment_section: {
     title: 'Additional comments',
@@ -296,9 +302,9 @@ const en = {
   add_the_terms_agreed: 'Add the terms agreed upon between you and the ISP in the contract.',
   contract_breaking_rules: 'contract breaking rules',
   add_rules_and_guidelines:
-    'Add rules and guidelines to follow for when ISPs do not fulfill contract terms.',
+    'Add rules and guidelines to follow when ISPs do not fulfill contract terms.',
   payment_settings: 'Payment settings',
-  add_payment_intervals: 'Add payment intervals for this contract.',
+  add_payment_frequency: 'Add payment frequency for this contract.',
   payment_interval: 'Payment interval',
   add_contract_terms: 'add contract terms',
   add_the_general_details: 'Add the general contract details',
@@ -368,6 +374,7 @@ const en = {
   item_by_roles: `item by roles`,
   only_admin_can_see_this_item: `Only admin can see this item`,
   dashboard: 'dashboard',
+  search_country: 'Search country for show data',
   users: 'users',
   settings: 'settings',
   account_settings: 'account settings',
@@ -821,13 +828,13 @@ const en = {
   drag_and_drop_csv_singular: 'Drag and drop .csv file here or click to upload',
   drag_and_drop_csv_multiple: 'Drag and drop .csv files here or click to upload',
   knowledge_base: 'Knowledge base',
-  contact_information: 'contact infomation',
+  contact_information: 'contact information',
   education_level: 'Education level',
   no_breaking_rules: 'No breaking rules added for this contract',
   schools_connected_out_of: 'schools connected out of',
   during: 'during',
   web3_transcations: 'Automatic Transactions',
-  search_isp_contacts: 'Search for ISP contacts',
+  search_isp_contacts: 'Select ISP contacts',
   search_contract_team: 'Search for available contract team members',
   onboard_steps: {
     home: {
@@ -837,7 +844,16 @@ const en = {
       language_popover: 'Here you can select the language of the application'
     },
     contracts: {
+      new_contract: 'This is the button to create a new contract',
+      filter: 'Here you can apply certain filters',
       table_container: 'Here you can see the contracts that you can manage'
+    },
+    profile: {
+      wallet: 'Here you can connect your wallet for the payment of automatic contracts'
+    },
+    contract_detail: {
+      schools: 'Here you can see the list of schools and monitor the status of their connectivity',
+      payment: 'Here you can export the invoices and add them'
     }
   },
   next: 'next',
@@ -868,10 +884,75 @@ const en = {
     secondary: 'Secondary'
   },
   payment_receiver_warning:
-    'The selected user does not have a configured wallet. They will not be able to receive automatic payments until they configure one in their profile.',
+    "The selected user does not have a configured wallet. He won't be able to receive automatic payments until he sets one up in his profile.",
   payment_details: 'Payment details',
   no_wallet_address: 'No wallet address',
-  isp_contacts: 'ISP contacts'
+  isp_contacts: 'ISP contacts',
+  school: 'school',
+  name_spaces_error: 'Name cannot contain spaces',
+  budget_exceeds_max_error: 'Total budget in schools must be equal to contract budget',
+  uploaded: 'uploaded',
+  added_as_contact: 'added as contact',
+  added_as_team_member: 'added as team member',
+  failed_to_upload: 'failed to upload',
+  failed_to_add_as_contact: 'failed to add as contact',
+  failed_to_add_as_team_member: 'failed to add as team member',
+  file_container_label_accept: 'Supported file types are {{accept}}',
+  file_container_label_size: 'Max file size is {{size}}mb.',
+  page_error: {
+    403: {
+      title: 'No permission',
+      content:
+        'The page you are trying access has restricted access. Please refer to your system administrator'
+    },
+    404: {
+      title: 'Page not found',
+      content:
+        'Sorry, we could not find the page you are looking for. Please make sure the URL is correct.'
+    },
+    500: {
+      title: 'Internal Server Error',
+      content: 'There was an error. Please try again later.'
+    },
+    generic: {
+      title: 'Looks like there was an error',
+      content: 'Something went wrong processing your request. Please try again.'
+    }
+  },
+  widgets: {
+    map: {
+      title: 'Schools map',
+      average_latency: 'Average latency',
+      average_uptime: 'Average uptime',
+      average_download_speed: 'Average download speed',
+      average_upload_speed: 'Average upload speed',
+      you_are_here: 'You are here'
+    },
+    contract_issues: {
+      title: 'Contracts with SLA issues',
+      no_data: 'No contracts have SLA issues'
+    },
+    take_action: {
+      title: 'Actions requiring attention',
+      no_data: 'No actions to be taken'
+    },
+    school_issues: {
+      title: 'Schools with SLA issues',
+      no_data: 'No schools have SLA issues'
+    },
+    upcoming_payments: {
+      title: 'Upcoming payments',
+      no_data: 'No upcoming payments'
+    },
+    overdue_payment: {
+      title: 'Overdue payments',
+      no_data: 'No overdue payments'
+    }
+  },
+  the_file_is_downloading: 'the file is downloading',
+  copied_link: 'copied link',
+  share_contract_details: 'Share contract details',
+  contract_dates: 'Contract dates'
 }
 
 export default en

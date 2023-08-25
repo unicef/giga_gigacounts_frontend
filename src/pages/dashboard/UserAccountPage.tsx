@@ -2,6 +2,7 @@ import { TextInput } from '@carbon/react'
 import { Helmet } from 'react-helmet-async'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import Banner from 'src/components/banner/Banner'
+import CustomJoyride from 'src/components/custom-joyride/CustomJoyride'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
 import { Views } from 'src/constants'
@@ -24,64 +25,74 @@ export default function UserAccountPage() {
       </Helmet>
       {user && (
         <>
-          <Banner title={`${translate('loginLayout.welcome')} ${user?.displayName || ''}`} />
-          <Stack orientation="horizontal" gap={spacing.xl}>
+          <CustomJoyride name="profile" />
+          <Banner title={`${translate('loginLayout.welcome')} ${user?.name} ${user?.lastName}`} />
+          <Stack
+            style={{ height: '84dvh', backgroundColor: palette.background.neutral }}
+            orientation="horizontal"
+            gap={spacing.xl}
+          >
             <Stack
-              gap={spacing.md}
               orientation="vertical"
               style={{
                 width: '100%',
-                backgroundColor: palette.background.neutral,
+                height: '100%',
+                backgroundColor: palette.background.default,
                 paddingInline: spacing.xl,
                 paddingBlock: spacing.lg
               }}
             >
-              <Typography as="h3">{capitalizeFirstLetter(translate('personal_info'))}</Typography>
-              <img
-                src={user?.photoUrl}
-                alt="user profile"
-                style={{ alignSelf: 'center', borderRadius: '50%', width: 230, height: 230 }}
-              />
+              <Typography style={{ marginBottom: spacing.xl + spacing.md }} as="h4">
+                {capitalizeFirstLetter(translate('personal_info'))}
+              </Typography>
+
               <TextInput
+                size="lg"
                 id="user name"
                 labelText={capitalizeFirstLetter(translate('name'))}
-                disabled
+                readOnly
                 value={user?.name}
               />
               <TextInput
+                size="lg"
                 id="user lastname"
                 labelText={capitalizeFirstLetter(translate('last_name'))}
-                disabled
+                readOnly
                 value={user?.lastName}
               />
               <TextInput
+                size="lg"
                 id="user role"
                 labelText={capitalizeFirstLetter(translate('role'))}
-                disabled
+                readOnly
                 value={user?.role?.name}
               />
               <TextInput
+                size="lg"
                 id="user email"
                 labelText={capitalizeFirstLetter(translate('email'))}
-                disabled
+                readOnly
                 value={user?.email}
               />
               <TextInput
+                size="lg"
                 id="user phoneNumber"
                 labelText={capitalizeFirstLetter(translate('phone_number'))}
-                disabled
+                readOnly
                 value={user?.phoneNumber}
               />
               <TextInput
+                size="lg"
                 id="user country name"
                 labelText={capitalizeFirstLetter(translate('country_name'))}
-                disabled
+                readOnly
                 value={user?.country.name}
               />
               <TextInput
+                size="lg"
                 id="user address"
                 labelText={capitalizeFirstLetter(translate('address'))}
-                disabled
+                readOnly
                 value={user?.address}
               />
             </Stack>

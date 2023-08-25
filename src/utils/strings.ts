@@ -10,5 +10,7 @@ export const uncapitalizeFirstLetter = (value: string) => {
 export const applyToEveryWord = (string: string, fn: (word: string) => string) =>
   string.split(' ').map(fn).join(' ')
 
-export const threeDots = (string: string, maxChars: number) =>
-  string.length > maxChars ? `${string.slice(0, maxChars - 3)}...` : string
+export const threeDots = (string: string, maxChars: number) => {
+  if (!string) return string
+  return string.length > maxChars ? `${string.slice(0, maxChars - 3)}...` : string
+}

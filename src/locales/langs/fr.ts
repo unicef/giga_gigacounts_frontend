@@ -121,7 +121,9 @@ const fr: TranslationObject = {
     approve_payment: 'Le paiement a été approuvé',
     approve_payment_error: "Une erreur s'est produite lors de l'approbation du paiement",
     reject_payment: 'Le paiement a été rejeté',
-    reject_payment_error: "Une erreur s'est produite lors du rejet du paiement"
+    reject_payment_error: "Une erreur s'est produite lors du rejet du paiement",
+    pay_payment: 'Le paiement a été marqué comme payé',
+    pay_payment_error: "Une erreur s'est produite lors du marquant du paiement comme payé"
   },
   duplicate_contract: {
     title: 'Dupliquer le contrat',
@@ -186,6 +188,11 @@ const fr: TranslationObject = {
   publish_contract_modal: {
     title: 'Vous êtes sur le point de publier le contrat.',
     content: 'Êtes-vous sûr de vouloir publier ce contrat?'
+  },
+  payment_pay_modal: {
+    title: 'Marquez le paiement comme payé',
+    content:
+      'Êtes-vous sûr de vouloir marquer ce paiement comme payé? Ce changement ne peut pas être annulé.'
   },
   contract_draft_modal: {
     title:
@@ -262,9 +269,9 @@ const fr: TranslationObject = {
   add_the_terms_agreed: 'Add the terms agreed upon between you and the ISP in the contract.',
   contract_breaking_rules: 'contract breaking rules',
   add_rules_and_guidelines:
-    'Ajoutez des règles et des directives à suivre pour le moment où les ISP ne respectent pas les conditions du contrat.',
+    'Ajoutez des règles et des directives à suivre lorsque les FAI ne respectent pas les conditions du contrat.',
   payment_settings: 'Paramètres de paiement',
-  add_payment_intervals: 'Ajouter des intervalles de paiement pour ce contrat.',
+  add_payment_frequency: 'Ajouter la fréquence de paiement pour ce contrat.',
   payment_interval: 'Intervalle de paiement',
   add_contract_terms: 'Ajouter des conditions de contrat',
   review_and_save: 'examiner et économiser',
@@ -379,6 +386,7 @@ const fr: TranslationObject = {
   item_by_roles: `élément par rôles`,
   only_admin_can_see_this_item: `seul l'administrateur peut voir cet élément`,
   dashboard: 'dashboard',
+  search_country: 'Rechercher le pays pour afficher des données',
   users: 'utilisateurs',
   settings: 'paramètres',
   account_settings: 'paramètres de compte',
@@ -846,7 +854,7 @@ const fr: TranslationObject = {
   schools_connected_out_of: 'écoles connectées à partir de',
   during: 'pendant',
   web3_transcations: 'Transactions automatiques',
-  search_isp_contacts: 'Trouver des contacts ISP',
+  search_isp_contacts: 'Sélectionnez les contacts ISP',
   search_contract_team: "Trouvez des membres de l'équipe contractuelle disponibles",
   onboard_steps: {
     home: {
@@ -857,7 +865,18 @@ const fr: TranslationObject = {
       language_popover: "Ici, vous pouvez sélectionner la langue de l'application"
     },
     contracts: {
+      new_contract: `C'est le bouton pour créer un nouveau contrat`,
+      filter: `Ici, vous pouvez appliquer certains filtres`,
       table_container: 'Ici, vous pouvez voir les contrats que vous pouvez gérer'
+    },
+    profile: {
+      wallet:
+        'Ici, vous pouvez connecter votre portefeuille pour le paiement des contrats automatiques'
+    },
+    contract_detail: {
+      schools:
+        'Ici, vous pouvez voir la liste des écoles et surveiller le statut de leur connectivité',
+      payment: 'Ici, vous pouvez exporter les factures et les ajouter'
     }
   },
   next: 'suivante',
@@ -888,10 +907,75 @@ const fr: TranslationObject = {
     secondary: 'Secondaire'
   },
   payment_receiver_warning:
-    "L'utilisateur sélectionné n'a pas de portefeuille configuré. Ils ne pourront pas recevoir de paiements automatiques tant qu'ils n'en configurent pas un dans leur profil.",
+    "L'utilisateur sélectionné n'a pas de portefeuille configuré. Il ne pourra pas recevoir de paiements automatiques tant qu'il n'en aura pas configuré un dans son profil.",
   payment_details: 'Détails de paiement',
   no_wallet_address: 'Aucune adresse de portefeuille',
-  isp_contacts: 'Contacts ISP'
+  isp_contacts: 'Contacts ISP',
+  school: 'école',
+  name_spaces_error: "Le nom ne peut pas contenir d'espaces",
+  budget_exceeds_max_error: 'Le budget total des écoles doit être égal au budget du contrat',
+  uploaded: 'téléchargé',
+  added_as_contact: 'ajouté comme contact',
+  added_as_team_member: "ajouté comme membre de l'équipe",
+  failed_to_upload: 'échec du téléchargement',
+  failed_to_add_as_contact: "échec de l'ajout en contact",
+  failed_to_add_as_team_member: "échec de l'ajout en tant que membre de l'équipe",
+  file_container_label_accept: 'Les types de fichiers compatibles sont {{accept}}',
+  file_container_label_size: 'La taille maximale du fichier est {{size}}mb.',
+  page_error: {
+    403: {
+      title: 'Aucune autorisation',
+      content:
+        "La page que vous essayez d'accès a un accès restreint. Veuillez vous référer à votre administrateur système"
+    },
+    404: {
+      title: 'Page non trouvée',
+      content:
+        "Nous l'avons senti, nous ne trouvons pas la page que vous recherchez.Assurez-vous que l'URL est correcte "
+    },
+    500: {
+      title: 'Erreur interne du serveur',
+      content: 'Il y a eu une erreur. Veuillez réessayer plus tard.'
+    },
+    generic: {
+      title: `On dirait qu'il y a eu une erreur`,
+      content: `Quelque chose s'est mal passé en traitement de votre demande. Veuillez réessayer.`
+    }
+  },
+  widgets: {
+    map: {
+      title: 'Carte des écoles',
+      average_latency: 'Latence moyenne',
+      average_uptime: 'Time de disponibilité moyen',
+      average_download_speed: 'Vitesse de téléchargement moyenne',
+      average_upload_speed: 'Vitesse de téléversement moyenne',
+      you_are_here: 'Tu es là'
+    },
+    contract_issues: {
+      title: 'Contractes avec les problèmes de SLA',
+      no_data: "Aucun contrat n'a de problèmes de SLA"
+    },
+    take_action: {
+      title: 'Actions nécessitant une attention',
+      no_data: 'Aucune action à prendre'
+    },
+    school_issues: {
+      title: 'Écoles avec des problèmes de SLA',
+      no_data: "Aucune école n'a de problèmes de SLA"
+    },
+    upcoming_payments: {
+      title: 'Paiements à venir',
+      no_data: 'Pas de paiements à venir'
+    },
+    overdue_payment: {
+      title: 'Paiements en retards',
+      no_data: 'Pas de paiements en retard'
+    }
+  },
+  the_file_is_downloading: 'le fichier se télécharge',
+  copied_link: 'lien copié',
+  share_contract_details: 'Partager les détails du contrat',
+  contract_dates: 'Dates du contrat'
 }
 
 export default fr

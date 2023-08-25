@@ -5,7 +5,6 @@ import {
   IContractPayment,
   ICurrency,
   IFrequency,
-  ISchoolsConnections,
   Icon,
   PaymentStatus,
   Translation
@@ -34,12 +33,9 @@ type Props = {
   contractId: string
   contractFrequency: IFrequency['name']
   contractStatus: ContractStatus
-  currency?: ICurrency
+  currency?: ICurrency | null
   contractAutomatic: boolean
-  metrics: ISchoolsConnections
-  paidDate: { month: number; year: number }
   payment: IContractPayment
-  dateFrom: string
   contractNumberOfSchools: number
 }
 
@@ -64,16 +60,20 @@ export default function PaymentTableRow({
     row.cells
   )
   const parsedStatus = parsePaymentStatus(status)
-  const canChangeStatus =
-    canAdd(Views.payment) && parsedStatus === PaymentStatus.OnHold && !contractAutomatic
+  const canChangeStatus = canAdd(Views.payment) && !contractAutomatic
 
   const approve = useModal()
   const reject = useModal()
+  const pay = useModal()
   const edit = useModal()
   const view = useModal()
 
+  const isOnHold = parsedStatus === PaymentStatus.OnHold
+  const isUnPaid = parsedStatus === PaymentStatus.Unpaid
+  const isPaid = parsedStatus === PaymentStatus.Paid
+
   const handleApprove = () => {
-    if (parsedStatus !== PaymentStatus.OnHold || !canChangeStatus) return
+    if (!(isOnHold || isPaid) || !canChangeStatus) return
     approve.close()
     changePaymentStatus(row.id, PaymentStatus.Verified)
       .then(() => {
@@ -83,7 +83,7 @@ export default function PaymentTableRow({
       .catch(() => pushError('push.approve_payment_error'))
   }
   const handleReject = () => {
-    if (parsedStatus !== PaymentStatus.OnHold || !canChangeStatus) return
+    if (!isOnHold || !canChangeStatus) return
     reject.close()
     changePaymentStatus(row.id, PaymentStatus.Unpaid)
       .then(() => {
@@ -93,6 +93,17 @@ export default function PaymentTableRow({
       .catch(() => pushError('push.reject_payment_error'))
   }
 
+  const handleMarkAsPaid = () => {
+    if (!isUnPaid || !canChangeStatus) return
+    pay.close()
+    changePaymentStatus(row.id, PaymentStatus.Paid)
+      .then(() => {
+        refetchPayments()
+        pushSuccess('push.pay_payment')
+      })
+      .catch(() => pushError('push.pay_payment_error'))
+  }
+
   const options: { icon: Icon; label: Translation; onClick: () => void }[] = [
     {
       icon: ICONS.View,
@@ -100,10 +111,15 @@ export default function PaymentTableRow({
       onClick: view.open
     }
   ]
-  if (canChangeStatus) {
+  if (canChangeStatus && isOnHold) {
     options.push({ icon: ICONS.Edit, label: 'edit', onClick: edit.open })
-    options.push({ icon: ICONS.SuccessOutline, label: 'approve', onClick: approve.open })
     options.push({ icon: ICONS.Close, label: 'decline', onClick: reject.open })
+  }
+  if (canChangeStatus && (isOnHold || isPaid)) {
+    options.push({ icon: ICONS.SuccessOutline, label: 'approve', onClick: approve.open })
+  }
+  if (canChangeStatus && isUnPaid) {
+    options.push({ icon: ICONS.Fund, label: 'mark_as_paid', onClick: pay.open })
   }
   return (
     <TableRow {...rowProps}>
@@ -157,7 +173,12 @@ export default function PaymentTableRow({
           paymentFrequency={contractFrequency}
           availablePayments={[payment.paidDate]}
           refetchPayments={refetchPayments}
-          contract={{ id: contractId, status: contractStatus, automatic: contractAutomatic, currency }}
+          contract={{
+            id: contractId,
+            status: contractStatus,
+            automatic: contractAutomatic,
+            currency
+          }}
           onClose={edit.close}
           open={edit.value}
           payment={payment}
@@ -190,6 +211,15 @@ export default function PaymentTableRow({
           secondaryButtonText={translate('cancel')}
           onRequestClose={reject.close}
           onRequestSubmit={handleReject}
+        />
+        <Modal
+          open={pay.value}
+          modalHeading={translate('payment_pay_modal.content')}
+          modalLabel={translate('payment_pay_modal.title')}
+          primaryButtonText={translate('mark_as_paid')}
+          secondaryButtonText={translate('cancel')}
+          onRequestClose={pay.close}
+          onRequestSubmit={handleMarkAsPaid}
         />
       </TableCell>
     </TableRow>

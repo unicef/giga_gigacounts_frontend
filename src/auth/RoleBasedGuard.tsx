@@ -1,37 +1,29 @@
 import { useLocales } from 'src/locales'
 import { Typography } from 'src/components/typography'
+import { UserRoles } from 'src/@types'
+import LoadingScreen from 'src/components/loading-screen/LoadingScreen'
 import { useAuthContext } from './useAuthContext'
 
 type RoleBasedGuardProp = {
-  hasContent?: boolean
-  roles?: string[]
+  roles?: readonly UserRoles[]
   children: React.ReactNode
 }
 
-export default function RoleBasedGuard({ hasContent, roles, children }: RoleBasedGuardProp) {
-  const { translate } = useLocales()
+export default function RoleBasedGuard({ roles, children }: RoleBasedGuardProp) {
   const { user } = useAuthContext()
-  const currentRole = user?.role
+  const { translate } = useLocales()
+  const currentRole = user?.role || { code: '' }
 
-  if (typeof roles !== 'undefined' && currentRole && !roles.includes(currentRole.code)) {
-    return hasContent ? (
+  if (!user) return <LoadingScreen />
+  if (roles && roles.length > 0 && currentRole && !roles.includes(currentRole.code)) {
+    return (
       <>
-        {/* <m.div>
-        <m.div variants={varBounce().in}> */}
         <Typography as="h3">{translate('role_base_guard.permission_denied')}</Typography>
-        {/* </m.div> */}
-        {/*
-        <m.div variants={varBounce().in}> */}
         <Typography variant="textSecondary">
           {translate('role_base_guard.without_permission')}
         </Typography>
-        {/* </m.div> */}
-        {/* <m.div variants={varBounce().in}> */}
-        {/* <ForbiddenIllustration sx={{ height: 260, my: { xs: 5, sm: 10 } }} /> */}
-        {/* </m.div> */}
-        {/* </m.div> */}
       </>
-    ) : null
+    )
   }
 
   return <> {children} </>

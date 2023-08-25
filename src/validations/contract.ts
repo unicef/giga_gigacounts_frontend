@@ -6,6 +6,8 @@ import { ContractForm, ContractStep, IDraft } from 'src/@types'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { useLocales } from 'src/locales'
 
+const MAX_BUDGET = 1000000000000000000
+
 export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | null) => {
   const { user } = useAuthContext()
   const { translate, replaceTranslated, replaceTwoTranslated } = useLocales()
@@ -13,9 +15,8 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
   const getDefaultValues = useCallback(
     (draft?: IDraft | null) => ({
       id: draft?.id ?? '',
-      ltaId: draft?.lta?.id ?? '',
       name: draft?.name ?? '',
-      country: draft?.country?.id ?? user?.country.id,
+      country: draft?.country?.id ?? user?.country.id ?? '',
       isp: draft?.isp?.id ?? '',
       startDate: draft?.startDate ? new Date(draft?.startDate) : null,
       endDate: draft?.endDate ? new Date(draft?.endDate) : null,
@@ -57,7 +58,6 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
   const resolver = yupResolver(
     Yup.object().shape({
       id: Yup.string(),
-      ltaId: Yup.string(),
       name: Yup.string().required(
         replaceTranslated('field_errors.required', '{{field}}', 'contract_name')
       ),
@@ -101,7 +101,7 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
           replaceTwoTranslated('field_errors.less_than', '{{field}}', '{{number}}', 'uptime', 100)
         )
         .nullable()
-        .transform((_, val) => (val ? Number(val) : null)),
+        .transform((_, val) => (!Number.isNaN(Number(val)) ? Number(val) : null)),
       downloadSpeed: Yup.number()
         .min(0, replaceTranslated('field_errors.positive', '{{field}}', 'download_speed'))
         .max(
@@ -115,7 +115,7 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
           )
         )
         .nullable()
-        .transform((_, val) => (val ? Number(val) : null)),
+        .transform((_, val) => (!Number.isNaN(Number(val)) ? Number(val) : null)),
       latency: Yup.number()
         .min(0, replaceTranslated('field_errors.positive', '{{field}}', 'latency'))
         .max(
@@ -129,7 +129,7 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
           )
         )
         .nullable()
-        .transform((_, val) => (val ? Number(val) : null)),
+        .transform((_, val) => (!Number.isNaN(Number(val)) ? Number(val) : null)),
       uploadSpeed: Yup.number()
         .min(0, replaceTranslated('field_errors.positive', '{{field}}', 'upload_speed'))
         .max(
@@ -143,7 +143,7 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
           )
         )
         .nullable()
-        .transform((_, val) => (val ? Number(val) : null)),
+        .transform((_, val) => (!Number.isNaN(Number(val)) ? Number(val) : null)),
       users: Yup.array(),
       currency:
         activeStep === 1
@@ -155,13 +155,33 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
         activeStep === 1
           ? Yup.number()
               .min(0, replaceTranslated('field_errors.positive', '{{field}}', 'budget'))
-              .nullable()
-              .transform((_, val) => (val ? Number(val) : null))
+              .max(
+                MAX_BUDGET,
+                replaceTwoTranslated(
+                  'field_errors.less_than',
+                  '{{field}}',
+                  '{{number}}',
+                  'budget',
+                  MAX_BUDGET
+                )
+              )
+              .nonNullable()
+              .transform((_, val) => (!Number.isNaN(Number(val)) ? Number(val) : null))
               .required(replaceTranslated('field_errors.required', '{{field}}', 'budget'))
           : Yup.number()
+              .nonNullable()
               .min(0, replaceTranslated('field_errors.positive', '{{field}}', 'budget'))
-              .nullable()
-              .transform((_, val) => (val ? Number(val) : null)),
+              .max(
+                MAX_BUDGET,
+                replaceTwoTranslated(
+                  'field_errors.less_than',
+                  '{{field}}',
+                  '{{number}}',
+                  'budget',
+                  MAX_BUDGET
+                )
+              )
+              .transform((_, val) => (!Number.isNaN(Number(val)) ? Number(val) : null)),
       notes: Yup.string(),
       automatic: Yup.boolean(),
       bypass: Yup.boolean(),
@@ -171,5 +191,5 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
     })
   )
 
-  return useForm({ resolver, values: defaultValues })
+  return useForm({ resolver, values: defaultValues, mode: 'all', reValidateMode: 'onChange' })
 }

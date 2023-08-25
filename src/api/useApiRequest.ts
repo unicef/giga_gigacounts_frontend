@@ -1,50 +1,36 @@
-import { useState, useEffect } from 'react'
-import { Axios, AxiosRequestConfig } from 'axios'
+import { useCallback, useState } from 'react'
 
-interface Config {
-  axiosInstance: Axios
-  method: 'get' | 'post' | 'put' | 'delete'
-  url: string
-  requestConfig?: AxiosRequestConfig
-}
-
-const useApiRequest = (): {
-  response: null
-  errors: Error | undefined
+const useApiRequest = <T, U extends any[]>(
+  fetch: (...params: U) => Promise<T>,
+  handleError?: (err: Error) => void
+): {
+  response: T | undefined
+  error: Error | undefined
   loading: boolean
-  axiosFetch: (configObj: Config) => Promise<void>
+  fetch: (...params: U) => void
 } => {
-  const [response, setResponse] = useState(null)
-  const [errors, setError] = useState<Error>()
+  const [response, setResponse] = useState<T | undefined>()
+  const [error, setError] = useState<Error | undefined>()
   const [loading, setLoading] = useState(false)
-  const [controller, setController] = useState<AbortController>()
 
-  const axiosFetch = async (configObj: Config) => {
-    const { axiosInstance, method, url, requestConfig } = configObj
+  const axiosFetch = useCallback(
+    (...params: U) => {
+      setLoading(true)
+      fetch(...params)
+        .then((res) => setResponse(res))
+        .catch((err) => {
+          if (err instanceof Error && handleError) {
+            handleError(err)
+            return
+          }
+          setError(err)
+        })
+        .finally(() => setLoading(false))
+    },
+    [fetch, handleError]
+  )
 
-    setLoading(true)
-
-    try {
-      const ctrl = new AbortController()
-      setController(ctrl)
-
-      const res = await axiosInstance[method](url, {
-        ...requestConfig,
-        signal: ctrl.signal
-      })
-
-      setResponse(res.data)
-      setLoading(false)
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error)
-      }
-    }
-  }
-
-  useEffect(() => () => controller && controller.abort(), [controller])
-
-  return { response, errors, loading, axiosFetch }
+  return { response, error, loading, fetch: axiosFetch }
 }
 
 export default useApiRequest

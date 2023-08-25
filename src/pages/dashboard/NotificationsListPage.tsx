@@ -1,18 +1,18 @@
-import { Modal } from '@carbon/react'
-import { useState } from 'react'
-import { Helmet } from 'react-helmet-async'
-import { INotification } from 'src/@types'
-import { Banner } from 'src/components/banner'
-import CustomDataTable from 'src/components/data-table/CustomDataTable'
-import { useTable } from 'src/components/table'
-import { ICONS, KEY_DEFAULTS } from 'src/constants'
-import { useBusinessContext } from 'src/context/BusinessContext'
-import { useModal } from 'src/hooks/useModal'
-import { useLocales } from 'src/locales'
+import { Modal } from '@carbon/react';
+import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { INotification } from 'src/@types';
+import { Banner } from 'src/components/banner';
+import CustomDataTable from 'src/components/data-table/CustomDataTable';
+import { useTable } from 'src/components/table';
+import { ICONS, KEY_DEFAULTS } from 'src/constants';
+import { useBusinessContext } from 'src/context/business/BusinessContext';
+import { useModal } from 'src/hooks/useModal';
+import { useLocales } from 'src/locales';
 import {
   NotificationTableRow,
   NotificationTableToolbar
-} from 'src/sections/@dashboard/user/notifications'
+} from 'src/sections/@dashboard/user/notifications';
 
 export default function NotificationsListPage() {
   const { page, rowsPerPage, setPage, setRowsPerPage, selected, onSelectAllRows, onSelectRow } =
@@ -45,10 +45,10 @@ export default function NotificationsListPage() {
         inputData: notifications,
         filterSearch
       })
-    : []
+    :null
 
-  const dataInPage = dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-  const isNotFound = !notifications || (!dataFiltered.length && !!filterSearch)
+  const dataInPage = dataFiltered ?  dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) :[]
+  const isNotFound = Boolean(dataFiltered && !dataFiltered.length )
 
   const handleDeleteRow = (id: string) => {
     discardNotification(id).finally(refetchNotifications)
@@ -61,7 +61,7 @@ export default function NotificationsListPage() {
   }
 
   const handleDeleteRows = (selectedRows: string[]) => {
-    if (!notifications) return
+    if (!notifications || !dataFiltered) return
     discardManyNotifications(selectedRows).finally(refetchNotifications)
 
     if (page > 0) {

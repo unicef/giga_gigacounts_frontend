@@ -11,6 +11,7 @@ type StackProps = {
   gap?: CSSProperties['gap']
   children: React.ReactNode
   style?: CSSProperties
+  className?: string
 }
 
 export default function Stack({
@@ -23,10 +24,12 @@ export default function Stack({
   justifyItems,
   alignSelf,
   gap,
-  style
+  style,
+  className
 }: StackProps) {
   return (
     <div
+      className={className}
       style={{
         display: 'flex',
         flexDirection: orientation === 'horizontal' ? 'row' : 'column',

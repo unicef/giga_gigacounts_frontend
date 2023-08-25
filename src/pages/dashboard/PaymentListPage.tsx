@@ -1,28 +1,32 @@
-import { useEffect, useState } from 'react'
-import { Helmet } from 'react-helmet-async'
-import { IContractPayment, PaymentStatus, UserRoles } from 'src/@types'
-import { getPayments } from 'src/api/payments'
-import { useAuthContext } from 'src/auth/useAuthContext'
-import { Banner } from 'src/components/banner'
-import CustomDataTable from 'src/components/data-table/CustomDataTable'
-import { useTable } from 'src/components/table'
-import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants'
-import { useAuthorization } from 'src/hooks/useAuthorization'
-import { useLocales } from 'src/locales'
-import { PaymentTableRow, PaymentTableToolbar } from 'src/sections/@dashboard/payment/list'
+import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router';
+import { IContractPayment, PaymentStatus, UserRoles } from 'src/@types';
+import { getPayments } from 'src/api/payments';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import { Banner } from 'src/components/banner';
+import CustomDataTable from 'src/components/data-table/CustomDataTable';
+import { useTable } from 'src/components/table';
+import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants';
+import { useAuthorization } from 'src/hooks/useAuthorization';
+import { useLocales } from 'src/locales';
+import { PaymentTableRow, PaymentTableToolbar } from 'src/sections/@dashboard/payment/list';
+import { redirectOnError } from '../errors/handlers';
 
 export default function PaymentListPage() {
+  const navigate = useNavigate()
   const { page, rowsPerPage, setPage, setRowsPerPage } = useTable({
     defaultOrderBy: 'dateTo'
   })
 
   const [tableData, setTableData] = useState<
-    (IContractPayment & {
-      contractName: string
-      contractId: string
-      contractNumberOfSchools: number
-    })[]
-  >([])
+    | (IContractPayment & {
+        contractName: string
+        contractId: string
+        contractNumberOfSchools: number
+      })[]
+    | null
+  >(null)
   const [filterName, setFilterName] = useState('')
   const [filterStatus, setFilterStatus] = useState<PaymentStatus | typeof FILTER_ALL_DEFAULT>(
     FILTER_ALL_DEFAULT
@@ -36,7 +40,7 @@ export default function PaymentListPage() {
 
   const TABLE_HEAD: { key: string; header: string; align?: string }[] = [
     { key: 'id', header: `${translate('payment')} #` },
-    { key: 'dateTo', header: translate('date_to') },
+    { key: 'dateTo', header: translate('payment_period') },
     { key: 'amount', header: translate('amount') },
     { key: 'status', header: translate('status') },
     { key: 'connections', header: translate('connection') }
@@ -56,25 +60,40 @@ export default function PaymentListPage() {
   }
 
   useEffect(() => {
-    getPayments().then(setTableData)
-  }, [])
+    getPayments()
+      .then(setTableData)
+      .catch((err) => redirectOnError(navigate, err))
+  }, [navigate])
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    filterName,
-    filterStatus
-  })
+  const dataFiltered = tableData
+    ? applyFilter({
+        inputData: tableData,
+        filterName,
+        filterStatus
+      })
+    : null
 
-  const isNotFound = !dataFiltered.length
+  const isNotFound = Boolean(dataFiltered && !dataFiltered.length)
 
-  const downloadableData = tableData.map((payment) => ({
-    'Payment number': payment.id,
-    'Contract name': payment.contractName,
-    'Amount': payment.amount,
-    'Date from': payment.dateFrom,
-    'Date to': payment.dateTo,
-    'Status': payment.status
-  }))
+  const downloadableData = tableData
+    ? tableData.map((payment) => ({
+        'Payment number': payment.id,
+        'Contract name': payment.contractName,
+        'Amount': payment.amount,
+        'Date from': payment.dateFrom,
+        'Date to': payment.dateTo,
+        'Status': payment.status
+      }))
+    : [
+        {
+          'Payment number': '',
+          'Contract name': '',
+          'Amount': '',
+          'Date from': '',
+          'Date to': '',
+          'Status': ''
+        }
+      ]
 
   return (
     <>
@@ -88,12 +107,10 @@ export default function PaymentListPage() {
         isSortable
         RowComponent={PaymentTableRow}
         getRowComponentProps={(row) => ({
-          paidDate: row.paidDate,
           currency: row.currency,
-          contractAutomatic: row.contractAutomatic,
+          contractAutomatic: row.contractAutomatic as boolean,
           contractStatus: row.contractStatus,
           contractId: row.contractId,
-          metrics: row.metrics,
           payment: row,
           contractFrequency: row.contractFrequency,
           contractNumberOfSchools: row.contractNumberOfSchools,
@@ -136,6 +153,7 @@ function applyFilter({
   filterName: string
   filterStatus: PaymentStatus | typeof FILTER_ALL_DEFAULT
 }) {
+
   if (filterName)
     inputData = inputData.filter(
       (invoice) => invoice.createdBy.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
@@ -143,6 +161,5 @@ function applyFilter({
 
   if (filterStatus !== FILTER_ALL_DEFAULT)
     inputData = inputData.filter((invoice) => invoice.status === filterStatus)
-
   return inputData
 }

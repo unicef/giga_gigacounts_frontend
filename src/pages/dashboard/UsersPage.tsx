@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { useNavigate } from 'react-router'
 import { ICountry, IUser } from 'src/@types'
 import { getUsers } from 'src/api/user'
 import { useAuthContext } from 'src/auth/useAuthContext'
@@ -7,17 +8,19 @@ import { Banner } from 'src/components/banner'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { useTable } from 'src/components/table'
 import { KEY_DEFAULTS } from 'src/constants'
-import { useBusinessContext } from 'src/context/BusinessContext'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useLocales } from 'src/locales'
 import { UsersTableRow, UsersTableToolbar } from 'src/sections/@dashboard/users/list'
+import { redirectOnError } from '../errors/handlers'
 
 export default function UsersPage() {
+  const navigate = useNavigate()
   const { page, rowsPerPage, setPage, setRowsPerPage } = useTable()
   const { user } = useAuthContext()
   const { countries } = useBusinessContext()
 
-  const [countryId, setCountryId] = useState(user?.country.id)
-  const [tableData, setTableData] = useState<IUser[]>([])
+  const [countryId, setCountryId] = useState(user?.country.id ?? '')
+  const [tableData, setTableData] = useState<IUser[] | null>(null)
   const [filterName, setFilterName] = useState('')
 
   const { translate } = useLocales()
@@ -33,15 +36,20 @@ export default function UsersPage() {
   ]
 
   useEffect(() => {
-    getUsers(countryId, []).then(setTableData)
+    getUsers(countryId, [])
+      .then(setTableData)
+      .catch((err) => redirectOnError(navigate, err))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryId])
 
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    filterName
-  })
+  const dataFiltered = tableData
+    ? applyFilter({
+        inputData: tableData,
+        filterName
+      })
+    : null
 
-  const isNotFound = !dataFiltered.length
+  const isNotFound = Boolean(dataFiltered && !dataFiltered.length)
 
   const handleFilterCountry = (countryName: string) => {
     const selectedCountry = countries.find((c) => c.name === countryName) as ICountry
