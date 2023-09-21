@@ -1,15 +1,17 @@
-import { Checkbox, DataTableRow, TableCell, TableRow, Tag } from '@carbon/react'
+import { DataTableRow, TableCell, TableRow, Tag } from '@carbon/react'
 import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
 import { useState } from 'react'
+import { ISchool } from 'src/@types'
 import { setReliability } from 'src/api/school'
-import { SCHOOL_RELIABILITY_COLOR } from 'src/constants'
+import { ActionButton } from 'src/components/action-button'
+import { SCHOOL_RELIABILITY_COLOR, STRING_DEFAULT } from 'src/constants'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
-import { capitalizeFirstLetter } from 'src/utils/strings'
+import { capitalizeFirstLetter, threeDots } from 'src/utils/strings'
 import { getOrderedFromCells } from 'src/utils/table'
 
 type Props = {
-  row: DataTableRow
+  row: DataTableRow<ISchool[]>
   selected: boolean
   rowProps: TableRowProps
 }
@@ -35,23 +37,30 @@ export default function SchoolReliabilityTableRow({ row, rowProps }: Props) {
 
   return (
     <TableRow {...rowProps}>
-      <TableCell>{external_id}</TableCell>
-
-      <TableCell>{name}</TableCell>
-
-      <TableCell>{location1}</TableCell>
-      <TableCell>
+      <TableCell style={{ width: '30%' }}>{threeDots(name, 50)}</TableCell>
+      <TableCell style={{ width: '15%' }}>
         <Tag type={SCHOOL_RELIABILITY_COLOR(checked)}>
           {capitalizeFirstLetter(translate(checked ? 'reliable' : 'unreliable'))}
         </Tag>
       </TableCell>
-      <TableCell>
-        <Checkbox
-          id={row.id}
-          labelText=""
-          checked={checked}
-          onChange={(_, data) => handleReliableChange(data.checked, data.id)}
-        />
+      <TableCell style={{ width: '20%' }}>{external_id}</TableCell>
+
+      <TableCell style={{ width: '25%' }}>{location1 || STRING_DEFAULT}</TableCell>
+
+      <TableCell style={{ width: '10%' }}>
+        {checked ? (
+          <ActionButton
+            icon="Close"
+            description="mark_as_unreliable"
+            onClick={() => handleReliableChange(false, row.id)}
+          />
+        ) : (
+          <ActionButton
+            icon="Success"
+            description="mark_as_reliable"
+            onClick={() => handleReliableChange(true, row.id)}
+          />
+        )}
       </TableCell>
     </TableRow>
   )

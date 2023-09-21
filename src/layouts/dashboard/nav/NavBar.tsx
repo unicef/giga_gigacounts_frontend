@@ -1,26 +1,16 @@
-import {
-  Button,
-  SideNav,
-  SideNavDivider,
-  SideNavItems,
-  SideNavLink,
-  SkeletonText
-} from '@carbon/react'
+import { Button, SideNav, SideNavDivider, SideNavItems, SkeletonText } from '@carbon/react'
 import { useLocation, useNavigate } from 'react-router'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { Stack } from 'src/components/stack'
-import { Typography } from 'src/components/typography'
-import { ICONS, KNOWLEDGE_BASE_MAP, LAYOUT_SIDEBAR_WIDTH } from 'src/constants'
+import { ICONS, LAYOUT_SIDEBAR_WIDTH } from 'src/constants'
 import { useNavbar } from 'src/context/layout/NavbarContext'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useSettings } from 'src/hooks/useSettings'
-import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
 import { ROUTES } from 'src/routes/paths'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 import NavAccount from './NavAccount'
-import NavIcon from './NavIcon'
 import NavItem from './NavItem'
 import NavShortcuts from './NavShortcuts'
 import navConfig, { shortcuts } from './config-navigation'
@@ -33,31 +23,12 @@ export default function NavBar() {
   const { translate } = useLocales()
   const { hasSomeRole } = useAuthorization()
   const { hasAllSettings } = useSettings()
-  const { pushError } = useSnackbar()
   const navigate = useNavigate()
-
-  const redirectToKnowledgeBase = () => {
-    let link = ''
-    return Object.keys(KNOWLEDGE_BASE_MAP).some((key) => {
-      if (pathname.includes(key)) {
-        link = KNOWLEDGE_BASE_MAP[key]
-        return true
-      }
-      return false
-    })
-      ? window.open(link, '_blank')
-      : pushError('push.knowledge_base_error')
-  }
-
-  const handleLogout = () => {
-    logout()
-    navigate(ROUTES.auth.login.route)
-  }
 
   const { spacing, palette } = useTheme()
   return (
     <SideNav
-      onToggle={(_: object, value: boolean) => (setExpanded ? setExpanded(value) : null)}
+      onToggle={(_, value) => setExpanded(value)}
       isPersistent={false}
       expanded={expanded}
       aria-label="Side navigation"
@@ -68,7 +39,7 @@ export default function NavBar() {
         alignItems="center"
         style={{
           height: '100%',
-          paddingTop: spacing.xl,
+          paddingTop: spacing.lg,
           width: LAYOUT_SIDEBAR_WIDTH,
           backgroundColor: palette.background.neutral
         }}
@@ -98,15 +69,6 @@ export default function NavBar() {
                   )
                 )
               })}
-              <SideNavLink
-                large
-                renderIcon={() => <NavIcon CarbonIcon={ICONS.KnowledgeBase} isActive={false} />}
-                onClick={redirectToKnowledgeBase}
-              >
-                <Typography as="span" variant="textTertiary">
-                  {capitalizeFirstLetter(translate('knowledge_base'))}
-                </Typography>
-              </SideNavLink>
             </SideNavItems>
           ) : (
             <Stack
@@ -131,7 +93,7 @@ export default function NavBar() {
           justifyContent="center"
           alignSelf="flex-start"
         >
-          <Button size="sm" kind="ghost" style={{ color: palette.grey[600] }} onClick={handleLogout}>
+          <Button size="sm" kind="ghost" style={{ color: palette.grey[600] }} onClick={logout}>
             <ICONS.Logout
               style={{
                 marginRight: spacing.xs,
@@ -146,7 +108,11 @@ export default function NavBar() {
             size="sm"
             kind="ghost"
             style={{ color: palette.grey[600] }}
-            onClick={() => navigate(ROUTES.dashboard.contact.feedback.route)}
+            onClick={() =>
+              navigate(ROUTES.dashboard.contact.feedback.route, {
+                state: { previousPath: pathname }
+              })
+            }
           >
             <ICONS.Mail
               style={{
@@ -156,6 +122,26 @@ export default function NavBar() {
               }}
             />
             {capitalizeFirstLetter(translate('send_feedback'))}
+          </Button>
+          <Button
+            id="ask-for-help-link"
+            size="sm"
+            kind="ghost"
+            style={{ color: palette.grey[600] }}
+            onClick={() =>
+              navigate(ROUTES.dashboard.contact.helpRequest.route, {
+                state: { previousPath: pathname }
+              })
+            }
+          >
+            <ICONS.Help
+              style={{
+                marginRight: spacing.xs,
+                stroke: palette.grey[600],
+                fill: palette.grey[600]
+              }}
+            />
+            {capitalizeFirstLetter(translate('ask_for_help'))}
           </Button>
         </Stack>
       </Stack>

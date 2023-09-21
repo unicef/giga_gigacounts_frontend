@@ -1,10 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import * as Yup from 'yup'
-import { ContractForm, ContractStep, IDraft } from 'src/@types'
+import { ContractForm, ContractStep, IDraft, Metric, MetricCamel, MetricSnake } from 'src/@types'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { useLocales } from 'src/locales'
+import * as Yup from 'yup'
 
 const MAX_BUDGET = 1000000000000000000
 
@@ -21,17 +21,17 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
       startDate: draft?.startDate ? new Date(draft?.startDate) : null,
       endDate: draft?.endDate ? new Date(draft?.endDate) : null,
       launchDate: draft?.launchDate ? new Date(draft?.launchDate) : null,
-      uptime: Number(
-        draft?.expectedMetrics?.find((metric) => metric.name === 'Uptime')?.value ?? ''
+      [MetricCamel.Uptime]: Number(
+        draft?.expectedMetrics?.find((metric) => metric.name === Metric.Uptime)?.value ?? ''
       ),
-      downloadSpeed: Number(
-        draft?.expectedMetrics?.find((metric) => metric.name === 'Download speed')?.value ?? ''
+      [MetricCamel.DownloadSpeed]: Number(
+        draft?.expectedMetrics?.find((metric) => metric.name === Metric.DownloadSpeed)?.value ?? ''
       ),
-      latency: Number(
-        draft?.expectedMetrics?.find((metric) => metric.name === 'Latency')?.value ?? ''
+      [MetricCamel.Latency]: Number(
+        draft?.expectedMetrics?.find((metric) => metric.name === Metric.Latency)?.value ?? ''
       ),
-      uploadSpeed: Number(
-        draft?.expectedMetrics?.find((metric) => metric.name === 'Upload speed')?.value ?? ''
+      [MetricCamel.UploadSpeed]: Number(
+        draft?.expectedMetrics?.find((metric) => metric.name === Metric.UploadSpeed)?.value ?? ''
       ),
       currency: draft?.currency?.id ?? '',
       budget: Number(draft?.budget ?? 0),
@@ -39,7 +39,7 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
       automatic: draft?.automatic ?? false,
       breakingRules: draft?.breakingRules ?? '',
       bypass: false,
-      frequencyId: draft?.frequency?.id ?? '',
+      frequencyId: draft?.frequency?.id ?? '3',
       paymentReceiverId: String(draft?.paymentReceiver?.id ?? ''),
       addLaunchDate:
         Boolean(draft?.launchDate) &&
@@ -78,15 +78,14 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
       launchDate: Yup.date()
         .nullable()
         .when(['startDate', 'endDate'], (dates, schema) => {
-          const dayAfterStart = dates[0] ? new Date(dates[0].getTime() + 86400000) : null
           const dayBeforeEnd = dates[1] ? new Date(dates[1].getTime() - 86400000) : null
           if (dates[0] && dates[1]) {
             return schema
-              .min(dayAfterStart, translate('field_errors.launch_date_min'))
+              .min(dates[0], translate('field_errors.launch_date_min'))
               .max(dayBeforeEnd, translate('field_errors.launch_date_max'))
           }
           if (dates[0]) {
-            return schema.min(dayAfterStart, translate('field_errors.launch_date_min'))
+            return schema.min(dates[0], translate('field_errors.launch_date_min'))
           }
           if (dates[1]) {
             return schema.max(dayBeforeEnd, translate('field_errors.launch_date_max'))
@@ -94,51 +93,57 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
           return schema
         }),
 
-      uptime: Yup.number()
-        .min(0, replaceTranslated('field_errors.positive', '{{field}}', 'uptime'))
+      [MetricCamel.Uptime]: Yup.number()
+        .min(0, replaceTranslated('field_errors.positive', '{{field}}', MetricSnake.Uptime))
         .max(
           100,
-          replaceTwoTranslated('field_errors.less_than', '{{field}}', '{{number}}', 'uptime', 100)
+          replaceTwoTranslated(
+            'field_errors.less_than',
+            '{{field}}',
+            '{{number}}',
+            MetricSnake.Uptime,
+            100
+          )
         )
         .nullable()
         .transform((_, val) => (!Number.isNaN(Number(val)) ? Number(val) : null)),
-      downloadSpeed: Yup.number()
-        .min(0, replaceTranslated('field_errors.positive', '{{field}}', 'download_speed'))
+      [MetricCamel.DownloadSpeed]: Yup.number()
+        .min(0, replaceTranslated('field_errors.positive', '{{field}}', MetricSnake.DownloadSpeed))
         .max(
           10000,
           replaceTwoTranslated(
             'field_errors.less_than',
             '{{field}}',
             '{{number}}',
-            'download_speed',
+            MetricSnake.DownloadSpeed,
             10000
           )
         )
         .nullable()
         .transform((_, val) => (!Number.isNaN(Number(val)) ? Number(val) : null)),
-      latency: Yup.number()
-        .min(0, replaceTranslated('field_errors.positive', '{{field}}', 'latency'))
+      [MetricCamel.Latency]: Yup.number()
+        .min(0, replaceTranslated('field_errors.positive', '{{field}}', MetricSnake.Latency))
         .max(
           10000,
           replaceTwoTranslated(
             'field_errors.less_than',
             '{{field}}',
             '{{number}}',
-            'latency',
+            MetricSnake.Latency,
             10000
           )
         )
         .nullable()
         .transform((_, val) => (!Number.isNaN(Number(val)) ? Number(val) : null)),
-      uploadSpeed: Yup.number()
-        .min(0, replaceTranslated('field_errors.positive', '{{field}}', 'upload_speed'))
+      [MetricCamel.UploadSpeed]: Yup.number()
+        .min(0, replaceTranslated('field_errors.positive', '{{field}}', MetricSnake.UploadSpeed))
         .max(
           10000,
           replaceTwoTranslated(
             'field_errors.less_than',
             '{{field}}',
             '{{number}}',
-            'upload_speed',
+            MetricSnake.UploadSpeed,
             10000
           )
         )

@@ -1,9 +1,9 @@
+import { IPeriod } from './general'
+import { MetricCamel } from './metrics'
 import { PaymentStatus } from './status'
 
 export type HelpRequestForm = {
-  code: string
   type: string
-  functionality: string
   description: string
 }
 
@@ -21,10 +21,6 @@ export type ContractForm = {
   startDate: Date | null
   endDate: Date | null
   launchDate: Date | null
-  uptime: number
-  downloadSpeed: number
-  latency: number
-  uploadSpeed: number
   currency: string
   budget: number
   notes: string
@@ -34,13 +30,13 @@ export type ContractForm = {
   addLaunchDate: boolean
   breakingRules: string
   paymentReceiverId: string
-}
+} & { [K in MetricCamel]: number }
 
 export type PaymentForm = {
   status: PaymentStatus
   description: string
   amount: number
-  payment: { month: number; day?: number; year: number }
+  payment: IPeriod | null
 }
 
 export type ContractFundForm = {

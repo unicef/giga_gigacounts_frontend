@@ -1,5 +1,5 @@
 import { UserRoles } from 'src/@types'
-import { ICONS, UserSettings } from 'src/constants'
+import { UserSettings } from 'src/constants'
 import { NavListProps } from 'src/layouts/dashboard/nav/types'
 import { ROUTES } from 'src/routes/paths'
 
@@ -33,7 +33,7 @@ export const VIEW_ROLES = {
     UserRoles.ISP_CUSTOMER_SERVICE
   ],
   schools: [UserRoles.GIGA_ADMIN],
-  users: [UserRoles.GIGA_ADMIN]
+  users: []
 } as const
 
 const navConfig = [
@@ -43,49 +43,49 @@ const navConfig = [
       {
         title: 'home',
         path: ROUTES.dashboard.app.route,
-        icon: ICONS.Home,
+        icon: 'Home',
         roles: VIEW_ROLES.home,
         settings: []
       },
       {
         title: 'contracts',
         path: ROUTES.dashboard.contract.root.route,
-        icon: ICONS.Contract,
+        icon: 'Contract',
         roles: VIEW_ROLES.contracts,
         settings: []
       },
       {
-        title: 'payments',
+        title: 'payments_log',
         path: ROUTES.dashboard.payment.root.route,
-        icon: ICONS.Payment,
+        icon: 'Payment',
         roles: VIEW_ROLES.payments,
         settings: []
       },
       {
-        title: 'connectivity',
+        title: 'schools_connectivity',
         path: ROUTES.dashboard.connection.route,
-        icon: ICONS.Connection,
+        icon: 'Connection',
         roles: VIEW_ROLES.connectivity,
         settings: []
       },
       {
         title: 'schools',
         path: ROUTES.dashboard.schoolReliability.root.route,
-        icon: ICONS.Education,
+        icon: 'Education',
         roles: VIEW_ROLES.schools,
         settings: []
       },
       {
-        title: 'users',
+        title: 'stakeholders',
         path: ROUTES.dashboard.users.root.route,
-        icon: ICONS.Users,
+        icon: 'Users',
         roles: VIEW_ROLES.users,
         settings: []
       },
       {
         title: 'automatic_contracts',
         path: ROUTES.dashboard.automatic_contract.root.route,
-        icon: ICONS.Automatic,
+        icon: 'Automatic',
         roles: VIEW_ROLES.automatic_contracts,
         settings: [{ name: UserSettings.SETTING_AUTOMATIC_CONTRACTS, value: true }]
       }
@@ -95,7 +95,7 @@ const navConfig = [
 
 export const shortcuts: NavListProps[] = [
   {
-    icon: ICONS.AddCircular,
+    icon: 'AddCircular',
     title: 'contract_creation',
     path: ROUTES.dashboard.contract.root.route,
     state: { new: true },

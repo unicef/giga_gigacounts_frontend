@@ -1,4 +1,4 @@
-import { IUser, UserRoles } from 'src/@types'
+import { IExternalUserWithId, IUser, UserRoles } from 'src/@types'
 import instance from './init'
 
 export const getUserProfile = async (): Promise<IUser> => {
@@ -15,16 +15,18 @@ export const settingAutomaticContracts = async (automaticContractsEnabled: boole
   return response.data
 }
 
-export const getUsers = async (
+export const getUsers = async <T extends boolean>(
   countryId: string,
   roles: UserRoles[],
+  externals: T,
   ispId?: string
-): Promise<IUser[]> => {
+): Promise<T extends true ? (IUser | IExternalUserWithId)[] : IUser[]> => {
   const response = await instance.get(`/user`, {
     params: {
       countryId,
       ispId,
-      roles: roles.join(',')
+      roles: roles.join(','),
+      externalUsers: externals ? 1 : 0
     }
   })
   return response.data

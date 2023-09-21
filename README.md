@@ -6,6 +6,9 @@ This App requires:
 
 - [Node.js](https://nodejs.org/) v16+ to run (^16.14.2).
 - [Yarn.js](https://classic.yarnpkg.com/en/docs/install) v1+ to run (^1.22.19).
+- [Azure Active Directory B2C installed and configured in Azure Subscription](https://learn.microsoft.com/en-us/azure/active-directory-b2c/overview).
+- The Backend project running.
+- The Smart Contracts from Blockchain project deployed in Polygon Testnet Network.
 
 - Check version of packages
 
@@ -59,6 +62,12 @@ REACT_APP_NODE_PROVIDER_URL=https://polygon-mumbai.g.alchemy.com/v2/
 REACT_APP_NODE_PROVIDER_KEY=NODE_PROVIDER_API_KEY
 REACT_APP_GIGACOUNTS_TOKEN_ADR=
 REACT_APP_GIGACOUNTS_CONTRACTS_HANDLER_ADR=
+REACT_APP_B2C_SIGNUP_SIGNIN_NAME=
+REACT_APP_B2C_FORGOT_PASSWORD_NAME=
+REACT_APP_B2C_EDIT_PROFILE_NAME=
+REACT_APP_B2C_URL=
+REACT_APP_B2C_DOMAIN=
+REACT_APP_B2C_CLIENT_ID=
 ```
 
 Some Variable description:
@@ -71,6 +80,8 @@ Some Variable description:
 - REACT_APP_NETWORK_ID: Is a property of the chain managed by the node. e.g (Polygon Mumbai Testnet = 80001)
 - REACT_APP_GIGACOUNTS_TOKEN_ADR: Smart Contract address of Gigacounts Tokens
 - REACT_APP_GIGACOUNTS_CONTRACTS_HANDLER_ADR: Smart contract address of Gigacounts Contracts Handler
+
+
 ## Start app
 
 ```sh
@@ -85,7 +96,12 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.
 You will also see any lint errors in the console.
 
-Please ask for login email and password.
+If you want to start in local port with B2C, you must run:
+```sh
+PORT=6340 npm start
+```
+
+Then, login in B2C with the user that you create in Azure. Remember, that you have to configure the same users in your database.
 
 ---
 

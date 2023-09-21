@@ -19,3 +19,7 @@ This project is built with [Carbon Design System](https://carbondesignsystem.com
   - [Colors](./development/11.colors.md)
   - [Components Overrides](./development/12.components-overrides.md)
   - [Limitations](./development/13.limitations.md)
+
+## Deployment Documentation
+
+- [Deployment in Azure with B2C](./deployment/GigaCounts-Azure-b2c-deployment.pdf)

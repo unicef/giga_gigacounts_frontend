@@ -1,10 +1,11 @@
-import { Icon } from 'src/@types'
+import { type Icon as IconType } from 'src/@types'
 import { Stack } from 'src/components/stack'
+import { ICONS } from 'src/constants'
 import { useTheme } from 'src/theme'
 
-export default function NavIcon({ CarbonIcon, isActive }: { CarbonIcon: Icon; isActive: boolean }) {
+export default function NavIcon({ icon, isActive }: { icon: IconType; isActive: boolean }) {
   const { spacing, palette } = useTheme()
-
+  const Icon = ICONS[icon]
   return (
     <Stack
       alignItems="center"
@@ -17,7 +18,7 @@ export default function NavIcon({ CarbonIcon, isActive }: { CarbonIcon: Icon; is
         padding: spacing.xxs
       }}
     >
-      <CarbonIcon size={24} />
+      <Icon size={24} />
     </Stack>
   )
 }

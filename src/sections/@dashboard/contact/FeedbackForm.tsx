@@ -1,4 +1,5 @@
-import { Button, TextArea } from '@carbon/react'
+import { Button, TextArea, Tooltip } from '@carbon/react'
+import { useLocation } from 'react-router'
 import { FeedbackForm as FeedbackFormType } from 'src/@types'
 import { sendFeedback } from 'src/api/feedback'
 import FormProvider from 'src/components/hook-form/FormProvider'
@@ -14,6 +15,7 @@ export default function FeedbackForm() {
   const { translate } = useLocales()
   const { spacing } = useTheme()
   const { pushSuccess, pushError } = useSnackbar()
+  const { state, pathname } = useLocation()
 
   const methods = useFeedbackSchema()
   const { setValue, handleSubmit, reset, watch } = methods
@@ -21,7 +23,7 @@ export default function FeedbackForm() {
   const handleReset = () => reset()
 
   const handlePost = (ticket: FeedbackFormType) => {
-    sendFeedback(ticket)
+    sendFeedback({ ...ticket, path: state?.previousPath ?? pathname })
       .then(() => pushSuccess('push.sent_feedback'))
       .catch(() => pushError('push.sent_feedback_error'))
 
@@ -66,19 +68,23 @@ export default function FeedbackForm() {
           gap={spacing.md}
         >
           {buttons.map((b) => (
-            <Button
-              className="btn-max-width-limit"
-              kind={watch().rate === b.value ? 'primary' : 'tertiary'}
-              key={b.value}
-              onClick={() => setValue('rate', b.value)}
-              size="xl"
+            <Tooltip
               style={{
                 width: '20%'
               }}
-              iconDescription={b.iconDescription}
+              description={b.iconDescription}
             >
-              <b.Icon size={32} />
-            </Button>
+              <Button
+                className="btn-max-width-limit"
+                kind={watch().rate === b.value ? 'primary' : 'tertiary'}
+                key={b.value}
+                onClick={() => setValue('rate', b.value)}
+                size="xl"
+                iconDescription={b.iconDescription}
+              >
+                <b.Icon size={32} />
+              </Button>
+            </Tooltip>
           ))}
         </Stack>
         <TextArea

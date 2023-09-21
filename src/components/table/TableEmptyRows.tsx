@@ -10,8 +10,8 @@ export default function TableEmptyRows({ emptyRows, cols }: Props) {
 
   return (
     <>
-      {ret.map((_) => (
-        <TableRow key={Math.random()}>
+      {ret.map((_, i) => (
+        <TableRow key={i}>
           <TableCell colSpan={cols} />
         </TableRow>
       ))}

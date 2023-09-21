@@ -7,10 +7,10 @@ export interface IDashboardSchools {
   country_id: number
   lat: string
   lng: string
-  avg_uptime: number
-  avg_latency: number
-  avg_dspeed: number
-  avg_uspeed: number
+  avg_uptime: number | null
+  avg_latency: number | null
+  avg_dspeed: number | null
+  avg_uspeed: number | null
   connectivity_issues: boolean
 }
 

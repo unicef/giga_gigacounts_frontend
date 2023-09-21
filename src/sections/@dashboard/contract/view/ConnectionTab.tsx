@@ -1,33 +1,52 @@
 import { useEffect, useState } from 'react'
-import { ContractDetails, EducationLevel, IContractSchools, MinMax } from 'src/@types'
+import { useNavigate } from 'react-router'
+import {
+  ContractDetails,
+  EducationLevel,
+  IContractSchools,
+  ISchoolMeasures,
+  Metric,
+  MetricCamel,
+  MetricSnake,
+  MinMax
+} from 'src/@types'
 import { getContractSchools } from 'src/api/contracts'
+import { getSchoolMeasures } from 'src/api/school'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { useTable } from 'src/components/table'
-import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants'
+import { Typography } from 'src/components/typography'
+import { FILTER_ALL_DEFAULT, FilterAll, KEY_DEFAULTS, STRING_DEFAULT } from 'src/constants'
+import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
 import { useLocales } from 'src/locales'
+import { redirectOnError } from 'src/pages/errors/handlers'
 import {
   ConnectivityTableRow,
   ConnectivityTableToolbar
 } from 'src/sections/@dashboard/connectivity/list'
-import { removeDuplicates } from 'src/utils/arrays'
+import { useTheme } from 'src/theme'
+import { removeDuplicates, resolvePromises } from 'src/utils/arrays'
+import { getConnectivityStatus } from 'src/utils/connectivity'
 
 export default function ConnectionTab({
   contract,
   expectedValues
 }: {
   contract: ContractDetails
-  expectedValues: { uptime: number; latency: number; downloadSpeed: number; uploadSpeed: number }
+  expectedValues: { [K in MetricCamel]: number }
 }) {
   const { translate } = useLocales()
+  const navigate = useNavigate()
+  const { spacing } = useTheme()
 
   const TABLE_HEAD = [
     { key: 'name', header: translate('name') },
+    { key: 'connectivityValue', header: translate('status') },
     { key: 'external_id', header: 'ID' },
     { key: 'budget', header: translate('budget') },
-    { key: 'uptime', header: translate('uptime') },
-    { key: 'latency', header: translate('latency') },
-    { key: 'downloadSpeed', header: translate('download_speed') },
-    { key: 'uploadSpeed', header: translate('upload_speed') },
+    { key: MetricCamel.Uptime, header: `${translate(MetricSnake.Uptime)} *` },
+    { key: MetricCamel.Latency, header: `${translate(MetricSnake.Latency)} *` },
+    { key: MetricCamel.DownloadSpeed, header: `${translate(MetricSnake.DownloadSpeed)} *` },
+    { key: MetricCamel.UploadSpeed, header: `${translate(MetricSnake.UploadSpeed)} *` },
     { key: KEY_DEFAULTS[0], header: '' },
     { key: KEY_DEFAULTS[1], header: '' }
   ]
@@ -36,13 +55,35 @@ export default function ConnectionTab({
     defaultOrderBy: 'name'
   })
 
+  const [measures, setMeasures] = useState<{ measures: ISchoolMeasures[]; school_id: string }[]>([])
+
   const [tableData, setTableData] = useState<IContractSchools[] | null>(null)
-  const [filterName, setFilterName] = useState('')
-  const [filterBudget, setFilterBudget] = useState<MinMax<string>>({ min: '', max: '' })
-  const [filterEducationLevel, setFilterEducationLevel] = useState<
-    EducationLevel | typeof FILTER_ALL_DEFAULT
-  >(FILTER_ALL_DEFAULT)
-  const [filterRegion, setFilterRegion] = useState<string>(FILTER_ALL_DEFAULT)
+
+  const [searchParams, generateSetter] = useCustomSearchParams({
+    filterSchoolName: '',
+    filterEducationLevel: FILTER_ALL_DEFAULT,
+    filterRegion: FILTER_ALL_DEFAULT,
+    filterSchoolStatus: FILTER_ALL_DEFAULT,
+    filterBudgetMin: '',
+    filterBudgetMax: ''
+  })
+  const {
+    filterSchoolName: filterName,
+    filterBudgetMax,
+    filterBudgetMin,
+    filterEducationLevel,
+    filterRegion,
+    filterSchoolStatus: filterStatus
+  } = searchParams
+  const filterBudget = { max: filterBudgetMax, min: filterBudgetMin }
+  const setFilterName = generateSetter('filterSchoolName')
+  const setFilterEducationLevel = generateSetter('filterEducationLevel')
+  const setFilterRegion = generateSetter('filterRegion')
+  const setFilterStatus = generateSetter('filterSchoolStatus')
+  const setFilterBudget = {
+    max: generateSetter('filterBudgetMax'),
+    min: generateSetter('filterBudgetMin')
+  }
 
   useEffect(() => {
     getContractSchools(contract.id)
@@ -50,13 +91,25 @@ export default function ConnectionTab({
       .catch(() => setTableData([]))
   }, [contract.id])
 
+  useEffect(() => {
+    if (contract.id && tableData)
+      resolvePromises(
+        tableData,
+        (row) => getSchoolMeasures(row.id, contract.id, 'day'),
+        (res, row) => setMeasures((prev) => [...prev, { measures: res, school_id: row?.id ?? '' }]),
+        (err) => redirectOnError(navigate, err)
+      )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contract.id, tableData])
+
   const dataFiltered = tableData
     ? applyFilter({
         inputData: tableData,
         filterName,
         filterBudget,
         filterRegion,
-        filterEducationLevel
+        filterEducationLevel,
+        filterStatus
       })
     : null
 
@@ -69,61 +122,98 @@ export default function ConnectionTab({
   const educationLevelOptions = tableData
     ? (removeDuplicates([FILTER_ALL_DEFAULT, ...tableData.map((s) => s.educationLevel)]) as (
         | EducationLevel
-        | typeof FILTER_ALL_DEFAULT
+        | FilterAll
       )[])
     : []
 
-  const isNotFound = Boolean(dataFiltered && !dataFiltered.length)
+  const isEmpty = Boolean(tableData && !tableData.length)
+  const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
+
+  const getSpecificMeasure = (measureName: Metric, school_id: string) => {
+    if (!measures) return STRING_DEFAULT
+    const school = measures.find((m) => m.school_id === school_id)
+    if (!school) return STRING_DEFAULT
+    const measure = school.measures.find((m) => m.metric_name === measureName)
+    if (!measure || !measure.unit) return STRING_DEFAULT
+    return `${measure.median_value ?? ''} ${measure.unit ?? ''}`
+  }
+
+  const getMeasures = (school_id: string) => {
+    if (!measures) return []
+    const school = measures.find((m) => m.school_id === school_id)
+    if (!school) return []
+    return school.measures
+  }
 
   return (
-    <CustomDataTable
-      isSortable
-      RowComponent={ConnectivityTableRow}
-      getRowComponentProps={(row) => ({
-        contractId: contract.id,
-        budget: row.budget,
-        currencyCode: contract.currency?.code,
-        contactInformation: row.contactInformation,
-        expectedValues
-      })}
-      ToolbarContent={
-        <ConnectivityTableToolbar
-          filterRegion={filterRegion}
-          regionOptions={regionOptions}
-          setFilterRegion={setFilterRegion}
-          educationLevelOptions={educationLevelOptions}
-          filterEducationLevel={filterEducationLevel}
-          setFilterEducationLevel={setFilterEducationLevel}
-          setFilterSearch={setFilterName}
-          setFilterBudget={setFilterBudget}
-          filterBudget={filterBudget}
-          setPage={setPage}
-        />
-      }
-      data={
-        dataFiltered
-          ? dataFiltered.map((row) => {
-              const locations = row.locations.split(',')
-              return {
-                ...row,
-                external_id: row.externalId,
-                location_1: locations[0],
-                location_2: locations[1],
-                location_3: locations[3]
-              }
-            })
-          : null
-      }
-      page={page}
-      setPage={setPage}
-      isNotFound={isNotFound}
-      rowsPerPage={rowsPerPage}
-      setRowsPerPage={setRowsPerPage}
-      tableHead={TABLE_HEAD}
-      tableName="connectivity"
-      noDataText="table_no_data.schools"
-      title="Connectivity table"
-    />
+    <>
+      <CustomDataTable
+        isSortable
+        RowComponent={ConnectivityTableRow}
+        getRowComponentProps={(row) => ({
+          measures: getMeasures(row.id),
+          budget: row.budget,
+          currencyCode: contract.currency?.code,
+          contactInformation: row.contactInformation,
+          expectedValues
+        })}
+        ToolbarContent={
+          <ConnectivityTableToolbar
+            filterStatus={filterStatus}
+            filterSearch={filterName}
+            setFilterStatus={setFilterStatus}
+            filterRegion={filterRegion}
+            regionOptions={regionOptions}
+            setFilterRegion={setFilterRegion}
+            educationLevelOptions={educationLevelOptions}
+            filterEducationLevel={filterEducationLevel}
+            setFilterEducationLevel={setFilterEducationLevel}
+            setFilterSearch={setFilterName}
+            setFilterBudget={setFilterBudget}
+            filterBudget={filterBudget}
+            setPage={setPage}
+          />
+        }
+        data={
+          dataFiltered
+            ? [...dataFiltered]
+                .map((row) => {
+                  const locations = row.locations.split(',')
+                  return {
+                    ...row,
+                    [MetricCamel.Uptime]: getSpecificMeasure(Metric.Uptime, row.id),
+                    [MetricCamel.Latency]: getSpecificMeasure(Metric.Latency, row.id),
+                    [MetricCamel.DownloadSpeed]: getSpecificMeasure(Metric.DownloadSpeed, row.id),
+                    [MetricCamel.UploadSpeed]: getSpecificMeasure(Metric.UploadSpeed, row.id),
+                    external_id: row.externalId,
+                    location_1: locations[0],
+                    location_2: locations[1],
+                    location_3: locations[3],
+                    connectivityValue: row.connection.value
+                  }
+                })
+                .sort((a, b) => a.name.localeCompare(b.name))
+            : null
+        }
+        page={page}
+        setPage={setPage}
+        isNotFound={isNotFound}
+        isEmpty={isEmpty}
+        rowsPerPage={rowsPerPage}
+        setRowsPerPage={setRowsPerPage}
+        tableHead={TABLE_HEAD}
+        tableName="connectivity"
+        emptyText="table_no_data.schools"
+        title="Connectivity table"
+      />
+      <Typography
+        style={{ paddingBlock: spacing.md, paddingInline: spacing.xs }}
+        variant="textTertiary"
+        size={12}
+      >
+        * {translate('tooltips.measures_24')}
+      </Typography>
+    </>
   )
 }
 
@@ -132,17 +222,21 @@ function applyFilter({
   filterName,
   filterBudget,
   filterEducationLevel,
-  filterRegion
+  filterRegion,
+  filterStatus
 }: {
   inputData: IContractSchools[]
   filterName: string
   filterBudget: MinMax<string>
   filterRegion: string
-  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
+  filterEducationLevel: string
+  filterStatus: string
 }) {
   if (filterName)
     inputData = inputData.filter(
-      (school) => school.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (school) =>
+        school.name.toLowerCase().includes(filterName.toLowerCase()) ||
+        school.externalId.toLowerCase().includes(filterName.toLowerCase())
     )
 
   if (filterBudget.min && filterBudget.max && Number(filterBudget.max) >= Number(filterBudget.min))
@@ -162,6 +256,10 @@ function applyFilter({
     inputData = inputData.filter(
       (school) =>
         (school.locations.split(',').at(0)?.toLowerCase() ?? '') === filterRegion.toLowerCase()
+    )
+  if (filterStatus !== FILTER_ALL_DEFAULT)
+    inputData = inputData.filter(
+      (school) => getConnectivityStatus(school.connection.value) === filterStatus
     )
 
   return inputData

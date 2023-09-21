@@ -1,4 +1,5 @@
 import {
+  ConnectivityStatus,
   ContractStatus,
   NotificationStatus,
   PaymentStatus,
@@ -11,14 +12,13 @@ export const CONTRACT_STATUS_COLORS: { [Key in ContractStatus]: TagColor } = {
   [ContractStatus.Sent]: 'cyan',
   [ContractStatus.Confirmed]: 'cool-gray',
   [ContractStatus.Ongoing]: 'purple',
-  [ContractStatus.Expired]: 'cool-gray',
+  [ContractStatus.Expired]: 'red',
   [ContractStatus.Completed]: 'green'
 } as const
 
 export const PAYMENT_STATUS_COLORS: { [Key in PaymentStatus]: TagColor } = {
-  [PaymentStatus.OnHold]: 'warm-gray',
+  [PaymentStatus.Draft]: 'warm-gray',
   [PaymentStatus.Paid]: 'teal',
-  [PaymentStatus.Verified]: 'magenta',
   [PaymentStatus.Unpaid]: 'red'
 } as const
 
@@ -33,4 +33,11 @@ export const SCHOOL_RELIABILITY_COLOR = (isReliable: boolean): TagColor =>
 export const WEB3_TRANSACTION_STATUS_COLORS: { [Key in Web3TransactionStatus]: TagColor } = {
   [Web3TransactionStatus.OK]: 'green',
   [Web3TransactionStatus.ERROR]: 'red'
+}
+
+export const CONNECTIVITY_STATUS_COLORS: { [Key in ConnectivityStatus]: TagColor } = {
+  [ConnectivityStatus.Connected]: 'green',
+  [ConnectivityStatus.PoorlyConnected]: 'magenta',
+  [ConnectivityStatus.Disconnected]: 'red',
+  [ConnectivityStatus.Unknown]: 'cool-gray'
 }

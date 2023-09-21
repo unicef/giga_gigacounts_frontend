@@ -1,12 +1,11 @@
-import { Button, DataTableRow, TableCell, TableRow } from '@carbon/react'
+import { DataTableRow, TableCell, TableRow } from '@carbon/react'
 import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
-import { ICONS } from 'src/constants'
-import { useLocales } from 'src/locales'
-import { capitalizeFirstLetter } from 'src/utils/strings'
+import { IAttachment } from 'src/@types'
+import { ActionButton } from 'src/components/action-button'
 import { getOrderedFromCells } from 'src/utils/table'
 
 type Props = {
-  row: DataTableRow
+  row: DataTableRow<IAttachment[]>
   rowProps: TableRowProps
   url: string
 }
@@ -14,20 +13,11 @@ type Props = {
 export default function AttachmentsTableRow({ row, rowProps, url }: Props) {
   const [name] = getOrderedFromCells(['name'], row.cells)
 
-  const { translate } = useLocales()
-
   return (
     <TableRow {...rowProps}>
-      <TableCell>{name}</TableCell>
-      <TableCell>
-        <Button
-          style={{ margin: 0, padding: 0 }}
-          kind="ghost"
-          onClick={() => window.open(url)}
-          iconDescription={capitalizeFirstLetter(translate('download'))}
-          renderIcon={ICONS.Download}
-          hasIconOnly
-        />
+      <TableCell style={{ width: '90%' }}>{name}</TableCell>
+      <TableCell style={{ width: '10%' }}>
+        <ActionButton onClick={() => window.open(url)} description="download" icon="Download" />
       </TableCell>
     </TableRow>
   )

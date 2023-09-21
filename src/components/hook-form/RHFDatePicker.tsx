@@ -45,7 +45,7 @@ export default function RHFDatePicker({
             invalidText={error ? error.message : helperText}
             style={{ width: '328px' }}
             id={id}
-            onBlur={onBlur || null}
+            onBlur={onBlur}
             placeholder={placeholder || 'mm/dd/yyyy'}
             labelText={labelText || ''}
             size={size || 'md'}

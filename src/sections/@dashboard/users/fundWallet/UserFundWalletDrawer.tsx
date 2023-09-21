@@ -231,7 +231,7 @@ export function UserFundWalletDrawer({ name, walletAddress, open, onClose }: Pro
               </Stack>
               <Stack orientation="horizontal" gap={spacing.xs}>
                 <RHFSelect
-                  id="currency select"
+                  id="currency-select"
                   options={currencies.map((c) => ({ value: c.id, label: c.code }))}
                   name="currency"
                   label={capitalizeFirstLetter(translate('currency'))}

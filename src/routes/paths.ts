@@ -101,10 +101,8 @@ export const ROUTES = {
   },
   auth: {
     root: createRoute(ROOTS_AUTH),
-    login: createRoute('/login', { root: ROOTS_AUTH }),
-    register: createRoute('/register', { root: ROOTS_AUTH }),
-    loginUnprotected: createRoute('/login-unprotected', { root: ROOTS_AUTH }),
-    registerUnprotected: createRoute('/register-unprotected', { root: ROOTS_AUTH }),
+    // loginUnprotected: createRoute('/login-unprotected', { root: ROOTS_AUTH }),
+    // registerUnprotected: createRoute('/register-unprotected', { root: ROOTS_AUTH }),
     verify: createRoute('/verify', { root: ROOTS_AUTH }),
     resetPassword: createRoute('/reset-password', { root: ROOTS_AUTH }),
     newPassword: createRoute('/new-password', { root: ROOTS_AUTH })

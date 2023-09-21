@@ -2,10 +2,11 @@ import { Tag, Theme } from '@carbon/react'
 import { IconProps, Icon as IconType, TagColor } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
+import { ICONS } from 'src/constants'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 
-type Item = { Icon?: IconType; label?: string; iconProps?: IconProps; title?: string }
+type Item = { icon?: IconType; label?: string; iconProps?: IconProps; title?: string }
 
 type BannerProps = {
   title: string
@@ -58,7 +59,7 @@ export default function Banner({
               {topThreeDetails.slice(0, 3).map((det, i) => (
                 <DetailsItem
                   key={(det.label ?? '') + i}
-                  Icon={det.Icon}
+                  icon={det.icon}
                   label={det.label}
                   title={det.title}
                   iconProps={det.iconProps}
@@ -82,7 +83,7 @@ export default function Banner({
             {details.map((det, i) => (
               <DetailsItem
                 key={(det.label ?? '') + i}
-                Icon={det.Icon}
+                icon={det.icon}
                 label={det.label}
                 title={det.title}
                 iconProps={det.iconProps}
@@ -95,8 +96,9 @@ export default function Banner({
   )
 }
 
-function DetailsItem({ label, Icon, title, iconProps }: Item) {
+function DetailsItem({ label, icon, title, iconProps }: Item) {
   const { spacing, palette } = useTheme()
+  const Icon = icon ? ICONS[icon] : null
   return (
     <Stack
       orientation="vertical"

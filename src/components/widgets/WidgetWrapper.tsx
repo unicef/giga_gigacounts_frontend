@@ -14,7 +14,7 @@ export default function WidgetWrapper({
 }: {
   children: React.ReactNode
   theme?: 'white' | 'g90'
-  title?: string
+  title?: React.ReactNode | string
   width: CSSProperties['width']
   height: CSSProperties['height']
 }) {
@@ -22,8 +22,7 @@ export default function WidgetWrapper({
   return (
     <Theme
       style={{
-        padding: spacing.xl + spacing.md,
-        paddingTop: spacing.md,
+        padding: spacing.xl,
         backgroundColor: palette.background.default,
         width,
         height,
@@ -44,7 +43,11 @@ export default function WidgetWrapper({
           alignSelf="flex-start"
           justifySelf="flex-start"
         >
-          {title && <Typography as="h2">{capitalizeFirstLetter(title)}</Typography>}
+          {title && (
+            <Typography as="h4" size={24}>
+              {typeof title === 'string' ? capitalizeFirstLetter(title) : title}
+            </Typography>
+          )}
         </Stack>
         <Stack
           style={{

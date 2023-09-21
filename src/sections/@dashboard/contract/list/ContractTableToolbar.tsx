@@ -1,27 +1,29 @@
 import { Button, Popover, PopoverContent, TableToolbarSearch } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
-import { ContractStatus, MinMax } from 'src/@types'
-import { FILTER_ALL_DEFAULT, ICONS } from 'src/constants'
+import { ContractStatus, MinMax, Setter } from 'src/@types'
+import { FilterAll, ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 import ContractTableFilters from './ContractTableFilters'
 
 type Props = {
-  setFilterStatus: Dispatch<SetStateAction<ContractStatus | typeof FILTER_ALL_DEFAULT>>
+  setFilterStatus: Setter<ContractStatus | FilterAll>
   filterBudget: MinMax<string>
   filterSchools: MinMax<string>
   filterRegion: string
   filterIsp: string
   filterDates: MinMax<string>
-  setFilterSearch: Dispatch<SetStateAction<string>>
-  setFilterRegion: Dispatch<SetStateAction<string>>
-  setFilterSchools: Dispatch<SetStateAction<MinMax<string>>>
-  setFilterBudget: Dispatch<SetStateAction<MinMax<string>>>
-  setFilterIsp: Dispatch<SetStateAction<string>>
-  setFilterDates: Dispatch<SetStateAction<MinMax<string>>>
+  filterSearch: string
+  setFilterSearch: Setter<string>
+  setFilterRegion: Setter<string>
+  setFilterSchools: MinMax<Setter<string>>
+  setFilterBudget: MinMax<Setter<string>>
+  setFilterIsp: Setter<string>
+  setFilterDates: MinMax<Setter<string>>
   setPage: Dispatch<SetStateAction<number>>
   regionOptions: string[]
+  filterStatus: string
   ispOptions: string[]
 }
 
@@ -31,6 +33,7 @@ export default function ContractTableToolbar({
   filterBudget,
   filterSchools,
   filterIsp,
+  filterSearch,
   filterRegion,
   filterDates,
   regionOptions,
@@ -40,7 +43,8 @@ export default function ContractTableToolbar({
   setFilterSchools,
   setFilterBudget,
   setFilterDates,
-  setFilterIsp
+  setFilterIsp,
+  filterStatus
 }: Props) {
   const popover = useModal()
 
@@ -53,7 +57,13 @@ export default function ContractTableToolbar({
 
   return (
     <>
-      <TableToolbarSearch onChange={(e: any) => handleFilterSearch(e.target.value)} />
+      <TableToolbarSearch
+        // @ts-ignore
+        value={filterSearch}
+        persistent
+        placeholder={capitalizeFirstLetter(translate('search'))}
+        onChange={(e: any) => handleFilterSearch(e ? e.target.value : '')}
+      />
       <Popover open={popover.value} isTabTip onRequestClose={popover.close} align="bottom-right">
         <Button
           id="contract-filter"
@@ -67,6 +77,7 @@ export default function ContractTableToolbar({
         />
         <PopoverContent>
           <ContractTableFilters
+            filterStatus={filterStatus}
             closePopover={popover.close}
             filterIsp={filterIsp}
             filterRegion={filterRegion}

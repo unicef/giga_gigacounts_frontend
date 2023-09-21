@@ -1,7 +1,8 @@
 export enum ConnectivityStatus {
-  Strong = 'Strong',
-  Very_weak = 'Very_weak',
-  Weak = 'Weak'
+  Connected = 'Connected',
+  PoorlyConnected = 'PoorlyConnected',
+  Disconnected = 'Disconnected',
+  Unknown = 'Unknown'
 }
 
 export enum ContractStatus {
@@ -14,10 +15,9 @@ export enum ContractStatus {
 }
 
 export enum PaymentStatus {
-  Verified = 'Verified',
   Unpaid = 'Unpaid',
   Paid = 'Paid',
-  OnHold = 'OnHold'
+  Draft = 'Draft'
 }
 
 export enum NotificationStatus {

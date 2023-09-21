@@ -91,9 +91,13 @@ export default function GeneralAppPage() {
                 onChange={({ selectedItem }: { selectedItem: ICountry | null }) => {
                   setCountryId(selectedItem?.id ?? user?.country.id)
                 }}
-                initialSelectedItem={user?.country}
+                selectedItem={countries.find((c) => c.id === countryId)}
                 items={[...countries].sort((a, b) => a.name.localeCompare(b.name))}
-                itemToString={(c: ICountry) => (c ? c.name : '')}
+                itemToString={(c) =>
+                  c && typeof c === 'object' && 'name' in c && c.name && typeof c.name === 'string'
+                    ? c.name
+                    : ''
+                }
                 placeholder={translate('search_country')}
               />
             </div>

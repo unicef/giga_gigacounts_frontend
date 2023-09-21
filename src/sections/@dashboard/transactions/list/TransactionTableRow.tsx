@@ -1,4 +1,4 @@
-import { Button, DataTableRow, Link, TableCell, TableRow, Tag } from '@carbon/react'
+import { DataTableRow, Link, TableCell, TableRow, Tag } from '@carbon/react'
 import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
 import {
   IBlockchainTransaction,
@@ -7,9 +7,9 @@ import {
   Translation,
   Web3TransactionStatus
 } from 'src/@types'
+import { ActionButton } from 'src/components/action-button'
 import {
   ENV_SUPPORTED_NETWORK_ID,
-  ICONS,
   SUPPORTED_NETWORKS,
   WEB3_TRANSACTION_STATUS_COLORS
 } from 'src/constants'
@@ -21,7 +21,7 @@ import { getOrderedFromCells } from 'src/utils/table'
 import TransactionViewDrawer from '../form/TransactionViewDrawer'
 
 type Props = {
-  row: DataTableRow
+  row: DataTableRow<IBlockchainTransaction[]>
   rowProps: TableRowProps
   transaction: IBlockchainTransaction
 }
@@ -36,7 +36,7 @@ export default function TransactionTableRow({ row, rowProps, transaction }: Prop
   }
   const options: { icon: Icon; label: Translation; onClick: () => void }[] = [
     {
-      icon: ICONS.View,
+      icon: 'View',
       label: 'view',
       onClick: handleView
     }
@@ -59,9 +59,14 @@ export default function TransactionTableRow({ row, rowProps, transaction }: Prop
 
   return (
     <TableRow {...rowProps}>
-      <TableCell>{transaction.id}</TableCell>
-      <TableCell>{formatDateTime(transaction.createdAt, '/')}</TableCell>
-      <TableCell>
+      <TableCell style={{ width: '12.5%' }}>{transaction.id}</TableCell>
+      <TableCell style={{ width: '12.5%' }}>
+        <Tag style={{ margin: 0 }} type={WEB3_TRANSACTION_STATUS_COLORS[parsedStatus]}>
+          {capitalizeFirstLetter(translate(`constant_status.web_transaction.${parsedStatus}`))}
+        </Tag>
+      </TableCell>
+      <TableCell style={{ width: '12.5%' }}>{formatDateTime(transaction.createdAt, '/')}</TableCell>
+      <TableCell style={{ width: '12.5%' }}>
         <Link
           href={trxExplorer.replace('TRX', transaction.transactionHash)}
           target="_blank"
@@ -70,10 +75,10 @@ export default function TransactionTableRow({ row, rowProps, transaction }: Prop
           {transaction.transactionHash}
         </Link>
       </TableCell>
-      <TableCell>
+      <TableCell style={{ width: '12.5%' }}>
         {getTypeNameByTypeCode(transaction.transactionType as TransactionTypeCode)}
       </TableCell>
-      <TableCell>
+      <TableCell style={{ width: '12.5%' }}>
         <Link
           href={addressExplorer.replace('ADR', transaction.walletAddress)}
           target="_blank"
@@ -82,26 +87,19 @@ export default function TransactionTableRow({ row, rowProps, transaction }: Prop
           {transaction.walletAddress}
         </Link>
       </TableCell>
-      <TableCell>{transaction.userDisplayName}</TableCell>
-      <TableCell>
-        <Tag style={{ margin: 0 }} type={WEB3_TRANSACTION_STATUS_COLORS[parsedStatus]}>
-          {capitalizeFirstLetter(translate(`constant_status.web_transaction.${parsedStatus}`))}
-        </Tag>
-      </TableCell>
-      <TableCell>
+      <TableCell style={{ width: '12.5%' }}>{transaction.userDisplayName}</TableCell>
+
+      <TableCell style={{ width: '12.5%' }}>
         {options.map((opt) => (
-          <Button
-            style={{ margin: 0, padding: 0 }}
+          <ActionButton
             key={row.id + opt.label}
-            kind="ghost"
             onClick={opt.onClick}
-            iconDescription={capitalizeFirstLetter(translate(opt.label))}
-            renderIcon={opt.icon}
-            hasIconOnly
+            description={opt.label}
+            icon={opt.icon}
           />
         ))}
       </TableCell>
-      <TableCell>
+      <TableCell style={{ width: '0%' }}>
         <TransactionViewDrawer
           transaction={{
             ...transaction,

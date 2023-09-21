@@ -87,14 +87,14 @@ export default function NotificationsPanel() {
               paddingInline: spacing.md,
               height: '500px',
               width: '500px',
-              overflow: 'scroll'
+              overflowX: 'hidden'
             }}
           >
             <Stack alignItems="center" justifyContent="space-between" orientation="horizontal">
               <Typography as="span">{translate('notifications')}</Typography>
               {hasNotifications && (
                 <Button size="sm" kind="ghost" onClick={handleMarkAllAsRead}>
-                  {capitalizeFirstLetter(translate('notifications_popover.dismiss_all'))}
+                  {capitalizeFirstLetter(translate('notifications_popover.mark_all_as_read'))}
                 </Button>
               )}
             </Stack>

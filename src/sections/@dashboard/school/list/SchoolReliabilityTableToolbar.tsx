@@ -1,21 +1,25 @@
 import { Button, Popover, PopoverContent, TableToolbarSearch } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
-import { FILTER_ALL_DEFAULT, ICONS } from 'src/constants'
+import { EducationLevel, Setter } from 'src/@types'
+import { FilterAll, ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import { EducationLevel } from 'src/@types'
 import SchoolReliabilityTableFilters from './SchoolReliabilityTableFilters'
 
 type Props = {
-  setFilterSearch: Dispatch<SetStateAction<string>>
+  setFilterSearch: Setter<string>
   setPage: Dispatch<SetStateAction<number>>
-  setFilterCountry: (countryName: string) => void
+  setFilterCountry: Setter<string>
   countryOptions: string[]
   countryName: string
-  educationLevelOptions: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
-  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
-  setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
+  educationLevelOptions: (EducationLevel | FilterAll)[]
+  filterEducationLevel: string
+  setFilterEducationLevel: Setter<string>
+  regionOptions: string[]
+  filterRegion: string
+  setFilterRegion: Setter<string>
+  filterSearch: string
 }
 
 export default function SchoolReliabilityTableToolbar({
@@ -26,7 +30,11 @@ export default function SchoolReliabilityTableToolbar({
   countryName,
   educationLevelOptions,
   filterEducationLevel,
-  setFilterEducationLevel
+  setFilterEducationLevel,
+  regionOptions,
+  filterRegion,
+  filterSearch,
+  setFilterRegion
 }: Props) {
   const { translate } = useLocales()
   const popover = useModal()
@@ -38,7 +46,13 @@ export default function SchoolReliabilityTableToolbar({
 
   return (
     <>
-      <TableToolbarSearch onChange={(e: any) => handleFilterName(e.target.value)} />
+      <TableToolbarSearch
+        // @ts-ignore
+        value={filterSearch}
+        persistent
+        placeholder={capitalizeFirstLetter(translate('search'))}
+        onChange={(e: any) => handleFilterName(e.target.value)}
+      />
       <Popover open={popover.value} isTabTip onRequestClose={popover.close} align="bottom-right">
         <Button
           kind="ghost"
@@ -51,6 +65,9 @@ export default function SchoolReliabilityTableToolbar({
         />
         <PopoverContent>
           <SchoolReliabilityTableFilters
+            regionOptions={regionOptions}
+            filterRegion={filterRegion}
+            setFilterRegion={setFilterRegion}
             countryName={countryName}
             closePopover={popover.close}
             educationLevelOptions={educationLevelOptions}

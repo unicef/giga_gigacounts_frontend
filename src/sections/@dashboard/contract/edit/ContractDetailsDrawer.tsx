@@ -1,33 +1,31 @@
-import { Time, TransactionalTrust } from '@carbon/pictograms-react'
 import { Button, InlineLoading, Modal, ProgressIndicator, ProgressStep } from '@carbon/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import {
   Contract,
   ContractCreationError,
   ContractForm,
-  ContractStatus,
   ContractStep,
   ICurrency,
   IDraft,
+  IExternalUser,
   IFileUpload,
-  IFrequency,
+  IISP,
   IUser,
   Translation
 } from 'src/@types'
 import { deleteAttachment, uploadAttachment } from 'src/api/attachments'
 import { addNewContact, deleteContact } from 'src/api/contacts'
 import { createContractDraft, publishContractDraft, updateContractDraft } from 'src/api/contracts'
-import { getFrequencies } from 'src/api/payments'
 import { getSchools } from 'src/api/school'
-import { addNewTeamMember } from 'src/api/stakeholders'
+import { addNewTeamMember, deleteTeamMember } from 'src/api/stakeholders'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import CancelDialog from 'src/components/cancel-dialog/CancelDialog'
 import Drawer from 'src/components/drawer/Drawer'
 import FormProvider from 'src/components/hook-form/FormProvider'
 import Stack from 'src/components/stack/Stack'
 import { SectionTitle, Typography } from 'src/components/typography'
-import { ICONS } from 'src/constants'
+import { EXTERNAL_CONTACT_ROLE, ICONS, PICTOGRAMS } from 'src/constants'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
@@ -35,8 +33,10 @@ import { useLocales } from 'src/locales'
 import { redirectOnError } from 'src/pages/errors/handlers'
 import { useTheme } from 'src/theme'
 import { getDraftFromForm, getPublishErrors } from 'src/utils/contracts'
+import { isValidFrequency } from 'src/utils/frequencies'
 import { applyToEveryWord, capitalizeFirstLetter, threeDots } from 'src/utils/strings'
 import { useContractSchema } from 'src/validations/contract'
+import { PublishModal } from '../publish'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
@@ -66,7 +66,8 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     schools: countrySchools,
     refetchCurrencies,
     refetchContracts,
-    setSchools
+    setSchools,
+    frequencies
   } = useBusinessContext()
   const [activeStep, setActiveStep] = useState<ContractStep>(0)
   const [termsAndConditions, setTermsAndConditions] = useState(false)
@@ -74,7 +75,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
   const methods = useContractSchema(activeStep, draft)
   const { watch, getValues, setValue, reset, handleSubmit, formState, trigger, setError } = methods
   const [currencies, setCurrencies] = useState<ICurrency[]>([])
-  const [frequencies, setFrequencies] = useState<IFrequency[]>([])
+  const [ispOptions, setIspOptions] = useState<IISP[]>([])
 
   const [contract, setContract] = useState<ContractSchoolsAndAttachments>(
     schoolsAndAttachmentsDefault
@@ -91,18 +92,30 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
 
   const [uploadErrorMessage, setUploadErrorMessage] = useState<Translation | ''>('')
 
-  const { currency: currencyId, country: countryId } = watch()
+  const {
+    currency: currencyId,
+    country: countryId,
+    startDate,
+    endDate,
+    frequencyId,
+    isp: ispId
+  } = watch()
+
+  const filteredFrequencies = useMemo(
+    () => frequencies.filter((f) => isValidFrequency(f.name, startDate, endDate)),
+    [startDate, endDate, frequencies]
+  )
 
   useEffect(() => {
     setValue('automatic', isAutomatic)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAutomatic])
+
   useEffect(() => {
-    getFrequencies()
-      .then(setFrequencies)
-      .catch((err) => redirectOnError(navigate, err))
+    if (frequencyId && filteredFrequencies.some((f) => f.id === currencyId)) return
+    setValue('frequencyId', filteredFrequencies[0]?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [filteredFrequencies])
 
   useEffect(() => {
     if (!countryId || activeStep !== 1) return
@@ -140,13 +153,13 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
         ...prev,
         attachments: [
           ...prev.attachments,
-          { name: a.name, file: '', type: 'draft', typeId: draft.id, status: 'edit' }
+          { name: a.name, file: '', type: 'draft', typeId: draft.id, status: 'edit', id: a.id }
         ]
       }))
     })
     if (draft.ispContacts)
       draft.ispContacts.forEach((p) => {
-        const person = contract.contacts.find((ac) => p.id === ac.id)
+        const person = contract.contacts.find((ac) => p.email === ac.email)
         if (person) return
         setContract((prev) => ({
           ...prev,
@@ -165,13 +178,17 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft])
 
-  const setAttachmentStatus = (name: string, newStatus: 'edit' | 'uploading' | 'complete') => {
+  const setAttachmentStatus = (
+    name: string,
+    newStatus: 'edit' | 'uploading' | 'complete',
+    id: string
+  ) => {
     setContract((prev) => {
       const indexToChange = prev.attachments.findIndex((a) => a.name === name)
 
       if (indexToChange === -1) return prev
       const newAttachments = [...prev.attachments]
-      newAttachments[indexToChange] = { ...newAttachments[indexToChange], status: newStatus }
+      newAttachments[indexToChange] = { ...newAttachments[indexToChange], status: newStatus, id }
 
       return { ...prev, attachments: newAttachments }
     })
@@ -197,8 +214,8 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
 
     setSaving(true)
     uploadAttachment(attachment)
-      .then(() => {
-        setAttachmentStatus(name, 'edit')
+      .then((a) => {
+        setAttachmentStatus(name, 'edit', a.id)
       })
       .catch(() => {
         setUploadErrorMessage('failed_to_upload')
@@ -210,21 +227,21 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
       .finally(() => setSaving(false))
   }
 
-  const handleAddContact = (contact: IUser) => {
+  const handleAddContact = (contact: IExternalUser | IUser) => {
     if (!getValues('id')) {
       setError('name', { message: replaceTranslated('field_errors.required', '{{field}}', 'name') })
       return
     }
-    const alreadyAdded = contract.contacts.find((p) => p.id === contact.id)
+    const alreadyAdded = contract.contacts.find((p) => p.email === contact.email)
     if (alreadyAdded) return
     setContract((c) => ({ ...c, contacts: [...c.contacts, contact] }))
 
     setSaving(true)
-    addNewContact(contact.id, getValues('id') ?? '')
+    addNewContact(contact, getValues('id') ?? '', contact.role.name === EXTERNAL_CONTACT_ROLE)
       .catch(() => {
         setContract((prev) => ({
           ...prev,
-          contacts: prev.contacts.filter((a) => a.id !== contact.id)
+          contacts: prev.contacts.filter((a) => a.email !== contact.email)
         }))
         pushError('failed_to_add_as_contact')
       })
@@ -256,6 +273,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
   const handleDeleteAttachment = (attachmentName: string) => {
     const index = contract.attachments.findIndex((a) => a.name === attachmentName)
     if (index === -1) return
+    const attachmentToDelete = contract.attachments[index]
 
     const oldAttachments = [...contract.attachments]
 
@@ -265,23 +283,25 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
       attachments: prev.attachments.filter((a) => a.name !== attachmentName)
     }))
 
-    deleteAttachment(attachmentName)
+    deleteAttachment(attachmentToDelete.id as string)
       .catch(() => {
         setContract((prev) => ({ ...prev, attachments: oldAttachments }))
       })
       .finally(() => setSaving(false))
   }
 
-  const handleDeleteContact = (id: string) => {
-    const index = contract.contacts.findIndex((a) => a.id === id)
+  const handleDeleteContact = (email: string) => {
+    const index = contract.contacts.findIndex((a) => a.email === email)
     if (index === -1) return
 
     const oldContacts = [...contract.contacts]
+    const contact = oldContacts[index]
+    const isExternal = contact.role.name === EXTERNAL_CONTACT_ROLE
 
-    setContract((prev) => ({ ...prev, contacts: prev.contacts.filter((a) => a.id !== id) }))
+    setContract((prev) => ({ ...prev, contacts: prev.contacts.filter((a) => a.email !== email) }))
 
     setSaving(true)
-    deleteContact(id, getValues('id'))
+    deleteContact(contact, getValues('id'), isExternal)
       .catch(() => {
         setContract((prev) => ({ ...prev, contacts: oldContacts }))
       })
@@ -297,7 +317,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     setContract((prev) => ({ ...prev, stakeholders: prev.stakeholders.filter((a) => a.id !== id) }))
 
     setSaving(true)
-    deleteContact(id, getValues('id'))
+    deleteTeamMember(id, getValues('id'))
       .catch(() => {
         setContract((prev) => ({ ...prev, stakeholders: oldStakeHolders }))
       })
@@ -305,14 +325,12 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
   }
 
   const handlePost = async (contractForm: ContractForm) => {
-    if (contractForm.name.includes(' ')) {
-      setError('name', { message: translate('name_spaces_error') })
-      return false
-    }
     if (saving || !(await trigger()) || Object.keys(formState.errors).length > 0 || !countrySchools)
       return false
-    const totalBudget = contract.schools.reduce((prev, curr) => prev + Number(curr.budget), 0)
-    const exceedsMaxBudget = totalBudget !== Number(contractForm.budget ?? 0)
+    const totalBudget = contract.schools
+      .reduce((prev, curr) => prev + Number(curr.budget), 0)
+      .toFixed(2)
+    const exceedsMaxBudget = Number(totalBudget) !== Number(contractForm.budget ?? 0)
     if (exceedsMaxBudget && activeStep === 1) {
       setError('budget', { message: translate('budget_exceeds_max_error') })
       return false
@@ -358,13 +376,27 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     })
     if (getPublishErrors(newContract).length > 0) return
     saved.close()
-    publishContractDraft(newContract, contractForm.id)
-      .then((res) => {
-        onClose()
-        published.open()
-        refetchContracts()
+    publishContractDraft(newContract, contractForm.id, false)
+      .then(() => {
+        handleReset()
         pushSuccess('push.published_contract')
-        setValue('id', res.id)
+      })
+      .catch(() => pushError('push.published_contract_error'))
+  }
+
+  const handleApproveManually = (contractForm: ContractForm) => {
+    if (!countrySchools) return
+    const newContract: Contract = getDraftFromForm(currencies, countrySchools, {
+      ...contractForm,
+      ...contract,
+      automatic: isAutomatic
+    })
+    if (getPublishErrors(newContract).length > 0) return
+    saved.close()
+    publishContractDraft(newContract, contractForm.id, true)
+      .then(() => {
+        handleReset()
+        pushSuccess('push.published_contract')
       })
       .catch(() => pushError('push.published_contract_error'))
   }
@@ -379,7 +411,6 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     saved.open()
     refetchContracts()
     pushSuccess('push.saved_as_draft')
-    onClose()
   }
 
   const stepComponents = [
@@ -403,6 +434,8 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
       deleteTeamMember={handleDeleteTeamMember}
       uploadErrorMessage={uploadErrorMessage}
       setUploadErrorMessage={setUploadErrorMessage}
+      ispOptions={ispOptions}
+      setIspOptions={setIspOptions}
     />,
     <Step2
       onChange={(c) => {
@@ -415,9 +448,11 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
       handlePost={handlePost}
       currencies={currencies}
     />,
-    <Step3 frequencies={frequencies} handlePost={handlePost} />,
+    <Step3 frequencies={filteredFrequencies} handlePost={handlePost} />,
     <Step4
-      frequencies={frequencies}
+      handlePost={handlePost}
+      ispOptions={ispOptions}
+      frequencies={filteredFrequencies}
       fields={contract}
       termsAndConditions={termsAndConditions}
       setTermsAndConditions={setTermsAndConditions}
@@ -454,7 +489,6 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     unsaved.close()
     setUnsavedChanges(false)
     setUploadErrorMessage('')
-    setFrequencies([])
     if (isAdmin) {
       getSchools(user?.country.id)
         .then(setSchools)
@@ -462,6 +496,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     }
     setCurrencies([])
     onClose()
+    refetchContracts()
   }
 
   const handleCreateAnotherContract = () => {
@@ -501,7 +536,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
               >
                 <SectionTitle
                   label={
-                    watch().name.length > 0 && !watch().name.includes(' ')
+                    watch().name.length > 0
                       ? threeDots(watch().name, 25)
                       : applyToEveryWord('new contract', (w) =>
                           capitalizeFirstLetter(translate(w as Translation))
@@ -584,7 +619,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
                         : true
                     }
                     kind="primary"
-                    onClick={() => handlePublish(getValues())}
+                    onClick={() => published.open()}
                   >
                     {capitalizeFirstLetter(translate('publish'))}
                   </Button>
@@ -633,35 +668,21 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
         }
       >
         <Stack alignItems="center" justifyContent="center" gap={spacing.lg}>
-          <Time width={84} height={84} />
+          <PICTOGRAMS.Time width={84} height={84} />
           <Typography as="h4">{translate('contract_draft_modal.title')}</Typography>
           <Typography as="h6">{translate('contract_draft_modal.content')}</Typography>
         </Stack>
       </Modal>
-      <Modal
+
+      <PublishModal
+        isAutomatic={watch().automatic}
         open={published.value}
-        onRequestClose={() => {
-          published.close()
-          handleReset()
-        }}
-        onRequestSubmit={() => {
-          navigate(
-            isAutomatic
-              ? `/dashboard/automatic-contract/view/${ContractStatus.Sent}/${getValues('id')}`
-              : `/dashboard/contract/view/${ContractStatus.Sent}/${getValues('id')}`
-          )
-          handleReset()
-        }}
-        onSecondarySubmit={handleCreateAnotherContract}
-        primaryButtonText={capitalizeFirstLetter(translate('view_contract'))}
-        secondaryButtonText={capitalizeFirstLetter(translate('create_another_contract'))}
-      >
-        <Stack alignItems="center" justifyContent="center" gap={spacing.lg}>
-          <TransactionalTrust width={84} height={84} />
-          <Typography as="h4">{translate('contract_published_modal.title')}</Typography>
-          <Typography as="h6">{translate('contract_published_modal.content')}</Typography>
-        </Stack>
-      </Modal>
+        onClose={published.close}
+        onApproveManually={() => handleApproveManually(getValues())}
+        onApproveSent={() => handlePublish(getValues())}
+        ispId={ispId}
+        countryId={countryId}
+      />
     </>
   )
 }

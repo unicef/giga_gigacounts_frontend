@@ -17,10 +17,14 @@ export default function FeedbackPage() {
 
       <Banner title={translate('functionalities.feedback')} />
       <div style={{ padding: spacing.lg }}>
-        <Typography as="h3"> {translate('send_us_feedback')}</Typography>
         <Stack orientation="horizontal" gap={spacing.xl}>
-          <FeedbackForm />
-          <Stack justifyContent="center" alignItems="center" style={{ width: '100%' }}>
+          <Stack style={{ width: '50%' }}>
+            <Typography as="h3" style={{ paddingBottom: spacing.xl }}>
+              {translate('send_us_feedback')}
+            </Typography>
+            <FeedbackForm />
+          </Stack>
+          <Stack style={{ width: '50%' }}>
             <img
               src="/assets/images/dashboard/feedback.png"
               alt="user profile"

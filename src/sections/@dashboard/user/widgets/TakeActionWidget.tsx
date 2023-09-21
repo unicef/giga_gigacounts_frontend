@@ -9,8 +9,8 @@ export default function TakeActionWidget() {
   const { notifications } = useBusinessContext()
 
   const headers = [
-    { label: `${translate('title')}`, key: 'title' },
-    { label: translate('date'), key: 'sent_at' }
+    { header: `${translate('message')}`, key: 'message' },
+    { header: translate('date'), key: 'sent_at' }
   ] as const
 
   const filteredNotifications = notifications?.filter((n) => n.priority === 1)
@@ -24,6 +24,7 @@ export default function TakeActionWidget() {
         noDataText={translate('widgets.take_action.no_data')}
         data={filteredNotifications?.sort((a, b) => a.sent_at.localeCompare(b.sent_at))}
         headers={headers}
+        maxChar={100}
       />
     </WidgetWrapper>
   )

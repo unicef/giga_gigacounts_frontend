@@ -16,7 +16,7 @@ const AttachmentList = ({
 
   return (
     <List
-      ItemComponent={FileUploaderItem}
+      ItemComponent={FileUploaderItem as (props: JSX.IntrinsicAttributes) => JSX.Element}
       getItemComponentProps={(item) => ({
         uuid: item.name,
         style: { maxWidth: '100%' },

@@ -3,7 +3,7 @@ import { NavBarContextValue, NavBarProviderProps } from './types'
 
 const initialState: NavBarContextValue = {
   expanded: true,
-  setExpanded: null
+  setExpanded: () => {}
 }
 
 export const NavbarContext = createContext<NavBarContextValue>(initialState)

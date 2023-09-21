@@ -1,4 +1,4 @@
-import { MetricName } from 'src/@types'
+import { Metric } from 'src/@types'
 import instance from './init'
 
 export interface ISuggestedMetrics {
@@ -20,16 +20,16 @@ export const getSuggestedMetrics = async (): Promise<ISuggestedMetrics> => {
     const response = await instance.get(`${ENDPOINT_URL}/suggested-values`)
     return {
       uptimeOptions: response.data
-        .find((r: { name: MetricName }) => r.name === 'Uptime')
+        .find((r: { name: Metric }) => r.name === Metric.Uptime)
         .suggestedMetrics.map((s: { value: string }) => Number(s.value)),
       latencyOptions: response.data
-        .find((r: { name: MetricName }) => r.name === 'Latency')
+        .find((r: { name: Metric }) => r.name === Metric.Latency)
         .suggestedMetrics.map((s: { value: string }) => Number(s.value)),
       downloadOptions: response.data
-        .find((r: { name: MetricName }) => r.name === 'Download speed')
+        .find((r: { name: Metric }) => r.name === Metric.DownloadSpeed)
         .suggestedMetrics.map((s: { value: string }) => Number(s.value)),
       uploadOptions: response.data
-        .find((r: { name: MetricName }) => r.name === 'Upload speed')
+        .find((r: { name: Metric }) => r.name === Metric.UploadSpeed)
         .suggestedMetrics.map((s: { value: string }) => Number(s.value))
     }
   } catch {

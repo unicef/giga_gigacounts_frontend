@@ -1,20 +1,27 @@
 import { Button, Popover, PopoverContent, TableToolbarSearch } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
-import { EducationLevel } from 'src/@types'
-import { FILTER_ALL_DEFAULT, ICONS } from 'src/constants'
+import { ConnectivityStatus, EducationLevel, Setter } from 'src/@types'
+import { FilterAll, ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
+import { capitalizeFirstLetter } from 'src/utils/strings'
 import MeasuresTableFilter from './MeasuresTableFilter'
 
 type Props = {
-  setFilterSearch: Dispatch<SetStateAction<string>>
+  setFilterSearch: Setter<string>
   setPage: Dispatch<SetStateAction<number>>
-  educationLevelOptions?: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
-  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
-  setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
+  filterName: string
+  educationLevelOptions?: (EducationLevel | FilterAll)[]
+  filterEducationLevel: string
+  setFilterEducationLevel: Setter<string>
+  setFilterCountry: Setter<string>
   filterRegion: string
-  setFilterRegion: Dispatch<SetStateAction<string>>
+  setFilterRegion: Setter<string>
   regionOptions: string[]
+  countryOptions: string[]
+  countryName: string
+  setFilterStatus: Setter<ConnectivityStatus | FilterAll>
+  filterStatus: string
 }
 
 export default function MeasureTableToolbar({
@@ -25,7 +32,13 @@ export default function MeasureTableToolbar({
   regionOptions,
   setFilterEducationLevel,
   educationLevelOptions,
-  filterEducationLevel
+  filterEducationLevel,
+  setFilterCountry,
+  countryOptions,
+  countryName,
+  setFilterStatus,
+  filterName,
+  filterStatus
 }: Props) {
   const popover = useModal()
   const { translate } = useLocales()
@@ -37,7 +50,13 @@ export default function MeasureTableToolbar({
 
   return (
     <>
-      <TableToolbarSearch onChange={(e: any) => handleFilterSearch(e.target.value)} />
+      <TableToolbarSearch
+        // @ts-ignore
+        value={filterName}
+        persistent
+        placeholder={capitalizeFirstLetter(translate('search'))}
+        onChange={(e: any) => handleFilterSearch(e.target.value)}
+      />
       {setFilterEducationLevel && educationLevelOptions && filterEducationLevel && (
         <Popover open={popover.value} isTabTip onRequestClose={popover.close} align="bottom-right">
           <Button
@@ -51,14 +70,19 @@ export default function MeasureTableToolbar({
           />
           <PopoverContent>
             <MeasuresTableFilter
+              filterStatus={filterStatus}
+              countryName={countryName}
+              countryOptions={countryOptions}
               closePopover={popover.close}
               setFilterRegion={setFilterRegion}
               filterRegion={filterRegion}
               regionOptions={regionOptions}
               educationLevelOptions={educationLevelOptions}
               filterEducationLevel={filterEducationLevel}
+              setFilterCountry={setFilterCountry}
               setFilterEducationLevel={setFilterEducationLevel}
               setPage={setPage}
+              setFilterStatus={setFilterStatus}
             />
           </PopoverContent>
         </Popover>

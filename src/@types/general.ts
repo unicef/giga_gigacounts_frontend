@@ -1,4 +1,5 @@
 import { ActionType } from './action-types'
+import { Metric, MetricCamel } from './metrics'
 import { ContractStatus, PaymentStatus } from './status'
 import { UserRoles } from './user'
 
@@ -16,7 +17,7 @@ export interface ISafe {
 }
 
 export interface IRole {
-  code: UserRoles
+  code: UserRoles | ''
   name: string
   permissions: string[]
 }
@@ -24,7 +25,7 @@ export interface IRole {
 export interface IUser {
   id: string
   name: string
-  last_name: string
+  lastName: string
   email: string
   about: string
   zipCode: string
@@ -34,6 +35,8 @@ export interface IUser {
   role: IRole
   country: ICountry
   safe?: ISafe
+  countryName: string
+  completeName: string
   walletAddress: string | null
   isp?: IISP
   automaticContractsEnabled?: boolean | false
@@ -83,7 +86,7 @@ export interface IDraft {
   lta?: ILta
   schools: (ISchool & { budget: string })[]
   notes: string
-  ispContacts: IUser[]
+  ispContacts: IExternalUser[]
   stakeholders: IUser[]
   breakingRules: string
   paymentReceiver?: {
@@ -129,14 +132,14 @@ export interface IContractDraft {
   expectedMetrics?: {
     id: string
     value: string
-    name: 'Uptime' | 'Download speed' | 'Upload speed' | 'Latency'
+    name: Metric
   }[]
 }
 
 export interface IConnectionMedian {
   contract_id: string
   metric_id: number
-  metric_name: string
+  metric_name: Metric
   unit: string
   median_value: number
 }
@@ -148,7 +151,7 @@ export interface IContractDetails {
   expectedMetrics: {
     metricId: string
     value: string
-    metricName: 'Uptime' | 'Download speed' | 'Upload speed' | 'Latency'
+    metricName: Metric
     metricUnit: 'Mb/s' | 'ms' | '%'
   }[]
   name: string
@@ -174,6 +177,12 @@ export interface IContractDetails {
   cashback?: number
   ispContacts: IUser[]
   stakeholders: IUser[]
+  paymentReceiver?: {
+    id: number
+    name: string
+    email: string
+    lastName: string
+  }
 }
 
 export interface IPendingContractDetails {
@@ -229,13 +238,9 @@ export interface IContract<Status extends ContractStatus = ContractStatus> {
   end_date: string | null
 }
 
-export interface IContractSchoolsConnection {
+export type ContractSchoolsConnection = {
   value: number
-  downloadSpeed: number
-  uploadSpeed: number
-  uptime: number
-  latency: number
-}
+} & { [K in MetricCamel]: number }
 
 export interface ISchoolContact {
   contactPerson: string
@@ -248,7 +253,7 @@ export interface IContractSchools {
   name: string
   externalId: string
   locations: string
-  connection: IContractSchoolsConnection
+  connection: ContractSchoolsConnection
   budget: string
   contactInformation: ISchoolContact
 }
@@ -266,6 +271,7 @@ export interface ISchoolMeasuresExtended extends ISchoolMeasures {
   school_education_level: EducationLevel
   school_external_id: string
   school_location1: string
+  connection: { value: number }
 }
 
 export interface IContractTotalSpent {
@@ -280,10 +286,7 @@ export interface IPaymentAttachment {
   url: string
 }
 
-export interface IPaymentForm {
-  month: number
-  year: number
-  day?: number
+export interface IPaymentForm extends IPeriod {
   contractId: string
   description: string
   amount: number
@@ -298,11 +301,7 @@ export interface IContractPayment {
   contractStatus: ContractStatus
   contractFrequency: IFrequency['name']
   contractAutomatic?: boolean
-  paidDate: {
-    month: number
-    year: number
-    day?: number
-  }
+  paidDate: IPeriod
   dateFrom: string
   dateTo: string
   description: string
@@ -442,22 +441,46 @@ export interface ISchool {
   phone_number: string
   contact_person: string
   country_id: string
+  reliable_measures: boolean
 }
 export type SchoolCell = ISchool & { budget: string }
 
 export interface IFrequency {
   id: string
-  name: 'Weekly' | 'Biweekly' | 'Monthly'
+  name: 'Weekly' | 'Biweekly' | 'Monthly' | 'Daily'
 }
 
-export type MetricName =
-  | 'uptime'
-  | 'download_speed'
-  | 'upload_speed'
-  | 'latency'
-  | 'Uptime'
-  | 'Download speed'
-  | 'Latency'
-  | 'Upload speed'
-
 export type EducationLevel = 'High school' | 'Primary' | 'Secondary'
+export interface IExternalUser {
+  name: string
+  role: IRole
+  email: string
+  phoneNumber: string
+  ispId: string
+  countryId: string
+}
+export interface IExternalUserWithId extends IExternalUser {
+  id: string
+  ispName: string
+}
+
+export interface IPeriod {
+  day?: number
+  month: number
+  year: number
+}
+
+export interface IPaymentConnection {
+  schoolsConnected: {
+    goodConnection: number
+    badConnection: number
+    noConnection: number
+    unknownConnection: number
+  }
+  daysConnected: {
+    goodConnection: number
+    badConnection: number
+    noConnection: number
+    unknownConnection: number
+  }
+}

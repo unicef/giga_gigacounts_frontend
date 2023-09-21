@@ -1,33 +1,37 @@
-import { Button, DataTableRow, Modal, TableCell, TableRow, Tag } from '@carbon/react'
+import { DataTableRow, Modal, TableCell, TableRow, Tag } from '@carbon/react'
 import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
+import { useEffect, useState } from 'react'
 import {
   ContractStatus,
   IContractPayment,
   ICurrency,
   IFrequency,
+  IPaymentConnection,
   Icon,
   PaymentStatus,
   Translation
 } from 'src/@types'
-import { changePaymentStatus } from 'src/api/payments'
-import { InfoToggletip } from 'src/components/info-toggletip'
-import PercentageBar from 'src/components/percentage-bar/PercentageBar'
-import { Stack } from 'src/components/stack'
-import { ICONS, PAYMENT_STATUS_COLORS, Views } from 'src/constants'
+import { changePaymentStatus, getPaymentConnection } from 'src/api/payments'
+import { ActionButton } from 'src/components/action-button'
+import { PAYMENT_STATUS_COLORS, Views } from 'src/constants'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
-import { useTheme } from 'src/theme'
-import { getContractSchoolDistribution } from 'src/utils/contracts'
 import { parsePaymentStatus } from 'src/utils/status'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 import { getOrderedFromCells } from 'src/utils/table'
 import PaymentDetailsDrawer from '../form/PaymentDetailsDrawer'
 import PaymentViewDrawer from '../form/PaymentViewDrawer'
+import { PaymentConnectivityBar } from '../graph'
 
 type Props = {
-  row: DataTableRow
+  row: DataTableRow<
+    (IContractPayment & {
+      contractName?: string
+      contractCountryName?: string
+    })[]
+  >
   rowProps: TableRowProps
   refetchPayments: () => void
   contractId: string
@@ -54,36 +58,41 @@ export default function PaymentTableRow({
   const { canAdd } = useAuthorization()
   const { translate } = useLocales()
   const { pushSuccess, pushError } = useSnackbar()
-  const { spacing } = useTheme()
-  const [, dateTo, amount, status, , contractName, contractCountryName] = getOrderedFromCells(
-    ['id', 'dateTo', 'amount', 'status', 'connections', 'contractName', 'contractCountryName'],
+
+  const [, dateTo, amount, status, , contractName] = getOrderedFromCells(
+    ['_', 'dateTo', 'amount', 'status', '_', 'contractName'],
     row.cells
   )
   const parsedStatus = parsePaymentStatus(status)
   const canChangeStatus = canAdd(Views.payment) && !contractAutomatic
-
-  const approve = useModal()
   const reject = useModal()
   const pay = useModal()
   const edit = useModal()
   const view = useModal()
 
-  const isOnHold = parsedStatus === PaymentStatus.OnHold
-  const isUnPaid = parsedStatus === PaymentStatus.Unpaid
+  const isDraft = parsedStatus === PaymentStatus.Draft
   const isPaid = parsedStatus === PaymentStatus.Paid
+  const canReject = isDraft && canChangeStatus
+  const canApprove = !isPaid && canChangeStatus
 
-  const handleApprove = () => {
-    if (!(isOnHold || isPaid) || !canChangeStatus) return
-    approve.close()
-    changePaymentStatus(row.id, PaymentStatus.Verified)
-      .then(() => {
-        refetchPayments()
-        pushSuccess('push.approve_payment')
-      })
-      .catch(() => pushError('push.approve_payment_error'))
-  }
+  const [paymentConnection, setPaymentConnection] = useState<IPaymentConnection>()
+
+  useEffect(() => {
+    if (payment?.paidDate && contractId)
+      getPaymentConnection(Number(contractId), payment.paidDate).then(setPaymentConnection)
+  }, [payment?.paidDate, contractId])
+
+  const absolutePerecentages = paymentConnection
+    ? ([
+        { color: 'success', percentage: paymentConnection.schoolsConnected.goodConnection },
+        { color: 'warning', percentage: paymentConnection.schoolsConnected.badConnection },
+        { color: 'error', percentage: paymentConnection.schoolsConnected.noConnection },
+        { color: 'unknown', percentage: paymentConnection.schoolsConnected.unknownConnection }
+      ] as const)
+    : null
+
   const handleReject = () => {
-    if (!isOnHold || !canChangeStatus) return
+    if (!canReject) return
     reject.close()
     changePaymentStatus(row.id, PaymentStatus.Unpaid)
       .then(() => {
@@ -94,7 +103,7 @@ export default function PaymentTableRow({
   }
 
   const handleMarkAsPaid = () => {
-    if (!isUnPaid || !canChangeStatus) return
+    if (!canApprove) return
     pay.close()
     changePaymentStatus(row.id, PaymentStatus.Paid)
       .then(() => {
@@ -106,69 +115,60 @@ export default function PaymentTableRow({
 
   const options: { icon: Icon; label: Translation; onClick: () => void }[] = [
     {
-      icon: ICONS.View,
+      icon: 'View',
       label: 'view',
       onClick: view.open
     }
   ]
-  if (canChangeStatus && isOnHold) {
-    options.push({ icon: ICONS.Edit, label: 'edit', onClick: edit.open })
-    options.push({ icon: ICONS.Close, label: 'decline', onClick: reject.open })
+  if (canReject) {
+    options.push({ icon: 'Edit', label: 'edit', onClick: edit.open })
+    options.push({ icon: 'Close', label: 'decline', onClick: reject.open })
   }
-  if (canChangeStatus && (isOnHold || isPaid)) {
-    options.push({ icon: ICONS.SuccessOutline, label: 'approve', onClick: approve.open })
-  }
-  if (canChangeStatus && isUnPaid) {
-    options.push({ icon: ICONS.Fund, label: 'mark_as_paid', onClick: pay.open })
+
+  if (canApprove) {
+    options.push({ icon: 'Fund', label: 'mark_as_paid', onClick: pay.open })
   }
   return (
     <TableRow {...rowProps}>
-      <TableCell>{row.id}</TableCell>
-      <TableCell>
-        {payment.dateFrom} {translate('to')} {dateTo}
-      </TableCell>
-      <TableCell>{`${currency?.code} ${amount}`}</TableCell>
-      <TableCell>
+      <TableCell style={{ width: '10%' }}>{row.id}</TableCell>
+      <TableCell style={{ width: '5%' }}>
         <Tag type={PAYMENT_STATUS_COLORS[parsedStatus]}>
           {capitalizeFirstLetter(translate(`constant_status.payment.${parsedStatus}`))}
         </Tag>
       </TableCell>
-      <TableCell>
-        <Stack
-          orientation="horizontal"
-          gap={spacing.md}
-          alignItems="center"
-          justifyContent="flex-start"
-        >
-          <InfoToggletip
-            title={`${contractNumberOfSchools * payment.metrics.allEqualOrAboveAvg} ${translate(
-              'schools_connected_out_of'
-            )} ${contractNumberOfSchools} ${translate('during')} ${payment.dateFrom} ${translate(
-              'to'
-            )} ${dateTo}`}
-          />
-          <PercentageBar width={240} data={getContractSchoolDistribution(payment.metrics)} />
-        </Stack>
+      <TableCell style={{ width: '20%' }}>
+        {payment.dateFrom} {translate('to')} {dateTo}
+      </TableCell>
+      <TableCell
+        style={{ width: contractName ? '10%' : '20%' }}
+      >{`${currency?.code} ${amount}`}</TableCell>
+
+      <TableCell style={{ width: '20%' }}>
+        <PaymentConnectivityBar
+          data={absolutePerecentages}
+          dateFrom={payment?.dateFrom}
+          dateTo={payment?.dateTo}
+          numberOfSchools={contractNumberOfSchools}
+          variant="status"
+          tooltipAlign={(_, i) => (i === 0 ? 'right' : 'left')}
+        />
       </TableCell>
 
-      {contractName && <TableCell>{contractName}</TableCell>}
-      {contractCountryName && <TableCell>{contractCountryName}</TableCell>}
+      {contractName && <TableCell style={{ width: '10%' }}>{contractName}</TableCell>}
 
-      <TableCell>
+      <TableCell style={{ width: '25%' }}>
         {options.map((opt) => (
-          <Button
-            style={{ margin: 0, padding: 0 }}
+          <ActionButton
             key={row.id + opt.label}
-            kind="ghost"
             onClick={opt.onClick}
-            iconDescription={capitalizeFirstLetter(translate(opt.label))}
-            renderIcon={opt.icon}
-            hasIconOnly
+            description={opt.label}
+            icon={opt.icon}
           />
         ))}
       </TableCell>
-      <TableCell>
+      <TableCell style={{ width: '0%' }}>
         <PaymentDetailsDrawer
+          amount={amount}
           openView={view.open}
           paymentFrequency={contractFrequency}
           availablePayments={[payment.paidDate]}
@@ -195,29 +195,20 @@ export default function PaymentTableRow({
           payment={payment}
         />
         <Modal
-          open={approve.value}
-          modalHeading={translate('payment_approve_modal.content')}
-          modalLabel={translate('payment_approve_modal.title')}
-          primaryButtonText={translate('approve')}
-          secondaryButtonText={translate('cancel')}
-          onRequestClose={approve.close}
-          onRequestSubmit={handleApprove}
-        />
-        <Modal
           open={reject.value}
-          modalHeading={translate('payment_reject_modal.content')}
-          modalLabel={translate('payment_reject_modal.title')}
-          primaryButtonText={translate('decline')}
-          secondaryButtonText={translate('cancel')}
+          modalHeading={capitalizeFirstLetter(translate('payment_reject_modal.content'))}
+          modalLabel={capitalizeFirstLetter(translate('payment_reject_modal.title'))}
+          primaryButtonText={capitalizeFirstLetter(translate('decline'))}
+          secondaryButtonText={capitalizeFirstLetter(translate('cancel'))}
           onRequestClose={reject.close}
           onRequestSubmit={handleReject}
         />
         <Modal
           open={pay.value}
-          modalHeading={translate('payment_pay_modal.content')}
-          modalLabel={translate('payment_pay_modal.title')}
-          primaryButtonText={translate('mark_as_paid')}
-          secondaryButtonText={translate('cancel')}
+          modalHeading={capitalizeFirstLetter(translate('payment_pay_modal.content'))}
+          modalLabel={capitalizeFirstLetter(translate('payment_pay_modal.title'))}
+          primaryButtonText={capitalizeFirstLetter(translate('mark_as_paid'))}
+          secondaryButtonText={capitalizeFirstLetter(translate('cancel'))}
           onRequestClose={pay.close}
           onRequestSubmit={handleMarkAsPaid}
         />

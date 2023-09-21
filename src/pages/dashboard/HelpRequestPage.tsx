@@ -15,7 +15,7 @@ export default function HelpRequestPage() {
         <title> Contact: Help Request | Gigacounts</title>
       </Helmet>
 
-      <Banner title={translate('functionalities.help_request')} />
+      <Banner title={translate('ask_for_help')} />
       <div style={{ padding: spacing.lg }}>
         <Typography as="h3"> {translate('functionalities.help_request')}</Typography>
         <Stack orientation="horizontal" gap={spacing.xl}>

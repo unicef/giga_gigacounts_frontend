@@ -124,7 +124,9 @@ const es: TranslationObject = {
     reject_payment: 'El pago ha sido rechazado',
     reject_payment_error: 'Ha ocurrido un error rechazando el pago',
     pay_payment: 'El pago ha sido marcado como pagado',
-    pay_payment_error: 'Ha ocurrido un error marcando el pago como pagado'
+    pay_payment_error: 'Ha ocurrido un error marcando el pago como pagado',
+    approved_manually_contract: 'El contrato fue aprobado manualmente',
+    approved_manually_contract_error: 'Ha ocurrido un error aprobando el contrato manualmente'
   },
   duplicate_contract: {
     title: 'Duplicar contrato',
@@ -200,9 +202,26 @@ const es: TranslationObject = {
     content: 'Encuentre y edite su contrato en la lista de contratos con el estado de borrador.'
   },
   contract_published_modal: {
-    title: '¡Su contrato fue creado con éxito! Recibirá una notificación cuando @ISP firme.',
-    content:
-      'El nuevo contrato fue enviado al ISP, estará en estado continuo. Le informaremos cuando esté listo o haya alguna observación.'
+    choose: {
+      title: 'Estás a un paso de un contrato activo.',
+      content:
+        'Puede enviar el contrato al ISP para la firma o puede validar el contrato usted mismo.',
+      primaryText: 'Enviar a ISP para la firma',
+      secondaryText: 'Confirmar la firma manualmente'
+    },
+    send: {
+      title: 'Estás a punto de enviar el contrato para la firma ISP.',
+      content: 'Recibirá una notificación cuando ISP firma.',
+      primaryText: 'Enviar a ISP para la firma',
+      secondaryText: 'Atrás'
+    },
+    manual: {
+      title: 'Estás a punto de confirmar la firma ISP.',
+      content:
+        'Al confirmar la firma del ISP, confirma que el ISP está bien informado y de acuerdo con los términos del contrato. Esta acción solo se puede hacer para contratos manuales.',
+      primaryText: 'Confirmar la firma manualmente',
+      secondaryText: 'Atrás'
+    }
   },
   contract_cancel_modal: {
     title: 'Cancelar creación de contrato',
@@ -233,6 +252,7 @@ const es: TranslationObject = {
     before_that: 'Anteriores',
     view_all: 'Ver Todas',
     dismiss_all: 'descartar todas',
+    mark_all_as_read: 'marcar todo como leído',
     empty: 'No tienes notificaciones'
   },
   upload_errors: {
@@ -251,7 +271,8 @@ const es: TranslationObject = {
     start_date: 'La fecha de inicio debe ser después de hoy',
     end_date: 'Fecha de fin debe ser posterior a Fecha de inicio',
     launch_date_min: 'Fecha de lanzamiento debe ser posterior a Fecha de inicio',
-    launch_date_max: 'Fecha de lanzamiento debe ser anterior a Fecha de fin'
+    launch_date_max: 'Fecha de lanzamiento debe ser anterior a Fecha de fin',
+    is_invalid: 'es invalido'
   },
   parse_errors: {
     school_not_found: 'Escuela no encontrada en la fila',
@@ -371,6 +392,7 @@ const es: TranslationObject = {
   contracts: `contratos`,
   payment: 'pago',
   payments: 'pagos',
+  payments_log: 'registro de pagos',
   automatic_contracts: 'contratos automáticos',
   automatic_contracts_list: 'lista de contratos automáticos',
   automatic_contracts_check_info:
@@ -442,6 +464,7 @@ const es: TranslationObject = {
   schools_list_budget: 'Lista de escuelas y asignación de presupuesto',
   schools: 'Escuelas',
   stakeholders_and_collaborators: 'Stakeholders & colaboradores',
+  stakeholders: 'Stakeholders',
   final_review: 'Revisión final',
   back: 'volver',
   save: 'guardar',
@@ -759,7 +782,7 @@ const es: TranslationObject = {
   flag: 'bandera',
   personal_info: 'Información personal',
   role: 'rol',
-  country_name: 'nome do país',
+  country_name: 'nombre del país',
   address: 'dirección',
   day: 'día',
   median_value: 'Valor medio',
@@ -778,6 +801,7 @@ const es: TranslationObject = {
     'Si activa esta opcion, el gerente de contrato podrá confirmar el contrato sin confirmación de ISP',
   contact_saved: 'Contacto guardado con éxito',
   help: 'Ayuda',
+  visit_help_page: 'Visite la página de ayuda',
   payment_frequency: 'frecuencia de pago',
   of: 'de',
   items: 'items',
@@ -787,13 +811,13 @@ const es: TranslationObject = {
   biweekly: 'quincenal',
   log_out: 'Cerrar sesión',
   connectivity: 'conectividad',
+  schools_connectivity: 'Conect. de las escuelas',
   no_comments_added: 'No se agregaron comentarios',
   constant_status: {
     payment: {
-      Verified: 'verificado',
-      Unpaid: 'no pagado',
-      Paid: 'pagado',
-      OnHold: 'en espera'
+      Unpaid: 'confirmado sin pagar',
+      Draft: 'borrador',
+      Paid: 'pagado'
     },
     contract: {
       Draft: 'borrador',
@@ -804,9 +828,10 @@ const es: TranslationObject = {
       Completed: 'terminado'
     },
     connectivity: {
-      Strong: 'fuerte',
-      Very_weak: 'muy débil',
-      Weak: 'débil'
+      Connected: 'conectada',
+      PoorlyConnected: 'Mal conectada',
+      Disconnected: 'desconectada',
+      Unknown: 'desconocida'
     },
     notification: {
       SENT: 'nueva',
@@ -851,7 +876,9 @@ const es: TranslationObject = {
       account_nav_information: 'En esta sección puede editar su información personal',
       notifications_popover: 'Puede ver y administrar sus notificaciones',
       feedback_link: 'Aquí puede compartir su experiencia con la aplicación GIGACounts',
-      language_popover: 'Aquí puede seleccionar el idioma de la aplicación'
+      language_popover: 'Aquí puede seleccionar el idioma de la aplicación',
+      help_page_link: 'Aquí puede visitar la página de ayuda',
+      ask_for_help_link: 'Aquí puedes pedir ayuda'
     },
     contracts: {
       new_contract: 'Este es el botón para crear un nuevo contrato',
@@ -872,14 +899,22 @@ const es: TranslationObject = {
   last: 'último',
   payment_receiver: 'Receptor de pago de ISP',
   table_no_data: {
-    contracts: 'Sin contratos',
-    measures: 'Sin medidas',
-    notifications: 'Sin notificaciones',
-    payments: 'Sin pagos',
-    schools: 'Sin escuelas',
-    users: 'Sin usuarios',
-    attachments: 'Sin adjuntos',
-    transactions: 'Sin transacciones'
+    contracts: 'contrato',
+    measures: 'medida',
+    notifications: 'notificacion',
+    payments: 'pago',
+    schools: 'escuela',
+    users: 'usuario',
+    attachments: 'adjunto',
+    transactions: 'transacción'
+  },
+  table_empty: {
+    title: 'Aún no hay datos registrados',
+    subtitle: 'Comienza creando un {{content}} y quedará registrado en este espacio'
+  },
+  table_not_found: {
+    title: 'Su búsqueda no produjo resultados',
+    subtitle: 'Intenta nuevamente verificando los datos correctamente o realiza una nueva búsqueda'
   },
   fedback_rating: {
     1: 'Me siento insatisfecho',
@@ -910,6 +945,7 @@ const es: TranslationObject = {
   failed_to_add_as_team_member: 'no se pudo agregar como miembro del equipo',
   file_container_label_accept: 'Los tipos de archivos compatibles son {{accept}}',
   file_container_label_size: 'El tamaño del archivo máximo es {{size}}mb.',
+  daily: 'a diario',
   page_error: {
     403: {
       title: 'Sin autorización',
@@ -940,7 +976,8 @@ const es: TranslationObject = {
       you_are_here: 'Usted está aquí'
     },
     contract_issues: {
-      title: 'Contratos con problemas de SLA',
+      title1: 'Contratos con problemas de',
+      title2: '',
       no_data: 'Ningún contrato tiene problemas de SLA'
     },
     take_action: {
@@ -948,7 +985,8 @@ const es: TranslationObject = {
       no_data: 'No hay medidas a tomar'
     },
     school_issues: {
-      title: 'Escuelas con problemas de SLA',
+      title1: 'Escuelas con problemas de',
+      title2: '',
       no_data: 'Ninguna escuelas tiene problemas de SLA'
     },
     upcoming_payments: {
@@ -963,7 +1001,99 @@ const es: TranslationObject = {
   the_file_is_downloading: 'el archivo se esta descargando',
   copied_link: 'enlace copiado',
   share_contract_details: 'Compartir detalles del contrato',
-  contract_dates: 'Fechas del contrato'
+  contract_dates: 'Fechas del contrato',
+  options: 'opciones',
+  copy_url: 'copiar y compartir URL',
+  distribute_budget_equally: 'Distribuir el presupuesto por igual',
+  add_external_isp_contact: 'Agregar contacto externo de ISP',
+  ask_for_help: 'pedir ayuda',
+  contract_period: 'período de contrato',
+  tooltips: {
+    SLA: {
+      line1: 'Nivel de calidad de servicio contratado',
+      line2: 'entre el ISP y un',
+      line3: 'Creador de contrato para una escuela.'
+    },
+    upcoming_payments: {
+      line1: 'Pagos no pagados',
+      line2: 'y que su período de cobertura',
+      line3: 'aún no ha comenzado.'
+    },
+    overdue_payments: {
+      line1: 'Pagos no pagados',
+      line2: 'y que su período de cobertura',
+      line3: 'ha terminado.'
+    },
+    measures_24: 'Las medidas son de las últimas 24 horas',
+    connectivity_distribution_status: {
+      line1: 'Muestra (en %) si las escuelas tenían conexión buena, mala o ninguna conexión.',
+      line2: 'Medido para {{number}} escuelas bajo el contrato,',
+      line3: 'para el período de pago seleccionado de {{dateFrom}} a {{dato}}.'
+    },
+    connectivity_distribution_days: {
+      line1:
+        'Muestra (en %) si las escuelas estaban conectadas todos los días, algunos días o 0 días.',
+      line2: 'Medido para {{number}}} escuelas bajo el contrato,',
+      line3: 'para el período de pago seleccionado de {{dateFrom}} a {{dato}}.'
+    },
+    quality_of_service_comparison: {
+      line1: 'Se compara entre el QoS acordado en el contrato y el QoS entregado',
+      line2: 'para el período de pago seleccionado de {{dateFrom}} a {{dato}}.'
+    },
+    payment_status:
+      'Le permite decidir y establecer un estado de pago. Si no se selecciona nada, el estado se establecerá en borrador.',
+    connectivity_graph: {
+      days: {
+        success: '{{number}}}% escuelas conectadas todos los días',
+        warning: '{{number}}}% escuelas conectadas algunos días',
+        error: '{{number}}}% escuelas desconectadas todos los días',
+        unknown: '{{number}}}% escuelas con datos de días conectados desconocido'
+      },
+      status: {
+        success: '{{number}}}% escuelas con buena conexión',
+        warning: '{{number}}}% escuelas con mala conexión',
+        error: '{{number}}}% escuelas sin conexión',
+        unknown: '{{number}}}% escuelas con estado de conexión desconocidos'
+      }
+    }
+  },
+  install: 'instalar',
+  month: 'mes',
+  january: 'enero',
+  february: 'febrero',
+  march: 'marzo',
+  april: 'abril',
+  may: 'mayo',
+  june: 'junio',
+  july: 'julio',
+  august: 'agosto',
+  september: 'septiembre',
+  october: 'octubre',
+  november: 'noviembre',
+  december: 'diciembre',
+  for: 'para',
+  percentage_schools_connected: 'Porcentaje de escuelas conectadas',
+  percentage_schools_connected_by_number_of_days:
+    'Porcentaje de escuelas conectadas por número de días',
+  number_schools: '{{number}} escuelas',
+  from_date_to_date: 'desde {{dateFrom}} hasta {{dateTo}}',
+  distributed_by_percentage_of_schools: 'distribuido por porcentaje de escuelas',
+  no_connection: 'sin conexión',
+  bad_connection: 'mala conexión',
+  good_connection: 'buena conexión',
+  unknown_data: 'datos desconocidos',
+  out_of_number_days: 'de {{number}} días',
+  out_of_number_schools: 'de {{number}} escuelas',
+  connected_number_days: 'conectado {{number}} días',
+  connected_every_day: 'conectado todos los días',
+  connected_1_to_number_days_out_of_max_days: 'conectado 1 a {{number}} días de {{max}} días',
+  mark_as_reliable: 'marcar como confiable',
+  mark_as_unreliable: 'marcar como poco confiable',
+  connectivity_distribution_by_status: 'distribución de conectividad: por estado',
+  connectivity_distribution_by_days: 'distribución de conectividad: por días',
+  quality_of_service_comparison: 'comparación de calidad de servicio',
+  none: 'Ninguna',
+  pay_reciev: 'Recep. Pago.'
 }
 
 export default es

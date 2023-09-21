@@ -1,43 +1,61 @@
-import { ComboBox, InlineNotification } from '@carbon/react'
+import { Button, Column, ComboBox, Grid, InlineNotification } from '@carbon/react'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate } from 'react-router'
-import { ContractForm, IFileUpload, IISP, IUser, Translation, UserRoles } from 'src/@types'
+import {
+  ContractForm,
+  IExternalUser,
+  IFileUpload,
+  IISP,
+  IUser,
+  Translation,
+  UserRoles
+} from 'src/@types'
 import { getUsers } from 'src/api/user'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import UploadError from 'src/components/errors/UploadError'
-import { RHFCheckbox, RHFDatePicker, RHFSelect, RHFTextField } from 'src/components/hook-form'
+import {
+  RHFCheckbox,
+  RHFComboBox,
+  RHFDatePicker,
+  RHFSelect,
+  RHFTextField
+} from 'src/components/hook-form'
+import FormProvider from 'src/components/hook-form/FormProvider'
 import { Stack } from 'src/components/stack'
 import { SectionSubtitle, SectionTitle } from 'src/components/typography'
 import { UploadBox } from 'src/components/upload-box'
 import { UserChipList } from 'src/components/user'
-import { CONTRACT_TEAM_ROLES, ISP_CONTACT_ROLES } from 'src/constants'
+import { CONTRACT_TEAM_ROLES, EXTERNAL_CONTACT_ROLE, ISP_CONTACT_ROLES } from 'src/constants'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useLocales } from 'src/locales'
 import { redirectOnError } from 'src/pages/errors/handlers'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
+import { useContactSchema } from 'src/validations/contact'
 import { ContractSchoolsAndAttachments } from './types'
 
 type Step1Props = {
   onChange: Dispatch<SetStateAction<ContractSchoolsAndAttachments>>
   fields: {
     attachments: (IFileUpload & { status: 'uploading' | 'edit' | 'complete' })[]
-    contacts: IUser[]
+    contacts: (IExternalUser | IUser)[]
     stakeholders: IUser[]
   }
   deleteAttachment: (name: string) => void
   uploadAttachment: (
     attachment: IFileUpload & { status: 'complete' | 'edit' | 'uploading' }
   ) => void
-  addContact: (contactForm: IUser) => void
-  deleteContact: (id: string) => void
+  addContact: (contactForm: IExternalUser | IUser) => void
+  deleteContact: (email: string) => void
   addTeamMember: (teamMemberForm: IUser) => void
   deleteTeamMember: (id: string) => void
   handlePost: (contractForm: ContractForm) => void
   uploadErrorMessage: Translation | ''
   setUploadErrorMessage: Dispatch<SetStateAction<Translation | ''>>
   isAutomatic: boolean
+  ispOptions: IISP[]
+  setIspOptions: Dispatch<SetStateAction<IISP[]>>
 }
 
 export default function Step1({
@@ -52,7 +70,9 @@ export default function Step1({
   deleteContact,
   addTeamMember,
   deleteTeamMember,
-  isAutomatic
+  isAutomatic,
+  ispOptions,
+  setIspOptions
 }: Step1Props) {
   const navigate = useNavigate()
   const { isAdmin } = useAuthContext()
@@ -70,15 +90,19 @@ export default function Step1({
   const hasContactPeople = fields.contacts.length > 0
   const hasTeam = fields.stakeholders.length > 0
 
-  const [ispOptions, setIspOptions] = useState<IISP[]>([])
-  const [ispContactOptions, setIspContactOptions] = useState<IUser[]>([])
+  const [ispContactOptions, setIspContactOptions] = useState<(IUser | IExternalUser)[]>([])
   const [teamMemberOptions, setTeamMemberOptions] = useState<IUser[]>([])
 
   const [showContactNotification, setShowContactNotification] = useState(false)
 
+  const contactSchema = useContactSchema()
+  const [showContactForm, setShowContactForm] = useState(false)
+
   useEffect(() => {
     if (!isAutomatic) return setShowContactNotification(false)
-    const receiver = ispContactOptions.find((u) => u.id === paymentReceiverId)
+    const receiver = ispContactOptions.find(
+      (u) => 'id' in u && u.id === paymentReceiverId && u.role.name !== EXTERNAL_CONTACT_ROLE
+    ) as IUser | undefined
     if (!receiver || fields.contacts.length === 0) return setShowContactNotification(false)
     if (!receiver.walletAddress) return setShowContactNotification(true)
     return setShowContactNotification(false)
@@ -86,13 +110,13 @@ export default function Step1({
 
   useEffect(() => {
     if (ispId)
-      getUsers(countryId, ISP_CONTACT_ROLES, ispId)
+      getUsers(countryId, ISP_CONTACT_ROLES, true, ispId)
         .then(setIspContactOptions)
         .catch(() => setIspContactOptions([]))
   }, [ispId, countryId])
 
   useEffect(() => {
-    getUsers(countryId, CONTRACT_TEAM_ROLES)
+    getUsers(countryId, CONTRACT_TEAM_ROLES, false)
       .then(setTeamMemberOptions)
       .catch(() => setTeamMemberOptions([]))
   }, [countryId])
@@ -138,14 +162,20 @@ export default function Step1({
     handlePost(getValues())
   }
 
-  const handleAddContact = (contactInfo: IUser) => {
+  const handleAddContact = (contactInfo: IExternalUser | IUser) => {
     addContact(contactInfo)
     handlePost(getValues())
-    if (fields.contacts.length === 0) setValue('paymentReceiverId', contactInfo.id)
+    if (
+      isAutomatic &&
+      fields.contacts.filter((u) => u.role.name !== EXTERNAL_CONTACT_ROLE).length === 0 &&
+      'id' in contactInfo &&
+      contactInfo.id
+    )
+      setValue('paymentReceiverId', contactInfo.id)
   }
 
   const ispContactOptionsFiltered = ispContactOptions.filter(
-    (o) => o && !fields.contacts.some((c) => c.id === o.id)
+    (o) => o && !fields.contacts.some((c) => c.email === o.email)
   )
 
   const teamMembersOptionsFiltered = teamMemberOptions.filter(
@@ -154,16 +184,44 @@ export default function Step1({
 
   const selectedContractManagers = fields.contacts.filter(
     (u) => u.role.code === UserRoles.ISP_CONTRACT_MANAGER
-  )
+  ) as IUser[]
 
-  const handleDeleteContact = (id: string) => {
-    deleteContact(id)
+  const handleDeleteContact = (email: string) => {
+    deleteContact(email)
     handlePost(getValues())
+    if (!isAutomatic) return
     if (selectedContractManagers.length === 1) setValue('paymentReceiverId', '')
     else if (selectedContractManagers.length === 2) {
-      const lastContact = selectedContractManagers.find((c) => c.id !== id)
+      const lastContact = selectedContractManagers.find((c) => c.email !== email)
       setValue('paymentReceiverId', lastContact?.id ?? '')
     }
+  }
+
+  const resetContactForm = () => {
+    contactSchema.reset()
+    setShowContactForm(false)
+  }
+
+  const handlePostContact = (values: {
+    contactName: string
+    phoneNumber: string
+    email: string
+  }) => {
+    const newContact = {
+      role: {
+        code: '' as const,
+        name: EXTERNAL_CONTACT_ROLE,
+        permissions: []
+      },
+      name: values.contactName,
+      phoneNumber: values.phoneNumber,
+      email: values.email,
+      ispId,
+      countryId
+    }
+    addContact(newContact)
+    setIspContactOptions((prev) => [...prev, newContact])
+    resetContactForm()
   }
 
   return (
@@ -196,9 +254,10 @@ export default function Step1({
           labelText={translate('contract_name')}
           onBlur={() => handlePost(getValues())}
         />
-        <RHFSelect
+        <RHFComboBox
+          defaultValue={{ value: '', label: '' }}
           id={`country selection ${contractId}`}
-          options={countries
+          options={[...countries]
             .map((c) => ({ value: c.id, label: c.name }))
             .sort((a, b) => a.label.localeCompare(b.label))}
           onChange={() => {
@@ -210,19 +269,20 @@ export default function Step1({
           readOnly={!isAdmin}
         />
 
-        <div
+        <Stack
+          gap={spacing.xs}
           style={{
             backgroundColor: palette.background.neutral,
             padding: spacing.md
           }}
         >
-          <RHFSelect
+          <RHFComboBox
+            defaultValue={{ value: '', label: '' }}
             id={`internet service provider selection ${contractId}`}
             options={ispOptions.map((i) => ({ value: i.id, label: i.name }))}
             name="isp"
             label={capitalizeFirstLetter(translate('isp'))}
             disabled={!countryId || hasContactPeople}
-            style={{ marginBottom: spacing.xs }}
             onChange={() => handlePost(getValues())}
           />
 
@@ -233,13 +293,21 @@ export default function Step1({
               )}
               <ComboBox
                 placeholder={translate('search_isp_contacts')}
-                items={ispContactOptionsFiltered}
+                items={[...ispContactOptionsFiltered, 'Add']}
                 selectedItem={{ name: '' }}
-                itemToString={(i: IUser) => i.name}
+                itemToString={(i) =>
+                  i === 'Add'
+                    ? `${capitalizeFirstLetter(translate('add_external_isp_contact'))} +`
+                    : (i as IExternalUser).name
+                }
                 id={`isp contact contract combo box ${contractId}`}
-                disabled={!contractName || !ispId || ispContactOptionsFiltered.length === 0}
+                disabled={!contractName || !ispId}
                 titleText={capitalizeFirstLetter(translate('add_an_isp'))}
-                onChange={(data: { selectedItem: IUser }) => handleAddContact(data.selectedItem)}
+                onChange={(data: { selectedItem: IExternalUser | 'Add' }) =>
+                  data.selectedItem === 'Add'
+                    ? setShowContactForm(true)
+                    : handleAddContact(data.selectedItem)
+                }
               />
               {hasContactPeople && isAutomatic && (
                 <RHFSelect
@@ -258,6 +326,47 @@ export default function Step1({
                   style={{ marginTop: spacing.xs }}
                 />
               )}
+              {showContactForm && (
+                <FormProvider methods={contactSchema}>
+                  <Stack style={{ marginTop: spacing.lg }} gap={spacing.md}>
+                    <RHFTextField
+                      labelText={capitalizeFirstLetter(translate('name'))}
+                      id={`contact person name ${getValues('id')}`}
+                      name="contactName"
+                    />
+                    <Grid
+                      narrow
+                      className="remove-gutters-2-columns"
+                      orientation="horizontal"
+                      gap={spacing.xs}
+                    >
+                      <Column span={8}>
+                        <RHFTextField
+                          labelText={capitalizeFirstLetter(translate('email'))}
+                          id={`contact person email ${getValues('id')}`}
+                          name="email"
+                        />
+                      </Column>
+                      <Column className="column-remove-margin-right" span={8}>
+                        <RHFTextField
+                          labelText={capitalizeFirstLetter(translate('phone_number'))}
+                          id={`contact person phone number ${getValues('id')}`}
+                          name="phoneNumber"
+                        />
+                      </Column>
+                    </Grid>
+                    <Button
+                      onClick={contactSchema.handleSubmit(handlePostContact)}
+                      size="sm"
+                      className="btn-max-width-limit"
+                      style={{ width: '50%', marginBlock: spacing.xl }}
+                      kind="secondary"
+                    >
+                      {capitalizeFirstLetter(translate('add_contact'))}
+                    </Button>
+                  </Stack>
+                </FormProvider>
+              )}
             </>
           )}
 
@@ -269,23 +378,7 @@ export default function Step1({
               lowContrast
             />
           )}
-        </div>
-
-        <div style={{ backgroundColor: palette.background.neutral, padding: spacing.md }}>
-          <RHFCheckbox
-            id={`bypass isp confirmation contract checkbox ${contractId}`}
-            helperText={capitalizeFirstLetter(translate('enable_bypass'))}
-            name="bypass"
-            onChange={() => handlePost(getValues())}
-          />
-          <InlineNotification
-            title={capitalizeFirstLetter(translate('important'))}
-            kind="info"
-            subtitle={translate('bypass_isp_description')}
-            lowContrast
-            hideCloseButton
-          />
-        </div>
+        </Stack>
 
         <Stack orientation="horizontal" gap={spacing.md}>
           <RHFDatePicker
@@ -333,7 +426,7 @@ export default function Step1({
             placeholder={translate('search_contract_team')}
             items={teamMembersOptionsFiltered}
             selectedItem={{ name: '' }}
-            itemToString={(i: IUser) => i.name}
+            itemToString={(i) => (i as IUser).name}
             id={`contract team combo box ${contractId}`}
             disabled={!contractName || teamMembersOptionsFiltered.length === 0}
             titleText={capitalizeFirstLetter(translate('add_a_team_member'))}

@@ -1,132 +1,132 @@
-// Full token list: https://github.com/carbon-design-system/carbon/blob/main/packages/themes/docs/sass.md#api
-@use '@carbon/styles/scss/config' with (
+@use 'theme/overrides';
+// Full token list: https://github.com/carbon-design-system/carbon/blob/main/packages/themes/docs/sass.md#api\
+@use '@carbon/react/scss/config' with (
   $css--body: false
 );
 
-@use '@carbon/type/scss/scale';
-@use '@carbon/type/scss/styles' with (
+@use '@carbon/react/scss/type' with (
   $body-compact-01: (
-    font-size: 14px,
+    font-size: 0.875rem,
     font-weight: 400,
     line-height: 1.125,
-    letter-spacing: 0.16
+    letter-spacing: 0.16px
   ),
   $body-compact-02: (
-    font-size: 16px,
+    font-size: 1rem,
     font-weight: 400,
     line-height: 1.375,
     letter-spacing: 0
   ),
   $body-01: (
-    font-size: 14px,
+    font-size: 0.875rem,
     font-weight: 400,
     line-height: 1.25,
-    letter-spacing: 0.16
+    letter-spacing: 0.16px
   ),
   $body-02: (
-    font-size: 16px,
+    font-size: 1rem,
     font-weight: 400,
     line-height: 1.5,
     letter-spacing: 0
   ),
   $code-01: (
-    font-size: 12px,
+    font-size: 0.75rem,
     font-weight: 400,
     line-height: 1,
     letter-spacing: 0.32px
   ),
   $code-02: (
-    font-size: 14px,
+    font-size: 0.875rem,
     font-weight: 400,
     line-height: 1.25,
     letter-spacing: 0.32px
   ),
   $label-01: (
-    font-size: 12px,
+    font-size: 0.75rem,
     font-weight: 400,
     line-height: 1,
     letter-spacing: 0.32px
   ),
   $label-02: (
-    font-size: 14px,
+    font-size: 0.875rem,
     font-weight: 400,
     line-height: 1.125,
     letter-spacing: 0.16px
   ),
   $helper-text-01: (
-    font-size: 12px,
+    font-size: 0.75rem,
     font-weight: 400,
     line-height: 1,
     letter-spacing: 0.32px
   ),
   $helper-text-02: (
-    font-size: 14px,
+    font-size: 0.875rem,
     font-weight: 400,
     line-height: 1.125,
     letter-spacing: 0.16px
   ),
   $legal-01: (
-    font-size: 12px,
+    font-size: 0.75rem,
     font-weight: 400,
     line-height: 1,
     letter-spacing: 0.32px
   ),
   $legal-02: (
-    font-size: 14px,
+    font-size: 0.875rem,
     font-weight: 400,
     line-height: 1.125,
     letter-spacing: 0.16px
   ),
   $heading-compact-01: (
-    font-size: 14px,
+    font-size: 0.875rem,
     font-weight: 600,
     line-height: 1.125,
-    letter-spacing: 0.16
+    letter-spacing: 0.16px
   ),
   $heading-compact-02: (
-    font-size: 16,
+    font-size: 1rem,
     font-weight: 600,
     line-height: 1.375,
     letter-spacing: 0
   ),
   $heading-01: (
-    font-size: 14px,
+    font-size: 0.875rem,
     font-weight: 600,
     line-height: 1.25,
     letter-spacing: 0.16px
   ),
   $heading-02: (
-    font-size: 16px,
+    font-size: 1rem,
     font-weight: 600,
     line-height: 1.5,
     letter-spacing: 0
   ),
   $heading-03: (
-    font-size: 20px,
+    font-size: 1.25rem,
     font-weight: 400,
     line-height: 1.75,
     letter-spacing: 0
   ),
   $heading-04: (
-    font-size: 28px,
+    font-size: 1.75rem,
     font-weight: 400,
     line-height: 2.25,
     letter-spacing: 0
   ),
   $heading-05: (
-    font-size: 32px,
+    font-size: 2rem,
     font-weight: 300,
     line-height: 2.5,
     letter-spacing: 0
   ),
   $heading-06: (
-    font-size: 42px,
+    font-size: 2.625rem,
     font-weight: 300,
     line-height: 3.125,
     letter-spacing: 0
   ),
   $heading-07: (
-    font-size: 54px,
+    font-size: 3.375rem,
     font-weight: 300,
     line-height: 4,
     letter-spacing: 0
@@ -140,8 +140,6 @@
 
 $g90: themes.$dark-theme;
 $white: themes.$light-theme;
-
-@use 'theme/overrides';
 
 @use '@carbon/react';
 

@@ -33,6 +33,7 @@ import {
   Money,
   Notification,
   NotificationNew,
+  OverflowMenuVertical,
   PreviousOutline,
   Receipt,
   Replicate,
@@ -47,6 +48,14 @@ import {
   Wallet,
   WarningFilled
 } from '@carbon/icons-react'
+import {
+  Assets,
+  DesignResearch,
+  Invoice,
+  Renew,
+  Time,
+  TransactionalTrust
+} from '@carbon/pictograms-react'
 
 export const ICONS = {
   Add,
@@ -69,8 +78,8 @@ export const ICONS = {
   Education,
   ErrorFilled,
   FeedbackHighRating: FaceActivated,
-  FeedbackLowRating: FaceSatisfied,
-  FeedbackNeutralRating: FaceNeutral,
+  FeedbackLowRating: FaceNeutral,
+  FeedbackNeutralRating: FaceSatisfied,
   FeedbackVeryHighRating: FaceCool,
   FeedbackVeryLowRating: FaceDissatisfied,
   Filter,
@@ -84,6 +93,7 @@ export const ICONS = {
   Mail: MailAll,
   Notification,
   NotificationNew,
+  OverflowMenuVertical,
   Payment: Receipt,
   Save,
   Send: SendAlt,
@@ -96,4 +106,13 @@ export const ICONS = {
   View,
   Wallet,
   WarningFilled
+} as const
+
+export const PICTOGRAMS = {
+  Renew,
+  Time,
+  TransactionalTrust,
+  Invoice,
+  Assets,
+  DesignResearch
 } as const

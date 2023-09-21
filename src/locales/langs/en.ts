@@ -120,7 +120,9 @@ const en = {
     reject_payment: 'The payment has been rejected',
     reject_payment_error: 'There was an error rejecting the payment',
     pay_payment: 'The payment has been marked as paid',
-    pay_payment_error: 'There was an error marking the payment as paid'
+    pay_payment_error: 'There was an error marking the payment as paid',
+    approved_manually_contract: 'The contract was approved manually',
+    approved_manually_contract_error: 'There was an error approving the contract manually'
   },
   duplicate_contract: {
     title: 'Duplicate contract',
@@ -190,9 +192,26 @@ const en = {
     content: 'Find and edit your contract in the list of contracts with the draft status.'
   },
   contract_published_modal: {
-    title: 'Your contract was created for school You will receive a notification when ISP signs.',
-    content:
-      'The new contract was sent to the ISP, it will be in ongoing status. We will inform you when it is ready or there are any observations.'
+    choose: {
+      title: 'You are one step away from an active contract.',
+      content:
+        'You can send the contract to ISP for signature or you can validate the contract yourself.',
+      primaryText: 'Send to ISP for signature',
+      secondaryText: 'Confirm signature manually'
+    },
+    send: {
+      title: 'You are about to send the contract for isp signature.',
+      content: 'You will recieve a notification when ISP signs.',
+      primaryText: 'Send to ISP for signature',
+      secondaryText: 'Back'
+    },
+    manual: {
+      title: 'You are about to confirm ISP signature for yourself.',
+      content:
+        'By confirming the ISP signature for yourself, you confirm that the ISP is well informed and in agreement of the contract terms. This action can only be done for manual contracts.',
+      primaryText: 'Confirm signature manually',
+      secondaryText: 'Back'
+    }
   },
   contract_cancel_modal: {
     title: 'Cancel contract creation',
@@ -227,6 +246,7 @@ const en = {
     before_that: 'Before that',
     view_all: 'View All',
     dismiss_all: 'dismiss all',
+    mark_all_as_read: 'Mark all as read',
     empty: 'You have no notifications'
   },
   upload_errors: {
@@ -245,7 +265,8 @@ const en = {
     start_date: 'Start date must be after today',
     end_date: 'End date must be after Start date',
     launch_date_min: 'Launch date must be after Start date',
-    launch_date_max: 'Launch date must be before End date'
+    launch_date_max: 'Launch date must be before End date',
+    is_invalid: '{{field}} is invalid'
   },
   parse_errors: {
     school_not_found: 'School not found on row',
@@ -362,6 +383,7 @@ const en = {
   contracts: 'contracts',
   payment: 'payment',
   payments: 'payments',
+  payments_log: 'payments log',
   automatic_contracts: 'automatic contracts',
   automatic_contracts_list: 'automatic contracts list',
   automatic_contracts_check_info:
@@ -374,7 +396,7 @@ const en = {
   item_by_roles: `item by roles`,
   only_admin_can_see_this_item: `Only admin can see this item`,
   dashboard: 'dashboard',
-  search_country: 'Search country for show data',
+  search_country: 'Search country to show data',
   users: 'users',
   settings: 'settings',
   account_settings: 'account settings',
@@ -432,6 +454,7 @@ const en = {
   schools_list_budget: 'School list & budget allocation',
   schools: 'Schools',
   stakeholders_and_collaborators: 'Stakeholders & collaborators',
+  stakeholders: 'Stakeholders',
   final_review: 'Final review',
   back: 'back',
   save: 'save',
@@ -768,6 +791,7 @@ const en = {
     'If you activate this option the contract manager will be able to confirm the contract without ISP confirmation',
   contact_saved: 'Contact saved',
   help: 'Help',
+  visit_help_page: 'visit help page',
   payment_frequency: 'payment frequency',
   of: 'of',
   items: 'items',
@@ -775,15 +799,16 @@ const en = {
   monthly: 'monthly',
   weekly: 'weekly',
   biweekly: 'biweekly',
+  daily: 'daily',
   log_out: 'Log out',
   connectivity: 'connectivity',
+  schools_connectivity: 'Schools connectivity',
   no_comments_added: 'No comments added',
   constant_status: {
     payment: {
-      Verified: 'verified',
-      Unpaid: 'unpaid',
+      Unpaid: 'confirmed but unpaid',
       Paid: 'paid',
-      OnHold: 'on hold'
+      Draft: 'draft'
     },
     contract: {
       Draft: 'draft',
@@ -794,9 +819,10 @@ const en = {
       Completed: 'completed'
     },
     connectivity: {
-      Strong: 'strong',
-      Very_weak: 'very weak',
-      Weak: 'weak'
+      Connected: 'connected',
+      PoorlyConnected: 'poorly connected',
+      Disconnected: 'disconnected',
+      Unknown: 'unknown'
     },
     notification: {
       SENT: 'new',
@@ -841,7 +867,9 @@ const en = {
       account_nav_information: 'In this section you can edit your personal information',
       notifications_popover: 'You can view and manage your notifications',
       feedback_link: 'Here you can share your experience with the GIGACounts application',
-      language_popover: 'Here you can select the language of the application'
+      language_popover: 'Here you can select the language of the application',
+      help_page_link: 'Here you can visit the help page',
+      ask_for_help_link: 'Here you can ask for help'
     },
     contracts: {
       new_contract: 'This is the button to create a new contract',
@@ -862,14 +890,22 @@ const en = {
   last: 'last',
   payment_receiver: 'ISP payment receiver',
   table_no_data: {
-    contracts: 'No contracts',
-    measures: 'No measures',
-    notifications: 'No notifications',
-    payments: 'No payments',
-    schools: 'No schools',
-    users: 'No users',
-    attachments: 'No attachments',
-    transactions: 'No transactions'
+    contracts: 'contract',
+    measures: 'measure',
+    notifications: 'notification',
+    payments: 'payment',
+    schools: 'school',
+    users: 'user',
+    attachments: 'attachment',
+    transactions: 'transaction'
+  },
+  table_empty: {
+    title: 'No recorded data yet',
+    subtitle: 'Start by creating a {{content}} and it will be registered in this space'
+  },
+  table_not_found: {
+    title: 'Your search returned no results',
+    subtitle: 'Try again verifying the data correctly or perform a new search'
   },
   fedback_rating: {
     1: 'I feel dissatisfied',
@@ -929,7 +965,8 @@ const en = {
       you_are_here: 'You are here'
     },
     contract_issues: {
-      title: 'Contracts with SLA issues',
+      title1: 'Contracts with',
+      title2: 'issues',
       no_data: 'No contracts have SLA issues'
     },
     take_action: {
@@ -937,7 +974,8 @@ const en = {
       no_data: 'No actions to be taken'
     },
     school_issues: {
-      title: 'Schools with SLA issues',
+      title1: 'Schools with',
+      title2: 'issues',
       no_data: 'No schools have SLA issues'
     },
     upcoming_payments: {
@@ -952,7 +990,98 @@ const en = {
   the_file_is_downloading: 'the file is downloading',
   copied_link: 'copied link',
   share_contract_details: 'Share contract details',
-  contract_dates: 'Contract dates'
+  contract_dates: 'Contract dates',
+  options: 'options',
+  copy_url: 'copy and share URL',
+  distribute_budget_equally: 'Distribute budget equally',
+  add_external_isp_contact: 'Add external ISP contact',
+  ask_for_help: 'ask for help',
+  contract_period: 'contract period',
+  tooltips: {
+    SLA: {
+      line1: 'Level of quality of service contracted',
+      line2: 'between the ISP and a',
+      line3: 'contract creator for a school.'
+    },
+    upcoming_payments: {
+      line1: 'Payments that are unpaid',
+      line2: 'but their coverage period',
+      line3: 'has not started yet.'
+    },
+    overdue_payments: {
+      line1: 'Payments that are unpaid',
+      line2: 'and their coverage period',
+      line3: 'has ended.'
+    },
+    measures_24: 'Measures are from the last 24 hours',
+    connectivity_distribution_status: {
+      line1: 'Shows (in %) whether school(s) had good, bad or no connection.',
+      line2: 'Measured for {{number}} schools under the contract,',
+      line3: 'for the selected payment period of {{dateFrom}} to {{dateTo}}.'
+    },
+    connectivity_distribution_days: {
+      line1: 'Shows (in %) whether school(s) were connected all days, some days or 0 days.',
+      line2: 'Measured for {{number}} schools under the contract,',
+      line3: 'for the selected payment period of {{dateFrom}} to {{dateTo}}.'
+    },
+    quality_of_service_comparison: {
+      line1: 'Compares between the QoS agreed on in the contract and the QoS delivered',
+      line2: 'for the selected payment period of {{dateFrom}} to {{dateTo}}.'
+    },
+    payment_status:
+      'Allows you to decide and set a payment status. If nothing is selected the status will be set to draft.',
+    connectivity_graph: {
+      days: {
+        success: '{{number}}% schools connected every day',
+        warning: '{{number}}% schools connected some days',
+        error: '{{number}}% schools disconnected every day',
+        unknown: '{{number}}% schools with unknown data for connected days '
+      },
+      status: {
+        success: '{{number}}% schools with good connection',
+        warning: '{{number}}% schools with bad connection',
+        error: '{{number}}% schools with no connection',
+        unknown: '{{number}}% schools with unknown connection status'
+      }
+    }
+  },
+  install: 'install',
+  month: 'month',
+  january: 'January',
+  february: 'February',
+  march: 'March',
+  april: 'April',
+  may: 'May',
+  june: 'June',
+  july: 'July',
+  august: 'August',
+  september: 'September',
+  october: 'October',
+  november: 'November',
+  december: 'December',
+  for: 'for',
+  percentage_schools_connected: 'percentage of schools connected',
+  percentage_schools_connected_by_number_of_days:
+    'percentage of schools connected by number of days',
+  number_schools: '{{number}} schools',
+  from_date_to_date: 'from {{dateFrom}} to {{dateTo}}',
+  distributed_by_percentage_of_schools: 'distributed by percentage of schools',
+  no_connection: 'no connection',
+  bad_connection: 'bad connection',
+  good_connection: 'good connection',
+  unknown_data: 'unknown data',
+  out_of_number_days: 'out of {{number}} days',
+  out_of_number_schools: 'out of {{number}} schools',
+  connected_number_days: 'connected {{number}} days',
+  connected_every_day: 'connected every day',
+  connected_1_to_number_days_out_of_max_days: 'connected 1 to {{number}} days out of {{max}} days',
+  mark_as_reliable: 'mark as reliable',
+  mark_as_unreliable: 'mark as unreliable',
+  connectivity_distribution_by_status: 'connectivity distribution: by status',
+  connectivity_distribution_by_days: 'connectivity distribution: by days',
+  quality_of_service_comparison: 'quality of service comparison',
+  none: 'None',
+  pay_reciev: 'Pay. Reciev.'
 }
 
 export default en

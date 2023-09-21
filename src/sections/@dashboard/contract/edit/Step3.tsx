@@ -1,12 +1,13 @@
 import { TextArea } from '@carbon/react'
 import { useFormContext } from 'react-hook-form'
-import { ContractForm, IFrequency, Translation } from 'src/@types'
+import { ContractForm, IFrequency, Metric, MetricCamel, MetricSnake, Translation } from 'src/@types'
 import { RHFRadioGroupButtons, RHFSelect } from 'src/components/hook-form'
 import { Stack } from 'src/components/stack'
 import { SectionSubtitle, SectionTitle } from 'src/components/typography'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
+import { getMetricLabel } from 'src/utils/metrics'
 import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/strings'
 
 type Step3Props = {
@@ -22,7 +23,7 @@ export default function Step3({ handlePost, frequencies }: Step3Props) {
 
   return (
     <>
-      <SectionTitle label="quality_of_service_terms" style={{ paddingBottom: 0 }} />
+      <SectionTitle label="quality_of_service_terms" style={{ paddingBottom: 0 }} required />
       <SectionSubtitle subtitle="add_the_terms_agreed" />
       <Stack orientation="vertical" gap={spacing.xs}>
         <Stack
@@ -35,12 +36,12 @@ export default function Step3({ handlePost, frequencies }: Step3Props) {
             style={{ width: '50%' }}
             id={`uptime selection ${getValues('id')}`}
             onBlur={() => handlePost(getValues())}
-            onClick={(value) => handlePost({ ...getValues(), uptime: value })}
+            onClick={(value) => handlePost({ ...getValues(), [MetricCamel.Uptime]: value })}
             type="number"
-            labelText={`${translate('uptime')} %`}
+            labelText={`${translate(MetricSnake.Uptime)} ${getMetricLabel(Metric.Uptime)}`}
             direction="horizontal"
             spacing={8}
-            name="uptime"
+            name={MetricCamel.Uptime}
             optionToString={(o) => String(o)}
             options={
               // @ts-ignore
@@ -51,12 +52,12 @@ export default function Step3({ handlePost, frequencies }: Step3Props) {
             style={{ width: '50%' }}
             id={`latency selection ${getValues('id')}`}
             onBlur={() => handlePost(getValues())}
-            onClick={(value) => handlePost({ ...getValues(), latency: value })}
+            onClick={(value) => handlePost({ ...getValues(), [MetricCamel.Latency]: value })}
             type="number"
-            labelText={`${translate('latency')} Ms`}
+            labelText={`${translate(MetricSnake.Latency)} ${getMetricLabel(Metric.Latency)}`}
             direction="horizontal"
             spacing={8}
-            name="latency"
+            name={MetricCamel.Latency}
             optionToString={(o) => String(o)}
             options={
               // @ts-ignore
@@ -75,16 +76,17 @@ export default function Step3({ handlePost, frequencies }: Step3Props) {
             style={{ width: '50%' }}
             id={`download speed selection ${getValues('id')}`}
             onBlur={() => handlePost(getValues())}
-            onClick={(value) => handlePost({ ...getValues(), downloadSpeed: value })}
+            onClick={(value) => handlePost({ ...getValues(), [MetricCamel.DownloadSpeed]: value })}
             type="number"
-            labelText={`${translate('download_speed')} Mb/s`}
+            labelText={`${translate(MetricSnake.DownloadSpeed)} ${getMetricLabel(
+              Metric.DownloadSpeed
+            )}`}
             direction="horizontal"
             spacing={8}
-            name="downloadSpeed"
+            name={MetricCamel.DownloadSpeed}
             optionToString={(o) => String(o)}
             options={
               // @ts-ignore
-
               (suggestedMetrics?.downloadOptions.toSorted((a, b) => b - a) ?? []) as number[]
             }
           />
@@ -92,12 +94,14 @@ export default function Step3({ handlePost, frequencies }: Step3Props) {
             style={{ width: '50%' }}
             id={`upload speed selection ${getValues('id')}`}
             onBlur={() => handlePost(getValues())}
-            onClick={(value) => handlePost({ ...getValues(), uploadSpeed: value })}
+            onClick={(value) => handlePost({ ...getValues(), [MetricCamel.UploadSpeed]: value })}
             type="number"
-            labelText={`${translate('upload_speed')} Mb/s`}
+            labelText={`${translate(MetricSnake.UploadSpeed)} ${getMetricLabel(
+              Metric.UploadSpeed
+            )}`}
             direction="horizontal"
             spacing={8}
-            name="uploadSpeed"
+            name={MetricCamel.UploadSpeed}
             optionToString={(o) => String(o)}
             options={
               // @ts-ignore

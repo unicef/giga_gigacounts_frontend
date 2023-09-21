@@ -1,8 +1,9 @@
-import { Button, DataTableRow, Modal, TableCell, TableRow } from '@carbon/react'
+import { DataTableRow, Modal, TableCell, TableRow } from '@carbon/react'
 import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
-import { IRole, Icon, Translation, UserRoles } from 'src/@types'
+import { IUser, Icon, Translation, UserRoles } from 'src/@types'
 import { useAuthContext } from 'src/auth/useAuthContext'
-import { ENV_SUPPORTED_NETWORK_ID, ICONS, SUPPORTED_NETWORKS } from 'src/constants'
+import { ActionButton } from 'src/components/action-button'
+import { ENV_SUPPORTED_NETWORK_ID, STRING_DEFAULT, SUPPORTED_NETWORKS } from 'src/constants'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useModal } from 'src/hooks/useModal'
 import { useWeb3Context } from 'src/hooks/useWeb3Context'
@@ -12,20 +13,21 @@ import { capitalizeFirstLetter } from 'src/utils/strings'
 import { getOrderedFromCells } from 'src/utils/table'
 
 type Props = {
-  row: DataTableRow
+  row: DataTableRow<(IUser & { roleName: string; ispName?: string })[]>
   rowProps: TableRowProps
-  role: IRole
+  lastName?: string
 }
 
-export default function UsersTableRow({ row, rowProps, role }: Props) {
-  const [countryName, completeName, email, , walletAddress] = getOrderedFromCells(
-    ['countryName', 'completeName', 'email', 'role', 'walletAddress'],
-    row.cells
-  )
+export default function UsersTableRow({ row, rowProps, lastName }: Props) {
+  const [countryName, name, email, roleName, walletAddress, phoneNumber, ispName] =
+    getOrderedFromCells(
+      ['countryName', 'name', 'email', 'roleName', 'walletAddress', 'phoneNumber', 'ispName'],
+      row.cells
+    )
 
   const { hasSomeRole } = useAuthorization()
   const { translate } = useLocales()
-  const { user } = useAuthContext()
+  const { user, isAdmin } = useAuthContext()
   const { account } = useWeb3Context()
   const fundWallet = useModal()
   const withoutVerifiedWallet = useModal()
@@ -35,7 +37,7 @@ export default function UsersTableRow({ row, rowProps, role }: Props) {
 
   if (canFundWallet) {
     options.push({
-      icon: ICONS.Fund,
+      icon: 'Fund',
       label: 'fund',
       onClick: user && user.walletAddress && account ? fundWallet.open : withoutVerifiedWallet.open
     })
@@ -43,50 +45,57 @@ export default function UsersTableRow({ row, rowProps, role }: Props) {
 
   return (
     <TableRow {...rowProps}>
-      <TableCell>{countryName}</TableCell>
-      <TableCell>{completeName}</TableCell>
-      <TableCell>{email}</TableCell>
-      <TableCell>{role.name}</TableCell>
-      <TableCell>
-        {walletAddress ? (
-          <a
-            href={addressExplorer.replace('ADR', walletAddress)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {walletAddress}
-          </a>
-        ) : (
-          capitalizeFirstLetter(translate('no_wallet_address'))
-        )}
+      <TableCell style={{ width: '15%' }}>
+        {name} {lastName ?? ''}
       </TableCell>
-      <TableCell>
+      <TableCell style={{ width: '20%' }}>{roleName}</TableCell>
+      <TableCell style={{ width: isAdmin ? '12.5%' : '15%' }}>{countryName}</TableCell>
+      <TableCell style={{ width: isAdmin ? '12.5%' : '15%' }}>
+        {ispName ?? STRING_DEFAULT}
+      </TableCell>
+      <TableCell style={{ width: isAdmin ? '12.5%' : '15%' }}>{email}</TableCell>
+      <TableCell style={{ width: isAdmin ? '12.5%' : '15%' }}>
+        {phoneNumber ?? STRING_DEFAULT}
+      </TableCell>
+      {isAdmin && (
+        <TableCell style={{ width: '10%' }}>
+          {walletAddress ? (
+            <a
+              href={addressExplorer.replace('ADR', walletAddress)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {walletAddress}
+            </a>
+          ) : (
+            STRING_DEFAULT
+          )}
+        </TableCell>
+      )}
+      <TableCell style={{ width: '5%' }}>
         {options.map((opt) => (
-          <Button
-            key={completeName + opt.label}
-            style={{ margin: 0, padding: 0 }}
-            kind="ghost"
+          <ActionButton
+            key={name + opt.label}
             onClick={opt.onClick}
-            iconDescription={capitalizeFirstLetter(translate(opt.label))}
-            renderIcon={opt.icon}
-            hasIconOnly
+            description={opt.label}
+            icon={opt.icon}
           />
         ))}
       </TableCell>
-      <TableCell>
+      <TableCell style={{ width: '0%' }}>
         {row && (
           <UserFundWalletDrawer
-            name={completeName}
-            walletAddress={walletAddress}
+            name={name ?? ''}
+            walletAddress={walletAddress ?? ''}
             open={fundWallet.value}
             onClose={fundWallet.close}
           />
         )}
         <Modal
+          passiveModal
           open={withoutVerifiedWallet.value}
-          modalLabel={translate('without_walllet.title')}
-          modalHeading={translate('without_walllet.to_fund_Wallet')}
-          primaryButtonText={translate('close')}
+          modalLabel={capitalizeFirstLetter(translate('without_walllet.title'))}
+          modalHeading={capitalizeFirstLetter(translate('without_walllet.to_fund_Wallet'))}
           onRequestClose={withoutVerifiedWallet.close}
           onRequestSubmit={withoutVerifiedWallet.close}
         />

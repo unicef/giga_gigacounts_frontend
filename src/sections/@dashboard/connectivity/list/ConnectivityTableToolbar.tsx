@@ -1,25 +1,30 @@
 import { Button, Popover, PopoverContent, TableToolbarSearch } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
-import { EducationLevel, MinMax } from 'src/@types'
-import { FILTER_ALL_DEFAULT, ICONS } from 'src/constants'
+import { ConnectivityStatus, EducationLevel, MinMax, Setter } from 'src/@types'
+import { FilterAll, ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
+import { capitalizeFirstLetter } from 'src/utils/strings'
 import ConnectivityTableFilters from './ConnectivityTableFilters'
 
 type Props = {
   filterBudget?: MinMax<string>
-  setFilterBudget?: Dispatch<SetStateAction<MinMax<string>>>
-  setFilterSearch: Dispatch<SetStateAction<string>>
+  setFilterBudget?: MinMax<Setter<string>>
+  setFilterSearch: Setter<string>
   setPage: Dispatch<SetStateAction<number>>
-  educationLevelOptions: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
-  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
-  setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
+  educationLevelOptions: (EducationLevel | FilterAll)[]
+  filterEducationLevel: string
+  setFilterEducationLevel: Setter<EducationLevel | FilterAll>
   filterRegion: string
-  setFilterRegion: Dispatch<SetStateAction<string>>
+  setFilterRegion: Setter<string>
   regionOptions: string[]
+  setFilterStatus: Setter<ConnectivityStatus | FilterAll>
+  filterSearch: string
+  filterStatus: string
 }
 
 export default function ConnectivityTableToolbar({
+  filterSearch,
   filterBudget,
   setFilterBudget,
   setPage,
@@ -29,7 +34,9 @@ export default function ConnectivityTableToolbar({
   setFilterEducationLevel,
   filterRegion,
   regionOptions,
-  setFilterRegion
+  setFilterRegion,
+  setFilterStatus,
+  filterStatus
 }: Props) {
   const { translate } = useLocales()
   const popover = useModal()
@@ -42,7 +49,11 @@ export default function ConnectivityTableToolbar({
   return (
     <>
       <TableToolbarSearch
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFilterSearch(e.target.value)}
+        // @ts-ignore
+        value={filterSearch}
+        persistent
+        placeholder={capitalizeFirstLetter(translate('search'))}
+        onChange={(e: any) => handleFilterSearch(e.target.value)}
       />
 
       <Popover open={popover.value} isTabTip onRequestClose={popover.close} align="bottom-right">
@@ -57,6 +68,8 @@ export default function ConnectivityTableToolbar({
         />
         <PopoverContent>
           <ConnectivityTableFilters
+            filterStatus={filterStatus}
+            setFilterStatus={setFilterStatus}
             filterRegion={filterRegion}
             regionOptions={regionOptions}
             setFilterRegion={setFilterRegion}

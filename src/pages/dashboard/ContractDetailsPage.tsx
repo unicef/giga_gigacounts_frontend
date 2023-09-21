@@ -2,7 +2,14 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@carbon/react'
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ContractDetails, ContractStatus, Error404 } from 'src/@types'
+import {
+  ContractDetails,
+  ContractStatus,
+  Error404,
+  Metric,
+  MetricCamel,
+  MetricSnake
+} from 'src/@types'
 import { getContractDetails } from 'src/api/contracts'
 import { getDraft } from 'src/api/drafts'
 import Banner from 'src/components/banner/Banner'
@@ -46,7 +53,10 @@ export default function ContractDetailsPage() {
         .catch(() => Error404.redirect(navigate))
     else
       getContractDetails(state.contractId as string)
-        .then((res) => setContract({ ...res, isContract: true }))
+        .then((res) => {
+          if (parseContractStatus(res.status) !== state.contractStatus) Error404.redirect(navigate)
+          setContract({ ...res, isContract: true })
+        })
         .catch(() => Error404.redirect(navigate))
   }, [state, navigate])
 
@@ -67,7 +77,7 @@ export default function ContractDetailsPage() {
     setSelectedIndex(evt.selectedIndex)
   }
 
-  const getMetricLabel = (name: 'Uptime' | 'Download speed' | 'Upload speed' | 'Latency') => {
+  const getMetricLabel = (name: Metric) => {
     if (!contract) return STRING_DEFAULT
     if (contract.expectedMetrics.length === 0) return STRING_DEFAULT
 
@@ -99,15 +109,15 @@ export default function ContractDetailsPage() {
           : STRING_DEFAULT,
         title: translate('budget')
       },
-      { label: getMetricLabel('Uptime'), title: translate('uptime') },
-      { label: getMetricLabel('Latency'), title: translate('latency') },
+      { label: getMetricLabel(Metric.Uptime), title: translate(MetricSnake.Uptime) },
+      { label: getMetricLabel(Metric.Latency), title: translate(MetricSnake.Latency) },
       {
-        label: getMetricLabel('Download speed'),
-        title: translate('download_speed')
+        label: getMetricLabel(Metric.DownloadSpeed),
+        title: translate(MetricSnake.DownloadSpeed)
       },
       {
-        label: getMetricLabel('Upload speed'),
-        title: translate('upload_speed')
+        label: getMetricLabel(Metric.UploadSpeed),
+        title: translate(MetricSnake.UploadSpeed)
       }
     ]
 
@@ -125,29 +135,33 @@ export default function ContractDetailsPage() {
     return details
   }
 
-  const expectedValues = contract?.isContract
+  const expectedValues: { [K in MetricCamel]: number } = contract?.isContract
     ? {
-        uptime: Number(
-          contract?.expectedMetrics.find((f) => f.metricName === 'Uptime')?.value ?? 0
+        [MetricCamel.Uptime]: Number(
+          contract?.expectedMetrics.find((f) => f.metricName === Metric.Uptime)?.value ?? 0
         ),
-        latency: Number(
-          contract?.expectedMetrics.find((f) => f.metricName === 'Latency')?.value ?? 0
+        [MetricCamel.Latency]: Number(
+          contract?.expectedMetrics.find((f) => f.metricName === Metric.Latency)?.value ?? 0
         ),
-        downloadSpeed: Number(
-          contract?.expectedMetrics.find((f) => f.metricName === 'Download speed')?.value ?? 0
+        [MetricCamel.DownloadSpeed]: Number(
+          contract?.expectedMetrics.find((f) => f.metricName === Metric.DownloadSpeed)?.value ?? 0
         ),
-        uploadSpeed: Number(
-          contract?.expectedMetrics.find((f) => f.metricName === 'Upload speed')?.value ?? 0
+        [MetricCamel.UploadSpeed]: Number(
+          contract?.expectedMetrics.find((f) => f.metricName === Metric.UploadSpeed)?.value ?? 0
         )
       }
     : {
-        uptime: Number(contract?.expectedMetrics.find((f) => f.name === 'Uptime')?.value ?? 0),
-        latency: Number(contract?.expectedMetrics.find((f) => f.name === 'Latency')?.value ?? 0),
-        downloadSpeed: Number(
-          contract?.expectedMetrics.find((f) => f.name === 'Download speed')?.value ?? 0
+        [MetricCamel.Uptime]: Number(
+          contract?.expectedMetrics.find((f) => f.name === Metric.UploadSpeed)?.value ?? 0
         ),
-        uploadSpeed: Number(
-          contract?.expectedMetrics.find((f) => f.name === 'Upload speed')?.value ?? 0
+        [MetricCamel.Latency]: Number(
+          contract?.expectedMetrics.find((f) => f.name === Metric.Latency)?.value ?? 0
+        ),
+        [MetricCamel.DownloadSpeed]: Number(
+          contract?.expectedMetrics.find((f) => f.name === Metric.DownloadSpeed)?.value ?? 0
+        ),
+        [MetricCamel.UploadSpeed]: Number(
+          contract?.expectedMetrics.find((f) => f.name === Metric.UploadSpeed)?.value ?? 0
         )
       }
 
@@ -190,21 +204,13 @@ export default function ContractDetailsPage() {
             aria-label="schools and payments"
             onChange={handleTabChange}
           >
-            <TabList
-              aria-label="schools or payments tab list"
-              leftOverflowButtonProps={{}}
-              rightOverflowButtonProps={{}}
-            >
+            <TabList aria-label="contract details tab list">
               <Tab>{capitalizeFirstLetter(translate('overview'))}</Tab>
               {contract.isContract && (
-                <Tab>
-                  <div id="schools-tab">{capitalizeFirstLetter(translate('schools'))}</div>
-                </Tab>
+                <Tab className="schools-tab">{capitalizeFirstLetter(translate('schools'))}</Tab>
               )}
               {contract.isContract && (
-                <Tab>
-                  <div id="payment-tab">{capitalizeFirstLetter(translate('payments'))}</div>
-                </Tab>
+                <Tab className="payment-tab">{capitalizeFirstLetter(translate('payments'))}</Tab>
               )}
               <Tab>{capitalizeFirstLetter(translate('attachments'))}</Tab>
               {contract.isContract && contract.automatic && (

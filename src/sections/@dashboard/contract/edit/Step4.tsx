@@ -1,8 +1,8 @@
 import { Checkbox, TextArea } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ContractForm, ICurrency, Translation } from 'src/@types'
-import { IFrequency } from 'src/@types/general'
+import { ContractForm, ICurrency, MetricCamel, MetricSnake, Translation } from 'src/@types'
+import { IFrequency, IISP } from 'src/@types/general'
 import AttachmentsList from 'src/components/attachment-list/AttachmentList'
 import { ContractInfo } from 'src/components/contract-info'
 import { ErrorList } from 'src/components/errors'
@@ -25,6 +25,8 @@ type Step4Props = {
   setTermsAndConditions: Dispatch<SetStateAction<boolean>>
   currencies: ICurrency[]
   frequencies: IFrequency[]
+  ispOptions: IISP[]
+  handlePost: (contractForm: ContractForm) => void
 }
 
 export default function Step4({
@@ -33,14 +35,15 @@ export default function Step4({
   termsAndConditions,
   setTermsAndConditions,
   currencies,
-  frequencies
+  frequencies,
+  ispOptions,
+  handlePost
 }: Step4Props) {
   const { getValues, setValue } = useFormContext<ContractForm>()
   const { countries, schools: countrySchools } = useBusinessContext()
   const { translate, replaceTranslated } = useLocales()
   const { palette, spacing } = useTheme()
   const charLimit = 16
-  const { internetProviders } = useBusinessContext()
 
   const publishErrors = countrySchools
     ? getPublishErrors(
@@ -90,7 +93,7 @@ export default function Step4({
               style={{ width: '33%' }}
               charLimit={charLimit}
               title={translate('internet_provider')}
-              value={internetProviders.find((i) => i.id === getValues('isp'))?.name ?? ''}
+              value={ispOptions.find((i) => i.id === getValues('isp'))?.name ?? ''}
             />
           </Stack>
           <Stack
@@ -122,7 +125,10 @@ export default function Step4({
       </Panel>
 
       <Panel label={translate('isp_contacts')}>
-        <UserList users={fields.contacts} />
+        <UserList
+          users={fields.contacts}
+          paymentRecieverId={Number(getValues('paymentReceiverId'))}
+        />
       </Panel>
       <Panel label={translate('contract_team')}>
         <UserList users={fields.stakeholders} />
@@ -173,32 +179,32 @@ export default function Step4({
           <Stack orientation="horizontal" gap={spacing.md}>
             <QosCard
               width={300}
-              name="uptime"
+              name={MetricSnake.Uptime}
               subtitle={capitalizeFirstLetter(translate('agreement'))}
-              value={getValues('uptime')}
+              value={getValues(MetricCamel.Uptime)}
               style={{ backgroundColor: palette.background.neutral }}
             />
             <QosCard
               width={300}
-              name="latency"
+              name={MetricSnake.Latency}
               subtitle={capitalizeFirstLetter(translate('agreement'))}
-              value={getValues('latency')}
+              value={getValues(MetricCamel.Latency)}
               style={{ backgroundColor: palette.background.neutral }}
             />
           </Stack>
           <Stack orientation="horizontal" gap={spacing.md}>
             <QosCard
               width={300}
-              name="upload_speed"
+              name={MetricSnake.UploadSpeed}
               subtitle={capitalizeFirstLetter(translate('agreement'))}
-              value={getValues('uploadSpeed')}
+              value={getValues(MetricCamel.UploadSpeed)}
               style={{ backgroundColor: palette.background.neutral }}
             />
             <QosCard
               width={300}
-              name="download_speed"
+              name={MetricSnake.DownloadSpeed}
               subtitle={capitalizeFirstLetter(translate('agreement'))}
-              value={getValues('downloadSpeed')}
+              value={getValues(MetricCamel.DownloadSpeed)}
               style={{ backgroundColor: palette.background.neutral }}
             />
           </Stack>

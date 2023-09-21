@@ -1,15 +1,16 @@
 import moment from 'moment'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router'
-import { ContractStatus, IContract, MinMax, Translation } from 'src/@types'
+import { IContract, MinMax, Translation } from 'src/@types'
 import { Banner } from 'src/components/banner'
 import CustomJoyride from 'src/components/custom-joyride'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { useTable } from 'src/components/table'
-import { FILTER_ALL_DEFAULT, ICONS, KEY_DEFAULTS, Views } from 'src/constants'
+import { FILTER_ALL_DEFAULT, KEY_DEFAULTS, Views } from 'src/constants'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useAuthorization } from 'src/hooks/useAuthorization'
+import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
@@ -29,25 +30,62 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
   const { contracts, refetchContracts, deleteContract } = useBusinessContext()
   const { translate } = useLocales()
 
-  const [filterSearch, setFilterSearch] = useState('')
-  const [filterIsp, setFilterIsp] = useState(FILTER_ALL_DEFAULT)
-  const [filterRegion, setFilterRegion] = useState(FILTER_ALL_DEFAULT)
-  const [filterStatus, setFilterStatus] = useState<ContractStatus | typeof FILTER_ALL_DEFAULT>(
-    FILTER_ALL_DEFAULT
-  )
-  const [filterBudget, setFilterBudget] = useState<MinMax<string>>({ min: '', max: '' })
-  const [filterSchools, setFilterSchools] = useState<MinMax<string>>({ min: '', max: '' })
-  const [filterDates, setFilterDates] = useState<MinMax<string>>({ min: '', max: '' })
+  const [searchParams, generateSetter] = useCustomSearchParams({
+    filterSearch: '',
+    filterIsp: FILTER_ALL_DEFAULT,
+    filterRegion: FILTER_ALL_DEFAULT,
+    filterStatus: FILTER_ALL_DEFAULT,
+    filterBudgetMin: '',
+    filterBudgetMax: '',
+    filterSchoolsMin: '',
+    filterSchoolsMax: '',
+    filterDatesMin: '',
+    filterDatesMax: ''
+  })
+
+  const {
+    filterSearch,
+    filterBudgetMax,
+    filterBudgetMin,
+    filterDatesMax,
+    filterDatesMin,
+    filterIsp,
+    filterRegion,
+    filterSchoolsMax,
+    filterSchoolsMin,
+    filterStatus
+  } = searchParams
+  const filterDates = { max: filterDatesMax, min: filterDatesMin }
+  const filterSchools = { max: filterSchoolsMax, min: filterSchoolsMin }
+  const filterBudget = { max: filterBudgetMax, min: filterBudgetMin }
+
+  const setFilterSearch = generateSetter('filterSearch')
+  const setFilterIsp = generateSetter('filterIsp')
+  const setFilterRegion = generateSetter('filterRegion')
+  const setFilterStatus = generateSetter('filterStatus')
+  const setFilterBudget = {
+    max: generateSetter('filterBudgetMax'),
+    min: generateSetter('filterBudgetMin')
+  }
+  const setFilterSchools = {
+    max: generateSetter('filterSchoolsMax'),
+    min: generateSetter('filterSchoolsMin')
+  }
+  const setFilterDates = {
+    max: generateSetter('filterDatesMax'),
+    min: generateSetter('filterDatesMin')
+  }
+
   const details = useModal(state?.new ?? false)
 
-  const contractsFiltered = contracts
+  const inputContracts = contracts ? contracts.filter((c) => c.automatic === automatic) : null
+
+  const contractsFiltered = inputContracts
     ? applyFilter({
-        inputData: contracts
-          .filter((c) => c.automatic === automatic)
-          .map((c) => ({
-            ...c,
-            countryName: c.country?.name ?? ''
-          })),
+        inputData: inputContracts.map((c) => ({
+          ...c,
+          countryName: c.country?.name ?? ''
+        })),
         filterSearch,
         filterStatus,
         filterRegion,
@@ -74,20 +112,25 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
     { key: KEY_DEFAULTS[1], header: '' }
   ]
 
-  const regionOptions = contracts
+  const regionOptions = inputContracts
     ? removeDuplicates([
         FILTER_ALL_DEFAULT,
-        ...contracts.map((r) => r.country?.name ?? FILTER_ALL_DEFAULT)
+        ...inputContracts.map((r) => r.country?.name ?? FILTER_ALL_DEFAULT)
       ])
     : []
-  const ispOptions = contracts
-    ? removeDuplicates([FILTER_ALL_DEFAULT, ...contracts.map((r) => r.isp ?? FILTER_ALL_DEFAULT)])
+  const ispOptions = inputContracts
+    ? removeDuplicates([
+        FILTER_ALL_DEFAULT,
+        ...inputContracts.map((r) => r.isp ?? FILTER_ALL_DEFAULT)
+      ])
     : []
 
   const dataInPage = contractsFiltered
     ? contractsFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
     : []
-  const isNotFound = Boolean(contractsFiltered && !contractsFiltered.length)
+
+  const isEmpty = Boolean(inputContracts && !inputContracts.length)
+  const isNotFound = !isEmpty && Boolean(contractsFiltered && !contractsFiltered.length)
 
   const handleDeleteRow = (id: string) => {
     deleteContract(id)
@@ -99,11 +142,7 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
       })
       .finally(refetchContracts)
 
-    if (page > 1) {
-      if (dataInPage.length === 1) {
-        setPage(page - 1)
-      }
-    }
+    if (page > 1 && dataInPage.length === 1) setPage(page - 1)
   }
   return (
     <>
@@ -111,19 +150,19 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
         <title>Contracts | Gigacounts</title>
       </Helmet>
       <CustomJoyride name="contracts" run={!state || !state.new} />
-      <Banner
-        title={automatic ? translate('automatic_contracts_list') : translate('contracts_list')}
-      />
+      <Banner title={automatic ? translate('automatic_contracts') : translate('contracts')} />
       <CustomDataTable
         isSortable
         RowComponent={ContractTableRow}
         getRowComponentProps={(row) => ({
-          onDeleteRow: (id: string) => handleDeleteRow(id),
+          onDeleteRow: handleDeleteRow,
           currencyCode: row.currencyCode,
           isAutomatic: row.automatic
         })}
         ToolbarContent={
           <ContractTableToolbar
+            filterStatus={filterStatus}
+            filterSearch={filterSearch}
             filterIsp={filterIsp}
             filterRegion={filterRegion}
             filterBudget={filterBudget}
@@ -141,15 +180,20 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
             setPage={setPage}
           />
         }
-        data={contractsFiltered}
+        data={
+          contractsFiltered
+            ? [...contractsFiltered].sort((a, b) => a.name.localeCompare(b.name))
+            : null
+        }
         page={page}
         setPage={setPage}
         isNotFound={isNotFound}
+        isEmpty={isEmpty}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         tableHead={TABLE_HEAD}
         tableName="contracts"
-        noDataText="table_no_data.contracts"
+        emptyText="table_no_data.contracts"
         title="Contract table"
         buttonsProps={
           userCanAdd
@@ -158,7 +202,7 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
                   kind: 'primary',
                   id: 'new-contract',
                   onClick: details.open,
-                  renderIcon: ICONS.Add,
+                  renderIcon: 'Add',
                   label: capitalizeFirstLetter(translate('contract'))
                 }
               ]
@@ -188,7 +232,7 @@ function applyFilter({
 }: {
   inputData: Array<IContract & { countryName: string }>
   filterSearch: string
-  filterStatus: ContractStatus | typeof FILTER_ALL_DEFAULT
+  filterStatus: string
   filterRegion: string
   filterIsp: string
   filterBudget: MinMax<string>
