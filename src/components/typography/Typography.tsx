@@ -17,6 +17,8 @@ type TypographyProps = {
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span'
   style?: CSSProperties
   onClick?: () => void
+  weight?: 300 | 400 | 500
+  size?: 12 | 14 | 16 | 20 | 24 | 28 | 32 | 38 | 48
 }
 
 const Typography = ({
@@ -24,6 +26,8 @@ const Typography = ({
   variant = 'default',
   as = 'p',
   style,
+  weight,
+  size,
   onClick
 }: TypographyProps) => {
   const { palette } = useTheme()
@@ -41,19 +45,21 @@ const Typography = ({
     disabled: palette.text.disabled
   }
 
-  const textColor = colors[variant]
+  const color = colors[variant]
+  const fontWeight = weight
+  const fontSize = size
 
   const elements: {
     [k in TypographyProps['as'] as string]: (text: React.ReactNode) => JSX.Element
   } = {
-    h1: (text) => <h1 style={{ color: textColor, ...style }}>{text}</h1>,
-    h2: (text) => <h2 style={{ color: textColor, ...style }}>{text}</h2>,
-    h3: (text) => <h3 style={{ color: textColor, ...style }}>{text}</h3>,
-    h4: (text) => <h4 style={{ color: textColor, ...style }}>{text}</h4>,
-    h5: (text) => <h5 style={{ color: textColor, ...style }}>{text}</h5>,
-    h6: (text) => <h6 style={{ color: textColor, ...style }}>{text}</h6>,
-    p: (text) => <p style={{ color: textColor, ...style }}>{text}</p>,
-    span: (text) => <span style={{ color: textColor, ...style }}>{text}</span>
+    h1: (text) => <h1 style={{ color, fontWeight, fontSize, ...style }}>{text}</h1>,
+    h2: (text) => <h2 style={{ color, fontWeight, fontSize, ...style }}>{text}</h2>,
+    h3: (text) => <h3 style={{ color, fontWeight, fontSize, ...style }}>{text}</h3>,
+    h4: (text) => <h4 style={{ color, fontWeight, fontSize, ...style }}>{text}</h4>,
+    h5: (text) => <h5 style={{ color, fontWeight, fontSize, ...style }}>{text}</h5>,
+    h6: (text) => <h6 style={{ color, fontWeight, fontSize, ...style }}>{text}</h6>,
+    p: (text) => <p style={{ color, fontWeight, fontSize, ...style }}>{text}</p>,
+    span: (text) => <span style={{ color, fontWeight, fontSize, ...style }}>{text}</span>
   }
 
   const buttonWrapper = (buttonChildren: React.ReactNode): JSX.Element => (

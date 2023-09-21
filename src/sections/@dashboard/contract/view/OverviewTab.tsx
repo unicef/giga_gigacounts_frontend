@@ -1,5 +1,14 @@
-import { Button, InlineNotification, TextArea } from '@carbon/react'
-import { ContractDetails } from 'src/@types'
+import {
+  Button,
+  Column,
+  Grid,
+  InlineNotification,
+  Popover,
+  PopoverContent,
+  TextArea,
+  TextInput
+} from '@carbon/react'
+import { ContractDetails, Metric, MetricCamel, MetricSnake } from 'src/@types'
 import { ContractInfo } from 'src/components/contract-info'
 import { ComparingCard } from 'src/components/qos-card'
 import { Stack } from 'src/components/stack'
@@ -7,54 +16,45 @@ import { SectionTitle, Typography } from 'src/components/typography'
 import { UserList } from 'src/components/user'
 import { ICONS, STRING_DEFAULT } from 'src/constants'
 import useCopyToClipboard from 'src/hooks/useCopyToClipboard'
+import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
-import { formatDate } from 'src/utils/date'
-import { capitalizeFirstLetter } from '../../../../utils/strings'
+import { capitalizeFirstLetter } from 'src/utils/strings'
 
 type Props = {
   contract: ContractDetails
-  expectedValues: { uptime: number; latency: number; downloadSpeed: number; uploadSpeed: number }
+  expectedValues: { [K in MetricCamel]: number }
 }
 export default function OverviewTab({ contract, expectedValues }: Props) {
   const { translate } = useLocales()
   const { spacing } = useTheme()
   const { copy } = useCopyToClipboard()
   const { pushInfo } = useSnackbar()
+  const copyLink = useModal()
 
-  const {
-    name,
-    startDate,
-    endDate,
-    country,
-    id,
-    budget,
-    launchDate,
-    schools,
-    currency,
-    notes,
-    breakingRules
-  } = contract
+  const { budget, schools, currency, notes, breakingRules } = contract
 
   const actual = contract.isContract
     ? {
-        uptime:
-          contract.connectionsMedian.find((f) => f.metric_name === 'Uptime')?.median_value ?? 0,
-        latency:
-          contract.connectionsMedian.find((f) => f.metric_name === 'Latency')?.median_value ?? 0,
-        downloadSpeed:
-          contract.connectionsMedian.find((f) => f.metric_name === 'Download speed')
+        [MetricCamel.Uptime]:
+          contract.connectionsMedian.find((f) => f.metric_name === Metric.Uptime)?.median_value ??
+          0,
+        [MetricCamel.Latency]:
+          contract.connectionsMedian.find((f) => f.metric_name === Metric.Latency)?.median_value ??
+          0,
+        [MetricCamel.DownloadSpeed]:
+          contract.connectionsMedian.find((f) => f.metric_name === Metric.DownloadSpeed)
             ?.median_value ?? 0,
-        uploadSpeed:
-          contract.connectionsMedian.find((f) => f.metric_name === 'Upload speed')?.median_value ??
-          0
+        [MetricCamel.UploadSpeed]:
+          contract.connectionsMedian.find((f) => f.metric_name === Metric.UploadSpeed)
+            ?.median_value ?? 0
       }
     : {
-        uptime: 0,
-        latency: 0,
-        downloadSpeed: 0,
-        uploadSpeed: 0
+        [MetricCamel.Uptime]: 0,
+        [MetricCamel.Latency]: 0,
+        [MetricCamel.DownloadSpeed]: 0,
+        [MetricCamel.UploadSpeed]: 0
       }
 
   return (
@@ -64,20 +64,48 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
         style={{ width: '100%' }}
         alignItems="center"
         justifyContent="flex-end"
+        gap={spacing.xs}
       >
-        <Button
-          renderIcon={ICONS.Copy}
-          size="sm"
-          kind="tertiary"
-          onClick={() => {
-            copy(window.location.toString())
-            pushInfo('copied_link')
-          }}
-        >
+        <Typography variant="primary">
           {capitalizeFirstLetter(translate('share_contract_details'))}
-        </Button>
+        </Typography>
+        <Popover
+          align="bottom-right"
+          onRequestClose={copyLink.close}
+          open={copyLink.value}
+          isTabTip
+        >
+          <Button
+            hasIconOnly
+            iconDescription={capitalizeFirstLetter(translate('options'))}
+            onClick={copyLink.toggle}
+            renderIcon={ICONS.OverflowMenuVertical}
+            kind="ghost"
+          />
+          <PopoverContent>
+            <Stack gap={spacing.lg} style={{ padding: spacing.md }}>
+              <TextInput
+                labelText=""
+                id="copy-link-input"
+                value={window.location.toString()}
+                readOnly
+              />
+              <Button
+                onClick={() => {
+                  copy(window.location.toString())
+                  pushInfo('copied_link')
+                  copyLink.close()
+                }}
+                size="sm"
+                renderIcon={ICONS.Copy}
+              >
+                {capitalizeFirstLetter(translate('copy_url'))}
+              </Button>
+            </Stack>
+          </PopoverContent>
+        </Popover>
       </Stack>
-      <SectionTitle label="contract_details" />
+
       {contract.automatic && (
         <InlineNotification
           kind="info"
@@ -86,99 +114,54 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
         />
       )}
 
-      <Stack orientation="horizontal" style={{ width: '100%' }} gap={spacing.xl}>
-        <Stack
-          style={{ width: '330px' }}
-          justifyItems="space-between"
-          alignContent="center"
-          orientation="vertical"
-        >
-          <ContractInfo
-            style={{ padding: spacing.xs }}
-            title={translate('contract_name')}
-            value={name}
-          />
-          <ContractInfo
-            style={{ padding: spacing.xs }}
-            title={translate('start_date')}
-            value={startDate ? formatDate(startDate) : STRING_DEFAULT}
-          />
-          <ContractInfo
-            style={{ padding: spacing.xs }}
-            title={translate('internet_provider')}
-            value={contract.isContract ? contract.isp : contract.isp?.name ?? STRING_DEFAULT}
-          />
-        </Stack>
-        <Stack
-          style={{ width: '330px' }}
-          justifyItems="space-between"
-          alignContent="center"
-          orientation="vertical"
-        >
-          <ContractInfo
-            style={{ padding: spacing.xs }}
-            title={translate('contract_id')}
-            value={id}
-          />
-
-          <ContractInfo
-            style={{ padding: spacing.xs }}
-            title={translate('end_date')}
-            value={endDate ? formatDate(endDate) : STRING_DEFAULT}
-          />
-        </Stack>
-        <Stack
-          style={{ width: '330px' }}
-          justifyItems="space-between"
-          alignContent="center"
-          orientation="vertical"
-        >
-          <ContractInfo
-            style={{ padding: spacing.xs }}
-            title={translate('country')}
-            value={country?.name ?? STRING_DEFAULT}
-          />
-
-          <ContractInfo
-            style={{ padding: spacing.xs }}
-            title={translate('launch_date')}
-            value={launchDate ? formatDate(launchDate) : STRING_DEFAULT}
-          />
-        </Stack>
-      </Stack>
       <SectionTitle label="quality_of_service" />
-      <Stack style={{ width: '100%' }} orientation="horizontal" gap={spacing.xl}>
-        <Stack orientation="vertical" gap={spacing.xl}>
+      <Grid className="gap-16px" fullWidth>
+        <Column md={spacing.xxs} xlg={spacing.xxs}>
           <ComparingCard
             width={300}
-            name="uptime"
-            expectedValue={expectedValues.uptime}
-            value={actual.uptime}
+            average
+            name={MetricSnake.Uptime}
+            expectedValue={expectedValues[MetricCamel.Uptime]}
+            value={actual[MetricCamel.Uptime]}
           />
+        </Column>
+        <Column md={spacing.xxs} xlg={spacing.xxs}>
           <ComparingCard
             width={300}
-            name="latency"
-            expectedValue={expectedValues.latency}
-            value={actual.latency}
+            average
+            name={MetricSnake.Latency}
+            expectedValue={expectedValues[MetricCamel.Latency]}
+            value={actual[MetricCamel.Latency]}
           />
-        </Stack>
-        <Stack orientation="vertical" gap={spacing.xl}>
+        </Column>
+        <Column md={spacing.xxs} xlg={spacing.xxs}>
           <ComparingCard
             width={300}
-            name="download_speed"
-            expectedValue={expectedValues.downloadSpeed}
-            value={actual.downloadSpeed}
+            average
+            name={MetricSnake.DownloadSpeed}
+            expectedValue={expectedValues[MetricCamel.DownloadSpeed]}
+            value={actual[MetricCamel.DownloadSpeed]}
           />
+        </Column>
+        <Column md={spacing.xxs} xlg={spacing.xxs}>
           <ComparingCard
             width={300}
-            name="upload_speed"
-            expectedValue={expectedValues.uploadSpeed}
-            value={actual.uploadSpeed}
+            average
+            name={MetricSnake.UploadSpeed}
+            expectedValue={expectedValues[MetricCamel.UploadSpeed]}
+            value={actual[MetricCamel.UploadSpeed]}
           />
-        </Stack>
-      </Stack>
+        </Column>
+      </Grid>
       <SectionTitle label="isp_contacts" />
-      <UserList users={contract.ispContacts} />
+      <UserList
+        users={contract.ispContacts}
+        paymentRecieverId={
+          contract.automatic && contract.paymentReceiver && 'id' in contract.paymentReceiver
+            ? contract.paymentReceiver.id
+            : null
+        }
+      />
       <SectionTitle label="contract_team" />
       <UserList users={contract.stakeholders} />
 
@@ -187,22 +170,28 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
         <Stack
           orientation="horizontal"
           gap={spacing.md}
+          style={{ width: '50%' }}
           justifyContent="flex-start"
           alignItems="center"
         >
           <ContractInfo
-            style={{ width: '330px' }}
+            style={{ width: '33%' }}
             title={translate('budget')}
             value={Number(budget) ? `${currency?.code ?? ''} ${budget}` : STRING_DEFAULT}
           />
           <ContractInfo
-            style={{ width: '330px' }}
+            style={{ width: '33%' }}
             title={translate('schools')}
             value={
               schools.length > 0
                 ? `${String(schools.length)} ${translate('schools')}`
                 : STRING_DEFAULT
             }
+          />
+          <ContractInfo
+            style={{ width: '33%' }}
+            title={translate('payment_frequency')}
+            value={contract.frequency?.name ?? STRING_DEFAULT}
           />
         </Stack>
       </Stack>

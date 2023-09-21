@@ -1,5 +1,4 @@
 import { Button, TextInput } from '@carbon/react'
-import { months } from 'moment'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import {
@@ -7,15 +6,17 @@ import {
   ContractStatus,
   IContractPayment,
   IFrequency,
+  IPaymentConnection,
+  MetricSnake,
   PaymentStatus,
   Translation
 } from 'src/@types'
 import { getContractDetails } from 'src/api/contracts'
 import { getDraft } from 'src/api/drafts'
+import { getPaymentConnection } from 'src/api/payments'
 import { AttachmentsList } from 'src/components/attachment-list'
 import Drawer from 'src/components/drawer/Drawer'
 import { InfoToggletip } from 'src/components/info-toggletip'
-import { PercentageBar } from 'src/components/percentage-bar'
 import { ComparingCard } from 'src/components/qos-card'
 import { Stack } from 'src/components/stack'
 import {
@@ -29,9 +30,12 @@ import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useLocales } from 'src/locales'
 import { redirectOnError } from 'src/pages/errors/handlers'
 import { useTheme } from 'src/theme'
-import { getContractSchoolDistribution } from 'src/utils/contracts'
+import { formatDate } from 'src/utils/date'
+import { transformMetric } from 'src/utils/metrics'
+import { getPeriodLabel } from 'src/utils/payments'
 import { parsePaymentStatus } from 'src/utils/status'
 import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/strings'
+import { PaymentConnectivityBar } from '../graph'
 
 interface Props {
   contract: ContractDetails | { id: string; status: ContractStatus; automatic: boolean }
@@ -52,12 +56,19 @@ export default function PaymentViewDrawer({
 }: Props) {
   const navigate = useNavigate()
   const { spacing } = useTheme()
-  const { translate } = useLocales()
-  const parsedStatus = parsePaymentStatus(payment?.status)
+  const { translate, translateCapitalized, replaceTranslated, replaceTwoTranslated } = useLocales()
+  const parsedStatus = payment ? parsePaymentStatus(payment.status) : null
+
+  const [paymentConnection, setPaymentConnection] = useState<IPaymentConnection>()
+
+  useEffect(() => {
+    if (payment?.paidDate && contract.id)
+      getPaymentConnection(Number(contract.id), payment.paidDate).then(setPaymentConnection)
+  }, [payment?.paidDate, contract.id])
 
   const { canAdd } = useAuthorization()
   const canChangeStatus =
-    canAdd(Views.payment) && parsedStatus === PaymentStatus.OnHold && !contract.automatic
+    canAdd(Views.payment) && parsedStatus === PaymentStatus.Draft && !contract.automatic
 
   const [item, setItem] = useState<ContractDetails | null>(null)
 
@@ -75,16 +86,54 @@ export default function PaymentViewDrawer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contract])
 
-  const getPaymentLabel = (p: { month: number; year: number; day?: number }) =>
-    p.day ? `${p.day}-${months(p.month)}-${p.year}` : `${p.year}-${months(p.month)}`
+  const metricsFirstColumn = [MetricSnake.Uptime, MetricSnake.UploadSpeed] as const
+  const metricsSecondColumn = [MetricSnake.Latency, MetricSnake.DownloadSpeed] as const
+  const sentenceMetrics = [
+    ...metricsFirstColumn.map((m) => transformMetric(m, 'sentence')),
+    ...metricsSecondColumn.map((m) => transformMetric(m, 'sentence'))
+  ]
 
-  const expectedMetrics = ['Uptime', 'Upload speed', 'Latency', 'Download speed'].map((name) =>
-    item && item?.isContract ? item.expectedMetrics.find((m) => m.metricName === name) : null
+  const expectedMetrics = Object.fromEntries(
+    sentenceMetrics.map((name) => [
+      name,
+      item && item?.isContract ? item.expectedMetrics.find((m) => m.metricName === name) : null
+    ])
   )
 
-  const realMetrics = ['Uptime', 'Upload speed', 'Latency', 'Download speed'].map((name) =>
-    item && item?.isContract ? item.connectionsMedian.find((m) => m.metric_name === name) : null
+  const realMetrics = Object.fromEntries(
+    sentenceMetrics.map((name) => [
+      name,
+      item && item?.isContract ? item.connectionsMedian.find((m) => m.metric_name === name) : null
+    ])
   )
+
+  const periodLabel = payment?.paidDate ? getPeriodLabel(payment?.paidDate) : ''
+  const hasDay = payment?.paidDate.day
+  const translatedLabel =
+    periodLabel && hasDay
+      ? `${periodLabel.split('-')[0]}-${translateCapitalized(
+          periodLabel.split('-')[1] as Translation
+        )}-${periodLabel.split('-')[2]}`
+      : `${translateCapitalized(periodLabel.split('-')[0] as Translation)}-${
+          periodLabel.split('-')[1]
+        }`
+
+  const absolutePerecentages = paymentConnection
+    ? ([
+        { color: 'success', percentage: paymentConnection.schoolsConnected.goodConnection },
+        { color: 'warning', percentage: paymentConnection.schoolsConnected.badConnection },
+        { color: 'error', percentage: paymentConnection.schoolsConnected.noConnection },
+        { color: 'unknown', percentage: paymentConnection.schoolsConnected.unknownConnection }
+      ] as const)
+    : null
+  const daysPercentages = paymentConnection
+    ? ([
+        { color: 'success', percentage: paymentConnection.daysConnected.goodConnection },
+        { color: 'warning', percentage: paymentConnection.daysConnected.badConnection },
+        { color: 'error', percentage: paymentConnection.daysConnected.noConnection },
+        { color: 'unknown', percentage: paymentConnection.daysConnected.unknownConnection }
+      ] as const)
+    : null
 
   return (
     <Drawer
@@ -104,6 +153,12 @@ export default function PaymentViewDrawer({
               readOnly
               labelText={capitalizeFirstLetter(translate('description'))}
               value={payment?.description}
+            />
+            <TextInput
+              id="payment-contract-id"
+              readOnly
+              labelText={capitalizeFirstLetter(translate('contract_id'))}
+              value={item?.id}
             />
           </Stack>
           <Stack orientation="horizontal" gap={spacing.xs} style={{ marginTop: spacing.lg }}>
@@ -129,20 +184,21 @@ export default function PaymentViewDrawer({
               value={payment?.discount}
             />
           </Stack>
-          <SectionHeading heading="payment_status" />
-          <TextInput
-            value={capitalizeFirstLetter(
-              translate(`constant_status.payment.${payment?.status as PaymentStatus}`)
-            )}
-            readOnly
-            id="payment status select"
-            name="status"
-            labelText={capitalizeFirstLetter(`${translate('payment_status')}`)}
-          />
+          <Stack orientation="horizontal" gap={spacing.xs} style={{ marginTop: spacing.lg }}>
+            <TextInput
+              value={capitalizeFirstLetter(
+                translate(`constant_status.payment.${payment?.status as PaymentStatus}`)
+              )}
+              readOnly
+              id="payment status select"
+              name="status"
+              labelText={capitalizeFirstLetter(`${translate('payment_status')}`)}
+            />
+          </Stack>
           <SectionTitle label={translate('payment_period')} />
           <Stack orientation="horizontal" gap={spacing.xs}>
             <TextInput
-              id="payment-period-select"
+              id="payment-frequency-select"
               value={capitalizeFirstLetter(
                 translate(
                   uncapitalizeFirstLetter(paymentFrequency ?? STRING_DEFAULT) as Translation
@@ -152,7 +208,7 @@ export default function PaymentViewDrawer({
               labelText={capitalizeFirstLetter(`${translate('payment_frequency')}`)}
             />
             <TextInput
-              value={payment?.paidDate ? getPaymentLabel(payment?.paidDate) : ''}
+              value={periodLabel ? translatedLabel : ''}
               id="payment period select"
               readOnly
               labelText={capitalizeFirstLetter(`${translate('period')}`)}
@@ -173,31 +229,122 @@ export default function PaymentViewDrawer({
             <Typography variant="disabled">{translate('no_attachments_added')}</Typography>
           )}
 
-          <SectionTitle label={translate('connectivity_quality_check')} />
-          {contract && (
+          {contract && item?.isContract && (
             <>
-              <Stack orientation="horizontal" gap={spacing.md} alignItems="center">
-                <SectionHeading heading="connectivity_status_distribution" />
-                <InfoToggletip title="" />
+              <SectionTitle
+                label={translate('connectivity_quality_check')}
+                subtitle={
+                  `${replaceTwoTranslated(
+                    'from_date_to_date',
+                    '{{dateFrom}}',
+                    '{{dateTo}}',
+                    formatDate(payment?.dateFrom, '/') as Translation,
+                    formatDate(payment?.dateTo, '/')
+                  )} ${translate('for')} ${replaceTranslated(
+                    'number_schools',
+                    '{{number}}',
+                    item.numberOfSchools as Translation
+                  )}` as Translation
+                }
+              />
+              <Stack orientation="horizontal" alignItems="center" gap={spacing.md}>
+                <SectionHeading weight={400} heading="connectivity_distribution_by_status" />
+                <InfoToggletip
+                  title={
+                    <>
+                      <Typography>
+                        {translate('tooltips.connectivity_distribution_status.line1')}
+                      </Typography>
+                      <Typography>
+                        {replaceTranslated(
+                          'tooltips.connectivity_distribution_status.line2',
+                          '{{number}}',
+                          item.numberOfSchools as Translation
+                        )}
+                      </Typography>
+                      <Typography>
+                        {replaceTwoTranslated(
+                          'tooltips.connectivity_distribution_status.line3',
+                          '{{dateFrom}}',
+                          '{{dateTo}}',
+                          formatDate(payment?.dateFrom, '/') as Translation,
+                          formatDate(payment?.dateTo, '/')
+                        )}
+                      </Typography>
+                    </>
+                  }
+                />
               </Stack>
-              <SectionSubtitle subtitle="connectivity_status_distribution" />
-
-              {item?.isContract && (
-                <Stack orientation="horizontal" gap={spacing.md} alignItems="center">
-                  <InfoToggletip title="" />
-                  <PercentageBar
-                    width={600}
-                    data={getContractSchoolDistribution(item?.schoolsConnection)}
-                  />
-                </Stack>
-              )}
+              <PaymentConnectivityBar
+                data={absolutePerecentages}
+                dateFrom={payment?.dateFrom}
+                dateTo={payment?.dateTo}
+                numberOfSchools={item.numberOfSchools}
+                variant="status"
+              />
+              <Stack orientation="horizontal" alignItems="center" gap={spacing.md}>
+                <SectionHeading weight={400} heading="connectivity_distribution_by_days" />
+                <InfoToggletip
+                  title={
+                    <>
+                      <Typography>
+                        {translate('tooltips.connectivity_distribution_days.line1')}
+                      </Typography>
+                      <Typography>
+                        {replaceTranslated(
+                          'tooltips.connectivity_distribution_days.line2',
+                          '{{number}}',
+                          item.numberOfSchools as Translation
+                        )}
+                      </Typography>
+                      <Typography>
+                        {replaceTwoTranslated(
+                          'tooltips.connectivity_distribution_days.line3',
+                          '{{dateFrom}}',
+                          '{{dateTo}}',
+                          formatDate(payment?.dateFrom, '/') as Translation,
+                          formatDate(payment?.dateTo, '/')
+                        )}
+                      </Typography>
+                    </>
+                  }
+                />
+              </Stack>
+              <PaymentConnectivityBar
+                data={daysPercentages}
+                dateFrom={payment?.dateFrom}
+                dateTo={payment?.dateTo}
+                numberOfSchools={item.numberOfSchools}
+                variant="days"
+              />
             </>
           )}
-          <Stack orientation="horizontal" gap={spacing.md} alignItems="center">
-            <SectionHeading heading="quality_of_service_terms" />
-            <InfoToggletip title="" />
+          <Stack
+            orientation="horizontal"
+            gap={spacing.md}
+            style={{ marginTop: spacing.lg }}
+            alignItems="center"
+          >
+            <SectionHeading weight={400} heading="quality_of_service_comparison" />
+            <InfoToggletip
+              title={
+                <>
+                  <Typography>
+                    {translate('tooltips.quality_of_service_comparison.line1')}
+                  </Typography>
+                  <Typography>
+                    {replaceTwoTranslated(
+                      'tooltips.quality_of_service_comparison.line2',
+                      '{{dateFrom}}',
+                      '{{dateTo}}',
+                      formatDate(payment?.dateFrom, '/') as Translation,
+                      formatDate(payment?.dateTo, '/')
+                    )}
+                  </Typography>
+                </>
+              }
+            />
           </Stack>
-          <SectionSubtitle subtitle="quality_of_service" />
 
           <Stack
             orientation="horizontal"
@@ -206,32 +353,32 @@ export default function PaymentViewDrawer({
             alignItems="center"
           >
             <Stack orientation="vertical" gap={spacing.xl}>
-              <ComparingCard
-                width={320}
-                name="uptime"
-                value={Number(realMetrics[0]?.median_value ?? null)}
-                expectedValue={Number(expectedMetrics[0]?.value ?? null)}
-              />
-              <ComparingCard
-                width={320}
-                value={Number(realMetrics[1]?.median_value ?? null)}
-                name="upload_speed"
-                expectedValue={Number(expectedMetrics[1]?.value ?? null)}
-              />
+              {metricsFirstColumn.map((i) => (
+                <ComparingCard
+                  key={i}
+                  average
+                  width={320}
+                  name={i}
+                  value={Number(realMetrics[transformMetric(i, 'sentence')]?.median_value ?? null)}
+                  expectedValue={Number(
+                    expectedMetrics[transformMetric(i, 'sentence')]?.value ?? null
+                  )}
+                />
+              ))}
             </Stack>
             <Stack orientation="vertical" gap={spacing.xl}>
-              <ComparingCard
-                width={320}
-                value={Number(realMetrics[2]?.median_value ?? null)}
-                name="latency"
-                expectedValue={Number(expectedMetrics[2]?.value ?? null)}
-              />
-              <ComparingCard
-                width={320}
-                value={Number(realMetrics[3]?.median_value ?? null)}
-                name="download_speed"
-                expectedValue={Number(expectedMetrics[3]?.value ?? null)}
-              />
+              {metricsSecondColumn.map((i) => (
+                <ComparingCard
+                  key={i}
+                  average
+                  width={320}
+                  name={i}
+                  value={Number(realMetrics[transformMetric(i, 'sentence')]?.median_value ?? null)}
+                  expectedValue={Number(
+                    expectedMetrics[transformMetric(i, 'sentence')]?.value ?? null
+                  )}
+                />
+              ))}
             </Stack>
           </Stack>
         </>

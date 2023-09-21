@@ -1,16 +1,17 @@
 import { Theme } from '@carbon/react'
 import { CSSProperties } from 'react'
+import { MetricSnake } from 'src/@types'
+import { Stack } from 'src/components/stack'
+import { Typography } from 'src/components/typography'
 import { STRING_DEFAULT } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { getMetricLabel } from 'src/utils/metrics'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import { Stack } from 'src/components/stack'
-import { Typography } from 'src/components/typography'
 
 type Props = {
   width?: number
-  name: 'uptime' | 'latency' | 'upload_speed' | 'download_speed'
+  name: MetricSnake
   value: number | null
   subtitle?: string
   style?: CSSProperties

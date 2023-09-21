@@ -1,12 +1,12 @@
-export type TourName = 'home' | 'contracts' | 'profile' | 'contract_detail'
+import { allLangs } from '../locales/config-lang'
 
+export type TourName = 'home' | 'contracts' | 'profile' | 'contract_detail'
+type HomeTour = `home_${(typeof allLangs)[number]['value']}`
 export type Settings = {
-  tours: Record<Exclude<TourName, 'home'> | 'home_en' | 'home_es' | 'home_fr' | 'home_br', boolean>
+  tours: Record<Exclude<TourName, 'home'> | HomeTour, boolean>
 }
 
 export type SettingsContextProps = Settings & {
-  completeTour: (
-    name: Exclude<TourName, 'home'> | 'home_en' | 'home_es' | 'home_fr' | 'home_br'
-  ) => void
+  completeTour: (name: Exclude<TourName, 'home'> | HomeTour) => void
   onResetSetting: () => void
 }

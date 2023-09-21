@@ -25,7 +25,7 @@ export default function ErrorLayout() {
 
         <HeaderName
           style={{ cursor: 'pointer' }}
-          onClick={() => navigate(ROUTES.dashboard.app.route)}
+          onClick={() => window.location.replace(ROUTES.dashboard.app.route)}
           prefix=""
         >
           <Typography as="h4" onClick={() => navigate(ROUTES.dashboard.app.route)}>

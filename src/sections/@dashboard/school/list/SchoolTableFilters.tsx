@@ -1,9 +1,9 @@
 import { Button, Dropdown } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
-import { EducationLevel, Translation } from 'src/@types'
+import { EducationLevel, Setter, Translation } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { PopoverTitle } from 'src/components/typography'
-import { FILTER_ALL_DEFAULT, TRANSLATION_SEPARATOR } from 'src/constants'
+import { FILTER_ALL_DEFAULT, FilterAll, TRANSLATION_SEPARATOR } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/strings'
@@ -11,13 +11,13 @@ import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/string
 type Props = {
   closePopover: () => void
   setPage: Dispatch<SetStateAction<number>>
-  setFilterRegion: Dispatch<SetStateAction<string>>
-  setFilterSearch: Dispatch<SetStateAction<string>>
+  setFilterRegion: Setter<string>
+  setFilterSearch: Setter<string>
   regionOptions: string[]
   filterRegion: string
-  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
-  setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
-  educationLevelOptions: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
+  filterEducationLevel: string
+  setFilterEducationLevel: Setter<EducationLevel | FilterAll>
+  educationLevelOptions: (EducationLevel | FilterAll)[]
 }
 
 export default function SchoolTableFilters({
@@ -45,7 +45,7 @@ export default function SchoolTableFilters({
       ? regionOptions.filter((r) => r).sort((a, b) => a.localeCompare(b))
       : []
 
-  const handleEducationLevelFilter = (value: EducationLevel | typeof FILTER_ALL_DEFAULT) => {
+  const handleEducationLevelFilter = (value: EducationLevel | FilterAll) => {
     setPage(1)
     setFilterEducationLevel(value)
   }
@@ -58,6 +58,13 @@ export default function SchoolTableFilters({
     closePopover()
   }
 
+  const itemToString = (item: string) => {
+    if (!item) return ''
+    return item === FILTER_ALL_DEFAULT || item === 'none'
+      ? capitalizeFirstLetter(translate(item))
+      : capitalizeFirstLetter(item)
+  }
+
   return (
     <Stack style={{ padding: spacing.md, width: '300px' }} orientation="vertical">
       <PopoverTitle title="region" />
@@ -65,12 +72,8 @@ export default function SchoolTableFilters({
         id="school-region-select"
         label={capitalizeFirstLetter(translate(FILTER_ALL_DEFAULT))}
         items={sortedOptions}
-        itemToString={(item) =>
-          item === FILTER_ALL_DEFAULT
-            ? capitalizeFirstLetter(translate(item))
-            : capitalizeFirstLetter(item)
-        }
-        selectedItem={filterRegion}
+        itemToString={itemToString}
+        selectedItem={sortedOptions.includes(filterRegion) ? filterRegion : 'none'}
         onChange={(e) => {
           handleFilterRegion(e.selectedItem ?? '')
           closePopover()
@@ -81,8 +84,9 @@ export default function SchoolTableFilters({
       <Dropdown
         id="education-level-filter"
         items={educationLevelOptions}
-        itemToString={(item) =>
-          item === FILTER_ALL_DEFAULT
+        itemToString={(item) => {
+          if (!item) return ''
+          return item === FILTER_ALL_DEFAULT || item === 'none'
             ? capitalizeFirstLetter(translate(item))
             : capitalizeFirstLetter(
                 translate(
@@ -92,9 +96,15 @@ export default function SchoolTableFilters({
                     .join(TRANSLATION_SEPARATOR)}` as Translation
                 )
               )
+        }}
+        selectedItem={
+          educationLevelOptions.includes(filterEducationLevel as EducationLevel)
+            ? filterEducationLevel
+            : 'none'
         }
-        selectedItem={filterEducationLevel}
-        onChange={(data) => handleEducationLevelFilter(data.selectedItem ?? FILTER_ALL_DEFAULT)}
+        onChange={(data: { selectedItem: EducationLevel | FilterAll }) =>
+          handleEducationLevelFilter(data.selectedItem ?? FILTER_ALL_DEFAULT)
+        }
         label={capitalizeFirstLetter(translate(FILTER_ALL_DEFAULT))}
         disabled={educationLevelOptions.length <= 1}
       />

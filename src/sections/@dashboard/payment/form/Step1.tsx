@@ -1,6 +1,7 @@
-import { months } from 'moment'
-import { Translation } from 'src/@types'
-import { IFileUpload, IFrequency } from 'src/@types/general'
+import { TextInput } from '@carbon/react'
+import { useFormContext } from 'react-hook-form'
+import { PaymentForm, Translation } from 'src/@types'
+import { IFileUpload, IFrequency, IPeriod } from 'src/@types/general'
 import { UploadError } from 'src/components/errors/'
 import { RHFSelect, RHFTextField } from 'src/components/hook-form'
 import { Stack } from 'src/components/stack'
@@ -9,7 +10,9 @@ import { UploadBox } from 'src/components/upload-box'
 import { STRING_DEFAULT } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
+import { getPeriodLabel } from 'src/utils/payments'
 import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/strings'
+import { PaymentStatus } from '../../../../@types/status'
 
 type Step1Props = {
   fields: {
@@ -24,8 +27,10 @@ type Step1Props = {
   invoiceUploadError: Translation | ''
   receiptUploadError: Translation | ''
   setUploadErrorMessage: (message: Translation, key: 'invoice' | 'receipt') => void
-  availablePayments: { month: number; year: number; day?: number }[]
+  availablePayments: IPeriod[]
   currencyCode: string
+  contractId: string
+  paymentStatus?: PaymentStatus
 }
 
 export default function Step1({
@@ -36,17 +41,20 @@ export default function Step1({
   receiptUploadError,
   setUploadErrorMessage,
   availablePayments,
-  currencyCode
+  currencyCode,
+  contractId,
+  paymentStatus
 }: Step1Props) {
-  const { translate } = useLocales()
+  const { translate, translateCapitalized } = useLocales()
   const { spacing } = useTheme()
+  const { watch } = useFormContext<PaymentForm>()
 
   const handleDrop = (acceptedFiles: File[], key: 'invoice' | 'receipt'): void => {
     if (acceptedFiles.length > 1) return setUploadErrorMessage('upload_errors.one_file', key)
     const pdf = acceptedFiles[0]
     if (pdf.name.split('.').pop() !== 'pdf') return setUploadErrorMessage('upload_errors.pdf', key)
     const reader = new FileReader()
-    reader.onload = () => {
+    reader.onloadstart = () => {
       const fileUpload = {
         name: pdf.name,
         typeId: '',
@@ -59,20 +67,48 @@ export default function Step1({
     reader.onerror = () => {
       throw new Error(`Cannot read the file ${pdf.name}`)
     }
+    reader.onloadend = () => {
+      const fileUpload = {
+        name: pdf.name,
+        typeId: '',
+        type: key,
+        file: reader.result,
+        status: 'complete'
+      } as const
+      uploadAttachment(fileUpload, key)
+    }
     return reader.readAsDataURL(pdf)
   }
 
-  const getPaymentLabel = (p: { month: number; year: number; day?: number }) =>
-    p.day ? `${p.day}-${months(p.month)}-${p.year}` : `${p.year}-${months(p.month)}`
+  const translatePeriodLabel = (p: IPeriod | null) => {
+    if (!p) return ''
+    const periodLabel = p ? getPeriodLabel(p) : ''
+    const hasDay = p.day
+    const translatedLabel =
+      periodLabel && hasDay
+        ? `${periodLabel.split('-')[0]}-${translateCapitalized(
+            periodLabel.split('-')[1] as Translation
+          )}-${periodLabel.split('-')[2]}`
+        : `${translateCapitalized(periodLabel.split('-')[0] as Translation)}-${
+            periodLabel.split('-')[1]
+          }`
+    return periodLabel ? translatedLabel : ''
+  }
 
   return (
     <>
       <SectionTitle label="payment_detail" />
       <Stack orientation="horizontal" gap={spacing.xs}>
         <RHFTextField
-          id="paymentDescription"
+          id="edit-payment-description"
           name="description"
           labelText={capitalizeFirstLetter(translate('description'))}
+        />
+        <TextInput
+          id="edit-payment-contract-id"
+          readOnly
+          labelText={capitalizeFirstLetter(translate('contract_id'))}
+          value={contractId}
         />
       </Stack>
       <Stack orientation="horizontal" gap={spacing.xs} style={{ marginTop: spacing.lg }}>
@@ -97,7 +133,7 @@ export default function Step1({
       <Stack orientation="horizontal" gap={spacing.xs}>
         <RHFSelect
           style={{ width: '50%' }}
-          id="payment period select"
+          id="payment-frequency"
           name=""
           selectedItem={{
             value: paymentFrequency,
@@ -111,13 +147,17 @@ export default function Step1({
         />
         <RHFSelect
           style={{ width: '50%' }}
-          id="payment period select"
-          disabled={availablePayments.length <= 1}
+          id="payment-period-select"
+          readOnly={availablePayments.length <= 1 || paymentStatus === PaymentStatus.Draft}
           name="payment"
+          selectedItem={{
+            value: watch().payment,
+            label: translatePeriodLabel(watch().payment)
+          }}
           label={capitalizeFirstLetter(`${translate('period')}`)}
           options={
             availablePayments
-              ? availablePayments.map((p) => ({ value: p, label: getPaymentLabel(p) }))
+              ? availablePayments.map((p) => ({ value: p, label: translatePeriodLabel(p) }))
               : []
           }
         />

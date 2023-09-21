@@ -1,14 +1,14 @@
-import { MetricName } from 'src/@types'
+import { Metric, MetricSnake } from 'src/@types'
 
 export const METRICS_LABELS: {
-  [K in MetricName]: string
+  [K in Metric | MetricSnake]: string
 } = {
-  'download_speed': 'Mb/s',
-  'Download speed': 'Mb/s',
-  'Latency': 'ms',
-  'latency': 'ms',
-  'Upload speed': 'Mb/s',
-  'upload_speed': 'Mb/s',
-  'Uptime': '%',
-  'uptime': '%'
+  [MetricSnake.DownloadSpeed]: 'Mb/s',
+  [Metric.DownloadSpeed]: 'Mb/s',
+  [Metric.Latency]: 'ms',
+  [MetricSnake.Latency]: 'ms',
+  [Metric.UploadSpeed]: 'Mb/s',
+  [MetricSnake.UploadSpeed]: 'Mb/s',
+  [Metric.Uptime]: '%',
+  [MetricSnake.Uptime]: '%'
 }

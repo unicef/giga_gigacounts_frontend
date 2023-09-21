@@ -1,7 +1,6 @@
 // i18n
 import './locales/i18n'
 
-import '@carbon/charts-react/styles.css'
 import '@carbon/styles/css/styles.css'
 import './app.scss'
 
@@ -30,6 +29,7 @@ import { BusinessProvider } from './context/business/BusinessContext'
 
 export default function App() {
   return (
+    <MsalProvider instance={msalInstance}>
       <BrowserRouter>
         <AuthProvider>
           <HelmetProvider>
@@ -54,5 +54,6 @@ export default function App() {
           </HelmetProvider>
         </AuthProvider>
       </BrowserRouter>
+    </MsalProvider>
   )
 }

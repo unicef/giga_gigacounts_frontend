@@ -1,21 +1,21 @@
 import { Button, Popover, PopoverContent, TableToolbarSearch } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
-import { FILTER_ALL_DEFAULT, ICONS } from 'src/constants'
+import { EducationLevel, Setter } from 'src/@types'
+import { FilterAll, ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import { EducationLevel } from 'src/@types'
 import SchoolTableFilters from './SchoolTableFilters'
 
 type Props = {
-  setFilterSearch: Dispatch<SetStateAction<string>>
-  setFilterRegion: Dispatch<SetStateAction<string>>
+  setFilterSearch: Setter<string>
+  setFilterRegion: Setter<string>
   setPage: Dispatch<SetStateAction<number>>
   regionOptions: string[]
   filterRegion: string
-  educationLevelOptions: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
-  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
-  setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
+  educationLevelOptions: (EducationLevel | FilterAll)[]
+  filterEducationLevel: string
+  setFilterEducationLevel: Setter<EducationLevel | FilterAll>
 }
 
 export default function SchoolTableToolbar({
@@ -38,7 +38,11 @@ export default function SchoolTableToolbar({
 
   return (
     <>
-      <TableToolbarSearch onChange={(e: any) => handleFilterName(e.target.value)} />
+      <TableToolbarSearch
+        persistent
+        placeholder={capitalizeFirstLetter(translate('search'))}
+        onChange={(e: any) => handleFilterName(e.target.value)}
+      />
       <Popover open={popover.value} isTabTip onRequestClose={popover.close} align="bottom-right">
         <Button
           kind="ghost"

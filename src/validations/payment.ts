@@ -1,9 +1,9 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import * as Yup from 'yup'
 import { IContractPayment, PaymentForm, PaymentStatus } from 'src/@types'
 import { useLocales } from 'src/locales'
+import * as Yup from 'yup'
 
 const MAX_AMOUNT = 1000000000000000000
 
@@ -11,10 +11,10 @@ export const usePaymentSchema = (payment?: IContractPayment) => {
   const { replaceTranslated, replaceTwoTranslated } = useLocales()
 
   const getDefaultValues = (pendingPayment?: IContractPayment) => ({
-    status: pendingPayment?.status ?? PaymentStatus.OnHold,
+    status: pendingPayment?.status ?? PaymentStatus.Draft,
     description: pendingPayment?.description ?? '',
     amount: pendingPayment?.amount ?? 0,
-    payment: pendingPayment?.paidDate ?? { month: 0, year: 0 }
+    payment: pendingPayment?.paidDate ?? null
   })
 
   const [defaultValues, setDefaultValues] = useState<PaymentForm>(getDefaultValues(payment))

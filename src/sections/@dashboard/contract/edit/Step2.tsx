@@ -10,7 +10,7 @@ import { ErrorList, UploadError } from 'src/components/errors'
 import { RHFSelect, RHFTextField } from 'src/components/hook-form'
 import { Stack } from 'src/components/stack'
 import { SectionSubtitle, SectionTitle, Typography } from 'src/components/typography'
-import { FILTER_ALL_DEFAULT } from 'src/constants'
+import { FILTER_ALL_DEFAULT, FilterAll } from 'src/constants'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
 import useTable from 'src/hooks/useTable'
 import { useLocales } from 'src/locales'
@@ -37,7 +37,7 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
   const { spacing, palette } = useTheme()
   const { isAdmin } = useAuthContext()
   const { translate } = useLocales()
-  const { getValues, watch } = useFormContext<ContractForm>()
+  const { getValues, watch, trigger, setValue } = useFormContext<ContractForm>()
   const { country: countryId, budget: contractBudget } = watch()
 
   const [tableData, setTableData] = useState<SchoolCell[]>(
@@ -67,11 +67,12 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
   const { page, rowsPerPage, setPage, selected, onSelectRow, onSelectAllRows, setRowsPerPage } =
     useTable({
       defaultSelected: fields.schools.map(
-        (school) => tableData.find((row) => row.external_id === school.id)?.id ?? ''
+        (school) => tableData.find((row) => row.external_id === school.id)?.external_id ?? ''
       )
     })
 
   const handleChangeBudget = (external_id: string, budget: string) => {
+    trigger()
     const school = fields.schools.find((r) => r.id === external_id)
     const indexToReplace = tableData.findIndex((r) => r.external_id === external_id)
     const row = tableData[indexToReplace]
@@ -85,13 +86,12 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
       return newTableData
     })
   }
-
   useEffect(() => {
     const newSchools: { id: string; budget: string }[] = []
 
-    selected.forEach((id) => {
-      const { external_id, budget } = tableData.find((s) => s.id === id) as SchoolCell
-      newSchools.push({ id: external_id, budget: budget ?? 0 })
+    selected.forEach((externalId) => {
+      const { budget } = tableData.find((s) => s.external_id === externalId) as SchoolCell
+      newSchools.push({ id: externalId, budget: budget ?? 0 })
     })
 
     if (
@@ -125,18 +125,18 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
     { key: 'budget', header: translate('budget') }
   ]
 
-  const REGION_OPTIONS = removeDuplicates([
+  const regionOptions = removeDuplicates([
     FILTER_ALL_DEFAULT,
     ...tableData.map((s) => s[regionKey])
   ])
   const EDUCATION_LEVEL_OPTIONS = removeDuplicates([
     FILTER_ALL_DEFAULT,
     ...tableData.map((s) => s.education_level)
-  ]) as (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
+  ]) as (EducationLevel | FilterAll)[]
 
-  const [filterEducationLevel, setFilterEducationLevel] = useState<
-    EducationLevel | typeof FILTER_ALL_DEFAULT
-  >(FILTER_ALL_DEFAULT)
+  const [filterEducationLevel, setFilterEducationLevel] = useState<EducationLevel | FilterAll>(
+    FILTER_ALL_DEFAULT
+  )
   const [filterSearch, setFilterSearch] = useState('')
   const [filterRegion, setFilterRegion] = useState(FILTER_ALL_DEFAULT)
 
@@ -147,15 +147,26 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
     filterEducationLevel
   })
 
-  const isNotFound = !dataFiltered.length
+  const isEmpty = Boolean(tableData && !tableData.length)
+  const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
 
   const totalBudget = selected
-    .map((id) => Number(tableData.find((r) => r.id === id)?.budget))
+    .map((externalId) => Number(tableData.find((r) => r.external_id === externalId)?.budget))
     .reduce((prev, curr) => prev + curr, 0)
+    .toFixed(2)
 
-  const exceedsMaxBudget = totalBudget !== Number(contractBudget)
+  const exceedsMaxBudget = Number(totalBudget) !== Number(contractBudget)
 
   const handleFileUpload = (fileSchools: { external_id: string; budget: string }[]) => {
+    setValue(
+      'budget',
+      Number(
+        fileSchools
+          .map((s) => Number(s.budget))
+          .reduce((prev, curr) => prev + curr, 0)
+          .toFixed(2)
+      )
+    )
     onChange((prev) => ({
       ...prev,
       schools: fileSchools.map((s) => ({ id: s.external_id, budget: s.budget }))
@@ -164,9 +175,7 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
 
     onSelectAllRows(
       true,
-      fileSchools
-        .map((s) => tableData.find((r) => r.external_id === s.external_id)?.id ?? null)
-        .filter((r) => r) as string[]
+      fileSchools.map((s) => s.external_id)
     )
   }
 
@@ -174,7 +183,6 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
     <>
       <SectionTitle label="total_budget" style={{ paddingBottom: 0 }} />
       <SectionSubtitle subtitle="add_the_total_budget" />
-
       <Stack orientation="horizontal" gap={spacing.md}>
         <RHFSelect
           id="currency select"
@@ -191,10 +199,8 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
           labelText={capitalizeFirstLetter(translate('total_budget_of_the_contract'))}
         />
       </Stack>
-
       <SectionTitle label="schools_list" style={{ paddingBottom: 0 }} />
       <SectionSubtitle subtitle="add_the_list_of_schools" />
-
       <UploadError message={uploadErrorMessage} />
       <ErrorList title={translate('uploaded_with_errors')} errorMessages={parsingErrorMessages} />
       <UploadSchoolFile
@@ -219,9 +225,10 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
           />
         </Typography>
       </InlineNotification>
-
       <CustomDataTable
         selection={selected}
+        rowToDataKey={(row) => row.cells[0].value}
+        getDataKey={(row) => row.external_id}
         isSortable
         isSelectable
         onSelectAll={(rows, checked) => {
@@ -229,13 +236,28 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
           else
             onSelectAllRows(
               checked,
-              rows.map((row) => row.id)
+              rows.map((row) => row.external_id)
             )
         }}
-        onSelectRow={(row) => onSelectRow(row.id)}
+        onSelectRow={(row) => onSelectRow(row.external_id)}
         RowComponent={SchoolTableRow}
-        getRowComponentProps={(row) => ({
-          selected: selected.includes(row.id),
+        buttonsProps={[
+          {
+            label: translate('distribute_budget_equally'),
+            disabled: selected.length === 0 || !contractBudget,
+            kind: 'primary',
+            onClick: () => {
+              selected.forEach((externalId) => {
+                handleChangeBudget(externalId, (contractBudget / selected.length).toFixed(2))
+                setValue(
+                  'budget',
+                  Number((contractBudget / selected.length).toFixed(2)) * selected.length
+                )
+              })
+            }
+          }
+        ]}
+        getRowComponentProps={() => ({
           onChangeBudget: handleChangeBudget
         })}
         ToolbarContent={
@@ -244,7 +266,7 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
             filterEducationLevel={filterEducationLevel}
             setFilterEducationLevel={setFilterEducationLevel}
             filterRegion={filterRegion}
-            regionOptions={REGION_OPTIONS}
+            regionOptions={regionOptions}
             setFilterRegion={setFilterRegion}
             setFilterSearch={setFilterSearch}
             setPage={setPage}
@@ -254,11 +276,12 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
         page={page}
         setPage={setPage}
         isNotFound={isNotFound}
+        isEmpty={isEmpty}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         tableHead={TABLE_HEAD}
         tableName="schools"
-        noDataText="table_no_data.schools"
+        emptyText="table_no_data.schools"
         title="School table"
       />
       {selected.length > 0 ? (

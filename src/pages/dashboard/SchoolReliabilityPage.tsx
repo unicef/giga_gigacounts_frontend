@@ -7,8 +7,9 @@ import { useAuthContext } from 'src/auth/useAuthContext'
 import { Banner } from 'src/components/banner'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { useTable } from 'src/components/table'
-import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants'
+import { FILTER_ALL_DEFAULT, FilterAll, KEY_DEFAULTS } from 'src/constants'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
+import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
 import { useLocales } from 'src/locales'
 import {
   SchoolReliabilityTableRow,
@@ -19,24 +20,31 @@ import { redirectOnError } from '../errors/handlers'
 
 export default function SchoolReliabilityPage() {
   const navigate = useNavigate()
-  const { page, rowsPerPage, setPage, setRowsPerPage, selected, onSelectRow } = useTable()
+  const { page, rowsPerPage, setPage, setRowsPerPage } = useTable()
   const { user } = useAuthContext()
   const { countries } = useBusinessContext()
 
   const [countryId, setCountryId] = useState(user?.country.id)
   const [tableData, setTableData] = useState<ISchool[] | null>(null)
-  const [filterName, setFilterName] = useState('')
-  const [filterEducationLevel, setFilterEducationLevel] = useState<
-    EducationLevel | typeof FILTER_ALL_DEFAULT
-  >(FILTER_ALL_DEFAULT)
+
+  const [searchParams, generateSetter] = useCustomSearchParams({
+    filterName: '',
+    filterEducationLevel: FILTER_ALL_DEFAULT,
+    filterRegion: FILTER_ALL_DEFAULT
+  })
+
+  const { filterName, filterRegion, filterEducationLevel } = searchParams
+  const setFilterName = generateSetter('filterName')
+  const setFilterEducationLevel = generateSetter('filterEducationLevel')
+  const setFilterRegion = generateSetter('filterRegion')
 
   const { translate } = useLocales()
 
   const TABLE_HEAD = [
-    { key: 'external_id', header: 'Id' },
     { key: 'name', header: translate('name') },
-    { key: 'location1', header: translate('region') },
     { key: 'reliable_measures', header: translate('has_reliable_measure_data') },
+    { key: 'external_id', header: 'Id' },
+    { key: 'location1', header: translate('region') },
     { key: KEY_DEFAULTS[0], header: '' }
   ]
 
@@ -47,15 +55,21 @@ export default function SchoolReliabilityPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryId])
 
+  const regionOptions = tableData
+    ? removeDuplicates([FILTER_ALL_DEFAULT, ...tableData.map((s) => s.location1)])
+    : []
+
   const dataFiltered = tableData
     ? applyFilter({
         inputData: tableData,
         filterName,
+        filterRegion,
         filterEducationLevel
       })
     : null
 
-  const isNotFound = Boolean(dataFiltered && !dataFiltered.length)
+  const isEmpty = Boolean(tableData && !tableData.length)
+  const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
 
   const handleFilterCountry = (countryName: string) => {
     const selectedCountry = countries.find((c) => c.name === countryName) as ICountry
@@ -65,9 +79,11 @@ export default function SchoolReliabilityPage() {
   const educationLevelOptions = tableData
     ? (removeDuplicates([FILTER_ALL_DEFAULT, ...tableData.map((s) => s.education_level)]) as (
         | EducationLevel
-        | typeof FILTER_ALL_DEFAULT
+        | FilterAll
       )[])
     : []
+
+  const selectedCountryName = countries?.find((c) => c.id === countryId)?.name ?? ''
 
   return (
     <>
@@ -75,17 +91,19 @@ export default function SchoolReliabilityPage() {
         <title> Schools: List | Gigacounts</title>
       </Helmet>
 
-      <Banner title={translate('schools_reliability')} />
+      <Banner
+        subtitle={selectedCountryName ? `${selectedCountryName}` : ''}
+        title={translate('schools_reliability')}
+      />
 
       <CustomDataTable
         isSortable
-        getRowComponentProps={(row) => ({
-          selected: selected.includes(row.id),
-          onSelectRow
-        })}
         RowComponent={SchoolReliabilityTableRow}
         ToolbarContent={
           <SchoolReliabilityTableToolbar
+            setFilterRegion={setFilterRegion}
+            filterRegion={filterRegion}
+            regionOptions={regionOptions}
             educationLevelOptions={educationLevelOptions}
             filterEducationLevel={filterEducationLevel}
             setFilterEducationLevel={setFilterEducationLevel}
@@ -94,17 +112,19 @@ export default function SchoolReliabilityPage() {
             setFilterSearch={setFilterName}
             setPage={setPage}
             countryOptions={countries.map((c) => c.name)}
+            filterSearch={filterName}
           />
         }
         data={dataFiltered}
         page={page}
         setPage={setPage}
         isNotFound={isNotFound}
+        isEmpty={isEmpty}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         tableHead={TABLE_HEAD}
         tableName="schools-reliability"
-        noDataText="table_no_data.schools"
+        emptyText="table_no_data.schools"
         title="Schools reliability table"
       />
     </>
@@ -114,19 +134,26 @@ export default function SchoolReliabilityPage() {
 function applyFilter({
   inputData,
   filterName,
+  filterRegion,
   filterEducationLevel
 }: {
   inputData: ISchool[]
   filterName: string
-  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
+  filterRegion: string
+  filterEducationLevel: string
 }) {
   if (filterName)
     inputData = inputData.filter(
-      (school) => school.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (school) =>
+        school.name.toLowerCase().includes(filterName.toLowerCase()) ||
+        school.external_id.toLowerCase().includes(filterName.toLowerCase())
     )
 
   if (filterEducationLevel !== FILTER_ALL_DEFAULT)
     inputData = inputData.filter((s) => s.education_level === filterEducationLevel)
+
+  if (filterRegion !== FILTER_ALL_DEFAULT)
+    inputData = inputData.filter((s) => s.location1 === filterRegion)
 
   return inputData
 }

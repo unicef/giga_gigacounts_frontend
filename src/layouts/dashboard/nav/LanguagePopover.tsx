@@ -1,4 +1,4 @@
-import { HeaderGlobalAction, MenuItem, Popover, PopoverContent } from '@carbon/react'
+import { HeaderGlobalAction, MenuItem, Popover, PopoverContent, Theme } from '@carbon/react'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
 import { ICONS } from 'src/constants'
@@ -27,16 +27,18 @@ export default function LanguagePopover() {
         </HeaderGlobalAction>
       </Stack>
       <PopoverContent>
-        {allLangs.map((lang) => (
-          <MenuItem
-            key={lang.value}
-            onClick={() => {
-              onChangeLang(lang.value)
-              popover.close()
-            }}
-            label={lang.label}
-          />
-        ))}
+        <Theme theme="white">
+          {allLangs.map((lang) => (
+            <MenuItem
+              key={lang.value}
+              onClick={() => {
+                onChangeLang(lang.value)
+                popover.close()
+              }}
+              label={lang.label}
+            />
+          ))}
+        </Theme>
       </PopoverContent>
     </Popover>
   )

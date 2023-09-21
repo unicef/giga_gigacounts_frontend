@@ -1,5 +1,6 @@
 import { Button, Popover, PopoverContent, TableToolbarSearch } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
+import { Setter } from 'src/@types'
 import { ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
@@ -7,11 +8,18 @@ import { capitalizeFirstLetter } from 'src/utils/strings'
 import UsersTableFilters from './UsersTableFilters'
 
 type Props = {
-  setFilterSearch: Dispatch<SetStateAction<string>>
+  setFilterSearch: Setter<string>
   setPage: Dispatch<SetStateAction<number>>
-  setFilterCountry: (countryName: string) => void
+  setFilterCountry: Setter<string>
   countryOptions: string[]
   countryName: string
+  setFilterRole: Setter<string>
+  roleOptions: string[]
+  filterRole: string
+  filterIsp: string
+  setFilterIsp: Setter<string>
+  ispOptions: string[]
+  filterSearch: string
 }
 
 export default function UsersTableToolbar({
@@ -19,7 +27,14 @@ export default function UsersTableToolbar({
   setFilterSearch,
   setFilterCountry,
   countryOptions,
-  countryName
+  countryName,
+  filterRole,
+  roleOptions,
+  setFilterRole,
+  filterIsp,
+  ispOptions,
+  setFilterIsp,
+  filterSearch
 }: Props) {
   const { translate } = useLocales()
   const popover = useModal()
@@ -31,7 +46,13 @@ export default function UsersTableToolbar({
 
   return (
     <>
-      <TableToolbarSearch onChange={(e: any) => handleFilterName(e.target.value)} persistent />
+      <TableToolbarSearch
+        // @ts-ignore
+        value={filterSearch}
+        persistent
+        placeholder={capitalizeFirstLetter(translate('search'))}
+        onChange={(e: any) => handleFilterName(e.target.value)}
+      />
       <Popover open={popover.value} isTabTip onRequestClose={popover.close} align="bottom-right">
         <Button
           kind="ghost"
@@ -44,6 +65,12 @@ export default function UsersTableToolbar({
         />
         <PopoverContent>
           <UsersTableFilters
+            filterIsp={filterIsp}
+            ispOptions={ispOptions}
+            setFilterIsp={setFilterIsp}
+            filterRole={filterRole}
+            setFilterRole={setFilterRole}
+            roleOptions={roleOptions}
             countryName={countryName}
             closePopover={popover.close}
             countryOptions={countryOptions}

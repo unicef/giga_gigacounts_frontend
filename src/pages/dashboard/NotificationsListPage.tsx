@@ -1,22 +1,31 @@
-import { Modal } from '@carbon/react';
-import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { INotification } from 'src/@types';
-import { Banner } from 'src/components/banner';
-import CustomDataTable from 'src/components/data-table/CustomDataTable';
-import { useTable } from 'src/components/table';
-import { ICONS, KEY_DEFAULTS } from 'src/constants';
-import { useBusinessContext } from 'src/context/business/BusinessContext';
-import { useModal } from 'src/hooks/useModal';
-import { useLocales } from 'src/locales';
+import { Modal } from '@carbon/react'
+import { useState } from 'react'
+import { Helmet } from 'react-helmet-async'
+import { INotification } from 'src/@types'
+import { Banner } from 'src/components/banner'
+import CustomDataTable from 'src/components/data-table/CustomDataTable'
+import { useTable } from 'src/components/table'
+import { KEY_DEFAULTS } from 'src/constants'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
+import { useModal } from 'src/hooks/useModal'
+import { useLocales } from 'src/locales'
 import {
   NotificationTableRow,
   NotificationTableToolbar
-} from 'src/sections/@dashboard/user/notifications';
+} from 'src/sections/@dashboard/user/notifications'
+import { capitalizeFirstLetter } from 'src/utils/strings'
 
 export default function NotificationsListPage() {
-  const { page, rowsPerPage, setPage, setRowsPerPage, selected, onSelectAllRows, onSelectRow } =
-    useTable()
+  const {
+    page,
+    rowsPerPage,
+    setPage,
+    setRowsPerPage,
+    selected,
+    onSelectAllRows,
+    onSelectRow,
+    setSelected
+  } = useTable()
 
   const {
     notifications,
@@ -45,32 +54,31 @@ export default function NotificationsListPage() {
         inputData: notifications,
         filterSearch
       })
-    :null
+    : null
 
-  const dataInPage = dataFiltered ?  dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) :[]
-  const isNotFound = Boolean(dataFiltered && !dataFiltered.length )
+  const dataInPage = dataFiltered
+    ? dataFiltered.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
+    : []
+  const isEmpty = Boolean(notifications && !notifications.length)
+  const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
 
   const handleDeleteRow = (id: string) => {
     discardNotification(id).finally(refetchNotifications)
-
-    if (page > 0) {
-      if (dataInPage.length < 2) {
-        setPage(page - 1)
-      }
-    }
+    if (dataInPage.length === 1) setPage(page - 1)
   }
 
   const handleDeleteRows = (selectedRows: string[]) => {
     if (!notifications || !dataFiltered) return
-    discardManyNotifications(selectedRows).finally(refetchNotifications)
+    discardManyNotifications(selectedRows).finally(() => {
+      refetchNotifications()
+      setSelected([])
+    })
 
-    if (page > 0) {
-      if (selectedRows.length === dataInPage.length) {
-        setPage(page - 1)
-      } else if (selectedRows.length === dataFiltered.length) {
-        setPage(0)
-      } else if (selectedRows.length > dataInPage.length) {
-        const newPage = Math.ceil((notifications.length - selectedRows.length) / rowsPerPage) - 1
+    if (page > 1) {
+      if (selectedRows.length === dataInPage.length) setPage(page - 1)
+      else if (selectedRows.length === dataFiltered.length) setPage(1)
+      else if (selectedRows.length > dataInPage.length) {
+        const newPage = Math.ceil((dataFiltered.length - selectedRows.length) / rowsPerPage)
         setPage(newPage)
       }
     }
@@ -79,7 +87,10 @@ export default function NotificationsListPage() {
   const handleReadRow = (id: string) => readNotification(id).finally(refetchNotifications)
 
   const handleReadRows = (selectedRows: { id: string }[]) =>
-    readManyNotifications(selectedRows.map((n) => n.id)).finally(refetchNotifications)
+    readManyNotifications(selectedRows.map((n) => n.id)).finally(() => {
+      refetchNotifications()
+      setSelected([])
+    })
 
   return (
     <>
@@ -96,16 +107,16 @@ export default function NotificationsListPage() {
             rows.map((r) => r.id)
           )
         }
-        onSelectRow={(row) => onSelectRow(row.id)}
+        onSelectRow={(notification) => onSelectRow(notification.id)}
         batchActions={[
           {
-            icon: ICONS.Success,
-            title: translate('mark_as_read'),
+            icon: 'Success',
+            title: capitalizeFirstLetter(translate('mark_as_read')),
             onClick: handleReadRows
           },
           {
-            icon: ICONS.Delete,
-            title: translate('delete'),
+            icon: 'Delete',
+            title: capitalizeFirstLetter(translate('delete')),
             onClick: confirm.open
           }
         ]}
@@ -121,19 +132,23 @@ export default function NotificationsListPage() {
         page={page}
         setPage={setPage}
         isNotFound={isNotFound}
+        isEmpty={isEmpty}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         tableHead={TABLE_HEAD}
         tableName="notifications"
-        noDataText="table_no_data.notifications"
+        emptyText="table_no_data.notifications"
         title="Notifications table"
+        rowToDataKey={(row) => row.id}
+        getDataKey={(n) => n.id}
+        selection={selected}
       />
 
       <Modal
         open={confirm.value}
         danger
         onRequestClose={confirm.close}
-        modalLabel={translate('delete')}
+        modalLabel={capitalizeFirstLetter(translate('delete'))}
         modalHeading={
           <div
             // eslint-disable-next-line react/no-danger
@@ -145,8 +160,8 @@ export default function NotificationsListPage() {
             }}
           />
         }
-        primaryButtonText={translate('delete')}
-        secondaryButtonText={translate('cancel')}
+        primaryButtonText={capitalizeFirstLetter(translate('delete'))}
+        secondaryButtonText={capitalizeFirstLetter(translate('cancel'))}
         onRequestSubmit={() => {
           handleDeleteRows(selected)
           confirm.close()

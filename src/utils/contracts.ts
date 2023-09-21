@@ -21,6 +21,11 @@ const getPublishErrors = (draft: Contract | null | undefined) => {
     { check: Boolean(draft?.currencyId), message: 'field_errors.required', field: 'currency' },
     { check: Boolean(draft?.ispId), message: 'field_errors.required', field: 'isp' },
     {
+      check: Boolean(draft?.frequencyId),
+      message: 'field_errors.required',
+      field: 'payment_frequency'
+    },
+    {
       check: isBoolean(draft?.automatic),
       message: 'field_errors.required',
       field: 'automatic'

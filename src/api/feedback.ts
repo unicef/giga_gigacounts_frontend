@@ -1,7 +1,7 @@
 import { FeedbackForm } from 'src/@types'
 import instance from './init'
 
-export const sendFeedback = async (feedback: FeedbackForm) => {
+export const sendFeedback = async (feedback: FeedbackForm & { path: string }) => {
   const response = await instance.post('/feedback', feedback)
   return response.data
 }

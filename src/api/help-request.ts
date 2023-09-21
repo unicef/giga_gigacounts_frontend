@@ -1,12 +1,12 @@
 import { HelpRequestForm, HelpRequestFunctionality, HelpRequestPossibleValue } from 'src/@types'
 import instance from './init'
 
-export const sendHelpRequest = async (helpRequest: HelpRequestForm) => {
+export const sendHelpRequest = async (helpRequest: HelpRequestForm & { path: string }) => {
   const response = await instance.post('/help-request', helpRequest)
   return response.data
 }
 
-export const getHelpRequests = async (): Promise<HelpRequestForm[]> => {
+export const getHelpRequests = async (): Promise<(HelpRequestForm & { path: string })[]> => {
   const response = await instance.get('/help-requests')
   return response.data
 }

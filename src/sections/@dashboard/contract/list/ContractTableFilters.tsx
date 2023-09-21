@@ -1,12 +1,24 @@
-import { Button, DatePicker, DatePickerInput, Dropdown, Tag, TextInput } from '@carbon/react'
+import {
+  Button,
+  ComboBox,
+  DatePicker,
+  DatePickerInput,
+  Dropdown,
+  Tag,
+  TextInput
+} from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
-import { ContractStatus, MinMax } from 'src/@types'
+import { ContractStatus, MinMax, Setter } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { PopoverTitle } from 'src/components/typography'
-import { CONTRACT_STATUS_COLORS, FILTER_ALL_DEFAULT } from 'src/constants'
+import {
+  CONTRACT_STATUS_COLORS,
+  FILTER_ALL_DEFAULT,
+  FILTER_TAG_BORDER,
+  FilterAll
+} from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
-import { formatDate } from 'src/utils/date'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 
 type Props = {
@@ -15,16 +27,17 @@ type Props = {
   filterBudget: MinMax<string>
   filterSchools: MinMax<string>
   filterDates: MinMax<string>
-  setFilterStatus: Dispatch<SetStateAction<ContractStatus | typeof FILTER_ALL_DEFAULT>>
-  setFilterSearch: Dispatch<SetStateAction<string>>
-  setFilterRegion: Dispatch<SetStateAction<string>>
-  setFilterIsp: Dispatch<SetStateAction<string>>
-  setFilterSchools: Dispatch<SetStateAction<MinMax<string>>>
-  setFilterBudget: Dispatch<SetStateAction<MinMax<string>>>
-  setFilterDates: Dispatch<SetStateAction<MinMax<string>>>
+  setFilterStatus: Setter<ContractStatus | FilterAll>
+  setFilterSearch: Setter<string>
+  setFilterRegion: Setter<string>
+  setFilterIsp: Setter<string>
+  setFilterSchools: MinMax<Setter<string>>
+  setFilterBudget: MinMax<Setter<string>>
+  setFilterDates: MinMax<Setter<string>>
   setPage: Dispatch<SetStateAction<number>>
   regionOptions: string[]
   ispOptions: string[]
+  filterStatus: string
   closePopover: () => void
 }
 const STATUS_OPTIONS = [FILTER_ALL_DEFAULT, ...Object.values(ContractStatus)] as const
@@ -45,7 +58,8 @@ export default function ContractTableFilters({
   filterDates,
   setFilterDates,
   setFilterSearch,
-  closePopover
+  closePopover,
+  filterStatus
 }: Props) {
   const { translate } = useLocales()
   const { spacing } = useTheme()
@@ -57,25 +71,14 @@ export default function ContractTableFilters({
 
   const handleFilterCountry = (country: string) => handleFilter(() => setFilterRegion(country))
   const handleFilterIsp = (country: string) => handleFilter(() => setFilterIsp(country))
-
-  const handleMaxBudget = (max: string) =>
-    handleFilter(() => setFilterBudget((prev) => ({ ...prev, max })))
-
-  const handleMinBudget = (min: string) =>
-    handleFilter(() => setFilterBudget((prev) => ({ ...prev, min })))
-
-  const handleMaxSchools = (max: string) =>
-    handleFilter(() => setFilterSchools((prev) => ({ ...prev, max })))
-
-  const handleMinSchools = (min: string) =>
-    handleFilter(() => setFilterSchools((prev) => ({ ...prev, min })))
-
-  const handleFilterStatus = (status: ContractStatus | typeof FILTER_ALL_DEFAULT) =>
+  const handleMaxBudget = (max: string) => handleFilter(() => setFilterBudget.max(max))
+  const handleMinBudget = (min: string) => handleFilter(() => setFilterBudget.min(min))
+  const handleMaxSchools = (max: string) => handleFilter(() => setFilterSchools.max(max))
+  const handleMinSchools = (min: string) => handleFilter(() => setFilterSchools.min(min))
+  const handleMaxDate = (max: string) => handleFilter(() => setFilterDates.max(max))
+  const handleMinDate = (min: string) => handleFilter(() => setFilterDates.min(min))
+  const handleFilterStatus = (status: ContractStatus | FilterAll) =>
     handleFilter(() => setFilterStatus(status))
-  const handleFilterDates = (dates: Date[]) =>
-    handleFilter(() =>
-      setFilterDates({ min: dates.at(0)?.toString() ?? '', max: dates.at(1)?.toString() ?? '' })
-    )
 
   const handleResetFilter = () => {
     closePopover()
@@ -84,9 +87,24 @@ export default function ContractTableFilters({
     setFilterRegion(FILTER_ALL_DEFAULT)
     setFilterIsp(FILTER_ALL_DEFAULT)
     setFilterStatus(FILTER_ALL_DEFAULT)
-    setFilterBudget({ min: '', max: '' })
-    setFilterSchools({ min: '', max: '' })
-    setFilterDates({ min: '', max: '' })
+    setFilterBudget.max('')
+    setFilterBudget.min('')
+    setFilterSchools.max('')
+    setFilterSchools.min('')
+    setFilterDates.max('')
+    setFilterDates.min('')
+  }
+
+  const sortedRegionOptions =
+    regionOptions.length > 0
+      ? regionOptions.filter((r) => r).sort((a, b) => a.localeCompare(b))
+      : []
+
+  const itemToString = (item: unknown) => {
+    if (!item) return ''
+    return item === FILTER_ALL_DEFAULT || item === 'none'
+      ? capitalizeFirstLetter(translate(item))
+      : capitalizeFirstLetter(item as string)
   }
   return (
     <Stack style={{ padding: spacing.md }} orientation="vertical">
@@ -95,7 +113,7 @@ export default function ContractTableFilters({
         {STATUS_OPTIONS.slice(0, 3).map((opt) => (
           <Tag
             key={opt}
-            style={{ border: 'none' }}
+            style={{ border: opt === filterStatus ? FILTER_TAG_BORDER : 'none' }}
             onClick={() => handleFilterStatus(opt)}
             type={opt === FILTER_ALL_DEFAULT ? 'gray' : CONTRACT_STATUS_COLORS[opt]}
           >
@@ -109,7 +127,7 @@ export default function ContractTableFilters({
         {STATUS_OPTIONS.slice(3).map((opt) => (
           <Tag
             key={opt}
-            style={{ border: 'none' }}
+            style={{ border: opt === filterStatus ? FILTER_TAG_BORDER : 'none' }}
             onClick={() => handleFilterStatus(opt)}
             type={opt === FILTER_ALL_DEFAULT ? 'gray' : CONTRACT_STATUS_COLORS[opt]}
           >
@@ -122,30 +140,26 @@ export default function ContractTableFilters({
 
       <PopoverTitle title="country" />
       <Dropdown
-        id="region-filter"
-        items={regionOptions}
-        itemToString={(item) =>
-          item === FILTER_ALL_DEFAULT
-            ? capitalizeFirstLetter(translate(item))
-            : capitalizeFirstLetter(item)
+        id="region-contract-filter"
+        items={sortedRegionOptions}
+        itemToString={itemToString}
+        selectedItem={sortedRegionOptions.includes(filterRegion) ? filterRegion : 'none'}
+        onChange={(data: { selectedItem: string }) =>
+          handleFilterCountry(data.selectedItem ?? FILTER_ALL_DEFAULT)
         }
-        selectedItem={filterRegion}
-        onChange={(data) => handleFilterCountry(data.selectedItem ?? FILTER_ALL_DEFAULT)}
         label={capitalizeFirstLetter(translate(FILTER_ALL_DEFAULT))}
-        disabled={regionOptions.length <= 1}
+        disabled={sortedRegionOptions.length <= 1}
       />
       <PopoverTitle title="isp" />
-      <Dropdown
+      <ComboBox
         id="isp-filter"
         items={ispOptions}
-        itemToString={(item) =>
-          item === FILTER_ALL_DEFAULT
-            ? capitalizeFirstLetter(translate(item))
-            : capitalizeFirstLetter(item)
+        value={itemToString(ispOptions.includes(filterIsp) ? filterIsp : 'none')}
+        itemToString={itemToString}
+        selectedItem={ispOptions.includes(filterIsp) ? filterIsp : 'none'}
+        onChange={(data: { selectedItem: string }) =>
+          handleFilterIsp(data.selectedItem ?? FILTER_ALL_DEFAULT)
         }
-        selectedItem={filterIsp}
-        onChange={(data) => handleFilterIsp(data.selectedItem ?? FILTER_ALL_DEFAULT)}
-        label={capitalizeFirstLetter(translate(FILTER_ALL_DEFAULT))}
         disabled={ispOptions.length <= 1}
       />
       <PopoverTitle title="contract_budget" />
@@ -194,19 +208,33 @@ export default function ContractTableFilters({
           }}
         />
       </Stack>
-      <PopoverTitle title="contract_dates" />
-      <DatePicker allowInput={false} onChange={handleFilterDates} datePickerType="range">
+      <PopoverTitle title="contract_period" />
+      <DatePicker
+        value={filterDates.min}
+        datePickerType="single"
+        allowInput={false}
+        onFocus={(e) => e.target.blur()}
+        onChange={(dates) => handleMinDate(dates[0].toISOString())}
+      >
         <DatePickerInput
-          value={formatDate(filterDates.min, '/')}
           placeholder="yyyy/mm/dd"
           labelText={translate('start_date')}
           id="contract-start-date-filter"
+          datePickerType="single"
         />
+      </DatePicker>
+      <DatePicker
+        value={filterDates.max}
+        datePickerType="single"
+        allowInput={false}
+        onFocus={(e) => e.target.blur()}
+        onChange={(dates) => handleMaxDate(dates[0].toISOString())}
+      >
         <DatePickerInput
-          value={formatDate(filterDates.max, '/')}
           placeholder="yyyy/mm/dd"
           labelText={translate('end_date')}
           id="contract-end-date-filter"
+          datePickerType="single"
         />
       </DatePicker>
 

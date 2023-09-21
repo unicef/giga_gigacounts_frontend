@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react'
+import { MetricSnake } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
 import { STRING_DEFAULT } from 'src/constants'
@@ -9,12 +10,13 @@ import { capitalizeFirstLetter } from 'src/utils/strings'
 
 type Props = {
   width?: CSSProperties['width']
-  name: 'uptime' | 'latency' | 'upload_speed' | 'download_speed'
+  name: MetricSnake
   value?: number | null
   expectedValue: number
   hideExpected?: boolean
   hideLabel?: boolean
   style?: CSSProperties
+  average?: boolean
 }
 
 export default function ComparingCard({
@@ -24,7 +26,8 @@ export default function ComparingCard({
   expectedValue,
   hideExpected = false,
   hideLabel = false,
-  style
+  style,
+  average
 }: Props) {
   const label = getMetricLabel(name)
   const { translate } = useLocales()
@@ -32,7 +35,7 @@ export default function ComparingCard({
 
   const getComparisonVariant = (real: number, total: number) => {
     let percentage = real / total
-    if (name === 'latency') percentage **= -1
+    if (name === MetricSnake.Latency) percentage **= -1
     if (percentage >= 0.9) return 'success'
     if (percentage >= 0.7) return 'warning'
     return 'error'
@@ -42,9 +45,12 @@ export default function ComparingCard({
     <Stack
       style={{ width, padding: spacing.md, backgroundColor: palette.background.neutral, ...style }}
       gap={spacing.lg}
+      justifyContent="flex-end"
       orientation="vertical"
     >
-      <Typography as="h5">{capitalizeFirstLetter(translate(name))}</Typography>
+      <Typography as="h5">
+        {capitalizeFirstLetter(translate(average ? `widgets.map.average_${name}` : name))}
+      </Typography>
       <Stack orientation="horizontal">
         {!hideExpected && (
           <Stack

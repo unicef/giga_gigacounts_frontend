@@ -1,8 +1,10 @@
-import { Button, Dropdown } from '@carbon/react'
+import { Button, ComboBox } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
+import { Setter } from 'src/@types'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { Stack } from 'src/components/stack'
 import { PopoverTitle } from 'src/components/typography'
+import { FILTER_ALL_DEFAULT } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter } from 'src/utils/strings'
@@ -10,10 +12,16 @@ import { capitalizeFirstLetter } from 'src/utils/strings'
 type Props = {
   closePopover: () => void
   setPage: Dispatch<SetStateAction<number>>
-  setFilterCountry: (countryName: string) => void
-  setFilterSearch: Dispatch<SetStateAction<string>>
+  setFilterCountry: Setter<string>
+  setFilterSearch: Setter<string>
   countryOptions: string[]
   countryName: string
+  setFilterRole: Setter<string>
+  roleOptions: string[]
+  filterRole: string
+  filterIsp: string
+  setFilterIsp: Setter<string>
+  ispOptions: string[]
 }
 
 export default function UsersTableFilters({
@@ -22,7 +30,13 @@ export default function UsersTableFilters({
   setFilterSearch,
   setPage,
   countryOptions,
-  countryName
+  countryName,
+  filterRole,
+  roleOptions,
+  setFilterRole,
+  filterIsp,
+  ispOptions,
+  setFilterIsp
 }: Props) {
   const { spacing } = useTheme()
   const { translate } = useLocales()
@@ -33,32 +47,80 @@ export default function UsersTableFilters({
     setFilterCountry(country)
   }
 
-  const sortedOptions =
+  const handleFilterRole = (role: string) => {
+    setPage(1)
+    setFilterRole(role)
+  }
+  const handleFilterIsp = (isp: string) => {
+    setPage(1)
+    setFilterIsp(isp)
+  }
+
+  const sortedCountries =
     countryOptions.length > 0
       ? countryOptions.filter((r) => r).sort((a, b) => a.localeCompare(b))
       : []
+  const sortedRoles =
+    roleOptions.length > 0 ? roleOptions.filter((r) => r).sort((a, b) => a.localeCompare(b)) : []
+  const sortedIsps =
+    ispOptions.length > 0 ? ispOptions.filter((r) => r).sort((a, b) => a.localeCompare(b)) : []
 
   const handleResetFilter = () => {
     setFilterCountry(user?.country.name ?? '')
+    setFilterRole(FILTER_ALL_DEFAULT)
+    setFilterIsp(FILTER_ALL_DEFAULT)
     setFilterSearch('')
     setPage(1)
     closePopover()
   }
 
+  const itemToString = (item: unknown) => {
+    if (!item) return ''
+    return item === FILTER_ALL_DEFAULT || item === 'none'
+      ? capitalizeFirstLetter(translate(item))
+      : capitalizeFirstLetter(item as string)
+  }
+
   return (
     <Stack style={{ padding: spacing.md, width: '400px' }} orientation="vertical">
       <PopoverTitle title="country" />
-      <Dropdown
+      <ComboBox
         id="user-country-select"
-        label={countryName}
-        itemToString={capitalizeFirstLetter}
-        items={sortedOptions}
+        itemToString={itemToString}
+        items={sortedCountries}
+        value={itemToString(countryName)}
         selectedItem={countryName}
-        onChange={(e) => {
-          handleFilterCountry(e.selectedItem ?? '')
+        onChange={(e: { selectedItem: string }) => {
+          handleFilterCountry(e.selectedItem ?? user?.country.name)
           closePopover()
         }}
-        disabled={sortedOptions.length <= 1}
+        disabled={sortedCountries.length <= 1}
+      />
+      <PopoverTitle title="role" />
+      <ComboBox
+        id="user-role-select"
+        itemToString={itemToString}
+        items={sortedRoles}
+        selectedItem={sortedRoles.includes(filterRole) ? filterRole : 'none'}
+        value={itemToString(sortedRoles.includes(filterRole) ? filterRole : 'none')}
+        onChange={(e: { selectedItem: string }) => {
+          handleFilterRole(e.selectedItem ?? FILTER_ALL_DEFAULT)
+          closePopover()
+        }}
+        disabled={sortedRoles.length <= 1}
+      />
+      <PopoverTitle title="isp" />
+      <ComboBox
+        id="user-isp-select"
+        itemToString={itemToString}
+        items={sortedIsps}
+        selectedItem={sortedIsps.includes(filterIsp) ? filterIsp : 'none'}
+        value={itemToString(sortedIsps.includes(filterIsp) ? filterIsp : 'none')}
+        onChange={(e: { selectedItem: string }) => {
+          handleFilterIsp(e.selectedItem ?? FILTER_ALL_DEFAULT)
+          closePopover()
+        }}
+        disabled={sortedIsps.length <= 1}
       />
       <Button
         size="sm"

@@ -1,10 +1,11 @@
 @forward './Button';
+@forward './DashboardSearch.scss';
 @forward './Grid.scss';
 @forward './Header.scss';
+@forward './HideScrollBar.scss';
 @forward './MapPopup.scss';
 @forward './PopoverContent.scss';
 @forward './SideNavItem.scss';
 @forward './TableToolbar.scss';
 @forward './Tag';
-@forward './HideScrollBar.scss';
-@forward './DashboardSearch.scss';
+@forward 'SideNavDivider.scss';

@@ -44,7 +44,7 @@ export default function CustomJoyride({ name, run = true }: CustomJoyrideProps) 
     if (data.status === STATUS.FINISHED || data.status === STATUS.SKIPPED)
       completeTour(name !== 'home' ? name : `home_${value}`)
 
-    if (data.action === ACTIONS.START && name === 'home' && setExpanded) {
+    if (data.action === ACTIONS.START && name === 'home') {
       setExpanded(true)
     }
   }

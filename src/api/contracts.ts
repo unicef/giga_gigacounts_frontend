@@ -11,6 +11,7 @@ import {
   IDraft,
   ILta,
   IPendingContractDetails,
+  IPeriod,
   Translation
 } from 'src/@types'
 import { DRAFT_ID_OFFSET } from 'src/constants'
@@ -80,15 +81,27 @@ export const updateContractDraft = async (contract: Contract) => {
   }
 }
 
-export const publishContractDraft = async (contract: Contract, draftId?: string) => {
+export const publishContractDraft = async (
+  contract: Contract,
+  draftId: string,
+  confirmation: boolean
+) => {
   const body = {
     draftId: String(Number(draftId) - DRAFT_ID_OFFSET),
     ...contract
   }
 
-  const response = await instance.post(`/contract`, {
-    ...body
-  })
+  const response = await instance.post(
+    `/contract`,
+    {
+      ...body
+    },
+    {
+      params: {
+        confirmation: confirmation ? 1 : 0
+      }
+    }
+  )
   return response.data
 }
 
@@ -133,7 +146,9 @@ export const approveContract = async (contractId: string) => {
   return response.data
 }
 
-export const getContractAvailablePayments = async (contractId: string): Promise<any> => {
+export const getContractAvailablePayments = async (
+  contractId: string
+): Promise<{ amount: number; periods: IPeriod[] }> => {
   const response = await instance.get(`/contract/available-payments/${contractId}`)
   return response.data
 }

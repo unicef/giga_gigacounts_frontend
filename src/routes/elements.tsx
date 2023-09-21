@@ -7,7 +7,7 @@ const Loadable = (Component: ElementType) => (props: any) =>
       <Component {...props} />
     </Suspense>
   )
-export const LoginPage = Loadable(lazy(() => import('src/pages/auth/LoginPage')))
+
 export const GeneralAppPage = Loadable(lazy(() => import('src/pages/dashboard/GeneralAppPage')))
 export const UserAccountPage = Loadable(lazy(() => import('src/pages/dashboard/UserAccountPage')))
 export const NotificationsListPage = Loadable(

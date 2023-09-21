@@ -1,25 +1,42 @@
-import { TableCell, TableRow } from '@carbon/react'
-import { useLocales } from 'src/locales'
-import { Translation } from 'src/@types'
+import { Pictogram } from 'src/@types'
 import { Typography } from 'src/components/typography'
+import { useTheme } from 'src/theme'
+import { capitalizeFirstLetter } from 'src/utils/strings'
+import { Stack } from '../stack'
 
 type Props = {
   isNotFound: boolean
-  cols?: number
-  text: Translation
+  title: string
+  subtitle: string
+  rowsPerPage: number
+  Icon: Pictogram
 }
+const ROW_HEIGHT = 81
 
-export default function TableNoData({ isNotFound, cols, text }: Props) {
-  const { translate } = useLocales()
-
+export default function TableNoData({ isNotFound, rowsPerPage, title, subtitle, Icon }: Props) {
+  const { palette, spacing } = useTheme()
   return (
     <>
       {isNotFound && (
-        <TableRow>
-          <TableCell colSpan={cols}>
-            <Typography as="h5">{translate(text)}</Typography>
-          </TableCell>
-        </TableRow>
+        <Stack
+          alignItems="center"
+          justifyContent="center"
+          style={{
+            width: '100%',
+            height: `${ROW_HEIGHT * rowsPerPage}px`
+          }}
+        >
+          <Icon
+            style={{ marginBottom: spacing.xl }}
+            width={96}
+            height={96}
+            color={palette.grey[380]}
+          />
+          <Typography as="h4" variant="disabled">
+            {capitalizeFirstLetter(title)}
+          </Typography>
+          <Typography variant="disabled">{capitalizeFirstLetter(subtitle)}</Typography>
+        </Stack>
       )}
     </>
   )

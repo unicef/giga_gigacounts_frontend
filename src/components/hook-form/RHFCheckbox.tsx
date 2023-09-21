@@ -10,7 +10,7 @@ interface RHFCheckboxProps {
   checked?: boolean
 }
 
-export function RHFCheckbox({
+export default function RHFCheckbox({
   onChange,
   id,
   name,

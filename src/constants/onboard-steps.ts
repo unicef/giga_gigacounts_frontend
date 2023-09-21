@@ -14,18 +14,28 @@ export const ONBOARD_TOUR_STEPS: Record<
       target: '#account-nav-information'
     },
     {
-      content: 'onboard_steps.home.notifications_popover',
-      target: '#notifications-popover'
-    },
-    {
       content: 'onboard_steps.home.language_popover',
       placement: 'bottom-end',
       target: '#language-popover'
     },
     {
+      content: 'onboard_steps.home.notifications_popover',
+      target: '#notifications-popover'
+    },
+    {
+      content: 'onboard_steps.home.help_page_link',
+      placement: 'top',
+      target: '#help-page-link'
+    },
+    {
       content: 'onboard_steps.home.feedback_link',
       placement: 'top',
       target: '#feedback-link'
+    },
+    {
+      content: 'onboard_steps.home.ask_for_help_link',
+      placement: 'top',
+      target: '#ask-for-help-link'
     }
     // {
     //   content: 'Here you can connect your wallet for the payment of automatic contracts',
@@ -76,12 +86,12 @@ export const ONBOARD_TOUR_STEPS: Record<
     {
       content: 'onboard_steps.contract_detail.schools',
       placement: 'bottom',
-      target: '#schools-tab'
+      target: '.schools-tab'
     },
     {
       content: 'onboard_steps.contract_detail.payment',
       placement: 'bottom',
-      target: '#payment-tab'
+      target: '.payment-tab'
     }
   ]
 }

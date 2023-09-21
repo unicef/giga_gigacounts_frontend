@@ -1,17 +1,19 @@
-import { useState } from 'react';
-import { IAttachment } from 'src/@types';
-import CustomDataTable from 'src/components/data-table/CustomDataTable';
-import { KEY_DEFAULTS } from 'src/constants';
-import useTable from 'src/hooks/useTable';
-import { useLocales } from 'src/locales';
+import { IAttachment } from 'src/@types'
+import CustomDataTable from 'src/components/data-table/CustomDataTable'
+import { KEY_DEFAULTS } from 'src/constants'
+import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
+import useTable from 'src/hooks/useTable'
+import { useLocales } from 'src/locales'
 import {
   AttachmentsTableRow,
   AttachmentsTableToolbar
-} from 'src/sections/@dashboard/attachments/list';
+} from 'src/sections/@dashboard/attachments/list'
 
 export default function AttachmentsTab({ attachments }: { attachments: IAttachment[] | null }) {
   const { translate } = useLocales()
-  const [filterName, setFilterName] = useState('')
+  const [searchParams, generateSetter] = useCustomSearchParams({ filterAttachmentName: '' })
+  const { filterAttachmentName: filterSearch } = searchParams
+  const setFilterSearch = generateSetter('filterAttachmentName')
 
   const { page, setPage, rowsPerPage, setRowsPerPage } = useTable()
 
@@ -20,12 +22,15 @@ export default function AttachmentsTab({ attachments }: { attachments: IAttachme
     { key: KEY_DEFAULTS[0], header: '' }
   ]
 
-  const dataFiltered = attachments ? applyFilter({
-    inputData: attachments,
-    filterName
-  }) : null
+  const dataFiltered = attachments
+    ? applyFilter({
+        inputData: attachments,
+        filterSearch
+      })
+    : null
 
-  const isNotFound = Boolean( dataFiltered && !dataFiltered.length)
+  const isEmpty = Boolean(attachments && !attachments.length)
+  const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
 
   return (
     <CustomDataTable
@@ -34,24 +39,39 @@ export default function AttachmentsTab({ attachments }: { attachments: IAttachme
       getRowComponentProps={(row) => ({
         url: row.url
       })}
-      ToolbarContent={<AttachmentsTableToolbar setFilterSearch={setFilterName} setPage={setPage} />}
+      ToolbarContent={
+        <AttachmentsTableToolbar
+          filterSearch={filterSearch}
+          setFilterSearch={setFilterSearch}
+          setPage={setPage}
+        />
+      }
       data={dataFiltered}
       page={page}
       setPage={setPage}
       isNotFound={isNotFound}
+      isEmpty={isEmpty}
       rowsPerPage={rowsPerPage}
       setRowsPerPage={setRowsPerPage}
       tableHead={TABLE_HEAD}
       tableName="attachments"
-      noDataText="table_no_data.attachments"
+      emptyText="table_no_data.attachments"
       title="Attachments table"
     />
   )
 }
 
-function applyFilter({ inputData, filterName }: { inputData: IAttachment[]; filterName: string }) {
-  if (filterName !== '')
-    inputData = inputData.filter((attachment) => filterName === attachment.name)
+function applyFilter({
+  inputData,
+  filterSearch
+}: {
+  inputData: IAttachment[]
+  filterSearch: string
+}) {
+  if (filterSearch !== '')
+    inputData = inputData.filter((attachment) =>
+      attachment.name.toLowerCase().includes(filterSearch.toLowerCase())
+    )
 
   return inputData
 }

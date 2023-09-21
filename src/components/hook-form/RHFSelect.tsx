@@ -23,7 +23,14 @@ type RHFSelectProps<T> = {
   readOnly?: boolean
 }
 
-export function RHFSelect<T>({ name, native, label, options, id, ...other }: RHFSelectProps<T>) {
+export default function RHFSelect<T>({
+  name,
+  native,
+  label,
+  options,
+  id,
+  ...other
+}: RHFSelectProps<T>) {
   const { control } = useFormContext()
   return (
     <Controller
@@ -35,7 +42,7 @@ export function RHFSelect<T>({ name, native, label, options, id, ...other }: RHF
           items={options}
           titleText={label}
           label={options.find((o) => o.value === field.value)?.label ?? ''}
-          itemToString={(item) => item.label}
+          itemToString={(item) => (item ? item.label : '')}
           {...field}
           {...other}
           onChange={(e) => {

@@ -18,3 +18,5 @@ export type SortableKeys<T extends {}> = Exclude<
   }[keyof T],
   undefined
 >
+
+export type Setter<T extends string> = (value: T) => void

@@ -1,19 +1,20 @@
 import {
   Header as CarbonHeader,
-  HeaderGlobalAction,
   HeaderGlobalBar,
   HeaderMenuButton,
   HeaderName,
   SkipToContent,
   Theme
 } from '@carbon/react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { Typography } from 'src/components/typography'
-import { ICONS } from 'src/constants'
 import { useNavbar } from 'src/context/layout/NavbarContext'
 import { useLocales } from 'src/locales'
 import { ROUTES } from 'src/routes/paths'
 import { useTheme } from 'src/theme'
+import { KNOWLEDGE_BASE_MAP } from 'src/constants'
+import { useSnackbar } from 'src/hooks/useSnackbar'
+import { capitalizeFirstLetter } from 'src/utils/strings'
 import LanguagePopover from './LanguagePopover'
 import NavBar from './NavBar'
 import NotificationPopover from './NotificationPopover'
@@ -23,6 +24,21 @@ export default function Header() {
   const { translate } = useLocales()
   const { spacing } = useTheme()
   const { expanded, setExpanded } = useNavbar()
+  const { pushError } = useSnackbar()
+  const { pathname } = useLocation()
+
+  const redirectToKnowledgeBase = () => {
+    let link = ''
+    return Object.keys(KNOWLEDGE_BASE_MAP).some((key) => {
+      if (pathname.includes(key)) {
+        link = KNOWLEDGE_BASE_MAP[key]
+        return true
+      }
+      return false
+    })
+      ? window.open(link, '_blank')
+      : pushError('push.knowledge_base_error')
+  }
 
   return (
     <CarbonHeader aria-label="header" style={{ zIndex: 1, paddingRight: spacing.xl }}>
@@ -31,7 +47,7 @@ export default function Header() {
         isCollapsible
         aria-label={expanded ? 'Close menu' : 'Open menu'}
         isActive={expanded}
-        onClick={() => (setExpanded ? setExpanded((prev) => !prev) : null)}
+        onClick={() => setExpanded((prev) => !prev)}
         aria-expanded={expanded}
       />
       <HeaderName
@@ -46,14 +62,15 @@ export default function Header() {
       <HeaderGlobalBar>
         <LanguagePopover />
 
-        <HeaderGlobalAction
-          id="help-request-link"
-          onClick={() => navigate(ROUTES.dashboard.contact.helpRequest.route)}
-          aria-label={translate('help')}
-        >
-          <ICONS.Help />
-        </HeaderGlobalAction>
         <NotificationPopover />
+        <div id="help-page-link">
+          <Typography
+            onClick={redirectToKnowledgeBase}
+            style={{ alignSelf: 'center', padding: spacing.xs }}
+          >
+            {capitalizeFirstLetter(translate('visit_help_page'))}
+          </Typography>
+        </div>
       </HeaderGlobalBar>
       <Theme theme="white">
         <NavBar />

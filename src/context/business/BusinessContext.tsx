@@ -1,10 +1,19 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { IContract, ICountry, ICurrency, IISP, INotification, ISchool } from 'src/@types'
+import {
+  IContract,
+  ICountry,
+  ICurrency,
+  IFrequency,
+  IISP,
+  INotification,
+  ISchool
+} from 'src/@types'
 import { deleteContractDraft, getContracts, getCountries, getCurrencies } from 'src/api/contracts'
 import { getIsp } from 'src/api/isp'
 import { ISuggestedMetrics, getSuggestedMetrics } from 'src/api/metrics'
 import { discardNotification, getNotifications, readNotification } from 'src/api/notifications'
+import { getFrequencies } from 'src/api/payments'
 import { getSchools } from 'src/api/school'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { CURRENCIES_TYPES, ENV_SUPPORTED_NETWORK_ID } from 'src/constants'
@@ -20,6 +29,7 @@ const initialState: BusinessContextValue = {
   schools: null,
   notifications: null,
   suggestedMetrics: null,
+  frequencies: [],
   refetchNotifications: () => {},
   refetchContracts: () => {},
   setSchools: () => {},
@@ -51,6 +61,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   const [schools, setSchools] = useState<ISchool[] | null>(null)
   const [notifications, setNotifications] = useState<INotification[] | null>(null)
   const [currencies, setCurrencies] = useState<ICurrency[]>([])
+  const [frequencies, setFrequencies] = useState<IFrequency[]>([])
   const { user, isAuthenticated, isAdmin } = useAuthContext()
 
   const handleErrors = useCallback(
@@ -67,6 +78,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
       schools,
       notifications,
       currencies,
+      frequencies,
       suggestedMetrics,
       refetchNotifications: () => {
         if (!isAuthenticated) return
@@ -116,6 +128,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         Promise.allSettled(ids.map((id) => discardNotification(user?.id, id)))
     }),
     [
+      frequencies,
       isAdmin,
       suggestedMetrics,
       isAuthenticated,
@@ -189,5 +202,9 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     getCurrencies(countryId).then(setCurrencies).catch(handleErrors)
   }, [getCountryId, isAuthenticated, handleErrors])
 
+  useEffect(() => {
+    getFrequencies().then(setFrequencies).catch(handleErrors)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return <BusinessContext.Provider value={memorizedValue}>{children}</BusinessContext.Provider>
 }

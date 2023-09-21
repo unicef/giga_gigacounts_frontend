@@ -1,14 +1,21 @@
 import { ProgressBar } from '@carbon/react'
 import { useEffect, useState } from 'react'
-import { ContractDetails, ContractStatus, IContractPayment, PaymentStatus } from 'src/@types'
+import {
+  ContractDetails,
+  ContractStatus,
+  IContractPayment,
+  IPeriod,
+  PaymentStatus
+} from 'src/@types'
 import { getContractAvailablePayments } from 'src/api/contracts'
 import { getContractPayments } from 'src/api/payments'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { Stack } from 'src/components/stack'
 import { useTable } from 'src/components/table'
 import { Typography } from 'src/components/typography'
-import { FILTER_ALL_DEFAULT, ICONS, KEY_DEFAULTS, Views } from 'src/constants'
+import { FILTER_ALL_DEFAULT, KEY_DEFAULTS, Views } from 'src/constants'
 import { useAuthorization } from 'src/hooks/useAuthorization'
+import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import PaymentDetailsDrawer from 'src/sections/@dashboard/payment/form/PaymentDetailsDrawer'
@@ -24,24 +31,27 @@ export default function PaymentTab({ contract }: { contract: ContractDetails }) 
 
   const paymentFrequency = contract.isContract ? contract.frequency.name : 'Monthly'
   const [tableData, setTableData] = useState<IContractPayment[] | null>(null)
-  const [filterName, setFilterName] = useState('')
-  const [filterStatus, setFilterStatus] = useState<PaymentStatus | typeof FILTER_ALL_DEFAULT>(
-    FILTER_ALL_DEFAULT
-  )
+
+  const [searchParams, generateSetter] = useCustomSearchParams({
+    filterPaymentStatus: FILTER_ALL_DEFAULT
+  })
+  const { filterPaymentStatus: filterStatus } = searchParams
+  const setFilterStatus = generateSetter('filterPaymentStatus')
 
   const newPayment = useModal()
 
-  const [availablePayments, setAvailablePayments] = useState<
-    { month: number; year: number }[] | null
-  >(null)
+  const [availablePayments, setAvailablePayments] = useState<{
+    amount: number
+    periods: IPeriod[]
+  } | null>(null)
 
   const { translate } = useLocales()
 
   const TABLE_HEAD: { key: string; header: string; align?: string }[] = [
     { key: 'id', header: `${translate('payment')} #` },
+    { key: 'status', header: translate('status') },
     { key: 'dateTo', header: translate('payment_period') },
     { key: 'amount', header: translate('amount') },
-    { key: 'status', header: translate('status') },
     { key: 'connections', header: translate('connection') },
     { key: KEY_DEFAULTS[0], header: '' },
     { key: KEY_DEFAULTS[1], header: '' }
@@ -56,6 +66,7 @@ export default function PaymentTab({ contract }: { contract: ContractDetails }) 
     !contract.automatic
 
   useEffect(() => {
+    getContractPayments(contract.id).then(setTableData)
     if (canAddPayment) {
       getContractAvailablePayments(contract.id)
         .then(setAvailablePayments)
@@ -72,21 +83,15 @@ export default function PaymentTab({ contract }: { contract: ContractDetails }) 
     }
   }
 
-  useEffect(() => {
-    getContractPayments(contract.id)
-      .then(setTableData)
-      .catch(() => setTableData([]))
-  }, [contract.id])
-
   const dataFiltered = tableData
     ? applyFilter({
         inputData: tableData,
-        filterName,
         filterStatus
       })
     : null
 
-  const isNotFound = Boolean(dataFiltered && !dataFiltered.length)
+  const isEmpty = Boolean(tableData && !tableData.length)
+  const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
 
   const downloadableData = tableData
     ? tableData.map((payment) => ({
@@ -108,6 +113,13 @@ export default function PaymentTab({ contract }: { contract: ContractDetails }) 
         }
       ]
 
+  const budgetPaid = tableData
+    ? tableData
+        .filter((p) => p.status === PaymentStatus.Paid)
+        .reduce((prev, curr) => prev + Number(curr.amount), 0)
+        .toFixed(2)
+    : 0
+
   return (
     <>
       {contract.isContract && (
@@ -120,11 +132,11 @@ export default function PaymentTab({ contract }: { contract: ContractDetails }) 
         >
           <Typography as="h6">{capitalizeFirstLetter(translate('spent_budget'))}</Typography>
           <ProgressBar
-            label={`${contract.currency.code} ${Number(contract.totalSpent.amount)} /
-            ${contract.currency.code} ${Number(contract.budget)}`}
+            label={`${contract.currency.code} ${Number(budgetPaid)} /
+            ${contract.currency.code} ${Number(contract.budget).toFixed(2)}`}
             size="big"
             max={Number(contract.budget)}
-            value={Number(contract.totalSpent.amount)}
+            value={Number(budgetPaid)}
           />
         </Stack>
       )}
@@ -143,9 +155,9 @@ export default function PaymentTab({ contract }: { contract: ContractDetails }) 
         })}
         ToolbarContent={
           <PaymentTableToolbar
+            filterStatus={filterStatus}
             csvDownloadData={downloadableData}
             csvDownloadFileName={`payments_contract:${contract.name}`}
-            setFilterSearch={setFilterName}
             setFilterStatus={setFilterStatus}
             setPage={setPage}
           />
@@ -154,52 +166,50 @@ export default function PaymentTab({ contract }: { contract: ContractDetails }) 
         page={page}
         setPage={setPage}
         isNotFound={isNotFound}
+        isEmpty={isEmpty}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         tableHead={TABLE_HEAD}
         tableName="payments"
-        noDataText="table_no_data.payments"
+        emptyText="table_no_data.payments"
         title="Payments table"
         buttonsProps={
-          canAddPayment && availablePayments && availablePayments.length > 0
+          canAddPayment && availablePayments?.periods && availablePayments.periods.length > 0
             ? [
                 {
                   kind: 'primary',
                   onClick: newPayment.open,
-                  renderIcon: ICONS.Add,
+                  renderIcon: 'Add',
                   label: capitalizeFirstLetter(translate('new_payment'))
                 }
               ]
             : []
         }
       />
-      <PaymentDetailsDrawer
-        openView={() => {}}
-        paymentFrequency={paymentFrequency}
-        availablePayments={availablePayments ?? []}
-        refetchPayments={refetchPayments}
-        contract={contract}
-        open={newPayment.value}
-        onClose={newPayment.close}
-      />
+      {availablePayments?.amount && (
+        <PaymentDetailsDrawer
+          renderView
+          handleOpen={newPayment.open}
+          paymentFrequency={paymentFrequency}
+          availablePayments={availablePayments?.periods ?? []}
+          refetchPayments={refetchPayments}
+          contract={contract}
+          open={newPayment.value}
+          onClose={newPayment.close}
+          amount={availablePayments.amount}
+        />
+      )}
     </>
   )
 }
 
 function applyFilter({
   inputData,
-  filterName,
   filterStatus
 }: {
   inputData: IContractPayment[]
-  filterName: string
-  filterStatus: PaymentStatus | typeof FILTER_ALL_DEFAULT
+  filterStatus: string
 }) {
-  if (filterName)
-    inputData = inputData.filter(
-      (invoice) => invoice.createdBy.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    )
-
   if (filterStatus !== FILTER_ALL_DEFAULT)
     inputData = inputData.filter((invoice) => invoice.status === filterStatus)
 

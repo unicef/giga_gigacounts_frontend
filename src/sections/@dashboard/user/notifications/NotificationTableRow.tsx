@@ -3,16 +3,16 @@ import TableRow, { TableRowProps } from '@carbon/react/lib/components/DataTable/
 import TableSelectRow, {
   TableSelectRowProps
 } from '@carbon/react/lib/components/DataTable/TableSelectRow'
-import { NotificationStatus } from 'src/@types'
+import { INotification, NotificationStatus } from 'src/@types'
 import { ICONS, NOTIFICATION_STATUS_COLORS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
 import { parseNotificationStatus } from 'src/utils/status'
-import { capitalizeFirstLetter } from 'src/utils/strings'
+import { capitalizeFirstLetter, threeDots } from 'src/utils/strings'
 import { getOrderedFromCells } from 'src/utils/table'
 
 type Props = {
-  row: DataTableRow
+  row: DataTableRow<INotification[]>
   rowProps: TableRowProps
   selectionProps: TableSelectRowProps
   handleReadRow: (id: string) => void
@@ -28,7 +28,10 @@ export default function NotificationsTableRow({
 }: Props) {
   const { translate } = useLocales()
 
-  const [title, status, message] = getOrderedFromCells(['title', 'status', 'message'], row.cells)
+  const [title, status, message] = getOrderedFromCells<INotification>(
+    ['title', 'status', 'message'],
+    row.cells
+  )
 
   const confirm = useModal()
 
@@ -38,19 +41,20 @@ export default function NotificationsTableRow({
     <TableRow {...rowProps}>
       <TableSelectRow {...selectionProps} />
 
-      <TableCell>{title}</TableCell>
-      <TableCell>
+      <TableCell style={{ width: '35%' }}>{title}</TableCell>
+      <TableCell style={{ width: '15%' }}>
         <Tag type={NOTIFICATION_STATUS_COLORS[parsedStatus]}>
           {capitalizeFirstLetter(translate(`constant_status.notification.${parsedStatus}`))}
         </Tag>
       </TableCell>
 
-      <TableCell>{capitalizeFirstLetter(message)}</TableCell>
+      <TableCell style={{ width: '35%' }}>
+        {threeDots(capitalizeFirstLetter(message as string), 150)}
+      </TableCell>
 
-      <TableCell>
+      <TableCell style={{ width: '15%' }}>
         {parsedStatus !== NotificationStatus.READ && (
           <Button
-            style={{ margin: 0, padding: 0 }}
             kind="ghost"
             hasIconOnly
             renderIcon={ICONS.Success}
@@ -60,7 +64,6 @@ export default function NotificationsTableRow({
         )}
 
         <Button
-          style={{ margin: 0, padding: 0 }}
           kind="ghost"
           hasIconOnly
           renderIcon={ICONS.Delete}
@@ -68,15 +71,15 @@ export default function NotificationsTableRow({
           onClick={() => confirm.open()}
         />
       </TableCell>
-      <TableCell>
+      <TableCell style={{ width: '0%' }}>
         <Modal
           open={confirm.value}
           danger
           onRequestClose={confirm.close}
           modalLabel={capitalizeFirstLetter(translate('delete'))}
-          modalHeading={translate('delete_confirm_item')}
-          primaryButtonText={translate('delete')}
-          secondaryButtonText={translate('cancel')}
+          modalHeading={capitalizeFirstLetter(translate('delete_confirm_item'))}
+          primaryButtonText={capitalizeFirstLetter(translate('delete'))}
+          secondaryButtonText={capitalizeFirstLetter(translate('cancel'))}
           onRequestSubmit={() => {
             handleDeleteRow(row.id)
             confirm.close()

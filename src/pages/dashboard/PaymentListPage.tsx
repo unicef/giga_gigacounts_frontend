@@ -1,17 +1,18 @@
-import { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router';
-import { IContractPayment, PaymentStatus, UserRoles } from 'src/@types';
-import { getPayments } from 'src/api/payments';
-import { useAuthContext } from 'src/auth/useAuthContext';
-import { Banner } from 'src/components/banner';
-import CustomDataTable from 'src/components/data-table/CustomDataTable';
-import { useTable } from 'src/components/table';
-import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants';
-import { useAuthorization } from 'src/hooks/useAuthorization';
-import { useLocales } from 'src/locales';
-import { PaymentTableRow, PaymentTableToolbar } from 'src/sections/@dashboard/payment/list';
-import { redirectOnError } from '../errors/handlers';
+import { useEffect, useState } from 'react'
+import { Helmet } from 'react-helmet-async'
+import { useNavigate } from 'react-router'
+import { IContractPayment, UserRoles } from 'src/@types'
+import { getPayments } from 'src/api/payments'
+import { useAuthContext } from 'src/auth/useAuthContext'
+import { Banner } from 'src/components/banner'
+import CustomDataTable from 'src/components/data-table/CustomDataTable'
+import { useTable } from 'src/components/table'
+import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants'
+import { useAuthorization } from 'src/hooks/useAuthorization'
+import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
+import { useLocales } from 'src/locales'
+import { PaymentTableRow, PaymentTableToolbar } from 'src/sections/@dashboard/payment/list'
+import { redirectOnError } from '../errors/handlers'
 
 export default function PaymentListPage() {
   const navigate = useNavigate()
@@ -24,13 +25,18 @@ export default function PaymentListPage() {
         contractName: string
         contractId: string
         contractNumberOfSchools: number
+        contractCountryName: string
       })[]
     | null
   >(null)
-  const [filterName, setFilterName] = useState('')
-  const [filterStatus, setFilterStatus] = useState<PaymentStatus | typeof FILTER_ALL_DEFAULT>(
-    FILTER_ALL_DEFAULT
-  )
+
+  const [searchParams, generateSetter] = useCustomSearchParams({
+    filterName: '',
+    filterStatus: FILTER_ALL_DEFAULT
+  })
+  const { filterName, filterStatus } = searchParams
+  const setFilterName = generateSetter('filterName')
+  const setFilterStatus = generateSetter('filterStatus')
 
   const { translate } = useLocales()
   const { hasSomeRole } = useAuthorization()
@@ -40,9 +46,9 @@ export default function PaymentListPage() {
 
   const TABLE_HEAD: { key: string; header: string; align?: string }[] = [
     { key: 'id', header: `${translate('payment')} #` },
+    { key: 'status', header: translate('status') },
     { key: 'dateTo', header: translate('payment_period') },
     { key: 'amount', header: translate('amount') },
-    { key: 'status', header: translate('status') },
     { key: 'connections', header: translate('connection') }
   ]
   if (canSeeContractName)
@@ -51,9 +57,7 @@ export default function PaymentListPage() {
       header: translate('contract_name')
     })
 
-  if (isAdmin) TABLE_HEAD.push({ key: 'contractCountryName', header: translate('country') })
-  TABLE_HEAD.push({ key: KEY_DEFAULTS[0], header: '' })
-  TABLE_HEAD.push({ key: KEY_DEFAULTS[1], header: '' })
+  TABLE_HEAD.push({ key: KEY_DEFAULTS[0], header: '' }, { key: KEY_DEFAULTS[1], header: '' })
 
   const refetchPayments = () => {
     getPayments().then(setTableData)
@@ -72,8 +76,8 @@ export default function PaymentListPage() {
         filterStatus
       })
     : null
-
-  const isNotFound = Boolean(dataFiltered && !dataFiltered.length)
+  const isEmpty = Boolean(tableData && !tableData.length)
+  const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
 
   const downloadableData = tableData
     ? tableData.map((payment) => ({
@@ -101,7 +105,7 @@ export default function PaymentListPage() {
         <title> Payment: List | Gigacounts</title>
       </Helmet>
 
-      <Banner title={translate('payments_list')} />
+      <Banner title={translate('payments_log')} />
 
       <CustomDataTable
         isSortable
@@ -118,6 +122,9 @@ export default function PaymentListPage() {
         })}
         ToolbarContent={
           <PaymentTableToolbar
+            filterStatus={filterStatus}
+            filterName={filterName}
+            search
             csvDownloadData={downloadableData}
             csvDownloadFileName="payments"
             setFilterSearch={setFilterName}
@@ -129,11 +136,12 @@ export default function PaymentListPage() {
         page={page}
         setPage={setPage}
         isNotFound={isNotFound}
+        isEmpty={isEmpty}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         tableHead={TABLE_HEAD}
         tableName="payments"
-        noDataText="table_no_data.payments"
+        emptyText="table_no_data.payments"
         title="Payments table"
       />
     </>
@@ -151,12 +159,11 @@ function applyFilter({
     contractNumberOfSchools: number
   })[]
   filterName: string
-  filterStatus: PaymentStatus | typeof FILTER_ALL_DEFAULT
+  filterStatus: string
 }) {
-
   if (filterName)
     inputData = inputData.filter(
-      (invoice) => invoice.createdBy.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+      (invoice) => invoice.contractName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     )
 
   if (filterStatus !== FILTER_ALL_DEFAULT)

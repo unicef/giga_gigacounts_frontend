@@ -1,8 +1,12 @@
 import { TOptionsBase } from 'i18next'
 import { useTranslation } from 'react-i18next'
-import localStorageAvailable from 'src/utils/localStorageAvailable'
 import { Translation } from 'src/@types'
-import { replaceTranslated, replaceTwoTranslated } from 'src/utils/translation'
+import localStorageAvailable from 'src/utils/localStorageAvailable'
+import {
+  replaceTranslated,
+  replaceTwoTranslated,
+  translateCapitalized
+} from 'src/utils/translation'
 import { allLangs, defaultLang } from './config-lang'
 
 export default function useLocales() {
@@ -26,12 +30,14 @@ export default function useLocales() {
     allLangs,
     replaceTranslated: (message: Translation, replace: string, value: Translation) =>
       replaceTranslated(message, replace, value, translate),
+    translateCapitalized: (message: Translation | Capitalize<Translation>) =>
+      translateCapitalized(message, translate),
     replaceTwoTranslated: (
       message: Translation,
       replace: string,
       replace2: string,
       value: Translation,
-      value2: number
+      value2: number | string
     ) => replaceTwoTranslated(message, replace, replace2, value, value2, translate)
   }
 }

@@ -7,15 +7,15 @@ export const divideIntoChunks = <T extends any[]>(array: T, chunkSize: number) =
 export const resolvePromises = <T, U>(
   array: T[],
   toPromise: (item: T) => Promise<U>,
-  then: (result: U) => void,
-  catchErr: (error: any) => void
+  then: (result: U, value?: T) => void,
+  catchErr: (error: any, value?: T) => void
 ) => {
   if (array.length === 0) return
   if (array.length > 0) {
     Promise.allSettled(array.map(toPromise)).then((result) =>
-      result.forEach((r) => {
-        if (r.status === 'fulfilled') then(r.value)
-        if (r.status === 'rejected') catchErr(r.reason)
+      result.forEach((r, index) => {
+        if (r.status === 'fulfilled') then(r.value, array.at(index))
+        if (r.status === 'rejected') catchErr(r.reason, array.at(index))
       })
     )
   }

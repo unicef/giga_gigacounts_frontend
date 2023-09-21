@@ -1,6 +1,7 @@
 import {
   Button,
   DataTable,
+  DataTableHeader,
   DataTableSkeleton,
   Table,
   TableBatchAction,
@@ -14,15 +15,18 @@ import {
   TableToolbar,
   TableToolbarContent
 } from '@carbon/react'
-import React, { Dispatch, SetStateAction } from 'react'
+import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
+import React from 'react'
 import { Icon, Translation } from 'src/@types'
 import { Stack } from 'src/components/stack'
 import { TableEmptyRows, TableNoData, TablePaginationCustom, emptyRows } from 'src/components/table'
+import { ICONS, KEY_DEFAULTS, PICTOGRAMS } from 'src/constants'
+import { useLocales } from 'src/locales'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 
 type RowComponentPropsBase = JSX.IntrinsicAttributes & {
   row: any
-  rowProps: any
+  rowProps: TableRowProps
   selectionProps?: any
 }
 
@@ -42,9 +46,10 @@ type CustomDataTableProps<T extends { id: string }, U extends RowComponentPropsB
     label: string
     renderIcon?: Icon
     hasIconOnly?: boolean
-    onClick?: (e: any) => void
+    onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
   }[]
   data: T[] | null
+  RowComponent: (props: U, children?: React.ReactNode) => JSX.Element
   getRowComponentProps?: (row: T) => Omit<U, 'row' | 'rowProps' | 'selectionProps'>
   isNotFound: boolean
   isSelectable?: boolean
@@ -52,17 +57,19 @@ type CustomDataTableProps<T extends { id: string }, U extends RowComponentPropsB
   onSelectAll?: (rows: T[], checked: boolean) => void
   onSelectRow?: (row: T, checked: boolean) => void
   page: number
-  RowComponent: (props: U, children?: React.ReactNode) => JSX.Element
   rowsPerPage: number
-  setPage: Dispatch<SetStateAction<number>>
-  setRowsPerPage: Dispatch<SetStateAction<number>>
-  tableHead: { key: string; header: React.ReactNode }[]
+  setPage: (page: number) => void
+  setRowsPerPage: (rowsPerPage: number) => void
+  tableHead: DataTableHeader[]
   tableName: string
   title?: string
   ToolbarContent?: React.ReactNode
   batchActions?: { icon: Icon; title: string; onClick: (selectedRows: any[]) => void }[]
   selection?: string[]
-  noDataText: Translation
+  emptyText: Translation
+  isEmpty: boolean
+  getDataKey?: (row: T) => string | number
+  rowToDataKey?: (row: any) => string
 }
 
 export default function CustomDataTable<T extends { id: string }, U extends RowComponentPropsBase>({
@@ -85,8 +92,12 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
   ToolbarContent,
   batchActions,
   selection,
-  noDataText
+  emptyText,
+  isEmpty,
+  getDataKey,
+  rowToDataKey
 }: CustomDataTableProps<T, U>) {
+  const { translate, replaceTranslated } = useLocales()
   return (
     <>
       {data ? (
@@ -117,17 +128,17 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
               selectedRows: any[]
               selectRow: any
             }) => {
-              if (selection) {
-                selection.forEach((id) => {
-                  if (selectedRows.map((r) => r.id).includes(id)) return
-                  selectRow(id)
+              if (selection && rowToDataKey) {
+                selection.forEach((selectedItem) => {
+                  if (selectedRows.map(rowToDataKey).includes(selectedItem)) return
+                  const row = rows.find((r) => rowToDataKey(r) === selectedItem)
+                  if (row) selectRow(row.id)
                 })
-                selectedRows
-                  .map((r) => r.id)
-                  .forEach((id) => {
-                    if (selection.includes(id)) return
-                    selectRow(id)
-                  })
+                selectedRows.map(rowToDataKey).forEach((selectedItem) => {
+                  if (selection.includes(selectedItem)) return
+                  const row = rows.find((r) => rowToDataKey(r) === selectedItem)
+                  if (row) selectRow(row.id)
+                })
               }
               return (
                 <TableContainer
@@ -138,7 +149,6 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
                   {ToolbarContent && (
                     <TableToolbar
                       id={`${tableName}-table-toolbar`}
-                      title={title}
                       {...getToolbarProps()}
                       aria-label="contract table toolbar"
                     >
@@ -148,7 +158,7 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
                             <TableBatchAction
                               key={action.title}
                               tabIndex={getBatchActionProps().shouldShowBatchActions ? 0 : -1}
-                              renderIcon={action.icon}
+                              renderIcon={action.icon ? ICONS[action.icon] : undefined}
                               onClick={() => action.onClick(selectedRows)}
                             >
                               {capitalizeFirstLetter(action.title)}
@@ -167,7 +177,7 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
                                   id={p.id}
                                   onClick={p.onClick}
                                   kind={p.kind}
-                                  renderIcon={p.renderIcon}
+                                  renderIcon={p.renderIcon ? ICONS[p.renderIcon] : undefined}
                                   iconDescription={p.label}
                                   hasIconOnly={p.hasIconOnly}
                                 >
@@ -196,7 +206,7 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
                         {headers.map((header: { key: string; header: React.ReactNode }) => (
                           <TableHeader
                             {...getHeaderProps({ header })}
-                            isSortable={header.key !== '' && header.key !== '-'}
+                            isSortable={!Object.values(KEY_DEFAULTS).includes(header.key as any)}
                             key={header.key}
                           >
                             {typeof header.header === 'string'
@@ -206,38 +216,71 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
                         ))}
                       </TableRow>
                     </TableHead>
-                    {data && (
+
+                    {!isEmpty && !isNotFound && (
                       <TableBody id={`${tableName}-table-body`}>
                         {rows
                           .slice((page - 1) * rowsPerPage)
                           .slice(0, rowsPerPage)
-                          .map((row, i) => (
-                            // @ts-ignore
-                            <RowComponent
-                              selectionProps={{
-                                ...getSelectionProps({
-                                  row,
+                          .map((row) => {
+                            const element = data.find((d) =>
+                              getDataKey && rowToDataKey
+                                ? getDataKey(d) === rowToDataKey(row)
+                                : d.id === row.id
+                            )
+                            return (
+                              // @ts-ignore
+                              <RowComponent
+                                selectionProps={{
+                                  ...getSelectionProps({
+                                    row
+                                  }),
                                   // @ts-ignore
-                                  onClick: (e) =>
-                                    onSelectRow ? onSelectRow(data[i], e.target.checked) : null
-                                })
-                              }}
-                              rowProps={{ ...getRowProps({ row }) }}
-                              key={row.id}
-                              row={row}
-                              {...(getRowComponentProps ? getRowComponentProps(data[i]) : {})}
-                            />
-                          ))}
-                        <TableNoData text={noDataText} isNotFound={isNotFound} cols={9} />
-                        {emptyRows(page, rowsPerPage, data.length, isNotFound) !== rowsPerPage && (
+                                  onChange: (value) => {
+                                    selectRow(row.id)
+                                    if (onSelectRow && element) onSelectRow(element, value)
+                                  }
+                                }}
+                                rowProps={{ ...getRowProps({ row }) }}
+                                key={getDataKey && element ? getDataKey(element) : element?.id}
+                                row={row}
+                                {...(getRowComponentProps && element
+                                  ? getRowComponentProps(element)
+                                  : {})}
+                              />
+                            )
+                          })}
+                        {emptyRows(page, rowsPerPage, data.length) !== rowsPerPage && (
                           <TableEmptyRows
-                            emptyRows={emptyRows(page, rowsPerPage, data.length, isNotFound)}
-                            cols={9}
+                            emptyRows={emptyRows(page, rowsPerPage, data.length)}
+                            cols={10}
                           />
                         )}
                       </TableBody>
                     )}
                   </Table>
+                  {(isEmpty || isNotFound) && (
+                    <>
+                      <TableNoData
+                        Icon={PICTOGRAMS.Assets}
+                        rowsPerPage={rowsPerPage}
+                        title={translate('table_empty.title')}
+                        subtitle={replaceTranslated(
+                          'table_empty.subtitle',
+                          '{{content}}',
+                          emptyText
+                        )}
+                        isNotFound={isEmpty}
+                      />
+                      <TableNoData
+                        Icon={PICTOGRAMS.DesignResearch}
+                        rowsPerPage={rowsPerPage}
+                        title={translate('table_not_found.title')}
+                        subtitle={translate('table_not_found.subtitle')}
+                        isNotFound={isNotFound}
+                      />
+                    </>
+                  )}
                 </TableContainer>
               )
             }}
@@ -263,9 +306,10 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
           rowCount={5}
           columnCount={tableHead.length}
           compact={false}
-          headers={tableHead.map((header) =>
-            typeof header.header === 'string' ? capitalizeFirstLetter(header.header) : header.header
-          )}
+          headers={tableHead.map((h) => ({
+            ...h,
+            header: typeof h.header === 'string' ? capitalizeFirstLetter(h.header) : h.header
+          }))}
         />
       )}
     </>

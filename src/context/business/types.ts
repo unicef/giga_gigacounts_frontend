@@ -1,4 +1,12 @@
-import { IContract, ICountry, ICurrency, IISP, INotification, ISchool } from 'src/@types'
+import {
+  IContract,
+  ICountry,
+  ICurrency,
+  IFrequency,
+  IISP,
+  INotification,
+  ISchool
+} from 'src/@types'
 import { ISuggestedMetrics } from 'src/api/metrics'
 
 export type BusinessContextValue = {
@@ -9,6 +17,7 @@ export type BusinessContextValue = {
   schools: ISchool[] | null
   suggestedMetrics: ISuggestedMetrics | null
   notifications: INotification[] | null
+  frequencies: IFrequency[]
   refetchNotifications: () => void
   refetchContracts: () => void
   setSchools: (newSchools: ISchool[] | null) => void

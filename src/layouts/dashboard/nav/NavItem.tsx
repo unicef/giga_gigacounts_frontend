@@ -22,9 +22,10 @@ export default function NavItem({ data, tabIndex, isActive = true }: NavListRoot
 
   return (
     <SideNavLink
+      tabIndex={tabIndex}
       isActive={isActive && active}
       large
-      renderIcon={() => <NavIcon CarbonIcon={data.icon} isActive={isActive && active} />}
+      renderIcon={() => <NavIcon icon={data.icon} isActive={isActive && active} />}
       onClick={() => navigate(data.path, { state: data.state })}
     >
       <Typography as="span" variant={isActive && active ? 'default' : 'textTertiary'}>

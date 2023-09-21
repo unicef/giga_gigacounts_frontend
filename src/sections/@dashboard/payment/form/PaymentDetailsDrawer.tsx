@@ -1,4 +1,3 @@
-import { Invoice } from '@carbon/pictograms-react'
 import { Button, Modal, ProgressIndicator, ProgressStep } from '@carbon/react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
@@ -10,6 +9,7 @@ import {
   IFileUpload,
   IFrequency,
   IPaymentForm,
+  IPeriod,
   PaymentForm,
   PaymentStep,
   Translation
@@ -22,7 +22,7 @@ import Drawer from 'src/components/drawer/Drawer'
 import FormProvider from 'src/components/hook-form/FormProvider'
 import { Stack } from 'src/components/stack'
 import { Typography } from 'src/components/typography'
-import { ICONS } from 'src/constants'
+import { ICONS, PICTOGRAMS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
@@ -30,6 +30,7 @@ import { redirectOnError } from 'src/pages/errors/handlers'
 import { useTheme } from 'src/theme'
 import { applyToEveryWord, capitalizeFirstLetter } from 'src/utils/strings'
 import { usePaymentSchema } from 'src/validations/payment'
+import PaymentViewDrawer from './PaymentViewDrawer'
 import Step1 from './Step1'
 import Step2 from './Step2'
 
@@ -42,8 +43,11 @@ interface Props {
   payment?: IContractPayment
   onClose: VoidFunction
   open: boolean
-  availablePayments: { month: number; year: number; day?: number }[]
-  openView: () => void
+  availablePayments: IPeriod[]
+  openView?: () => void
+  amount: number
+  renderView?: boolean
+  handleOpen?: () => void
 }
 
 export default function PaymentDetailsDrawer({
@@ -54,7 +58,10 @@ export default function PaymentDetailsDrawer({
   onClose,
   availablePayments,
   paymentFrequency,
-  openView
+  openView,
+  renderView = false,
+  amount,
+  handleOpen
 }: Props) {
   const navigate = useNavigate()
   const { spacing } = useTheme()
@@ -63,12 +70,13 @@ export default function PaymentDetailsDrawer({
 
   const [activeStep, setActiveStep] = useState<PaymentStep>(0)
   const methods = usePaymentSchema(payment)
-  const { setValue, reset, handleSubmit, trigger, formState } = methods
+  const { setValue, reset, handleSubmit, trigger, formState, watch } = methods
 
   const [contractDetails, setContractDetails] = useState<ContractDetails | null>(null)
 
   const unsaved = useModal()
   const published = useModal()
+  const view = useModal()
 
   const [unsavedChanges, setUnsavedChanges] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -81,21 +89,24 @@ export default function PaymentDetailsDrawer({
   >(null)
   const [invoiceUploadError, setInvoiceUploadError] = useState<Translation | ''>('')
   const [receiptUploadError, setReceiptUploadError] = useState<Translation | ''>('')
+  const [viewPayment, setViewPayment] = useState<IContractPayment | null>(null)
+  useEffect(() => {
+    if (watch('payment') === null) setValue('payment', availablePayments[0])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availablePayments])
 
   useEffect(() => {
-    if (contractDetails?.budget && availablePayments) {
-      setValue(
-        'amount',
-        Number((Number(contractDetails.budget ?? '') / availablePayments.length).toFixed(3)) // TODO: Change to info from backend
-      )
+    if (contractDetails?.budget && amount) {
+      setValue('amount', amount)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contractDetails?.budget, availablePayments])
+  }, [contractDetails?.budget, amount, open])
+
+  const isContract = 'isContract' in contract && contract.isContract
 
   useEffect(() => {
     if (!contract) return
-    if (Object.keys(contract).includes('isContract'))
-      setContractDetails(contract as ContractDetails)
+    if (isContract) setContractDetails(contract as ContractDetails)
     else if ((contract as { id: string; status: ContractStatus }).status === ContractStatus.Draft)
       getDraft(contract.id)
         .then((res) => setContractDetails({ ...res, isContract: false }))
@@ -105,7 +116,7 @@ export default function PaymentDetailsDrawer({
         .then((res) => setContractDetails({ ...res, isContract: true }))
         .catch((err) => redirectOnError(navigate, err))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contract])
+  }, [contract.id, isContract])
 
   useEffect(() => {
     if (availablePayments.length === 1) setValue('payment', availablePayments[0])
@@ -153,7 +164,7 @@ export default function PaymentDetailsDrawer({
 
     try {
       setSaving(true)
-      if (payment) {
+      if (payment || viewPayment) {
         const updatedPayment: Partial<IPaymentForm> = {
           contractId: contractDetails?.id ?? '',
           amount: paymentForm.amount,
@@ -161,22 +172,26 @@ export default function PaymentDetailsDrawer({
         }
         if (invoiceFile?.file) updatedPayment.invoice = invoiceFile
         if (receiptFile?.file) updatedPayment.receipt = receiptFile
-        await updatePayment(payment.id, updatedPayment)
-        await changePaymentStatus(payment.id, paymentForm.status)
+        const id = payment ? payment.id : (viewPayment?.id as string)
+        const upayment = await updatePayment(id, updatedPayment)
+        await changePaymentStatus(id, paymentForm.status)
+        setViewPayment({ ...upayment, status: paymentForm.status })
+
         pushSuccess('push.updated_payment')
       } else {
         const newPayment: IPaymentForm = {
           contractId: contractDetails?.id ?? '',
           amount: paymentForm.amount,
           description: paymentForm.description,
-          year: paymentForm.payment.year,
-          month: paymentForm.payment.month
+          year: paymentForm?.payment?.year as number,
+          month: paymentForm?.payment?.month as number
         }
-        if (paymentForm.payment.day) newPayment.day = paymentForm.payment.day
+        if (paymentForm?.payment?.day) newPayment.day = paymentForm.payment.day
         if (invoiceFile?.file) newPayment.invoice = invoiceFile
         if (receiptFile?.file) newPayment.receipt = receiptFile
-        const createdPayment = (await createPayment(newPayment)) as { id: string }
+        const createdPayment = await createPayment(newPayment)
         await changePaymentStatus(createdPayment.id, paymentForm.status)
+        setViewPayment({ ...createdPayment, status: paymentForm.status })
         pushSuccess('push.added_payment')
       }
       handleReset()
@@ -194,13 +209,18 @@ export default function PaymentDetailsDrawer({
 
   const handleCancel = () => {
     if (unsavedChanges) unsaved.open()
-    else handleReset()
+    else {
+      handleReset()
+      setViewPayment(null)
+    }
   }
 
   const handleReset = () => {
     reset()
     if (refetchPayments) refetchPayments()
     unsaved.close()
+    published.close()
+    view.close()
     setUnsavedChanges(false)
     setInvoiceFile(null)
     setReceiptFile(null)
@@ -218,16 +238,22 @@ export default function PaymentDetailsDrawer({
 
   const stepComponents = [
     <Step1
+      paymentStatus={viewPayment?.status}
+      contractId={contractDetails?.id ?? ''}
       paymentFrequency={paymentFrequency}
       availablePayments={availablePayments}
-      currencyCode={contract.currency?.code || ''}
+      currencyCode={contractDetails?.currency?.code ?? ''}
       fields={{ invoice: invoiceFile, receipt: receiptFile }}
       uploadAttachment={handleUploadAttachments}
       receiptUploadError={receiptUploadError}
       invoiceUploadError={invoiceUploadError}
       setUploadErrorMessage={handleUploadError}
     />,
-    <Step2 contract={contractDetails} />
+    <Step2
+      paymentFrequency={paymentFrequency}
+      contract={contractDetails}
+      paidDate={watch().payment}
+    />
   ]
   const lastStep = stepComponents.length - 1
   const isFirstStep = activeStep === 0
@@ -337,7 +363,10 @@ export default function PaymentDetailsDrawer({
         title={translate('payment_cancel_modal.title')}
         content={translate('payment_cancel_modal.content')}
         open={unsaved.value}
-        onCancel={handleReset}
+        onCancel={() => {
+          handleReset()
+          setViewPayment(null)
+        }}
         onDismiss={unsaved.close}
       />
       <Modal
@@ -345,24 +374,48 @@ export default function PaymentDetailsDrawer({
         onRequestClose={() => {
           published.close()
           handleReset()
+          setViewPayment(null)
         }}
         onRequestSubmit={() => {
           published.close()
-          openView()
+          if (openView) openView()
+          onClose()
+          if (renderView) view.open()
         }}
         onSecondarySubmit={() => {
           published.close()
           handleReset()
+          setViewPayment(null)
         }}
         primaryButtonText={capitalizeFirstLetter(translate('view_payment'))}
         secondaryButtonText={capitalizeFirstLetter(translate('close'))}
       >
         <Stack alignItems="center" justifyContent="center" gap={spacing.lg}>
-          <Invoice width={84} height={84} />
+          <PICTOGRAMS.Invoice width={84} height={84} />
           <Typography as="h4">{translate('payment_created_modal.title')}</Typography>
           <Typography as="h6">{translate('payment_created_modal.content')}</Typography>
         </Stack>
       </Modal>
+      <PaymentViewDrawer
+        handleEdit={() => {
+          if (handleOpen) handleOpen()
+          view.close()
+          if (viewPayment) {
+            setValue('amount', viewPayment.amount)
+            setValue('payment', viewPayment.paidDate)
+            setValue('description', viewPayment.description)
+            setValue('status', viewPayment.status)
+          }
+        }}
+        contract={contract}
+        payment={viewPayment ?? undefined}
+        onClose={() => {
+          view.close()
+          setViewPayment(null)
+        }}
+        open={view.value}
+        paymentFrequency={paymentFrequency}
+      />
     </>
   )
 }

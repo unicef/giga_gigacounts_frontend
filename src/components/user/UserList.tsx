@@ -1,11 +1,17 @@
-import { IUser } from 'src/@types'
-import { useTheme } from 'src/theme'
+import { IExternalUser, IUser } from 'src/@types'
 import { useLocales } from 'src/locales'
+import { useTheme } from 'src/theme'
 import { ContactCard } from '../contact-card'
-import { Typography } from '../typography'
 import { List } from '../list'
+import { Typography } from '../typography'
 
-export default function UserList({ users }: { users: IUser[] }) {
+export default function UserList({
+  users,
+  paymentRecieverId
+}: {
+  users: (IUser | IExternalUser)[]
+  paymentRecieverId?: number | null
+}) {
   const { spacing, palette } = useTheme('white')
   const { translate } = useLocales()
   return (
@@ -15,9 +21,10 @@ export default function UserList({ users }: { users: IUser[] }) {
       ItemComponent={ContactCard}
       getItemComponentProps={(item) => ({
         width: 200,
-        name: item.name,
-        value: item.role,
-        style: { backgroundColor: palette.background.neutral }
+        contact: item,
+        style: { backgroundColor: palette.background.neutral },
+        paymentReciever:
+          'id' in item && Boolean(paymentRecieverId) && item.id === String(paymentRecieverId)
       })}
       items={users}
       itemsPerRow={3}

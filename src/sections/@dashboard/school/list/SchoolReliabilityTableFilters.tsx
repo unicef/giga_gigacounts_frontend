@@ -1,10 +1,10 @@
-import { Button, Dropdown } from '@carbon/react'
+import { Button, ComboBox, Dropdown } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
-import { EducationLevel, Translation } from 'src/@types'
+import { EducationLevel, Setter, Translation } from 'src/@types'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { Stack } from 'src/components/stack'
 import { PopoverTitle } from 'src/components/typography'
-import { FILTER_ALL_DEFAULT, TRANSLATION_SEPARATOR } from 'src/constants'
+import { FILTER_ALL_DEFAULT, FilterAll, TRANSLATION_SEPARATOR } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/strings'
@@ -12,13 +12,16 @@ import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/string
 type Props = {
   closePopover: () => void
   setPage: Dispatch<SetStateAction<number>>
-  filterEducationLevel: EducationLevel | typeof FILTER_ALL_DEFAULT
-  setFilterEducationLevel: Dispatch<SetStateAction<EducationLevel | typeof FILTER_ALL_DEFAULT>>
-  setFilterCountry: (countryName: string) => void
-  setFilterSearch: Dispatch<SetStateAction<string>>
+  filterEducationLevel: string
+  setFilterEducationLevel: Setter<string>
+  setFilterCountry: Setter<string>
+  setFilterSearch: Setter<string>
   countryOptions: string[]
-  educationLevelOptions: (EducationLevel | typeof FILTER_ALL_DEFAULT)[]
+  educationLevelOptions: (EducationLevel | FilterAll)[]
   countryName: string
+  regionOptions: string[]
+  filterRegion: string
+  setFilterRegion: Setter<string>
 }
 
 export default function SchoolReliabilityTableFilters({
@@ -30,7 +33,10 @@ export default function SchoolReliabilityTableFilters({
   countryName,
   setFilterEducationLevel,
   educationLevelOptions,
-  filterEducationLevel
+  filterEducationLevel,
+  regionOptions,
+  filterRegion,
+  setFilterRegion
 }: Props) {
   const { spacing } = useTheme()
   const { translate } = useLocales()
@@ -41,45 +47,76 @@ export default function SchoolReliabilityTableFilters({
     setFilterCountry(country)
   }
 
-  const handleEducationLevelFilter = (value: EducationLevel | typeof FILTER_ALL_DEFAULT) => {
+  const handleEducationLevelFilter = (value: EducationLevel | FilterAll) => {
     setPage(1)
     setFilterEducationLevel(value)
   }
 
-  const sortedOptions =
+  const handleRegionFilter = (value: string) => {
+    setPage(1)
+    setFilterRegion(value)
+  }
+
+  const sortedCountryOptions =
     countryOptions.length > 0
       ? countryOptions.filter((r) => r).sort((a, b) => a.localeCompare(b))
+      : []
+
+  const sortedRegionOptions =
+    regionOptions.length > 0
+      ? regionOptions.filter((r) => r).sort((a, b) => a.localeCompare(b))
       : []
 
   const handleResetFilter = () => {
     setFilterCountry(user?.country.name ?? '')
     setFilterSearch('')
     setFilterEducationLevel(FILTER_ALL_DEFAULT)
+    setFilterRegion(FILTER_ALL_DEFAULT)
     setPage(1)
     closePopover()
+  }
+
+  const itemToString = (item: unknown) => {
+    if (!item) return ''
+    return item === FILTER_ALL_DEFAULT || item === 'none'
+      ? capitalizeFirstLetter(translate(item))
+      : capitalizeFirstLetter(item as string)
   }
 
   return (
     <Stack style={{ padding: spacing.md, width: '400px' }} orientation="vertical">
       <PopoverTitle title="country" />
-      <Dropdown
+      <ComboBox
         id="school-country-select"
-        label={countryName}
-        itemToString={capitalizeFirstLetter}
-        items={sortedOptions}
+        itemToString={itemToString}
+        items={sortedCountryOptions}
         selectedItem={countryName}
-        onChange={(e) => {
-          handleFilterCountry(e.selectedItem ?? '')
+        onChange={(e: { selectedItem: string }) => {
+          handleFilterCountry(e.selectedItem ?? user?.country.name)
           closePopover()
         }}
-        disabled={sortedOptions.length <= 1}
+        disabled={sortedCountryOptions.length <= 1}
+      />
+      <PopoverTitle title="region" />
+      <Dropdown
+        id="school-region-reliability-select"
+        label={capitalizeFirstLetter(translate(FILTER_ALL_DEFAULT))}
+        items={sortedRegionOptions}
+        itemToString={itemToString}
+        selectedItem={sortedRegionOptions.includes(filterRegion) ? filterRegion : 'none'}
+        onChange={(data: { selectedItem: string }) => {
+          handleRegionFilter(data.selectedItem ?? '')
+          closePopover()
+        }}
+        disabled={sortedRegionOptions.length <= 1}
       />
       <PopoverTitle title="education_level" />
       <Dropdown
         id="education-level-filter"
         items={educationLevelOptions}
-        itemToString={(item) =>
-          item === FILTER_ALL_DEFAULT
+        itemToString={(item) => {
+          if (!item) return ''
+          return item === FILTER_ALL_DEFAULT || item === 'none'
             ? capitalizeFirstLetter(translate(item))
             : capitalizeFirstLetter(
                 translate(
@@ -89,9 +126,15 @@ export default function SchoolReliabilityTableFilters({
                     .join(TRANSLATION_SEPARATOR)}` as Translation
                 )
               )
+        }}
+        selectedItem={
+          educationLevelOptions.includes(filterEducationLevel as EducationLevel)
+            ? filterEducationLevel
+            : 'none'
         }
-        selectedItem={filterEducationLevel}
-        onChange={(data) => handleEducationLevelFilter(data.selectedItem ?? FILTER_ALL_DEFAULT)}
+        onChange={(data: { selectedItem: EducationLevel | FilterAll }) =>
+          handleEducationLevelFilter(data.selectedItem ?? FILTER_ALL_DEFAULT)
+        }
         label={capitalizeFirstLetter(translate(FILTER_ALL_DEFAULT))}
         disabled={educationLevelOptions.length <= 1}
       />
