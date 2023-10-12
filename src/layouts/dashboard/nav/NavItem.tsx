@@ -10,38 +10,40 @@ import NavIcon from './NavIcon'
 
 type NavListRootProps = {
   data: NavListProps
-  tabIndex: number
   isActive?: boolean
+  id?: string
 }
 
-export default function NavItem({ data, tabIndex, isActive = true }: NavListRootProps) {
+export default function NavItem({ data, isActive = true, id }: NavListRootProps) {
   const navigate = useNavigate()
   const { translate } = useLocales()
-  const { active } = useActiveLink(data.path)
+  const { active } = useActiveLink('path' in data ? data.path : '')
   const { spacing } = useTheme()
 
   return (
     <SideNavLink
-      tabIndex={tabIndex}
+      id={id}
       isActive={isActive && active}
       large
       renderIcon={() => <NavIcon icon={data.icon} isActive={isActive && active} />}
-      onClick={() => navigate(data.path, { state: data.state })}
+      onClick={() => ('path' in data ? navigate(data.path, { state: data.state }) : data.onClick)}
     >
       <Typography as="span" variant={isActive && active ? 'default' : 'textTertiary'}>
         {capitalizeFirstLetter(translate(data.title))}
       </Typography>
-      <div
-        style={{
-          width: 24,
-          height: 24,
-          position: 'absolute',
-          right: spacing.md,
-          bottom: '25%'
-        }}
-      >
-        {data.badge}
-      </div>
+      {data.badge && (
+        <div
+          style={{
+            width: 24,
+            height: 24,
+            position: 'absolute',
+            right: spacing.md,
+            bottom: '25%'
+          }}
+        >
+          {data.badge}
+        </div>
+      )}
     </SideNavLink>
   )
 }

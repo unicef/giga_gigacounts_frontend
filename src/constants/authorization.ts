@@ -5,9 +5,9 @@ export enum Views {
   attachment = 'attachment',
   metric = 'metric',
   measure = 'measure',
-  safe = 'safe',
-  lta = 'lta',
   isp = 'isp',
   school = 'school',
-  country = 'country'
+  country = 'country',
+  schoolConnectivity = 'schoolConnectivity',
+  paymentLog = 'paymentLog'
 }

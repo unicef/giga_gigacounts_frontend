@@ -6,7 +6,7 @@ import { ContractStatus, IContract, IDraft, Icon, Translation, UserRoles } from 
 import { approveContract, duplicateContract, publishContractDraft } from 'src/api/contracts'
 import { duplicateDraft, getDraft } from 'src/api/drafts'
 import { useAuthContext } from 'src/auth/useAuthContext'
-import { ActionButton } from 'src/components/action-button'
+import { ActionButton, ActionLink } from 'src/components/action'
 import { Typography } from 'src/components/typography'
 import { CONTRACT_STATUS_COLORS, STRING_DEFAULT, Views } from 'src/constants'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
@@ -24,7 +24,7 @@ import { getOrderedFromCells } from 'src/utils/table'
 import { PublishModal } from '../publish'
 
 type Props = {
-  row: DataTableRow<(IContract & { countryName: string })[]>
+  row: DataTableRow<(IContract & { countryName: string; ispName: string })[]>
   rowProps: TableRowProps
   onDeleteRow: (id: string) => void
   currencyCode: string
@@ -42,6 +42,7 @@ export default function ContractTableRow({
   const { translate } = useLocales()
   const { refetchContracts } = useBusinessContext()
   const { pushSuccess, pushWarning, pushError } = useSnackbar()
+  const { isAdmin } = useAuthContext()
 
   const confirm = useModal()
   const duplicate = useModal()
@@ -55,10 +56,11 @@ export default function ContractTableRow({
 
   const [draft, setDraft] = useState<IDraft | null>(null)
 
-  const [name, status, countryName, numberOfSchools, budget] = getOrderedFromCells(
-    ['name', 'status', 'countryName', 'numberOfSchools', 'budget'],
+  const [name, status, countryName, numberOfSchools, budget, ispName] = getOrderedFromCells(
+    ['name', 'status', 'countryName', 'numberOfSchools', 'budget', 'isp'],
     row.cells
   )
+
   const parsedStatus = parseContractStatus(status)
   const { canAdd, canEdit, canApprove, hasSomeRole } = useAuthorization()
   const canEditContract = canEdit(Views.contract) && parsedStatus === ContractStatus.Draft
@@ -86,6 +88,10 @@ export default function ContractTableRow({
     if (!row?.id || parsedStatus !== ContractStatus.Draft) return
     getDraft(row.id).then(setDraft)
   }, [row.id, parsedStatus])
+
+  const refetchDraft = () => {
+    getDraft(row.id).then(setDraft)
+  }
 
   const handleApproveRow = () => {
     approve.close()
@@ -187,6 +193,12 @@ export default function ContractTableRow({
         : `/dashboard/contract/view/${parsedStatus}/${row.id}`
     )
 
+  const actions: {
+    icon: Icon
+    label: Translation
+    onClick: () => void
+    variant?: 'error' | 'success'
+  }[] = []
   const options: { icon: Icon; label: Translation; onClick: () => void }[] = [
     {
       icon: 'View',
@@ -197,18 +209,29 @@ export default function ContractTableRow({
   if (canAddContract)
     options.push({ icon: 'Duplicate', label: 'duplicate', onClick: duplicate.open })
   if (canEditContract && draft && getPublishErrors(getContractFromDraft(draft)).length === 0)
-    options.push({ icon: 'SuccessOutline', label: 'publish', onClick: publish.open })
+    actions.push({
+      icon: 'SuccessOutline',
+      label: 'publish',
+      onClick: publish.open,
+      variant: 'success'
+    })
   if (canEditContract) {
     options.push({ icon: 'Edit', label: 'edit', onClick: details.open })
     options.push({ icon: 'Delete', label: 'delete', onClick: confirm.open })
   }
   if (canApproveContract && !isAutomatic)
-    options.push({ icon: 'SuccessOutline', label: 'approve', onClick: approve.open })
-
-  if (canApproveWithWalletContract && isAutomatic)
-    options.push({
+    actions.push({
       icon: 'SuccessOutline',
       label: 'approve',
+      onClick: approve.open,
+      variant: 'success'
+    })
+
+  if (canApproveWithWalletContract && isAutomatic)
+    actions.push({
+      icon: 'SuccessOutline',
+      label: 'approve',
+      variant: 'success',
       onClick:
         user && user.walletAddress && account
           ? approveWithWallet.open
@@ -227,21 +250,44 @@ export default function ContractTableRow({
 
   return (
     <TableRow {...rowProps}>
-      <TableCell style={{ width: '20%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '10%' : '15%' }}>
         <Typography as="h6">{name}</Typography>
-        <Link onClick={handleView}>ID: {row.id}</Link>
+        <Link style={{ cursor: 'pointer' }} onClick={handleView}>
+          ID: {row.id}
+        </Link>
       </TableCell>
-      <TableCell style={{ width: '15%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '10%' }}>
         <Tag type={CONTRACT_STATUS_COLORS[parsedStatus]}>
           {capitalizeFirstLetter(translate(`constant_status.contract.${parsedStatus}`))}
         </Tag>
       </TableCell>
-      <TableCell style={{ width: '10%' }}>{capitalizeFirstLetter(countryName ?? '')}</TableCell>
-      <TableCell style={{ width: '10%' }}>
+
+      <TableCell style={{ verticalAlign: 'middle', width: '10%' }}>
+        {capitalizeFirstLetter(ispName ?? STRING_DEFAULT)}
+      </TableCell>
+      {isAdmin && (
+        <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
+          {capitalizeFirstLetter(countryName ?? STRING_DEFAULT)}
+        </TableCell>
+      )}
+      <TableCell style={{ verticalAlign: 'middle', width: '5%' }}>
         {numberOfSchools === '0' || !numberOfSchools ? STRING_DEFAULT : numberOfSchools}
       </TableCell>
-      <TableCell style={{ width: '20%' }}>{`${currencyCode ?? ''} ${budget}`}</TableCell>
-      <TableCell style={{ width: '25%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '17.5%' }}>{`${
+        currencyCode ?? ''
+      } ${budget}`}</TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '5%' }}>
+        {actions.map((opt) => (
+          <ActionLink
+            key={name + opt.label}
+            onClick={opt.onClick}
+            description={opt.label}
+            icon={opt.icon}
+            variant={opt.variant}
+          />
+        ))}
+      </TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '17.5%' : '22.5%' }}>
         {options.map((opt) => (
           <ActionButton
             key={name + opt.label}
@@ -255,6 +301,7 @@ export default function ContractTableRow({
       <TableCell style={{ width: '0%' }}>
         {draft && (
           <ContractDetailsDrawer
+            refetchDraft={refetchDraft}
             isAutomatic={isAutomatic}
             item={draft}
             open={details.value}

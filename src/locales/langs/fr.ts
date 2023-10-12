@@ -214,14 +214,17 @@ const fr: TranslationObject = {
       title: "Vous êtes sur le point d'envoyer le contrat pour la signature ISP.",
       content: 'Vous recevrez une notification lorsque les signes ISP.',
       primaryText: 'Envoyer au FAI pour signature',
-      secondaryText: 'Retourner'
+      secondaryText: 'Retourner',
+      disabledText:
+        "Le ISP doit faire enregistrer un utilisateur dans le système, le ISP pour ce contrat ne l'a pas fait."
     },
     manual: {
       title: 'Vous êtes sur le point de confirmer la signature du FAI pour vous-même.',
       content:
         'En confirmant la signature du FAI pour vous, vous confirmez que le FAI est bien informé et en accord des termes du contrat. Cette action ne peut être effectuée que pour les contrats manuels.',
       primaryText: 'Confirmer la signature manuellement',
-      secondaryText: 'Retourner'
+      secondaryText: 'Retourner',
+      disabledText: "La confirmation manuelle n'est disponible que pour les contrats manuels"
     }
   },
   contract_cancel_modal: {
@@ -521,6 +524,7 @@ const fr: TranslationObject = {
   send: 'envoyer',
   share: 'partager',
   mark_as_paid: 'marquer comme payé',
+  mark_as_unpaid: 'Mark comme impayé rémunéré',
   close: 'fermer',
   service_type: 'Type de service',
   search_user: 'Rechercher un utilisateur...',
@@ -557,6 +561,10 @@ const fr: TranslationObject = {
     title: 'Votre paiement a été créé avec succès!',
     content: 'Trouvez votre paiement sur la liste de paiement'
   },
+  payment_updated_modal: {
+    title: 'Votre paiement a été mis à jour avec succès!',
+    content: 'Trouvez votre paiement sur la liste de paiement'
+  },
   payment_approve_modal: {
     title: 'Approbation du paiement',
     content: 'Voulez-vous vraiment approuver ce paiement?'
@@ -590,7 +598,7 @@ const fr: TranslationObject = {
   forgot_password: "J'ai oublié mon mot de passe",
   wallet: {
     switch_subtitle:
-      'En activant cette option, vous pouvez configurer un portefeuille ici et une nouvelle option de menu principal sera disponible pour afficher les contrats automatiques (nécessite de se déconnecter et de se reconnecter).',
+      'En activant cette option, vous pouvez configurer un portefeuille ici et une nouvelle option de menu principal sera disponible pour afficher les contrats automatiques.',
     switch_update_msg_ok: 'Enregistré',
     switch_update_msg_error: "Erreur lors de l'enregistrement du paramètre",
     label: 'Portefeuille',
@@ -806,7 +814,7 @@ const fr: TranslationObject = {
     'Si vous activez cette option, le gestionnaire de contrat peut confirmer le contrat sans confirmation du ISP',
   contact_saved: 'Contact réussi',
   help: 'Aider',
-  visit_help_page: "Visitez la page d'aide",
+  visit_help_page: "visitez la page d'aide",
   payment_frequency: 'fréquence de paiement',
   of: 'de',
   items: 'articles',
@@ -1106,7 +1114,9 @@ const fr: TranslationObject = {
   connectivity_distribution_by_days: 'distribution de la connectivité: par jours',
   quality_of_service_comparison: 'comparaison de la qualité de service',
   none: 'Aucun',
-  pay_reciev: 'Recep. Paie.'
+  pay_reciev: 'Recep. Paie.',
+  reset_table: 'réinitialiser tableau',
+  help_request_subtitle: 'Veuillez remplir votre requête ci-dessous ou'
 }
 
 export default fr

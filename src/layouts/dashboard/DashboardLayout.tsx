@@ -15,6 +15,7 @@ export default function DashboardLayout() {
         <Header />
       </Theme>
       <main
+        id="#main-content"
         style={{
           paddingLeft: expanded ? LAYOUT_SIDEBAR_WIDTH : 0,
           paddingTop: spacing.xl + spacing.md

@@ -1,10 +1,16 @@
 import { Navigate, useRoutes } from 'react-router-dom'
+import PermissionBasedGuard from 'src/auth/PermissionBasedGuard'
 import RoleBasedGuard from 'src/auth/RoleBasedGuard'
+import SettingBasedGuard from 'src/auth/SettingBasedGuard'
 import { PATH_AFTER_LOGIN } from 'src/constants'
 import { NavBarProvider } from 'src/context/layout/NavbarContext'
 import { Web3ContextProvider } from 'src/context/web3/Web3Context'
 import DashboardLayout from 'src/layouts/dashboard'
-import { VIEW_ROLES } from 'src/layouts/dashboard/nav/config-navigation'
+import {
+  VIEW_PERMISSIONS,
+  VIEW_ROLES,
+  VIEW_SETTINGS
+} from 'src/layouts/dashboard/nav/config-navigation'
 import { ErrorLayout } from 'src/layouts/error'
 import {
   ContractDetailsPage,
@@ -35,23 +41,26 @@ export default function Router() {
       ),
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
-        { path: 'app', element: <GeneralAppPage /> },
+        {
+          path: 'app',
+          element: <GeneralAppPage />
+        },
         {
           path: 'school-reliability',
           element: (
             <RoleBasedGuard roles={VIEW_ROLES.schools}>
-              <SchoolReliabilityPage />
+              <PermissionBasedGuard permissions={VIEW_PERMISSIONS.schools}>
+                <SchoolReliabilityPage />
+              </PermissionBasedGuard>
             </RoleBasedGuard>
           )
         },
         {
           path: 'users',
           element: (
-            <RoleBasedGuard roles={VIEW_ROLES.users}>
-              <Web3ContextProvider>
-                <UsersPage />
-              </Web3ContextProvider>
-            </RoleBasedGuard>
+            <Web3ContextProvider>
+              <UsersPage />
+            </Web3ContextProvider>
           )
         },
         {
@@ -60,21 +69,21 @@ export default function Router() {
             {
               path: '',
               element: (
-                <RoleBasedGuard roles={VIEW_ROLES.contracts}>
+                <PermissionBasedGuard permissions={VIEW_PERMISSIONS.contracts}>
                   <Web3ContextProvider>
                     <ContractsListPage automatic={false} />
                   </Web3ContextProvider>
-                </RoleBasedGuard>
+                </PermissionBasedGuard>
               )
             },
             {
               path: 'view/:contractStatus/:contractId',
               element: (
-                <RoleBasedGuard roles={VIEW_ROLES.contracts}>
+                <PermissionBasedGuard permissions={VIEW_PERMISSIONS.contracts}>
                   <Web3ContextProvider>
                     <ContractDetailsPage />
                   </Web3ContextProvider>
-                </RoleBasedGuard>
+                </PermissionBasedGuard>
               )
             }
           ]
@@ -85,21 +94,23 @@ export default function Router() {
             {
               path: '',
               element: (
-                <RoleBasedGuard roles={VIEW_ROLES.automatic_contracts}>
-                  <Web3ContextProvider>
-                    <ContractsListPage automatic />
-                  </Web3ContextProvider>
-                </RoleBasedGuard>
+                <PermissionBasedGuard permissions={VIEW_PERMISSIONS.automatic_contracts}>
+                  <SettingBasedGuard settings={VIEW_SETTINGS.automatic_contracts}>
+                    <Web3ContextProvider>
+                      <ContractsListPage automatic />
+                    </Web3ContextProvider>
+                  </SettingBasedGuard>
+                </PermissionBasedGuard>
               )
             },
             {
               path: 'view/:contractStatus/:contractId',
               element: (
-                <RoleBasedGuard roles={VIEW_ROLES.automatic_contracts}>
+                <PermissionBasedGuard permissions={VIEW_PERMISSIONS.automatic_contracts}>
                   <Web3ContextProvider>
                     <ContractDetailsPage />
                   </Web3ContextProvider>
-                </RoleBasedGuard>
+                </PermissionBasedGuard>
               )
             }
           ]
@@ -111,9 +122,9 @@ export default function Router() {
             {
               path: 'list',
               element: (
-                <RoleBasedGuard roles={VIEW_ROLES.payments}>
+                <PermissionBasedGuard permissions={VIEW_PERMISSIONS.payments}>
                   <PaymentListPage />
-                </RoleBasedGuard>
+                </PermissionBasedGuard>
               )
             }
           ]
@@ -124,11 +135,7 @@ export default function Router() {
             { element: <Navigate to="/dashboard/connectivity/list" replace />, index: true },
             {
               path: 'list',
-              element: (
-                <RoleBasedGuard roles={VIEW_ROLES.connectivity}>
-                  <MeasuresListPage />
-                </RoleBasedGuard>
-              )
+              element: <MeasuresListPage />
             }
           ]
         },

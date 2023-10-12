@@ -2,7 +2,7 @@ import { DataTableRow, Modal, TableCell, TableRow } from '@carbon/react'
 import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
 import { IUser, Icon, Translation, UserRoles } from 'src/@types'
 import { useAuthContext } from 'src/auth/useAuthContext'
-import { ActionButton } from 'src/components/action-button'
+import { ActionLink } from 'src/components/action'
 import { ENV_SUPPORTED_NETWORK_ID, STRING_DEFAULT, SUPPORTED_NETWORKS } from 'src/constants'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useModal } from 'src/hooks/useModal'
@@ -32,33 +32,43 @@ export default function UsersTableRow({ row, rowProps, lastName }: Props) {
   const fundWallet = useModal()
   const withoutVerifiedWallet = useModal()
   const canFundWallet = hasSomeRole([UserRoles.GIGA_ADMIN]) && walletAddress
-  const options: { icon: Icon; label: Translation; onClick: () => void }[] = []
+  const actions: {
+    icon: Icon
+    label: Translation
+    onClick: () => void
+    variant?: 'error' | 'primary' | 'success'
+  }[] = []
   const addressExplorer = `${SUPPORTED_NETWORKS[ENV_SUPPORTED_NETWORK_ID].blockExplorerUrl}/address/ADR`
 
   if (canFundWallet) {
-    options.push({
+    actions.push({
       icon: 'Fund',
       label: 'fund',
-      onClick: user && user.walletAddress && account ? fundWallet.open : withoutVerifiedWallet.open
+      onClick: user && user.walletAddress && account ? fundWallet.open : withoutVerifiedWallet.open,
+      variant: 'primary'
     })
   }
 
   return (
     <TableRow {...rowProps}>
-      <TableCell style={{ width: '15%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
         {name} {lastName ?? ''}
       </TableCell>
-      <TableCell style={{ width: '20%' }}>{roleName}</TableCell>
-      <TableCell style={{ width: isAdmin ? '12.5%' : '15%' }}>{countryName}</TableCell>
-      <TableCell style={{ width: isAdmin ? '12.5%' : '15%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '20%' }}>{roleName}</TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '12.5%' : '15%' }}>
+        {countryName}
+      </TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '12.5%' : '15%' }}>
         {ispName ?? STRING_DEFAULT}
       </TableCell>
-      <TableCell style={{ width: isAdmin ? '12.5%' : '15%' }}>{email}</TableCell>
-      <TableCell style={{ width: isAdmin ? '12.5%' : '15%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '12.5%' : '15%' }}>
+        {email}
+      </TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '12.5%' : '15%' }}>
         {phoneNumber ?? STRING_DEFAULT}
       </TableCell>
       {isAdmin && (
-        <TableCell style={{ width: '10%' }}>
+        <TableCell style={{ verticalAlign: 'middle', width: '10%' }}>
           {walletAddress ? (
             <a
               href={addressExplorer.replace('ADR', walletAddress)}
@@ -72,9 +82,10 @@ export default function UsersTableRow({ row, rowProps, lastName }: Props) {
           )}
         </TableCell>
       )}
-      <TableCell style={{ width: '5%' }}>
-        {options.map((opt) => (
-          <ActionButton
+      <TableCell style={{ verticalAlign: 'middle', width: '5%' }}>
+        {actions.map((opt) => (
+          <ActionLink
+            variant={opt.variant}
             key={name + opt.label}
             onClick={opt.onClick}
             description={opt.label}

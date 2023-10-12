@@ -1,4 +1,3 @@
-import { Search } from '@carbon/icons-react'
 import { Column, ComboBox, Grid } from '@carbon/react'
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
@@ -9,7 +8,7 @@ import { useAuthContext } from 'src/auth/useAuthContext'
 import { Banner } from 'src/components/banner'
 import CustomJoyride from 'src/components/custom-joyride/CustomJoyride'
 import { Stack } from 'src/components/stack'
-import { Views } from 'src/constants'
+import { ICONS, Views } from 'src/constants'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useLocales } from 'src/locales'
@@ -26,7 +25,7 @@ export default function GeneralAppPage() {
   const { spacing, palette } = useTheme()
   const { translate } = useLocales()
   const { canView } = useAuthorization()
-  const canViewPayments = canView(Views.payment)
+  const canViewPayments = canView(Views.paymentLog)
   const canViewContracts = canView(Views.contract)
   const [payments, setPayments] = useState<IContractPayment[]>()
   const [schools, setSchools] = useState<IDashboardSchools[]>()
@@ -37,7 +36,7 @@ export default function GeneralAppPage() {
 
   useEffect(() => {
     if (canViewPayments)
-      getPayments(countryId)
+      getPayments('', '', countryId)
         .then(setPayments)
         .catch(() => setPayments(undefined))
   }, [canViewPayments, countryId])
@@ -64,44 +63,52 @@ export default function GeneralAppPage() {
 
       <div style={{ backgroundColor: palette.background.neutral }}>
         {isAdmin && (
-          <Stack
-            orientation="horizontal"
-            alignItems="center"
-            justifyContent="flex-start"
-            style={{
-              paddingBottom: spacing.md,
-              width: '100%'
-            }}
-          >
-            <Search
-              color={palette.text.disabled}
-              size={16}
-              width={48}
-              height={48}
+          <div style={{ backgroundColor: '#ffffff' }}>
+            <Stack
+              id="dashboard-search"
+              orientation="horizontal"
+              alignItems="center"
+              justifyContent="flex-start"
               style={{
-                borderBottom: `1px solid ${palette.grey[380]}`,
-                padding: spacing.md
+                backgroundColor: 'transparent',
+                marginBottom: spacing.md,
+                width: '100%'
               }}
-            />
-            <div style={{ width: '100%' }}>
-              <ComboBox
-                className="dashboard-search"
-                id="dashboard-country-filter"
-                size="lg"
-                onChange={({ selectedItem }: { selectedItem: ICountry | null }) => {
-                  setCountryId(selectedItem?.id ?? user?.country.id)
+            >
+              <ICONS.Search
+                color={palette.text.disabled}
+                size={16}
+                width={48}
+                height={48}
+                style={{
+                  borderBottom: `1px solid ${palette.grey[380]}`,
+                  padding: spacing.md
                 }}
-                selectedItem={countries.find((c) => c.id === countryId)}
-                items={[...countries].sort((a, b) => a.name.localeCompare(b.name))}
-                itemToString={(c) =>
-                  c && typeof c === 'object' && 'name' in c && c.name && typeof c.name === 'string'
-                    ? c.name
-                    : ''
-                }
-                placeholder={translate('search_country')}
               />
-            </div>
-          </Stack>
+              <div style={{ width: '100%' }}>
+                <ComboBox
+                  className="dashboard-search"
+                  id="dashboard-country-filter"
+                  size="lg"
+                  onChange={({ selectedItem }: { selectedItem: ICountry | null }) => {
+                    setCountryId(selectedItem?.id ?? user?.country.id)
+                  }}
+                  selectedItem={countries.find((c) => c.id === countryId)}
+                  items={[...countries].sort((a, b) => a.name.localeCompare(b.name))}
+                  itemToString={(c) =>
+                    c &&
+                    typeof c === 'object' &&
+                    'name' in c &&
+                    c.name &&
+                    typeof c.name === 'string'
+                      ? c.name
+                      : ''
+                  }
+                  placeholder={translate('search_country')}
+                />
+              </div>
+            </Stack>
+          </div>
         )}
 
         <Grid fullWidth className="gap-16px" condensed>

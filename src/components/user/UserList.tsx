@@ -20,9 +20,11 @@ export default function UserList({
       rowGap={spacing.sm}
       ItemComponent={ContactCard}
       getItemComponentProps={(item) => ({
-        width: 200,
+        width: 210,
         contact: item,
-        style: { backgroundColor: palette.background.neutral },
+        style: {
+          backgroundColor: palette.background.neutral
+        },
         paymentReciever:
           'id' in item && Boolean(paymentRecieverId) && item.id === String(paymentRecieverId)
       })}

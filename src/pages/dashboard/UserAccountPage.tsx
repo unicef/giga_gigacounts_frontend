@@ -47,56 +47,56 @@ export default function UserAccountPage() {
               </Typography>
 
               <TextInput
-                size="lg"
+                size="sm"
                 id="user name"
                 labelText={capitalizeFirstLetter(translate('name'))}
                 readOnly
                 value={user?.name}
               />
               <TextInput
-                size="lg"
+                size="sm"
                 id="user lastname"
                 labelText={capitalizeFirstLetter(translate('last_name'))}
                 readOnly
                 value={user?.lastName}
               />
               <TextInput
-                size="lg"
+                size="sm"
                 id="user role"
                 labelText={capitalizeFirstLetter(translate('role'))}
                 readOnly
                 value={user?.role?.name}
               />
               <TextInput
-                size="lg"
+                size="sm"
                 id="user email"
                 labelText={capitalizeFirstLetter(translate('email'))}
                 readOnly
                 value={user?.email}
               />
               <TextInput
-                size="lg"
+                size="sm"
                 id="user phoneNumber"
                 labelText={capitalizeFirstLetter(translate('phone_number'))}
                 readOnly
                 value={user?.phoneNumber}
               />
               <TextInput
-                size="lg"
+                size="sm"
                 id="user country name"
                 labelText={capitalizeFirstLetter(translate('country_name'))}
                 readOnly
                 value={user?.country.name}
               />
               <TextInput
-                size="lg"
+                size="sm"
                 id="user address"
                 labelText={capitalizeFirstLetter(translate('address'))}
                 readOnly
                 value={user?.address}
               />
             </Stack>
-            {canView(Views.wallet) && <AccountCrypto />}
+            {canView(Views.contract) && <AccountCrypto />}
           </Stack>
         </>
       )}

@@ -3,7 +3,6 @@ import instance from './init'
 
 export const getUserProfile = async (): Promise<IUser> => {
   const response = await instance.get('/user/profile')
-
   return response.data
 }
 

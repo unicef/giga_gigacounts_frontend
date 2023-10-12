@@ -45,6 +45,7 @@ export default function NotificationsListPage() {
     { key: 'title', header: translate('title') },
     { key: 'status', header: translate('status') },
     { key: 'message', header: translate('message') },
+    { key: 'sent_at', header: translate('date') },
     { key: KEY_DEFAULTS[0], header: '' },
     { key: KEY_DEFAULTS[1], header: '' }
   ]
@@ -138,7 +139,6 @@ export default function NotificationsListPage() {
         tableHead={TABLE_HEAD}
         tableName="notifications"
         emptyText="table_no_data.notifications"
-        title="Notifications table"
         rowToDataKey={(row) => row.id}
         getDataKey={(n) => n.id}
         selection={selected}

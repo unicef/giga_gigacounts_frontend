@@ -13,5 +13,5 @@ export const KNOWLEDGE_BASE_MAP: Record<string, string> = {
   '/dashboard/user/account': `${BASE_URL}/posts/connect-wallet`,
   '/dashboard/contact/feedback': `${BASE_URL}/posts/send-feedback`,
   '/dashboard/contact/help-request': `${BASE_URL}/posts/send-help-request`,
-  'user/notifications': `${BASE_URL}/tags/users`
+  'user/notifications': `${BASE_URL}/tags`
 }

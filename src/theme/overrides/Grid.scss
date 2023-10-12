@@ -10,3 +10,14 @@
 .column-remove-margin-right {
   margin-right: 0 !important;
 }
+
+@media (width <= 1500px) and (width >= 1056px) {
+  .grid-column-span-8-1500 {
+    grid-column: span 8 / span 8 !important;
+  }
+}
+@media (width <= 890px) and (width >= 672px) {
+  .grid-column-span-8-1500 {
+    grid-column: span 8 / span 8 !important;
+  }
+}

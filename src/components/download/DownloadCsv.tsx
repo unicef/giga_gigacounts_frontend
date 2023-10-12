@@ -2,6 +2,7 @@ import { Button, ButtonKind, Link } from '@carbon/react'
 import { ICONS } from 'src/constants'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
+import { downloadFile } from 'src/utils/download'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 
 type Props<T extends Record<string, string | number>> = {
@@ -39,16 +40,7 @@ export default function DownloadCsv<T extends Record<string, string | number>>({
       [fileString],
       `${fileName}_${new Date().toISOString().slice(0, 10).replace(/-/g, '_')}.csv`
     )
-    const link = document.createElement('a')
-    link.style.display = 'none'
-    link.href = URL.createObjectURL(template)
-    link.download = template.name
-    document.body.appendChild(link)
-    link.click()
-    setTimeout(() => {
-      URL.revokeObjectURL(link.href)
-      link.parentNode?.removeChild(link)
-    }, 0)
+    downloadFile(template, template.name)
     pushInfo('the_file_is_downloading')
   }
 
@@ -64,7 +56,11 @@ export default function DownloadCsv<T extends Record<string, string | number>>({
         {label}
       </Button>
     ),
-    link: <Link onClick={download}>{label}</Link>
+    link: (
+      <Link style={{ cursor: 'pointer' }} onClick={download}>
+        {label}
+      </Link>
+    )
   }
 
   return types[type]

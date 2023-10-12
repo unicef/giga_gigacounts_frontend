@@ -5,11 +5,13 @@ import { Typography } from 'src/components/typography'
 import { STRING_DEFAULT } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
+import { formatDate } from 'src/utils/date'
 import { getMetricLabel } from 'src/utils/metrics'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 
 type Props = {
   width?: CSSProperties['width']
+  height?: CSSProperties['height']
   name: MetricSnake
   value?: number | null
   expectedValue: number
@@ -17,6 +19,7 @@ type Props = {
   hideLabel?: boolean
   style?: CSSProperties
   average?: boolean
+  period?: { dateTo?: string; dateFrom?: string }
 }
 
 export default function ComparingCard({
@@ -27,7 +30,9 @@ export default function ComparingCard({
   hideExpected = false,
   hideLabel = false,
   style,
-  average
+  average,
+  period,
+  height
 }: Props) {
   const label = getMetricLabel(name)
   const { translate } = useLocales()
@@ -43,7 +48,13 @@ export default function ComparingCard({
 
   return (
     <Stack
-      style={{ width, padding: spacing.md, backgroundColor: palette.background.neutral, ...style }}
+      style={{
+        width,
+        height,
+        padding: spacing.md,
+        backgroundColor: palette.background.neutral,
+        ...style
+      }}
       gap={spacing.lg}
       justifyContent="flex-end"
       orientation="vertical"
@@ -55,7 +66,10 @@ export default function ComparingCard({
         {!hideExpected && (
           <Stack
             orientation="vertical"
+            justifyContent="space-between"
+            gap={spacing.md}
             style={{
+              width: '50%',
               padding: spacing.xs,
               borderRightColor: palette.divider,
               borderRightWidth: '1px',
@@ -65,23 +79,35 @@ export default function ComparingCard({
             }}
           >
             {!hideLabel && (
-              <Typography style={{ marginBlockEnd: spacing.md }} as="h6">
-                {capitalizeFirstLetter(translate('agreement'))}
-              </Typography>
+              <Typography as="h6">{capitalizeFirstLetter(translate('agreement'))}</Typography>
             )}
-            <Typography as="h3">
+            <Typography as="p" size={28}>
               {expectedValue ? `${expectedValue}${label}` : STRING_DEFAULT}
             </Typography>
           </Stack>
         )}
-        <Stack style={{ padding: spacing.xs }} orientation="vertical">
+        <Stack
+          justifyContent="space-between"
+          style={{
+            width: hideExpected ? '100%' : '50%',
+            padding: spacing.xs
+          }}
+          gap={spacing.md}
+          orientation="vertical"
+        >
           {!hideLabel && (
-            <Typography style={{ marginBlockEnd: spacing.md }} as="h6">
-              {capitalizeFirstLetter(translate('current_delivery'))}
+            <Typography as="h6">
+              {period
+                ? `${formatDate(period.dateFrom, '/')}
+                  ${translate('to')}
+                  ${formatDate(period.dateTo, '/')}`
+                : capitalizeFirstLetter(translate('current_delivery'))}
             </Typography>
           )}
           <Typography
-            as="h3"
+            as="p"
+            size={28}
+            style={{ justifySelf: 'center' }}
             variant={value ? getComparisonVariant(value, expectedValue) : 'default'}
           >
             {value ? `${value}${label}` : STRING_DEFAULT}

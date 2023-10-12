@@ -94,7 +94,7 @@ export default function UsersPage() {
         <title> Users: List | Gigacounts</title>
       </Helmet>
       <Banner
-        subtitle={selectedCountryName ? `${selectedCountryName}` : ''}
+        subtitle={selectedCountryName && isAdmin ? selectedCountryName : ''}
         title={translate('stakeholders_and_collaborators')}
       />
       <CustomDataTable
@@ -130,7 +130,6 @@ export default function UsersPage() {
         tableHead={TABLE_HEAD}
         tableName="users-list"
         emptyText="table_no_data.users"
-        title="Users table"
       />
     </>
   )

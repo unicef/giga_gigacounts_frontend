@@ -157,7 +157,7 @@ export default function Step1({
           label={capitalizeFirstLetter(`${translate('period')}`)}
           options={
             availablePayments
-              ? availablePayments.map((p) => ({ value: p, label: translatePeriodLabel(p) }))
+              ? [...availablePayments].map((p) => ({ value: p, label: translatePeriodLabel(p) }))
               : []
           }
         />

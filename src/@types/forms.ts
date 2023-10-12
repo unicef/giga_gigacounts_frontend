@@ -14,7 +14,6 @@ export type FeedbackForm = {
 
 export type ContractForm = {
   id: string
-  ltaId?: string
   name: string
   country: string
   isp: string
@@ -27,7 +26,6 @@ export type ContractForm = {
   automatic: boolean
   bypass: boolean
   frequencyId: string
-  addLaunchDate: boolean
   breakingRules: string
   paymentReceiverId: string
 } & { [K in MetricCamel]: number }

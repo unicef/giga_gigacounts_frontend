@@ -169,7 +169,7 @@ export function UserFundWalletDrawer({ name, walletAddress, open, onClose }: Pro
               cursor: updating ? 'wait' : 'auto'
             }}
           >
-            <h4 style={{ wordBreak: 'break-all' }}>{title}</h4>
+            <SectionTitle label={title} style={{ wordBreak: 'break-all' }} />
           </Stack>
         }
         handleClose={handleCancel}

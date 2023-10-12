@@ -2,8 +2,20 @@ import { InlineNotification, TextInput } from '@carbon/react'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate } from 'react-router'
-import { ContractForm, EducationLevel, ICurrency, SchoolCell, Translation } from 'src/@types'
-import { useAuthContext } from 'src/auth/useAuthContext'
+import {
+  ContractForm,
+  CsvParseError,
+  EducationLevel,
+  ICurrency,
+  ISchool,
+  SchoolCell,
+  Translation
+} from 'src/@types'
+import {
+  getSchoolsByExternalIdArray,
+  getSchoolsByNameOrExternalId,
+  getSchoolsPagination
+} from 'src/api/school'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { DownloadCsv } from 'src/components/download'
 import { ErrorList, UploadError } from 'src/components/errors'
@@ -11,7 +23,7 @@ import { RHFSelect, RHFTextField } from 'src/components/hook-form'
 import { Stack } from 'src/components/stack'
 import { SectionSubtitle, SectionTitle, Typography } from 'src/components/typography'
 import { FILTER_ALL_DEFAULT, FilterAll } from 'src/constants'
-import { useBusinessContext } from 'src/context/business/BusinessContext'
+import { useDebounce } from 'src/hooks/useDebounce'
 import useTable from 'src/hooks/useTable'
 import { useLocales } from 'src/locales'
 import { redirectOnError } from 'src/pages/errors/handlers'
@@ -24,7 +36,7 @@ import { ContractSchoolsAndAttachments } from './types'
 
 type Step2Props = {
   onChange: Dispatch<SetStateAction<ContractSchoolsAndAttachments>>
-  fields: { schools: { id: string; budget: string }[] }
+  fields: { schools: SchoolCell[] }
   handlePost: (contractForm: ContractForm) => Promise<boolean>
   currencies: ICurrency[]
 }
@@ -33,47 +45,59 @@ const regionKey = 'location1'
 
 export default function Step2({ onChange, fields, handlePost, currencies }: Step2Props) {
   const navigate = useNavigate()
-  const { schools, refetchSchools, setSchools } = useBusinessContext()
   const { spacing, palette } = useTheme()
-  const { isAdmin } = useAuthContext()
   const { translate } = useLocales()
   const { getValues, watch, trigger, setValue } = useFormContext<ContractForm>()
   const { country: countryId, budget: contractBudget } = watch()
+  const [schoolPage, setSchoolPage] = useState(1)
+  const [disablePagination, setDisablePagination] = useState(false)
+  const [total, setTotal] = useState(0)
+  const [tableData, setTableData] = useState<SchoolCell[]>(fields.schools)
 
-  const [tableData, setTableData] = useState<SchoolCell[]>(
-    schools?.map((cs) => ({
-      ...cs,
-      budget: fields.schools.find((row) => row.id === cs.external_id)?.budget ?? ''
-    })) ?? []
-  )
-
+  const {
+    page,
+    rowsPerPage,
+    setPage,
+    selected,
+    onSelectRow,
+    onSelectAllRows,
+    setRowsPerPage,
+    setSelected
+  } = useTable({
+    defaultSelected: fields.schools.map((fs) => fs?.external_id)
+  })
   useEffect(() => {
-    if (!isAdmin || !countryId) return
-    refetchSchools(countryId)
-      ?.then((rs) => {
-        setSchools(rs)
-        setTableData(
-          rs.map((sch) => ({
-            ...sch,
-            budget: fields.schools.find((row) => row.id === sch.external_id)?.budget ?? ''
-          }))
-        )
+    if (!countryId || disablePagination) return
+    getSchoolsPagination(countryId, schoolPage, 30)
+      .then(({ data, meta }) => {
+        setTotal(meta.total)
+        setTableData((prev) => [
+          ...prev,
+          ...data
+            .filter(
+              (r) =>
+                fields.schools.every((fs) => fs.external_id !== r.external_id) ||
+                prev.every((prevR) => prevR.external_id !== r.external_id)
+            )
+            .map((r) => ({
+              ...r,
+              budget: ''
+            }))
+        ])
       })
       .catch((err) => redirectOnError(navigate, err))
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAdmin, countryId])
+  }, [countryId, schoolPage, disablePagination])
 
-  const { page, rowsPerPage, setPage, selected, onSelectRow, onSelectAllRows, setRowsPerPage } =
-    useTable({
-      defaultSelected: fields.schools.map(
-        (school) => tableData.find((row) => row.external_id === school.id)?.external_id ?? ''
-      )
-    })
+  useEffect(() => {
+    if (!tableData || tableData.length === 0 || disablePagination) return
+    if (page * rowsPerPage > tableData.length - 5) setSchoolPage(schoolPage + 1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage])
 
   const handleChangeBudget = (external_id: string, budget: string) => {
     trigger()
-    const school = fields.schools.find((r) => r.id === external_id)
+    const school = fields.schools.find((r) => r.external_id === external_id)
     const indexToReplace = tableData.findIndex((r) => r.external_id === external_id)
     const row = tableData[indexToReplace]
     if (school) school.budget = budget
@@ -87,18 +111,20 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
     })
   }
   useEffect(() => {
-    const newSchools: { id: string; budget: string }[] = []
+    if (!tableData || tableData.length === 0) return
+    const newSchools: (ISchool & { budget: string })[] = []
 
     selected.forEach((externalId) => {
-      const { budget } = tableData.find((s) => s.external_id === externalId) as SchoolCell
-      newSchools.push({ id: externalId, budget: budget ?? 0 })
+      const school = tableData.find((s) => s.external_id === externalId) as SchoolCell
+      newSchools.push(school)
     })
 
     if (
       !selected ||
+      !newSchools ||
       (fields.schools.length === newSchools.length &&
         newSchools.every((s) => {
-          const school = fields.schools.find((sc) => sc.id === s.id)
+          const school = fields.schools.find((sc) => sc?.id === s?.id)
           return school && school.budget === s.budget
         }))
     )
@@ -137,12 +163,39 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
   const [filterEducationLevel, setFilterEducationLevel] = useState<EducationLevel | FilterAll>(
     FILTER_ALL_DEFAULT
   )
-  const [filterSearch, setFilterSearch] = useState('')
   const [filterRegion, setFilterRegion] = useState(FILTER_ALL_DEFAULT)
-
+  const [filterSearch, setFilterSearch] = useState('')
+  const debouncedFilterName = useDebounce(filterSearch, 500)
+  useEffect(() => {
+    if (!debouncedFilterName) {
+      handleReset()
+      setTableData((prev) => {
+        if (fields.schools.every((s) => tableData.some((r) => r.external_id === s.external_id)))
+          return prev
+        return [...fields.schools, ...prev]
+      })
+      return
+    }
+    setDisablePagination(true)
+    getSchoolsByNameOrExternalId(countryId, debouncedFilterName)
+      .then((res) => {
+        setTotal(res.length)
+        if (!res || res.length === 0) {
+          setTableData([])
+          return
+        }
+        setTableData(
+          res.map((r) => ({
+            ...r,
+            budget: fields.schools.find((fs) => fs.external_id === r.external_id)?.budget ?? ''
+          }))
+        )
+      })
+      .catch(() => setTableData([]))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedFilterName, countryId])
   const dataFiltered = applyFilter({
     inputData: tableData,
-    filterSearch,
     filterRegion,
     filterEducationLevel
   })
@@ -151,34 +204,96 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
   const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
 
   const totalBudget = selected
-    .map((externalId) => Number(tableData.find((r) => r.external_id === externalId)?.budget))
+    .map((externalId) => Number(fields.schools.find((r) => r?.external_id === externalId)?.budget))
     .reduce((prev, curr) => prev + curr, 0)
     .toFixed(2)
 
   const exceedsMaxBudget = Number(totalBudget) !== Number(contractBudget)
 
-  const handleFileUpload = (fileSchools: { external_id: string; budget: string }[]) => {
-    setValue(
-      'budget',
-      Number(
-        fileSchools
-          .map((s) => Number(s.budget))
-          .reduce((prev, curr) => prev + curr, 0)
-          .toFixed(2)
+  const translateErrorRow = (message: Translation, row: number) => `${translate(message)} ${row}`
+
+  const handleFileUpload = (
+    fileSchools: { external_id: string; budget: number | string; row: number }[]
+  ) => {
+    getSchoolsByExternalIdArray(
+      countryId,
+      fileSchools.map((s) => s?.external_id)
+    ).then((res) => {
+      const validSchools = fileSchools.filter((fileSchool) => {
+        const apiSchool = res.find((r) => fileSchool.external_id === r.external_id)
+        if (apiSchool && apiSchool.valid && !Number.isNaN(Number(fileSchool.budget))) return true
+        return false
+      })
+      setTotal(validSchools.length)
+      setValue(
+        'budget',
+        Number(
+          validSchools
+            .map((s) => Number(s.budget))
+            .reduce((prev, curr) => prev + curr, 0)
+            .toFixed(2)
+        )
       )
-    )
-    onChange((prev) => ({
-      ...prev,
-      schools: fileSchools.map((s) => ({ id: s.external_id, budget: s.budget }))
-    }))
-    fileSchools.forEach((s) => handleChangeBudget(s.external_id, s.budget))
-
-    onSelectAllRows(
-      true,
-      fileSchools.map((s) => s.external_id)
-    )
+      onChange((prev) => ({
+        ...prev,
+        schools: validSchools.map((fs) => ({
+          ...(res.find((r) => fs.external_id === r.external_id) as ISchool),
+          budget: String(fs.budget)
+        }))
+      }))
+      validSchools.forEach((s) => handleChangeBudget(s.external_id, String(s.budget)))
+      setTableData(
+        validSchools.map((s) => {
+          const apiSchool = res.find((r) => s.external_id === r.external_id) as ISchool
+          return {
+            budget: String(s.budget),
+            ...apiSchool
+          }
+        })
+      )
+      setDisablePagination(true)
+      onSelectAllRows(
+        true,
+        validSchools.map((s) => s.external_id)
+      )
+      res.forEach((school) => {
+        const fileSchool = fileSchools.find((fs) => fs.external_id === school.external_id)
+        try {
+          if (!school || !school.valid || !fileSchool)
+            throw new CsvParseError('parse_errors.school_not_found', fileSchool?.row as number)
+          if (!fileSchool.external_id || typeof fileSchool.external_id !== 'string')
+            throw new CsvParseError('parse_errors.school_id', fileSchool?.row as number)
+          if (!fileSchool.budget || typeof fileSchool.budget !== 'number') {
+            throw new CsvParseError('parse_errors.school_budget_missing', fileSchool?.row as number)
+          }
+          if (fileSchool.budget <= 0)
+            throw new CsvParseError(
+              'parse_errors.school_budget_positive',
+              fileSchool?.row as number
+            )
+        } catch (err) {
+          if (err instanceof CsvParseError && err.message)
+            setParsingErrorMessages((prev) => [...prev, translateErrorRow(err.message, err.row)])
+          else throw err
+        }
+      })
+    })
   }
-
+  const handleReset = () => {
+    setSchoolPage(1)
+    setDisablePagination(false)
+    setPage(1)
+    setParsingErrorMessages([])
+  }
+  const handleDistributeEqually = () => {
+    selected.forEach((externalId) => {
+      handleChangeBudget(externalId, (contractBudget / selected.length).toFixed(2))
+      setValue(
+        'budget',
+        Number((Number((contractBudget / selected.length).toFixed(2)) * selected.length).toFixed(2))
+      )
+    })
+  }
   return (
     <>
       <SectionTitle label="total_budget" style={{ paddingBottom: 0 }} />
@@ -193,6 +308,8 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
           disabled={currencies && currencies.length === 1}
         />
         <RHFTextField
+          inputMode="numeric"
+          pattern="[0-9]+(.[0-9]{1,2})?"
           id="total budget"
           onBlur={() => handlePost(getValues())}
           name="budget"
@@ -204,7 +321,6 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
       <UploadError message={uploadErrorMessage} />
       <ErrorList title={translate('uploaded_with_errors')} errorMessages={parsingErrorMessages} />
       <UploadSchoolFile
-        schools={tableData}
         onUpload={handleFileUpload}
         setUploadErrorMessage={setUploadErrorMessage}
         setParsingErrorMessages={setParsingErrorMessages}
@@ -226,39 +342,39 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
         </Typography>
       </InlineNotification>
       <CustomDataTable
+        customCount={total}
+        hideSelectAllButton
         selection={selected}
         rowToDataKey={(row) => row.cells[0].value}
         getDataKey={(row) => row.external_id}
         isSortable
         isSelectable
-        onSelectAll={(rows, checked) => {
-          if (checked && selected.length > 0) onSelectAllRows(false, [])
-          else
-            onSelectAllRows(
-              checked,
-              rows.map((row) => row.external_id)
-            )
-        }}
         onSelectRow={(row) => onSelectRow(row.external_id)}
         RowComponent={SchoolTableRow}
         buttonsProps={[
           {
+            label: translate('reset_table'),
+            kind: 'ghost',
+            onClick: () => {
+              handleReset()
+              onChange((prev) => ({ ...prev, schools: [] }))
+              setSelected([])
+              if (schoolPage !== 1) setTableData([])
+              else setTableData((prev) => prev.map((p) => ({ ...p, budget: '' })))
+            },
+            hasIconOnly: true,
+            renderIcon: 'Reset'
+          },
+          {
             label: translate('distribute_budget_equally'),
             disabled: selected.length === 0 || !contractBudget,
             kind: 'primary',
-            onClick: () => {
-              selected.forEach((externalId) => {
-                handleChangeBudget(externalId, (contractBudget / selected.length).toFixed(2))
-                setValue(
-                  'budget',
-                  Number((contractBudget / selected.length).toFixed(2)) * selected.length
-                )
-              })
-            }
+            onClick: handleDistributeEqually
           }
         ]}
-        getRowComponentProps={() => ({
-          onChangeBudget: handleChangeBudget
+        getRowComponentProps={(row) => ({
+          budget: Number(tableData.find((r) => r.external_id === row.external_id)?.budget ?? 0),
+          setBudget: handleChangeBudget
         })}
         ToolbarContent={
           <SchoolTableToolbar
@@ -282,7 +398,6 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
         tableHead={TABLE_HEAD}
         tableName="schools"
         emptyText="table_no_data.schools"
-        title="School table"
       />
       {selected.length > 0 ? (
         <Stack
@@ -312,23 +427,13 @@ export default function Step2({ onChange, fields, handlePost, currencies }: Step
 
 function applyFilter({
   inputData,
-  filterSearch,
   filterRegion,
   filterEducationLevel
 }: {
   inputData: SchoolCell[]
-  filterSearch: string
   filterRegion: string
   filterEducationLevel: string
 }) {
-  if (filterSearch)
-    inputData = inputData.filter(({ name, external_id }) => {
-      const flatContract = { name, external_id }
-      return Object.values(flatContract).some((value) =>
-        value?.toLowerCase().includes(filterSearch.toLowerCase())
-      )
-    })
-
   if (filterRegion !== FILTER_ALL_DEFAULT)
     inputData = inputData.filter((school) => school[regionKey] === filterRegion)
 

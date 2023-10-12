@@ -1,8 +1,8 @@
 import { Breadcrumb, Link } from '@carbon/react'
 import { useParams } from 'react-router'
+import { Stack } from 'src/components/stack'
 import { useRoutesCustom } from 'src/hooks/useRoutesCustom'
 import { useTheme } from 'src/theme'
-import { Stack } from 'src/components/stack'
 import LinkItem from './LinkItem'
 import { CustomBreadcrumbsProps } from './types'
 
@@ -20,7 +20,7 @@ export default function CustomBreadcrumbs({
   const allLinks = [...links, ...paramsLinks]
 
   return (
-    <div style={{ paddingBlock: spacing.md }}>
+    <div style={{ padding: spacing.md }}>
       <Stack orientation="horizontal">
         <div style={{ flexGrow: 1 }}>
           {allLinks.length && (

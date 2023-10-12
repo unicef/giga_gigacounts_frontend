@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate } from 'react-router'
 import { EducationLevel, ICountry, ISchool } from 'src/@types'
-import { getSchools } from 'src/api/school'
+import { getSchoolsByNameOrExternalId, getSchoolsPagination } from 'src/api/school'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { Banner } from 'src/components/banner'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
@@ -10,6 +10,7 @@ import { useTable } from 'src/components/table'
 import { FILTER_ALL_DEFAULT, FilterAll, KEY_DEFAULTS } from 'src/constants'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
+import { useDebounce } from 'src/hooks/useDebounce'
 import { useLocales } from 'src/locales'
 import {
   SchoolReliabilityTableRow,
@@ -21,7 +22,7 @@ import { redirectOnError } from '../errors/handlers'
 export default function SchoolReliabilityPage() {
   const navigate = useNavigate()
   const { page, rowsPerPage, setPage, setRowsPerPage } = useTable()
-  const { user } = useAuthContext()
+  const { user, isAdmin } = useAuthContext()
   const { countries } = useBusinessContext()
 
   const [countryId, setCountryId] = useState(user?.country.id)
@@ -48,12 +49,71 @@ export default function SchoolReliabilityPage() {
     { key: KEY_DEFAULTS[0], header: '' }
   ]
 
+  const debouncedFilterName = useDebounce(filterName, 500)
+  const [schoolPage, setSchoolPage] = useState(1)
+  const [total, setTotal] = useState(1)
+  const [disablePagination, setDisablePagination] = useState(false)
+
+  const handleReset = () => {
+    setSchoolPage(1)
+    setPage(1)
+    setDisablePagination(false)
+    if (schoolPage !== 1) {
+      setTableData(null)
+    }
+  }
+
   useEffect(() => {
-    getSchools(countryId)
-      .then(setTableData)
+    if (!debouncedFilterName) {
+      handleReset()
+      return
+    }
+    setDisablePagination(true)
+    getSchoolsByNameOrExternalId(countryId, debouncedFilterName)
+      .then((res) => {
+        setTotal(res.length)
+        if (!res || res.length === 0) {
+          setTableData([])
+          return
+        }
+        setTableData(res)
+      })
+      .catch(() => setTableData([]))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedFilterName])
+
+  useEffect(() => {
+    if (!tableData || disablePagination) return
+    if (page * rowsPerPage > tableData.length - 5) setSchoolPage(schoolPage + 1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, rowsPerPage])
+
+  const fetchPage = (country_id: string, pageToFetch: number) => {
+    getSchoolsPagination(country_id, pageToFetch, 30)
+      .then(({ data, meta }) => {
+        setTotal(meta.total)
+        if ((!data || data.length === 0) && pageToFetch === 1) {
+          setTableData([])
+          return
+        }
+        setTableData((prev) => (prev ? [...prev, ...data] : data))
+      })
       .catch((err) => redirectOnError(navigate, err))
+  }
+
+  useEffect(() => {
+    handleReset()
+    setTableData(null)
+    setFilterName('')
+    if (schoolPage === 1 && countryId !== user?.country.id) fetchPage(countryId, 1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryId])
+
+  useEffect(() => {
+    if (!countryId || disablePagination) return
+    fetchPage(countryId, schoolPage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [schoolPage, disablePagination])
 
   const regionOptions = tableData
     ? removeDuplicates([FILTER_ALL_DEFAULT, ...tableData.map((s) => s.location1)])
@@ -62,7 +122,6 @@ export default function SchoolReliabilityPage() {
   const dataFiltered = tableData
     ? applyFilter({
         inputData: tableData,
-        filterName,
         filterRegion,
         filterEducationLevel
       })
@@ -92,13 +151,14 @@ export default function SchoolReliabilityPage() {
       </Helmet>
 
       <Banner
-        subtitle={selectedCountryName ? `${selectedCountryName}` : ''}
+        subtitle={selectedCountryName && isAdmin ? selectedCountryName : ''}
         title={translate('schools_reliability')}
       />
 
       <CustomDataTable
         isSortable
         RowComponent={SchoolReliabilityTableRow}
+        customCount={total}
         ToolbarContent={
           <SchoolReliabilityTableToolbar
             setFilterRegion={setFilterRegion}
@@ -125,7 +185,6 @@ export default function SchoolReliabilityPage() {
         tableHead={TABLE_HEAD}
         tableName="schools-reliability"
         emptyText="table_no_data.schools"
-        title="Schools reliability table"
       />
     </>
   )
@@ -133,22 +192,13 @@ export default function SchoolReliabilityPage() {
 
 function applyFilter({
   inputData,
-  filterName,
   filterRegion,
   filterEducationLevel
 }: {
   inputData: ISchool[]
-  filterName: string
   filterRegion: string
   filterEducationLevel: string
 }) {
-  if (filterName)
-    inputData = inputData.filter(
-      (school) =>
-        school.name.toLowerCase().includes(filterName.toLowerCase()) ||
-        school.external_id.toLowerCase().includes(filterName.toLowerCase())
-    )
-
   if (filterEducationLevel !== FILTER_ALL_DEFAULT)
     inputData = inputData.filter((s) => s.education_level === filterEducationLevel)
 

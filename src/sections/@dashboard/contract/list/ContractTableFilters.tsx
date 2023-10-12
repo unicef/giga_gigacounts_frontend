@@ -6,20 +6,21 @@ import {
   Dropdown,
   Tag,
   TextInput
-} from '@carbon/react'
-import { Dispatch, SetStateAction } from 'react'
-import { ContractStatus, MinMax, Setter } from 'src/@types'
-import { Stack } from 'src/components/stack'
-import { PopoverTitle } from 'src/components/typography'
+} from '@carbon/react';
+import { Dispatch, SetStateAction } from 'react';
+import { ContractStatus, MinMax, Setter } from 'src/@types';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import { Stack } from 'src/components/stack';
+import { PopoverTitle } from 'src/components/typography';
 import {
   CONTRACT_STATUS_COLORS,
   FILTER_ALL_DEFAULT,
   FILTER_TAG_BORDER,
   FilterAll
-} from 'src/constants'
-import { useLocales } from 'src/locales'
-import { useTheme } from 'src/theme'
-import { capitalizeFirstLetter } from 'src/utils/strings'
+} from 'src/constants';
+import { useLocales } from 'src/locales';
+import { useTheme } from 'src/theme';
+import { capitalizeFirstLetter } from 'src/utils/strings';
 
 type Props = {
   filterRegion: string
@@ -63,6 +64,7 @@ export default function ContractTableFilters({
 }: Props) {
   const { translate } = useLocales()
   const { spacing } = useTheme()
+  const { isAdmin } = useAuthContext()
 
   const handleFilter = (filterChange: () => void) => {
     setPage(1)
@@ -138,18 +140,22 @@ export default function ContractTableFilters({
         ))}
       </Stack>
 
-      <PopoverTitle title="country" />
-      <Dropdown
-        id="region-contract-filter"
-        items={sortedRegionOptions}
-        itemToString={itemToString}
-        selectedItem={sortedRegionOptions.includes(filterRegion) ? filterRegion : 'none'}
-        onChange={(data: { selectedItem: string }) =>
-          handleFilterCountry(data.selectedItem ?? FILTER_ALL_DEFAULT)
-        }
-        label={capitalizeFirstLetter(translate(FILTER_ALL_DEFAULT))}
-        disabled={sortedRegionOptions.length <= 1}
-      />
+      {isAdmin && (
+        <>
+          <PopoverTitle title="country" />
+          <Dropdown
+            id="region-contract-filter"
+            items={sortedRegionOptions}
+            itemToString={itemToString}
+            selectedItem={sortedRegionOptions.includes(filterRegion) ? filterRegion : 'none'}
+            onChange={(data: { selectedItem: string }) =>
+              handleFilterCountry(data.selectedItem ?? FILTER_ALL_DEFAULT)
+            }
+            label={capitalizeFirstLetter(translate(FILTER_ALL_DEFAULT))}
+            disabled={sortedRegionOptions.length <= 1}
+          />
+        </>
+      )}
       <PopoverTitle title="isp" />
       <ComboBox
         id="isp-filter"
@@ -157,9 +163,7 @@ export default function ContractTableFilters({
         value={itemToString(ispOptions.includes(filterIsp) ? filterIsp : 'none')}
         itemToString={itemToString}
         selectedItem={ispOptions.includes(filterIsp) ? filterIsp : 'none'}
-        onChange={(data: { selectedItem: string }) =>
-          handleFilterIsp(data.selectedItem ?? FILTER_ALL_DEFAULT)
-        }
+        onChange={(data) => handleFilterIsp(data.selectedItem ?? FILTER_ALL_DEFAULT)}
         disabled={ispOptions.length <= 1}
       />
       <PopoverTitle title="contract_budget" />
@@ -210,14 +214,14 @@ export default function ContractTableFilters({
       </Stack>
       <PopoverTitle title="contract_period" />
       <DatePicker
+        style={{ marginBottom: spacing.sm }}
         value={filterDates.min}
         datePickerType="single"
         allowInput={false}
-        onFocus={(e) => e.target.blur()}
-        onChange={(dates) => handleMinDate(dates[0].toISOString())}
+        onChange={(dates) => handleMinDate(dates[0] instanceof Date ? dates[0].toISOString() : '')}
       >
         <DatePickerInput
-          placeholder="yyyy/mm/dd"
+          placeholder="mm/dd/yyyy"
           labelText={translate('start_date')}
           id="contract-start-date-filter"
           datePickerType="single"
@@ -228,10 +232,10 @@ export default function ContractTableFilters({
         datePickerType="single"
         allowInput={false}
         onFocus={(e) => e.target.blur()}
-        onChange={(dates) => handleMaxDate(dates[0].toISOString())}
+        onChange={(dates) => handleMaxDate(dates[0] instanceof Date ? dates[0].toISOString() : '')}
       >
         <DatePickerInput
-          placeholder="yyyy/mm/dd"
+          placeholder="mm/dd/yyyy"
           labelText={translate('end_date')}
           id="contract-end-date-filter"
           datePickerType="single"
@@ -239,7 +243,6 @@ export default function ContractTableFilters({
       </DatePicker>
 
       <Button
-        size="sm"
         className="btn-max-width-limit"
         kind="secondary"
         style={{ marginTop: spacing.md, width: '100%' }}

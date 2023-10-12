@@ -11,7 +11,7 @@ type Item = { icon?: IconType; label?: string; iconProps?: IconProps; title?: st
 type BannerProps = {
   title: string
   label?: { text: string; color: TagColor }
-  subtitle?: string
+  subtitle?: string | JSX.Element
   details?: Item[]
   topThreeDetails?: [Item, Item, Item] | [Item, Item] | [Item]
   variant?: 'sm' | 'lg'
@@ -50,7 +50,7 @@ export default function Banner({
             </Stack>
             {subtitle && (
               <Typography as={isSmall ? 'h6' : 'h5'} variant="default">
-                {capitalizeFirstLetter(subtitle)}
+                {typeof subtitle === 'string' ? capitalizeFirstLetter(subtitle) : subtitle}
               </Typography>
             )}
           </Stack>

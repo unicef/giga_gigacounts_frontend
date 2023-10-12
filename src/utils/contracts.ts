@@ -4,7 +4,6 @@ import {
   ContractForm,
   ICurrency,
   IDraft,
-  ISchool,
   ISchoolsConnections,
   Translation
 } from 'src/@types'
@@ -71,7 +70,6 @@ const getContractFromDraft = (draftForm: IDraft): Contract => ({
 
 const getDraftFromForm = (
   currencies: ICurrency[],
-  countrySchools: ISchool[],
   {
     id,
     name,
@@ -90,13 +88,12 @@ const getDraftFromForm = (
     notes,
     automatic,
     frequencyId,
-    addLaunchDate,
     breakingRules,
     paymentReceiverId
   }: ContractForm & ContractSchoolsAndAttachments
 ) => {
   const getLaunchDate = () => {
-    if (addLaunchDate && launchDate) return formatDate(launchDate)
+    if (launchDate) return formatDate(launchDate)
     if (startDate) return formatDate(startDate)
     return ''
   }
@@ -109,10 +106,7 @@ const getDraftFromForm = (
     launchDate: getLaunchDate(),
     budget: budget ? String(budget) : '0',
     schools: {
-      schools: schools.map((s: { id: string; budget: string }) => {
-        const countrySchool = countrySchools.find((cs) => s.id === cs.external_id) as ISchool
-        return { ...countrySchool, budget: s.budget }
-      })
+      schools
     },
     expectedMetrics: { metrics: [] },
     automatic,

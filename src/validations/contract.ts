@@ -40,11 +40,7 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
       breakingRules: draft?.breakingRules ?? '',
       bypass: false,
       frequencyId: draft?.frequency?.id ?? '3',
-      paymentReceiverId: String(draft?.paymentReceiver?.id ?? ''),
-      addLaunchDate:
-        Boolean(draft?.launchDate) &&
-        Boolean(draft?.startDate) &&
-        draft?.startDate !== draft?.launchDate
+      paymentReceiverId: String(draft?.paymentReceiver?.id ?? '')
     }),
     [user]
   )
@@ -191,7 +187,6 @@ export const useContractSchema = (activeStep: ContractStep, contract?: IDraft | 
       automatic: Yup.boolean(),
       bypass: Yup.boolean(),
       frequencyId: Yup.string(),
-      addLaunchDate: Yup.boolean(),
       paymentReceiverId: Yup.string()
     })
   )

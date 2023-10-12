@@ -1,22 +1,22 @@
-import { Button, TextArea } from '@carbon/react'
-import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router'
+import { Button, TextArea } from '@carbon/react';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import {
   HelpRequestForm as HelpRequestFormType,
   HelpRequestPossibleValue,
   Translation
-} from 'src/@types'
-import { getHelpRequestPossibleValues, sendHelpRequest } from 'src/api/help-request'
-import { RHFSelect } from 'src/components/hook-form'
-import FormProvider from 'src/components/hook-form/FormProvider'
-import { Stack } from 'src/components/stack'
-import { ICONS } from 'src/constants'
-import { useSnackbar } from 'src/hooks/useSnackbar'
-import { useLocales } from 'src/locales'
-import { redirectOnError } from 'src/pages/errors/handlers'
-import { useTheme } from 'src/theme'
-import { capitalizeFirstLetter } from 'src/utils/strings'
-import { useHelpRequestSchema } from 'src/validations/help-request'
+} from 'src/@types';
+import { getHelpRequestPossibleValues, sendHelpRequest } from 'src/api/help-request';
+import { RHFSelect } from 'src/components/hook-form';
+import FormProvider from 'src/components/hook-form/FormProvider';
+import { Stack } from 'src/components/stack';
+import { ICONS } from 'src/constants';
+import { useSnackbar } from 'src/hooks/useSnackbar';
+import { useLocales } from 'src/locales';
+import { redirectOnError } from 'src/pages/errors/handlers';
+import { useTheme } from 'src/theme';
+import { capitalizeFirstLetter } from 'src/utils/strings';
+import { useHelpRequestSchema } from 'src/validations/help-request';
 
 export default function HelpRequestForm() {
   const { translate } = useLocales()
@@ -30,7 +30,7 @@ export default function HelpRequestForm() {
   useEffect(() => {
     getHelpRequestPossibleValues()
       .then(setPossibleValues)
-      .catch((err) => redirectOnError(err, navigate))
+      .catch((err) => redirectOnError(navigate, err))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -77,7 +77,6 @@ export default function HelpRequestForm() {
           <Button
             style={{ width: '50%' }}
             className="btn-max-width-limit"
-            size="sm"
             renderIcon={ICONS.Clean}
             iconDescription={capitalizeFirstLetter(translate('clean_form'))}
             kind="secondary"
@@ -89,7 +88,6 @@ export default function HelpRequestForm() {
             disabled={!type}
             className="btn-max-width-limit"
             style={{ width: '50%' }}
-            size="sm"
             renderIcon={ICONS.Send}
             iconDescription={capitalizeFirstLetter(translate('send'))}
             type="submit"

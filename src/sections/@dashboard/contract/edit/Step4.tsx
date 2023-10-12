@@ -1,4 +1,4 @@
-import { Checkbox, TextArea } from '@carbon/react'
+import { Checkbox, Link, TextArea } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ContractForm, ICurrency, MetricCamel, MetricSnake, Translation } from 'src/@types'
@@ -9,12 +9,14 @@ import { ErrorList } from 'src/components/errors'
 import { Panel } from 'src/components/panel'
 import { QosCard } from 'src/components/qos-card'
 import { Stack } from 'src/components/stack'
+import { Typography } from 'src/components/typography'
 import { UserList } from 'src/components/user'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { getDraftFromForm, getPublishErrors } from 'src/utils/contracts'
 import { formatDate } from 'src/utils/date'
+import { downloadFile } from 'src/utils/download'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 import { ContractSchoolsAndAttachments } from './types'
 
@@ -26,7 +28,6 @@ type Step4Props = {
   currencies: ICurrency[]
   frequencies: IFrequency[]
   ispOptions: IISP[]
-  handlePost: (contractForm: ContractForm) => void
 }
 
 export default function Step4({
@@ -36,27 +37,24 @@ export default function Step4({
   setTermsAndConditions,
   currencies,
   frequencies,
-  ispOptions,
-  handlePost
+  ispOptions
 }: Step4Props) {
   const { getValues, setValue } = useFormContext<ContractForm>()
-  const { countries, schools: countrySchools } = useBusinessContext()
+  const { countries } = useBusinessContext()
   const { translate, replaceTranslated } = useLocales()
   const { palette, spacing } = useTheme()
   const charLimit = 16
 
-  const publishErrors = countrySchools
-    ? getPublishErrors(
-        getDraftFromForm(currencies, countrySchools, {
-          ...getValues(),
-          ...fields
-        })
-      ).map((err) => replaceTranslated(err.message, '{{field}}', err.field as Translation))
-    : []
+  const publishErrors = getPublishErrors(
+    getDraftFromForm(currencies, {
+      ...getValues(),
+      ...fields
+    })
+  ).map((err) => replaceTranslated(err.message, '{{field}}', err.field as Translation))
 
   return (
     <Stack gap={spacing.xs}>
-      <Panel label={translate('contract_details')}>
+      <Panel label={translate('contract_details')} style={{ marginTop: 0 }}>
         <Stack orientation="vertical" gap={spacing.lg}>
           <Stack
             orientation="horizontal"
@@ -229,7 +227,24 @@ export default function Step4({
         disabled={publishErrors.length > 0}
         checked={termsAndConditions}
         id="accept terms and conditions checkbox"
-        labelText={capitalizeFirstLetter(translate('accept_the_terms'))}
+        labelText={
+          <Typography variant={publishErrors.length > 0 ? 'disabled' : 'default'} size={14}>
+            {translate('wallet_external_component.connect.selectingWallet.agreement.agree')}{' '}
+            <Link
+              style={{ cursor: 'pointer' }}
+              onClick={() => downloadFile('/assets/docs/terms_and_conditions.pdf', 'terms and conditions')}
+            >
+              {translate('wallet_external_component.connect.selectingWallet.agreement.terms')}
+            </Link>{' '}
+            {translate('wallet_external_component.connect.selectingWallet.agreement.and')}{' '}
+            <Link
+              style={{ cursor: 'pointer' }}
+              onClick={() => downloadFile('/assets/docs/privacy_policy.pdf', 'privacy policy')}
+            >
+              {translate('wallet_external_component.connect.selectingWallet.agreement.privacy')}
+            </Link>
+          </Typography>
+        }
         onChange={() => setTermsAndConditions((prev) => !prev)}
       />
     </Stack>

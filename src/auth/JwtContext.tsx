@@ -60,12 +60,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isAuthenticated,
       user,
       isAdmin,
+      setUser,
       logout: () => {
         setSession(null)
         instance.logout()
       }
     }),
-    [isAuthenticated, isInitialized, user, isAdmin, instance]
+    [isAuthenticated, isInitialized, user, isAdmin, instance, setUser]
   )
 
   return (

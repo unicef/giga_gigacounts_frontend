@@ -1,7 +1,7 @@
 import { Button, Dropdown, TextInput } from '@carbon/react'
 import { groupBy } from 'lodash'
-import { months } from 'moment'
-import { useState } from 'react'
+import moment, { months } from 'moment'
+import { useEffect, useState } from 'react'
 import {
   ISchoolContact,
   ISchoolMeasures,
@@ -10,6 +10,7 @@ import {
   MetricSnake,
   Translation
 } from 'src/@types'
+import { getSchoolMeasures } from 'src/api/school'
 import { Banner } from 'src/components/banner'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { DownloadCsv } from 'src/components/download'
@@ -22,15 +23,15 @@ import { ICONS } from 'src/constants'
 import { useLocales } from 'src/locales'
 import SchoolMeasureTableRow from 'src/sections/@dashboard/measures/list/SchoolMeasureTableRow'
 import { useTheme } from 'src/theme'
-import { removeDuplicates } from 'src/utils/arrays'
+import { generateRange } from 'src/utils/arrays'
 import { formatDate } from 'src/utils/date'
 import { getMetricLabel } from 'src/utils/metrics'
 import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/strings'
 
 interface Props {
   schoolName: string
+  schoolExternalId: string
   schoolId: string
-  measures: ISchoolMeasures[] | null
   expectedValues?: {
     [K in MetricCamel]: number
   }
@@ -41,31 +42,51 @@ interface Props {
 
 export default function ConnectivityDetailsDrawer({
   open,
-  measures,
   onClose,
   contactInformation,
   expectedValues,
+  schoolExternalId,
   schoolId,
   schoolName
 }: Props) {
   const { translate } = useLocales()
   const { spacing } = useTheme()
-  const MONTH_LIST = measures
-    ? removeDuplicates(
-        measures.map(
-          (m) => `${months(new Date(m.date).getMonth())}-${new Date(m.date).getFullYear()}`
-        )
-      )
-    : []
-  const [filterMonth, setFilterMonth] = useState('')
+  const [measures, setMeasures] = useState<ISchoolMeasures[] | null>(null)
+
+  const currentYear = moment().year()
+  const currentMonth = moment().month()
+  const MONTH_LIST = generateRange(0, 11).sort((a, b) => b - a)
+  const YEARS_LIST = generateRange(2010, currentYear).sort((a, b) => b - a)
+
+  const [filterMonth, setFilterMonth] = useState(currentMonth)
+  const [filterYear, setFilterYear] = useState(currentYear)
+
   const handleCancel = () => {
     onClose()
-    setFilterMonth('')
+    setFilterMonth(currentMonth)
+    setFilterYear(currentYear)
   }
-  const handleFilterMonth = (month: string | null) => {
-    setFilterMonth(month ?? '')
+  const handleFilterMonth = (month: number) => {
+    setFilterMonth(month)
     setPage(1)
   }
+  const handleFilterYear = (month: number) => {
+    setFilterYear(month)
+    setPage(1)
+  }
+
+  useEffect(() => {
+    if (!open) return
+    const selectedDate = moment({ month: filterMonth, year: filterYear })
+    getSchoolMeasures(
+      schoolId,
+      'day',
+      selectedDate.toISOString(),
+      selectedDate.add(1, 'month').toISOString()
+    ).then(setMeasures)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterMonth, filterYear, open])
 
   const TABLE_HEAD = [
     { key: 'date', header: translate('day') },
@@ -80,33 +101,28 @@ export default function ConnectivityDetailsDrawer({
   })
 
   const measuresByDay = measures
-    ? Object.entries(groupBy(measures, (m) => formatDate(m.date))).map(([key, value]) => ({
-        id: key,
-        date: key,
-        [MetricCamel.Uptime]:
-          value.find((m) => m.metric_name === Metric.Uptime)?.median_value ?? null,
-        [MetricCamel.Latency]:
-          value.find((m) => m.metric_name === Metric.Latency)?.median_value ?? null,
-        [MetricCamel.DownloadSpeed]:
-          value.find((m) => m.metric_name === Metric.DownloadSpeed)?.median_value ?? null,
-        [MetricCamel.UploadSpeed]:
-          value.find((m) => m.metric_name === Metric.UploadSpeed)?.median_value ?? null
-      }))
+    ? Object.entries(groupBy(measures, (m) => formatDate(m.date)))
+        .map(([key, value]) => ({
+          id: key,
+          date: key,
+          [MetricCamel.Uptime]:
+            value.find((m) => m.metric_name === Metric.Uptime)?.median_value ?? null,
+          [MetricCamel.Latency]:
+            value.find((m) => m.metric_name === Metric.Latency)?.median_value ?? null,
+          [MetricCamel.DownloadSpeed]:
+            value.find((m) => m.metric_name === Metric.DownloadSpeed)?.median_value ?? null,
+          [MetricCamel.UploadSpeed]:
+            value.find((m) => m.metric_name === Metric.UploadSpeed)?.median_value ?? null
+        }))
+        .sort((a, b) => moment(b.date).diff(moment(a.date)))
     : null
 
   const metricsKeys = Array.from(Object.values(MetricCamel))
 
-  const dataFiltered = measuresByDay
-    ? applyFilter({
-        inputData: measuresByDay,
-        filterMonth
-      })
-    : null
-
-  const medians = dataFiltered
+  const medians = measuresByDay
     ? (Object.fromEntries(
         metricsKeys.map((name) => {
-          const availableMeasures = dataFiltered.filter((m) => m[name] !== null)
+          const availableMeasures = measuresByDay.filter((m) => m[name] !== null)
           return [
             name,
             availableMeasures.reduce((prev, curr) => prev + Number(curr[name]), 0) /
@@ -117,10 +133,9 @@ export default function ConnectivityDetailsDrawer({
     : null
 
   const isEmpty = Boolean(measuresByDay && !measuresByDay.length)
-  const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
 
-  const downloadableData = dataFiltered
-    ? dataFiltered.map((measure) => ({
+  const downloadableData = measuresByDay
+    ? measuresByDay.map((measure) => ({
         Date: `${formatDate(measure.date, '/')}`,
         [Metric.Uptime]: `${measure[MetricCamel.Uptime]}${getMetricLabel(MetricSnake.Uptime)}`,
         [Metric.Latency]: `${measure[MetricCamel.Latency]}${getMetricLabel(MetricSnake.Latency)}`,
@@ -139,7 +154,7 @@ export default function ConnectivityDetailsDrawer({
         <Banner
           variant="sm"
           title={schoolName}
-          subtitle={`${translate('school')} ID ${schoolId}`}
+          subtitle={`${translate('school')} ID ${schoolExternalId}`}
         />
       }
       wrapHeader={false}
@@ -151,20 +166,35 @@ export default function ConnectivityDetailsDrawer({
           <Typography style={{ marginTop: spacing.xxs, marginBottom: spacing.lg }}>
             {translate('qos_description')}
           </Typography>
+          <Stack style={{ marginBottom: spacing.md }} orientation="horizontal" gap={spacing.sm}>
+            <Dropdown
+              style={{ width: '75%' }}
+              label={capitalizeFirstLetter(
+                translate(uncapitalizeFirstLetter(months(0)) as Translation)
+              )}
+              onChange={(data) => handleFilterMonth(data.selectedItem as number)}
+              id="month-selection"
+              items={MONTH_LIST}
+              itemToString={(i) =>
+                `${capitalizeFirstLetter(
+                  translate(uncapitalizeFirstLetter(months(i as number)) as Translation)
+                )}`
+              }
+              selectedItem={filterMonth}
+              disabled={MONTH_LIST.length === 0}
+            />
+            <Dropdown
+              style={{ width: '25%' }}
+              label={2010}
+              onChange={(data) => handleFilterYear(data.selectedItem as number)}
+              id="year-selection"
+              items={YEARS_LIST}
+              itemToString={String}
+              selectedItem={filterYear}
+              disabled={YEARS_LIST.length === 0}
+            />
+          </Stack>
 
-          <Dropdown
-            onChange={(data) => handleFilterMonth(data.selectedItem)}
-            id="month-selection"
-            items={MONTH_LIST}
-            label={capitalizeFirstLetter(translate('month'))}
-            itemToString={(i) =>
-              `${capitalizeFirstLetter(
-                translate(uncapitalizeFirstLetter(i?.split('-')[0] ?? '') as Translation)
-              )}-${i?.split('-')[1]}`
-            }
-            selectedItem={filterMonth}
-            disabled={MONTH_LIST.length === 0}
-          />
           {expectedValues && (
             <Stack orientation="horizontal" gap={spacing.md}>
               <ComparingCard
@@ -220,42 +250,43 @@ export default function ConnectivityDetailsDrawer({
             }
             isSortable
             RowComponent={SchoolMeasureTableRow}
-            data={dataFiltered}
+            data={measuresByDay}
             page={page}
             setPage={setPage}
-            isNotFound={isNotFound}
+            isNotFound={false}
             isEmpty={isEmpty}
             rowsPerPage={rowsPerPage}
             setRowsPerPage={setRowsPerPage}
             tableHead={TABLE_HEAD}
             tableName="school-measures"
             emptyText="table_no_data.measures"
-            title="School measures table"
           />
 
           {contactInformation && (
             <Stack style={{ marginTop: spacing.lg }} orientation="vertical">
               <SectionTitle label="contact_information" />
-              <Stack orientation="horizontal" gap={spacing.md}>
+              <Stack gap={spacing.sm}>
+                <Stack orientation="horizontal" gap={spacing.md}>
+                  <TextInput
+                    labelText={capitalizeFirstLetter(translate('name'))}
+                    id="school-contact-name"
+                    value={contactInformation.contactPerson}
+                    readOnly
+                  />
+                  <TextInput
+                    labelText={capitalizeFirstLetter(translate('phone_number'))}
+                    id="school-contact-phone-number"
+                    value={contactInformation.phoneNumber}
+                    readOnly
+                  />
+                </Stack>
                 <TextInput
-                  labelText={capitalizeFirstLetter(translate('name'))}
-                  id="school-contact-name"
-                  value={contactInformation.contactPerson}
-                  readOnly
-                />
-                <TextInput
-                  labelText={capitalizeFirstLetter(translate('phone_number'))}
-                  id="school-contact-phone-number"
-                  value={contactInformation.phoneNumber}
+                  labelText={capitalizeFirstLetter(translate('email'))}
+                  id="school-contact-email"
+                  value={contactInformation.email}
                   readOnly
                 />
               </Stack>
-              <TextInput
-                labelText={capitalizeFirstLetter(translate('email'))}
-                id="school-contact-email"
-                value={contactInformation.email}
-                readOnly
-              />
             </Stack>
           )}
         </>
@@ -273,24 +304,4 @@ export default function ConnectivityDetailsDrawer({
       }
     />
   )
-}
-
-function applyFilter({
-  inputData,
-  filterMonth
-}: {
-  inputData: ({
-    date: string
-    id: string
-  } & { [K in MetricCamel]: number | null })[]
-  filterMonth: string
-}) {
-  if (filterMonth !== '')
-    inputData = inputData.filter(
-      (m) =>
-        filterMonth.toLowerCase() ===
-        `${months(new Date(m.date).getMonth())}-${new Date(m.date).getFullYear()}`.toLowerCase()
-    )
-
-  return inputData
 }

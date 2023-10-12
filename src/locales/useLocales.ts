@@ -36,8 +36,8 @@ export default function useLocales() {
       message: Translation,
       replace: string,
       replace2: string,
-      value: Translation,
+      value: Translation | (string & {}),
       value2: number | string
-    ) => replaceTwoTranslated(message, replace, replace2, value, value2, translate)
+    ) => replaceTwoTranslated(message, replace, replace2, value as Translation, value2, translate)
   }
 }

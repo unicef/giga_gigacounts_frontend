@@ -8,11 +8,10 @@ export interface IIsp {
   country_id: string
 }
 
-export const getIsp = async (countryId?: string, ltaId?: string): Promise<IIsp[]> => {
+export const getIsp = async (countryId?: string): Promise<IIsp[]> => {
   const response = await instance.get(ENDPOINT_URL, {
     params: {
-      countryId,
-      ltaId
+      countryId
     }
   })
 

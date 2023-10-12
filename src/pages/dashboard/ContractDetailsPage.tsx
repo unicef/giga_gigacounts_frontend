@@ -15,7 +15,8 @@ import { getDraft } from 'src/api/drafts'
 import Banner from 'src/components/banner/Banner'
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs'
 import CustomJoyride from 'src/components/custom-joyride/CustomJoyride'
-import { CONTRACT_STATUS_COLORS, STRING_DEFAULT } from 'src/constants'
+import { CONTRACT_STATUS_COLORS, STRING_DEFAULT, Views } from 'src/constants'
+import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useWeb3Context } from 'src/hooks/useWeb3Context'
 import { useLocales } from 'src/locales'
 import {
@@ -32,11 +33,13 @@ import { capitalizeFirstLetter } from 'src/utils/strings'
 export default function ContractDetailsPage() {
   const state = useParams()
   const navigate = useNavigate()
+  const { canView } = useAuthorization()
   const [contractFunds, setContractFunds] = useState('0')
   const { translate } = useLocales()
   const [contract, setContract] = useState<ContractDetails | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const { getContractBalance } = useWeb3Context()
+  const canViewPayments = canView(Views.payment)
 
   useEffect(() => {
     if (!state || !state.contractId || !state.contractStatus) Error404.redirect(navigate)
@@ -49,16 +52,17 @@ export default function ContractDetailsPage() {
 
     if (state.contractStatus === ContractStatus.Draft)
       getDraft(state.contractId as string)
-        .then((res) => setContract({ ...res, isContract: false }))
+        .then((res) => setContract({ ...res, isDetails: false }))
         .catch(() => Error404.redirect(navigate))
     else
       getContractDetails(state.contractId as string)
         .then((res) => {
           if (parseContractStatus(res.status) !== state.contractStatus) Error404.redirect(navigate)
-          setContract({ ...res, isContract: true })
+          setContract({ ...res, isDetails: true })
         })
         .catch(() => Error404.redirect(navigate))
-  }, [state, navigate])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (!state || !state.contractId || !state.contractStatus) Error404.redirect(navigate)
@@ -81,7 +85,7 @@ export default function ContractDetailsPage() {
     if (!contract) return STRING_DEFAULT
     if (contract.expectedMetrics.length === 0) return STRING_DEFAULT
 
-    if (contract.isContract) {
+    if (contract.isDetails) {
       const metric = contract.expectedMetrics.find((m) => m.metricName === name)
       return `${metric?.value} ${metric?.metricUnit}`
     }
@@ -91,7 +95,7 @@ export default function ContractDetailsPage() {
 
   const getIsp = () => {
     if (!contract) return STRING_DEFAULT
-    if (contract.isContract) return contract.isp
+    if (contract.isDetails) return contract.isp
     return contract.isp?.name ?? STRING_DEFAULT
   }
 
@@ -121,7 +125,7 @@ export default function ContractDetailsPage() {
       }
     ]
 
-    if (contract.automatic && contract.isContract) {
+    if (contract.automatic && contract.isDetails) {
       details.splice(3, 0, {
         label: `${contract.currency?.code ?? ''} ${contractFunds.toString() || '0'}`,
         title: translate('funds')
@@ -135,7 +139,7 @@ export default function ContractDetailsPage() {
     return details
   }
 
-  const expectedValues: { [K in MetricCamel]: number } = contract?.isContract
+  const expectedValues: { [K in MetricCamel]: number } = contract?.isDetails
     ? {
         [MetricCamel.Uptime]: Number(
           contract?.expectedMetrics.find((f) => f.metricName === Metric.Uptime)?.value ?? 0
@@ -171,7 +175,7 @@ export default function ContractDetailsPage() {
       <Helmet>
         <title> Contract: View | Gigacounts</title>
       </Helmet>
-      {contract?.isContract && <CustomJoyride name="contract_detail" />}
+      {contract?.isDetails && <CustomJoyride name="contract_detail" />}
       <CustomBreadcrumbs />
       {contract && (
         <>
@@ -206,14 +210,14 @@ export default function ContractDetailsPage() {
           >
             <TabList aria-label="contract details tab list">
               <Tab>{capitalizeFirstLetter(translate('overview'))}</Tab>
-              {contract.isContract && (
+              {contract.isDetails && (
                 <Tab className="schools-tab">{capitalizeFirstLetter(translate('schools'))}</Tab>
               )}
-              {contract.isContract && (
+              {contract.isDetails && canViewPayments && (
                 <Tab className="payment-tab">{capitalizeFirstLetter(translate('payments'))}</Tab>
               )}
               <Tab>{capitalizeFirstLetter(translate('attachments'))}</Tab>
-              {contract.isContract && contract.automatic && (
+              {contract.isDetails && contract.automatic && (
                 <Tab>{capitalizeFirstLetter(translate('web3_transcations'))}</Tab>
               )}
             </TabList>
@@ -221,12 +225,12 @@ export default function ContractDetailsPage() {
               <TabPanel>
                 <OverviewTab expectedValues={expectedValues} contract={contract} />
               </TabPanel>
-              {contract.isContract && (
+              {contract.isDetails && (
                 <TabPanel>
                   <ConnectionTab expectedValues={expectedValues} contract={contract} />
                 </TabPanel>
               )}
-              {contract.isContract && (
+              {contract.isDetails && canViewPayments && (
                 <TabPanel>
                   <PaymentTab contract={contract} />
                 </TabPanel>
@@ -234,7 +238,7 @@ export default function ContractDetailsPage() {
               <TabPanel>
                 <AttachmentsTab attachments={contract ? contract.attachments : null} />
               </TabPanel>
-              {contract.isContract && contract.automatic && (
+              {contract.isDetails && contract.automatic && (
                 <TabPanel>
                   <Web3TransactionsTab contract={contract} />
                 </TabPanel>

@@ -12,12 +12,14 @@ import {
   Translation
 } from 'src/@types'
 import { changePaymentStatus, getPaymentConnection } from 'src/api/payments'
-import { ActionButton } from 'src/components/action-button'
+import { ActionButton, ActionLink } from 'src/components/action'
+import { Stack } from 'src/components/stack'
 import { PAYMENT_STATUS_COLORS, Views } from 'src/constants'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useModal } from 'src/hooks/useModal'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
+import { useTheme } from 'src/theme'
 import { parsePaymentStatus } from 'src/utils/status'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 import { getOrderedFromCells } from 'src/utils/table'
@@ -40,7 +42,6 @@ type Props = {
   currency?: ICurrency | null
   contractAutomatic: boolean
   payment: IContractPayment
-  contractNumberOfSchools: number
 }
 
 export default function PaymentTableRow({
@@ -52,12 +53,12 @@ export default function PaymentTableRow({
   currency,
   contractAutomatic,
   payment,
-  contractStatus,
-  contractNumberOfSchools
+  contractStatus
 }: Props) {
   const { canAdd } = useAuthorization()
   const { translate } = useLocales()
   const { pushSuccess, pushError } = useSnackbar()
+  const { spacing } = useTheme()
 
   const [, dateTo, amount, status, , contractName] = getOrderedFromCells(
     ['_', 'dateTo', 'amount', 'status', '_', 'contractName'],
@@ -112,7 +113,12 @@ export default function PaymentTableRow({
       })
       .catch(() => pushError('push.pay_payment_error'))
   }
-
+  const actions: {
+    icon: Icon
+    label: Translation
+    onClick: () => void
+    variant?: 'error' | 'success'
+  }[] = []
   const options: { icon: Icon; label: Translation; onClick: () => void }[] = [
     {
       icon: 'View',
@@ -120,43 +126,60 @@ export default function PaymentTableRow({
       onClick: view.open
     }
   ]
+  if (canApprove) {
+    actions.push({
+      icon: 'Success',
+      label: 'mark_as_paid',
+      onClick: pay.open,
+      variant: 'success'
+    })
+  }
   if (canReject) {
     options.push({ icon: 'Edit', label: 'edit', onClick: edit.open })
-    options.push({ icon: 'Close', label: 'decline', onClick: reject.open })
+    actions.push({ icon: 'Close', label: 'mark_as_unpaid', onClick: reject.open, variant: 'error' })
   }
 
-  if (canApprove) {
-    options.push({ icon: 'Fund', label: 'mark_as_paid', onClick: pay.open })
-  }
   return (
     <TableRow {...rowProps}>
-      <TableCell style={{ width: '10%' }}>{row.id}</TableCell>
-      <TableCell style={{ width: '5%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '5%' }}>{row.id}</TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '5%' }}>
         <Tag type={PAYMENT_STATUS_COLORS[parsedStatus]}>
           {capitalizeFirstLetter(translate(`constant_status.payment.${parsedStatus}`))}
         </Tag>
       </TableCell>
-      <TableCell style={{ width: '20%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '10%' }}>
         {payment.dateFrom} {translate('to')} {dateTo}
       </TableCell>
       <TableCell
-        style={{ width: contractName ? '10%' : '20%' }}
+        style={{ verticalAlign: 'middle', width: contractName ? '5%' : '15%' }}
       >{`${currency?.code} ${amount}`}</TableCell>
 
-      <TableCell style={{ width: '20%' }}>
+      {contractName && (
+        <TableCell style={{ verticalAlign: 'middle', width: '10%' }}>{contractName}</TableCell>
+      )}
+
+      <TableCell style={{ verticalAlign: 'middle', width: '20%' }}>
         <PaymentConnectivityBar
           data={absolutePerecentages}
-          dateFrom={payment?.dateFrom}
-          dateTo={payment?.dateTo}
-          numberOfSchools={contractNumberOfSchools}
           variant="status"
-          tooltipAlign={(_, i) => (i === 0 ? 'right' : 'left')}
+          tooltipAlign={() => 'top'}
         />
       </TableCell>
 
-      {contractName && <TableCell style={{ width: '10%' }}>{contractName}</TableCell>}
-
-      <TableCell style={{ width: '25%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '20%' }}>
+        <Stack alignItems="center" orientation="horizontal" gap={spacing.xs}>
+          {actions.map((opt) => (
+            <ActionLink
+              variant={opt.variant}
+              key={row.id + opt.label}
+              onClick={opt.onClick}
+              description={opt.label}
+              icon={opt.icon}
+            />
+          ))}
+        </Stack>
+      </TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '10%' }}>
         {options.map((opt) => (
           <ActionButton
             key={row.id + opt.label}

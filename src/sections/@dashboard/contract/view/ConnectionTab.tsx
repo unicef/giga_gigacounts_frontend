@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import {
@@ -14,7 +15,7 @@ import { getContractSchools } from 'src/api/contracts'
 import { getSchoolMeasures } from 'src/api/school'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { useTable } from 'src/components/table'
-import { Typography } from 'src/components/typography'
+import { Footer } from 'src/components/typography'
 import { FILTER_ALL_DEFAULT, FilterAll, KEY_DEFAULTS, STRING_DEFAULT } from 'src/constants'
 import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
 import { useLocales } from 'src/locales'
@@ -23,7 +24,6 @@ import {
   ConnectivityTableRow,
   ConnectivityTableToolbar
 } from 'src/sections/@dashboard/connectivity/list'
-import { useTheme } from 'src/theme'
 import { removeDuplicates, resolvePromises } from 'src/utils/arrays'
 import { getConnectivityStatus } from 'src/utils/connectivity'
 
@@ -36,7 +36,6 @@ export default function ConnectionTab({
 }) {
   const { translate } = useLocales()
   const navigate = useNavigate()
-  const { spacing } = useTheme()
 
   const TABLE_HEAD = [
     { key: 'name', header: translate('name') },
@@ -91,11 +90,14 @@ export default function ConnectionTab({
       .catch(() => setTableData([]))
   }, [contract.id])
 
+  const today = moment().toISOString()
+  const yesterday = moment().subtract(1, 'day').toISOString()
+
   useEffect(() => {
     if (contract.id && tableData)
       resolvePromises(
         tableData,
-        (row) => getSchoolMeasures(row.id, contract.id, 'day'),
+        (row) => getSchoolMeasures(row.id, 'day', yesterday, today, contract.id),
         (res, row) => setMeasures((prev) => [...prev, { measures: res, school_id: row?.id ?? '' }]),
         (err) => redirectOnError(navigate, err)
       )
@@ -155,7 +157,8 @@ export default function ConnectionTab({
           budget: row.budget,
           currencyCode: contract.currency?.code,
           contactInformation: row.contactInformation,
-          expectedValues
+          expectedValues,
+          schoolId: row.id
         })}
         ToolbarContent={
           <ConnectivityTableToolbar
@@ -204,15 +207,8 @@ export default function ConnectionTab({
         tableHead={TABLE_HEAD}
         tableName="connectivity"
         emptyText="table_no_data.schools"
-        title="Connectivity table"
       />
-      <Typography
-        style={{ paddingBlock: spacing.md, paddingInline: spacing.xs }}
-        variant="textTertiary"
-        size={12}
-      >
-        * {translate('tooltips.measures_24')}
-      </Typography>
+      <Footer text={translate('tooltips.measures_24')} required />
     </>
   )
 }

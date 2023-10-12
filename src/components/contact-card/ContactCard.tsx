@@ -10,7 +10,7 @@ import { IExternalUser } from '../../@types/general'
 
 type Props = {
   contact: IUser | IExternalUser
-  width?: number
+  width?: CSSProperties['width']
   style?: CSSProperties
   theme?: 'g90' | 'white'
   paymentReciever?: boolean
@@ -29,9 +29,14 @@ export default function ContractCard({
 
   return (
     <Theme theme={theme}>
-      <Stack style={{ width, padding: spacing.md, ...style }} gap={spacing.md}>
+      <Stack
+        justifyContent="space-between"
+        style={{ width, padding: spacing.md, aspectRatio: '1.1/0.9', ...style }}
+      >
         <Stack justifyContent="space-between" orientation="horizontal">
-          <Typography as="h4">{name}</Typography>
+          <Typography style={{ height: '60px' }} as="h5" size={20} weight={500}>
+            {threeDots(name, 33)}
+          </Typography>
           {paymentReciever && (
             <Typography size={12} as="p">
               {capitalizeFirstLetter(translate('pay_reciev'))}
@@ -43,6 +48,7 @@ export default function ContractCard({
         </Typography>
         <Typography as="p" size={12} variant="textTertiary">
           {email || ''}
+          <br />
           {phoneNumber || ''}
         </Typography>
       </Stack>

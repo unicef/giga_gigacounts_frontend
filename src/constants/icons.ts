@@ -37,9 +37,12 @@ import {
   PreviousOutline,
   Receipt,
   Replicate,
+  Reset,
   Save,
+  Search,
   SendAlt,
   Settings,
+  Share,
   ShareKnowledge,
   Subtract,
   TrashCan,
@@ -56,6 +59,7 @@ import {
   Time,
   TransactionalTrust
 } from '@carbon/pictograms-react'
+import { NoInfo } from 'src/icons'
 
 export const ICONS = {
   Add,
@@ -95,9 +99,12 @@ export const ICONS = {
   NotificationNew,
   OverflowMenuVertical,
   Payment: Receipt,
+  Reset,
   Save,
+  Search,
   Send: SendAlt,
   Settings,
+  Share,
   Subtract,
   Success: Checkmark,
   SuccessFilled: CheckmarkFilled,
@@ -114,5 +121,6 @@ export const PICTOGRAMS = {
   TransactionalTrust,
   Invoice,
   Assets,
-  DesignResearch
+  DesignResearch,
+  NoInfo
 } as const

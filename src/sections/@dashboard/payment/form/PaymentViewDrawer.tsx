@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router'
 import {
   ContractDetails,
   ContractStatus,
+  IContractDetails,
   IContractPayment,
   IFrequency,
   IPaymentConnection,
@@ -12,7 +13,6 @@ import {
   Translation
 } from 'src/@types'
 import { getContractDetails } from 'src/api/contracts'
-import { getDraft } from 'src/api/drafts'
 import { getPaymentConnection } from 'src/api/payments'
 import { AttachmentsList } from 'src/components/attachment-list'
 import Drawer from 'src/components/drawer/Drawer'
@@ -70,21 +70,18 @@ export default function PaymentViewDrawer({
   const canChangeStatus =
     canAdd(Views.payment) && parsedStatus === PaymentStatus.Draft && !contract.automatic
 
-  const [item, setItem] = useState<ContractDetails | null>(null)
+  const [item, setItem] = useState<IContractDetails | null>(null)
 
   useEffect(() => {
+    const isDetails = 'isDetails' in contract && contract.isDetails
     if (!contract) return
-    if (Object.keys(contract).includes('isContract')) setItem(contract as ContractDetails)
-    else if ((contract as { id: string; status: ContractStatus }).status === ContractStatus.Draft)
-      getDraft(contract.id)
-        .then((res) => setItem({ ...res, isContract: false }))
-        .catch((err) => redirectOnError(navigate, err))
+    if (isDetails) setItem(contract)
     else
       getContractDetails(contract.id)
-        .then((res) => setItem({ ...res, isContract: true }))
+        .then(setItem)
         .catch((err) => redirectOnError(navigate, err))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contract])
+  }, [])
 
   const metricsFirstColumn = [MetricSnake.Uptime, MetricSnake.UploadSpeed] as const
   const metricsSecondColumn = [MetricSnake.Latency, MetricSnake.DownloadSpeed] as const
@@ -96,14 +93,16 @@ export default function PaymentViewDrawer({
   const expectedMetrics = Object.fromEntries(
     sentenceMetrics.map((name) => [
       name,
-      item && item?.isContract ? item.expectedMetrics.find((m) => m.metricName === name) : null
+      item ? item.expectedMetrics.find((m) => m.metricName === name) : null
     ])
   )
 
   const realMetrics = Object.fromEntries(
     sentenceMetrics.map((name) => [
       name,
-      item && item?.isContract ? item.connectionsMedian.find((m) => m.metric_name === name) : null
+      paymentConnection
+        ? paymentConnection.connectionsMedian.find((m) => m.metric_name === name)
+        : null
     ])
   )
 
@@ -229,7 +228,7 @@ export default function PaymentViewDrawer({
             <Typography variant="disabled">{translate('no_attachments_added')}</Typography>
           )}
 
-          {contract && item?.isContract && (
+          {item && (
             <>
               <SectionTitle
                 label={translate('connectivity_quality_check')}
@@ -250,72 +249,32 @@ export default function PaymentViewDrawer({
               <Stack orientation="horizontal" alignItems="center" gap={spacing.md}>
                 <SectionHeading weight={400} heading="connectivity_distribution_by_status" />
                 <InfoToggletip
-                  title={
-                    <>
-                      <Typography>
-                        {translate('tooltips.connectivity_distribution_status.line1')}
-                      </Typography>
-                      <Typography>
-                        {replaceTranslated(
-                          'tooltips.connectivity_distribution_status.line2',
-                          '{{number}}',
-                          item.numberOfSchools as Translation
-                        )}
-                      </Typography>
-                      <Typography>
-                        {replaceTwoTranslated(
-                          'tooltips.connectivity_distribution_status.line3',
-                          '{{dateFrom}}',
-                          '{{dateTo}}',
-                          formatDate(payment?.dateFrom, '/') as Translation,
-                          formatDate(payment?.dateTo, '/')
-                        )}
-                      </Typography>
-                    </>
-                  }
+                  align="top"
+                  title={translate('tooltips.connectivity_distribution_status.line1')}
                 />
               </Stack>
               <PaymentConnectivityBar
                 data={absolutePerecentages}
-                dateFrom={payment?.dateFrom}
-                dateTo={payment?.dateTo}
-                numberOfSchools={item.numberOfSchools}
                 variant="status"
+                tooltipAlign={(a, i) => {
+                  if (a.percentage >= 50) return 'top'
+                  return i === 0 ? 'top-left' : 'top-right'
+                }}
               />
               <Stack orientation="horizontal" alignItems="center" gap={spacing.md}>
                 <SectionHeading weight={400} heading="connectivity_distribution_by_days" />
                 <InfoToggletip
-                  title={
-                    <>
-                      <Typography>
-                        {translate('tooltips.connectivity_distribution_days.line1')}
-                      </Typography>
-                      <Typography>
-                        {replaceTranslated(
-                          'tooltips.connectivity_distribution_days.line2',
-                          '{{number}}',
-                          item.numberOfSchools as Translation
-                        )}
-                      </Typography>
-                      <Typography>
-                        {replaceTwoTranslated(
-                          'tooltips.connectivity_distribution_days.line3',
-                          '{{dateFrom}}',
-                          '{{dateTo}}',
-                          formatDate(payment?.dateFrom, '/') as Translation,
-                          formatDate(payment?.dateTo, '/')
-                        )}
-                      </Typography>
-                    </>
-                  }
+                  align="top"
+                  title={translate('tooltips.connectivity_distribution_days.line1')}
                 />
               </Stack>
               <PaymentConnectivityBar
                 data={daysPercentages}
-                dateFrom={payment?.dateFrom}
-                dateTo={payment?.dateTo}
-                numberOfSchools={item.numberOfSchools}
                 variant="days"
+                tooltipAlign={(a, i) => {
+                  if (a.percentage >= 50) return 'top'
+                  return i === 0 ? 'top-left' : 'top-right'
+                }}
               />
             </>
           )}
@@ -327,22 +286,8 @@ export default function PaymentViewDrawer({
           >
             <SectionHeading weight={400} heading="quality_of_service_comparison" />
             <InfoToggletip
-              title={
-                <>
-                  <Typography>
-                    {translate('tooltips.quality_of_service_comparison.line1')}
-                  </Typography>
-                  <Typography>
-                    {replaceTwoTranslated(
-                      'tooltips.quality_of_service_comparison.line2',
-                      '{{dateFrom}}',
-                      '{{dateTo}}',
-                      formatDate(payment?.dateFrom, '/') as Translation,
-                      formatDate(payment?.dateTo, '/')
-                    )}
-                  </Typography>
-                </>
-              }
+              align="top"
+              title={translate('tooltips.quality_of_service_comparison.line1')}
             />
           </Stack>
 
@@ -363,6 +308,7 @@ export default function PaymentViewDrawer({
                   expectedValue={Number(
                     expectedMetrics[transformMetric(i, 'sentence')]?.value ?? null
                   )}
+                  period={{ dateFrom: payment?.dateFrom, dateTo: payment?.dateTo }}
                 />
               ))}
             </Stack>
@@ -377,6 +323,7 @@ export default function PaymentViewDrawer({
                   expectedValue={Number(
                     expectedMetrics[transformMetric(i, 'sentence')]?.value ?? null
                   )}
+                  period={{ dateFrom: payment?.dateFrom, dateTo: payment?.dateTo }}
                 />
               ))}
             </Stack>
