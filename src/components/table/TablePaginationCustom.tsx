@@ -8,6 +8,7 @@ type Props = {
   rowsPerPage?: number
   onChangePagination: (e: any) => void
   rowsPerPageOptions?: number[]
+  pageInputDisabled?: boolean
 }
 
 export default function TablePaginationCustom({
@@ -16,11 +17,14 @@ export default function TablePaginationCustom({
   rowsPerPageOptions = [5, 10, 25],
   onChangePagination,
   page,
-  rowsPerPage
+  rowsPerPage,
+  pageInputDisabled
 }: Props) {
   const { translate } = useLocales()
   return (
     <Pagination
+      pageSizeInputDisabled={rowsPerPageOptions.length === 1}
+      pageInputDisabled={pageInputDisabled}
       id={id}
       onChange={onChangePagination}
       backwardText={translate('previous_page')}

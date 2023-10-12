@@ -22,7 +22,7 @@ export default function SectionTitle({
   const { translate } = useLocales()
 
   return (
-    <div style={{ paddingBlock: spacing.md, ...style }}>
+    <div style={{ paddingBlockStart: spacing.lg, ...style }}>
       <Typography as="h4" variant="primary">
         {capitalizeFirstLetter(translate(label as Translation))}
         {required && (

@@ -40,7 +40,7 @@ export default function SchoolReliabilityTableFilters({
 }: Props) {
   const { spacing } = useTheme()
   const { translate } = useLocales()
-  const { user } = useAuthContext()
+  const { user, isAdmin } = useAuthContext()
 
   const handleFilterCountry = (country: string) => {
     setPage(1)
@@ -85,18 +85,22 @@ export default function SchoolReliabilityTableFilters({
 
   return (
     <Stack style={{ padding: spacing.md, width: '400px' }} orientation="vertical">
-      <PopoverTitle title="country" />
-      <ComboBox
-        id="school-country-select"
-        itemToString={itemToString}
-        items={sortedCountryOptions}
-        selectedItem={countryName}
-        onChange={(e: { selectedItem: string }) => {
-          handleFilterCountry(e.selectedItem ?? user?.country.name)
-          closePopover()
-        }}
-        disabled={sortedCountryOptions.length <= 1}
-      />
+      {isAdmin && (
+        <>
+          <PopoverTitle title="country" />
+          <ComboBox
+            id="school-country-select"
+            itemToString={itemToString}
+            items={sortedCountryOptions}
+            selectedItem={countryName}
+            onChange={(e) => {
+              handleFilterCountry(e.selectedItem ?? user?.country.name)
+              closePopover()
+            }}
+            disabled={sortedCountryOptions.length <= 1}
+          />
+        </>
+      )}
       <PopoverTitle title="region" />
       <Dropdown
         id="school-region-reliability-select"
@@ -139,7 +143,6 @@ export default function SchoolReliabilityTableFilters({
         disabled={educationLevelOptions.length <= 1}
       />
       <Button
-        size="sm"
         className="btn-max-width-limit"
         kind="secondary"
         style={{ marginTop: spacing.md, width: '100%' }}

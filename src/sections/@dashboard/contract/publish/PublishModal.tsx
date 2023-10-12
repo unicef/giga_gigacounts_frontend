@@ -42,6 +42,7 @@ export default function PublishModal({
       onPrimarySubmit: () => void
       onSecondarySubmit: () => void
       primaryButtonDisabled: boolean
+      disabledText?: Translation
     }
   } = {
     choose: {
@@ -64,6 +65,7 @@ export default function PublishModal({
         setPublishModalStep('choose')
       },
       onSecondarySubmit: () => setPublishModalStep('choose'),
+      disabledText: 'contract_published_modal.manual.disabledText',
       primaryButtonDisabled: isAutomatic
     },
     send: {
@@ -77,11 +79,22 @@ export default function PublishModal({
         setPublishModalStep('choose')
       },
       onSecondarySubmit: () => setPublishModalStep('choose'),
+      disabledText: 'contract_published_modal.send.disabledText',
       primaryButtonDisabled: !isAutomatic && disableApproveSent
     }
   } as const
 
   const activeModalStep = publishModalSteps[publishModalStep]
+  const {
+    content,
+    onPrimarySubmit,
+    onSecondarySubmit,
+    primaryButtonDisabled,
+    primaryText,
+    secondaryText,
+    title,
+    disabledText
+  } = activeModalStep
 
   useEffect(() => {
     if (!countryId || !ispId) return
@@ -96,11 +109,11 @@ export default function PublishModal({
         <Modal
           open={open}
           onRequestClose={onClose}
-          onRequestSubmit={activeModalStep.onPrimarySubmit}
-          onSecondarySubmit={activeModalStep.onSecondarySubmit}
-          primaryButtonText={capitalizeFirstLetter(translate(activeModalStep.primaryText))}
-          secondaryButtonText={capitalizeFirstLetter(translate(activeModalStep.secondaryText))}
-          primaryButtonDisabled={activeModalStep.primaryButtonDisabled}
+          onRequestSubmit={onPrimarySubmit}
+          onSecondarySubmit={onSecondarySubmit}
+          primaryButtonText={capitalizeFirstLetter(translate(primaryText))}
+          secondaryButtonText={capitalizeFirstLetter(translate(secondaryText))}
+          primaryButtonDisabled={primaryButtonDisabled}
         >
           <Stack
             style={{ paddingInline: spacing.xl }}
@@ -110,9 +123,12 @@ export default function PublishModal({
           >
             <PICTOGRAMS.TransactionalTrust style={{ alignSelf: 'center' }} width={84} height={84} />
             <Typography style={{ alignSelf: 'center' }} as="h4">
-              {translate(activeModalStep.title)}
+              {translate(title)}
             </Typography>
-            <Typography as="h6">{translate(activeModalStep.content)}</Typography>
+            <Typography as="h6">{translate(content)}</Typography>
+            {primaryButtonDisabled && disabledText && (
+              <Typography>{translate(disabledText)}</Typography>
+            )}
           </Stack>
         </Modal>
       )}

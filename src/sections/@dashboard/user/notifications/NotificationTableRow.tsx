@@ -1,12 +1,16 @@
-import { Button, DataTableRow, Modal, TableCell, Tag } from '@carbon/react'
+import { DataTableRow, Modal, TableCell, Tag } from '@carbon/react'
 import TableRow, { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
 import TableSelectRow, {
   TableSelectRowProps
 } from '@carbon/react/lib/components/DataTable/TableSelectRow'
 import { INotification, NotificationStatus } from 'src/@types'
-import { ICONS, NOTIFICATION_STATUS_COLORS } from 'src/constants'
+import { ActionLink } from 'src/components/action'
+import { Stack } from 'src/components/stack'
+import { NOTIFICATION_STATUS_COLORS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
 import { useLocales } from 'src/locales'
+import { useTheme } from 'src/theme'
+import { formatDateTime } from 'src/utils/date'
 import { parseNotificationStatus } from 'src/utils/status'
 import { capitalizeFirstLetter, threeDots } from 'src/utils/strings'
 import { getOrderedFromCells } from 'src/utils/table'
@@ -27,9 +31,10 @@ export default function NotificationsTableRow({
   selectionProps
 }: Props) {
   const { translate } = useLocales()
+  const { spacing } = useTheme()
 
-  const [title, status, message] = getOrderedFromCells<INotification>(
-    ['title', 'status', 'message'],
+  const [title, status, message, sentAt] = getOrderedFromCells<INotification>(
+    ['title', 'status', 'message', 'sent_at'],
     row.cells
   )
 
@@ -41,35 +46,37 @@ export default function NotificationsTableRow({
     <TableRow {...rowProps}>
       <TableSelectRow {...selectionProps} />
 
-      <TableCell style={{ width: '35%' }}>{title}</TableCell>
-      <TableCell style={{ width: '15%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '20%' }}>{title}</TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
         <Tag type={NOTIFICATION_STATUS_COLORS[parsedStatus]}>
           {capitalizeFirstLetter(translate(`constant_status.notification.${parsedStatus}`))}
         </Tag>
       </TableCell>
 
-      <TableCell style={{ width: '35%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '30%' }}>
         {threeDots(capitalizeFirstLetter(message as string), 150)}
       </TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
+        {formatDateTime(sentAt, '/', { seconds: false })}
+      </TableCell>
 
-      <TableCell style={{ width: '15%' }}>
-        {parsedStatus !== NotificationStatus.READ && (
-          <Button
-            kind="ghost"
-            hasIconOnly
-            renderIcon={ICONS.Success}
-            iconDescription={capitalizeFirstLetter(translate('read'))}
-            onClick={() => handleReadRow(row.id)}
+      <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
+        <Stack alignItems="center" orientation="horizontal" gap={spacing.xs}>
+          <ActionLink
+            variant="error"
+            icon="Delete"
+            description="delete"
+            onClick={() => confirm.open()}
           />
-        )}
-
-        <Button
-          kind="ghost"
-          hasIconOnly
-          renderIcon={ICONS.Delete}
-          iconDescription={capitalizeFirstLetter(translate('delete'))}
-          onClick={() => confirm.open()}
-        />
+          {parsedStatus !== NotificationStatus.READ && (
+            <ActionLink
+              variant="success"
+              icon="Success"
+              description="read"
+              onClick={() => handleReadRow(row.id)}
+            />
+          )}
+        </Stack>
       </TableCell>
       <TableCell style={{ width: '0%' }}>
         <Modal

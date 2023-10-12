@@ -1,20 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
-import {
-  IContract,
-  ICountry,
-  ICurrency,
-  IFrequency,
-  IISP,
-  INotification,
-  ISchool
-} from 'src/@types'
+import { IContract, ICountry, ICurrency, IFrequency, IISP, INotification } from 'src/@types'
 import { deleteContractDraft, getContracts, getCountries, getCurrencies } from 'src/api/contracts'
 import { getIsp } from 'src/api/isp'
 import { ISuggestedMetrics, getSuggestedMetrics } from 'src/api/metrics'
 import { discardNotification, getNotifications, readNotification } from 'src/api/notifications'
 import { getFrequencies } from 'src/api/payments'
-import { getSchools } from 'src/api/school'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { CURRENCIES_TYPES, ENV_SUPPORTED_NETWORK_ID } from 'src/constants'
 import { redirectOnError } from 'src/pages/errors/handlers'
@@ -26,15 +17,12 @@ const initialState: BusinessContextValue = {
   countries: [],
   internetProviders: [],
   contracts: null,
-  schools: null,
   notifications: null,
   suggestedMetrics: null,
   frequencies: [],
   refetchNotifications: () => {},
   refetchContracts: () => {},
-  setSchools: () => {},
-  refetchSchools: (countryId: string) => new Promise(() => {}),
-  refetchIsps: (countryId: string, ltaId?: string) => new Promise(() => {}),
+  refetchIsps: (countryId: string) => new Promise(() => {}),
   refetchCurrencies: (automaticContract: boolean, countryId?: string) => new Promise(() => {}),
   deleteContract: (id: string) => new Promise(() => {}),
   readNotification: (id: string) => new Promise(() => {}),
@@ -58,7 +46,6 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   const [countries, setCountries] = useState<ICountry[]>([])
   const [internetProviders, setInternetProviders] = useState<IISP[]>([])
   const [contracts, setContracts] = useState<IContract[] | null>(null)
-  const [schools, setSchools] = useState<ISchool[] | null>(null)
   const [notifications, setNotifications] = useState<INotification[] | null>(null)
   const [currencies, setCurrencies] = useState<ICurrency[]>([])
   const [frequencies, setFrequencies] = useState<IFrequency[]>([])
@@ -75,7 +62,6 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
       countries,
       internetProviders,
       contracts,
-      schools,
       notifications,
       currencies,
       frequencies,
@@ -95,22 +81,9 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
           )
         })
       },
-      setSchools: (newSchools: ISchool[] | null) => {
-        if (!isAdmin) return
-        setSchools((prev) => {
-          if (!prev || !newSchools) return newSchools
-          return [...prev, ...newSchools].filter(
-            (value, index, arr) => index === arr.findIndex((t) => t.id === value.id)
-          )
-        })
-      },
-      refetchSchools: (countryId: string) => {
+      refetchIsps: (countryId: string) => {
         if (!isAuthenticated) return undefined
-        return getSchools(countryId)
-      },
-      refetchIsps: (countryId: string, ltaId?: string) => {
-        if (!isAuthenticated) return undefined
-        return getIsp(countryId, ltaId)
+        return getIsp(countryId)
       },
       refetchCurrencies: (automaticContract: boolean, countryId?: string) => {
         if (!isAuthenticated) return undefined
@@ -129,13 +102,11 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       frequencies,
-      isAdmin,
       suggestedMetrics,
       isAuthenticated,
       countries,
       internetProviders,
       contracts,
-      schools,
       notifications,
       user,
       currencies
@@ -170,13 +141,6 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
       })
       .catch(handleErrors)
   }, [isAuthenticated, handleErrors])
-
-  useEffect(() => {
-    const countryId = getCountryId()
-    if (!isAuthenticated || !countryId) return
-
-    getSchools(countryId).then(setSchools).catch(handleErrors)
-  }, [isAuthenticated, countries, isAdmin, user, getCountryId, handleErrors])
 
   useEffect(() => {
     if (!isAuthenticated) return

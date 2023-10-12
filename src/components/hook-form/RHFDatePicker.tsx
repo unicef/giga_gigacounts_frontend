@@ -10,6 +10,8 @@ type Props = {
   placeholder?: string
   size: 'sm' | 'md' | 'lg'
   labelText?: string
+  minDate?: string
+  maxDate?: string
 }
 
 export default function RHFDatePicker({
@@ -20,7 +22,9 @@ export default function RHFDatePicker({
   placeholder,
   size,
   labelText,
-  onChange
+  onChange,
+  maxDate,
+  minDate
 }: Props) {
   const { control } = useFormContext()
 
@@ -30,6 +34,8 @@ export default function RHFDatePicker({
       control={control}
       render={({ field, fieldState: { error } }) => (
         <DatePicker
+          maxDate={maxDate}
+          minDate={minDate}
           onFocus={(e) => e.target.blur()}
           allowInput={false}
           value={field.value}

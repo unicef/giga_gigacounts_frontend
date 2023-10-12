@@ -7,7 +7,7 @@ import {
   Translation,
   Web3TransactionStatus
 } from 'src/@types'
-import { ActionButton } from 'src/components/action-button'
+import { ActionButton } from 'src/components/action'
 import {
   ENV_SUPPORTED_NETWORK_ID,
   SUPPORTED_NETWORKS,
@@ -59,14 +59,16 @@ export default function TransactionTableRow({ row, rowProps, transaction }: Prop
 
   return (
     <TableRow {...rowProps}>
-      <TableCell style={{ width: '12.5%' }}>{transaction.id}</TableCell>
-      <TableCell style={{ width: '12.5%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '12.5%' }}>{transaction.id}</TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '12.5%' }}>
         <Tag style={{ margin: 0 }} type={WEB3_TRANSACTION_STATUS_COLORS[parsedStatus]}>
           {capitalizeFirstLetter(translate(`constant_status.web_transaction.${parsedStatus}`))}
         </Tag>
       </TableCell>
-      <TableCell style={{ width: '12.5%' }}>{formatDateTime(transaction.createdAt, '/')}</TableCell>
-      <TableCell style={{ width: '12.5%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '12.5%' }}>
+        {formatDateTime(transaction.createdAt, '/')}
+      </TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '12.5%' }}>
         <Link
           href={trxExplorer.replace('TRX', transaction.transactionHash)}
           target="_blank"
@@ -75,10 +77,10 @@ export default function TransactionTableRow({ row, rowProps, transaction }: Prop
           {transaction.transactionHash}
         </Link>
       </TableCell>
-      <TableCell style={{ width: '12.5%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '12.5%' }}>
         {getTypeNameByTypeCode(transaction.transactionType as TransactionTypeCode)}
       </TableCell>
-      <TableCell style={{ width: '12.5%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '12.5%' }}>
         <Link
           href={addressExplorer.replace('ADR', transaction.walletAddress)}
           target="_blank"
@@ -87,9 +89,11 @@ export default function TransactionTableRow({ row, rowProps, transaction }: Prop
           {transaction.walletAddress}
         </Link>
       </TableCell>
-      <TableCell style={{ width: '12.5%' }}>{transaction.userDisplayName}</TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '12.5%' }}>
+        {transaction.userDisplayName}
+      </TableCell>
 
-      <TableCell style={{ width: '12.5%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '12.5%' }}>
         {options.map((opt) => (
           <ActionButton
             key={row.id + opt.label}
@@ -111,7 +115,6 @@ export default function TransactionTableRow({ row, rowProps, transaction }: Prop
               transaction.transactionType as TransactionTypeCode
             )
           }}
-          hasError={parsedStatus === Web3TransactionStatus.ERROR}
           open={details.value}
           onClose={details.close}
         />

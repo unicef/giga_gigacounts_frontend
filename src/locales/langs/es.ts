@@ -213,14 +213,17 @@ const es: TranslationObject = {
       title: 'Estás a punto de enviar el contrato para la firma ISP.',
       content: 'Recibirá una notificación cuando ISP firma.',
       primaryText: 'Enviar a ISP para la firma',
-      secondaryText: 'Atrás'
+      secondaryText: 'Atrás',
+      disabledText:
+        'El ISP debe tener un usuario registrado en el sistema, el ISP para este contrato no lo ha hecho.'
     },
     manual: {
       title: 'Estás a punto de confirmar la firma ISP.',
       content:
         'Al confirmar la firma del ISP, confirma que el ISP está bien informado y de acuerdo con los términos del contrato. Esta acción solo se puede hacer para contratos manuales.',
       primaryText: 'Confirmar la firma manualmente',
-      secondaryText: 'Atrás'
+      secondaryText: 'Atrás',
+      disabledText: 'Confirmar manualmente solo está disponible para contratos manuales'
     }
   },
   contract_cancel_modal: {
@@ -518,7 +521,8 @@ const es: TranslationObject = {
   print: 'imprimir',
   send: 'enviar',
   share: 'compartir',
-  mark_as_paid: 'marcar como pagado',
+  mark_as_paid: 'marcar como pago',
+  mark_as_unpaid: 'marcar como no pago',
   close: 'cerrar',
   service_type: 'Tipo de servicio',
   search_user: 'Buscar usuario...',
@@ -556,6 +560,10 @@ const es: TranslationObject = {
     title: '¡Su pago fue creado con éxito!',
     content: 'Encuentre su pago en la lista de pagos'
   },
+  payment_updated_modal: {
+    title: '¡Su pago fue actualizado con éxito!',
+    content: 'Encuentre su pago en la lista de pagos'
+  },
   payment_approve_modal: {
     title: 'Aprobación de pago',
     content: '¿Estás seguro de que quieres aprobar este pago?'
@@ -589,7 +597,7 @@ const es: TranslationObject = {
   forgot_password: 'Olvide mi contraseña',
   wallet: {
     switch_subtitle:
-      'Al activar este interruptor, se puede configurar una billetera y en el menú principal estará disponible una nueva opción, para ver los contratos automáticos (es necesario cerrar sesión e iniciar sesión nuevamente).',
+      'Al activar este interruptor, se puede configurar una billetera y en el menú principal estará disponible una nueva opción, para ver los contratos automáticos.',
     switch_update_msg_ok: 'Guardado',
     switch_update_msg_error: 'Error al guardar la configuración',
     label: 'Billetera',
@@ -801,7 +809,7 @@ const es: TranslationObject = {
     'Si activa esta opcion, el gerente de contrato podrá confirmar el contrato sin confirmación de ISP',
   contact_saved: 'Contacto guardado con éxito',
   help: 'Ayuda',
-  visit_help_page: 'Visite la página de ayuda',
+  visit_help_page: 'visite la página de ayuda',
   payment_frequency: 'frecuencia de pago',
   of: 'de',
   items: 'items',
@@ -1093,7 +1101,9 @@ const es: TranslationObject = {
   connectivity_distribution_by_days: 'distribución de conectividad: por días',
   quality_of_service_comparison: 'comparación de calidad de servicio',
   none: 'Ninguna',
-  pay_reciev: 'Recep. Pago.'
+  pay_reciev: 'Recep. Pago.',
+  reset_table: 'reiniciar tabla',
+  help_request_subtitle: 'Complete su consulta a continuación o'
 }
 
 export default es

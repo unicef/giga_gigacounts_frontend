@@ -1,6 +1,7 @@
 import { PopoverAlignment, SkeletonText, Tooltip } from '@carbon/react'
 import { CSSProperties, ReactNode } from 'react'
 import { Stack } from 'src/components/stack'
+import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
 import { Typography } from '../typography'
 
@@ -20,16 +21,20 @@ type PercentageBarProps = {
 
 export default function PercentageBar({ data, width, tooltipAlign }: PercentageBarProps) {
   const { palette, spacing } = useTheme()
+  const { translate } = useLocales()
   const itemStyle = (percentage: number, color: Color, tooltip?: boolean) =>
     ({
       textAlign: 'left',
-      padding: spacing.xs,
+      padding: spacing.xxs,
       width: tooltip ? '100%' : `${percentage}%`,
+      minWidth: 'fit-content',
       backgroundColor: color === 'unknown' ? palette.grey[360] : palette[color].light
     } as const)
 
   const isValidPercentage = (percentage: number) =>
     !Number.isNaN(Number(percentage)) && Number(percentage) !== 0
+  if (!data) return <SkeletonText />
+
   return (
     <Stack orientation="horizontal" style={{ width }}>
       {data && data.some((d) => isValidPercentage(d.percentage)) ? (
@@ -43,7 +48,7 @@ export default function PercentageBar({ data, width, tooltipAlign }: PercentageB
                 border: 'none'
               }}
             >
-              <Typography>{item.percentage}%</Typography>
+              <Typography size={14}>{item.percentage}%</Typography>
             </button>
           )
 
@@ -51,13 +56,16 @@ export default function PercentageBar({ data, width, tooltipAlign }: PercentageB
             isValidPercentage(item.percentage) &&
             (item.tooltip ? (
               <Tooltip
+                className="percentage-bar-tooltip"
+                key={item.color + item.percentage}
                 leaveDelayMs={0}
                 align={(() => {
                   if (tooltipAlign) return tooltipAlign(item, i)
                   return i === 0 ? 'top-left' : 'top-right'
                 })()}
                 style={{
-                  width: `${item.percentage}%`
+                  width: `${item.percentage}%`,
+                  minWidth: 'fit-content'
                 }}
                 description={item.tooltip}
               >
@@ -69,7 +77,9 @@ export default function PercentageBar({ data, width, tooltipAlign }: PercentageB
           )
         })
       ) : (
-        <SkeletonText />
+        <div style={{ ...itemStyle(100, 'unknown', true) }}>
+          <Typography size={14}>{translate('no_data')}</Typography>
+        </div>
       )}
     </Stack>
   )

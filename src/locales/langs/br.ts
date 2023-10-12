@@ -212,14 +212,17 @@ const br: TranslationObject = {
       title: 'Você está prestes a enviar o contrato para a assinatura do ISP.',
       content: 'Receberá uma notificação quando os sinais do ISP.',
       primaryText: 'Enviar ISP para a assinatura',
-      secondaryText: 'Retornar'
+      secondaryText: 'Retornar',
+      disabledText:
+        'O ISP deve ter um usuário registrado no sistema, o ISP para este contrato não o fez.'
     },
     manual: {
       title: 'Você está prestes a confirmar a assinatura do ISP.',
       content:
         'Ao confirmar a assinatura do ISP, confirma que o ISP está bem informado e de acordo com os termos do contrato. Essa ação só pode ser realizada para contratos manuais.',
       primaryText: 'Confirme a assinatura manualmente',
-      secondaryText: 'Retornar'
+      secondaryText: 'Retornar',
+      disabledText: 'Confirmar manualmente está disponível apenas para contratos manuais'
     }
   },
   contract_cancel_modal: {
@@ -269,8 +272,8 @@ const br: TranslationObject = {
     multiple_missing: 'Faltam campos',
     start_date: 'A data de início deve ser depois de hoje',
     end_date: 'A data final deve ser posterior à Data de início',
-    launch_date_min: 'A data de lançamento deve ser posterior à Data de início',
-    launch_date_max: 'A data de lançamento deve ser anterior à Data final',
+    launch_date_min: 'A data de ativação deve ser posterior à Data de início',
+    launch_date_max: 'A data de ativação deve ser anterior à Data final',
     is_invalid: 'é inválido'
   },
   parse_errors: {
@@ -427,7 +430,7 @@ const br: TranslationObject = {
   enable_bypass: 'habilitar a confirmação do ISP de desvio',
   important: 'importante',
   add_a_contract_launch_day:
-    'adicione uma data de lançamento do contrato (se a data de lançamento for diferente da data de início, adicione aqui)',
+    'adicione uma data de ativação do contrato (se a data de ativação for diferente da data de início, adicione aqui)',
   link_schools:
     'vincular as escolas mais rapidamente, enviando uma lista de IDs e orçamentos da escola',
   breaking_rules: 'quebrando o contrato de regras',
@@ -444,7 +447,7 @@ const br: TranslationObject = {
   end_date: 'Data final',
   date_from: 'Data de',
   date_to: 'Data para',
-  launch_date: 'Data de lançamento',
+  launch_date: 'Data de ativação',
   umbrella: 'Umbrella',
   quality_of_service: 'Qualidade de serviço',
   uptime: 'Tempo de atividade',
@@ -516,7 +519,8 @@ const br: TranslationObject = {
   print: 'imprimir',
   send: 'enviar',
   share: 'compartilhar',
-  mark_as_paid: 'marcar como pago',
+  mark_as_paid: 'marca conforme pago',
+  mark_as_unpaid: 'marca como não remunerado',
   close: 'fechar',
   service_type: 'Tipo de serviço',
   search_user: 'Pesquisar usuário...',
@@ -555,6 +559,10 @@ const br: TranslationObject = {
     title: 'Seu pagamento foi criado com sucesso!',
     content: 'Encontre seu pagamento na lista de pagamentos'
   },
+  payment_updated_modal: {
+    title: 'Seu pagamento foi atualizado com sucesso!',
+    content: 'Encontre seu pagamento na lista de pagamentos'
+  },
   payment_approve_modal: {
     title: 'Aprovação de pagamento',
     content: 'Tem certeza de que deseja aprovar este pagamento?'
@@ -588,7 +596,7 @@ const br: TranslationObject = {
   forgot_password: 'Esqueci minha senha',
   wallet: {
     switch_subtitle:
-      'Ao ativar esta opção, você pode configurar uma carteira aqui e uma nova opção no menu principal estará disponível para visualizar os contratos automáticos (é necessário fazer logout e login novamente).',
+      'Ao ativar esta opção, você pode configurar uma carteira aqui e uma nova opção no menu principal estará disponível para visualizar os contratos automáticos.',
     switch_update_msg_ok: 'Salvo',
     switch_update_msg_error: 'Erro ao salvar configuração',
     label: 'Carteira',
@@ -801,7 +809,7 @@ const br: TranslationObject = {
     'Se você ativar esta opção, o gerente do contrato poderá confirmar o contrato sem confirmação do ISP',
   contact_saved: 'Contate adicionado com sucesso',
   help: 'Ajuda',
-  visit_help_page: 'Visite a página de ajuda',
+  visit_help_page: 'visite a página de ajuda',
   payment_frequency: 'frequência de Pagamento',
   of: 'de',
   items: 'itens',
@@ -823,7 +831,7 @@ const br: TranslationObject = {
       Draft: 'rascunho',
       Sent: 'enviado',
       Confirmed: 'confirmado',
-      Ongoing: 'no curso',
+      Ongoing: 'ativo',
       Expired: 'expirado',
       Completed: 'finalizado'
     },
@@ -1075,7 +1083,7 @@ const br: TranslationObject = {
   percentage_schools_connected_by_number_of_days:
     'Porcentagem de escolas conectadas por número de dias',
   number_schools: '{{number}} escolas',
-  from_date_to_date: 'de {{datefrom}} para {{dateto}}',
+  from_date_to_date: 'de {{dateFrom}} para {{dateTo}}',
   distributed_by_percentage_of_schools: 'distribuído pela porcentagem de escolas',
   no_connection: 'sem conexão',
   bad_connection: 'conexão ruim',
@@ -1092,7 +1100,9 @@ const br: TranslationObject = {
   connectivity_distribution_by_days: 'distribuição de conectividade: para dias',
   quality_of_service_comparison: 'comparación de calidad de servicio',
   none: 'Nenhum',
-  pay_reciev: 'Recep. Paga.'
+  pay_reciev: 'Recep. Paga.',
+  reset_table: 'reiniciar tela',
+  help_request_subtitle: 'Conclua sua consulta abaixo ou'
 }
 
 export default br

@@ -109,7 +109,6 @@ export default function SchoolTableFilters({
         disabled={educationLevelOptions.length <= 1}
       />
       <Button
-        size="sm"
         className="btn-max-width-limit"
         kind="secondary"
         style={{ marginTop: spacing.md, width: '100%' }}

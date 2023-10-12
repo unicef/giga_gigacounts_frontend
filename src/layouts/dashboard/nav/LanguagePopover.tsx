@@ -13,16 +13,21 @@ export default function LanguagePopover() {
   const { spacing } = useTheme()
   return (
     <Popover isTabTip onRequestClose={popover.close} open={popover.value} align="bottom-right">
-      <Stack orientation="horizontal">
-        <Typography style={{ alignSelf: 'center', padding: spacing.xs }}>
-          {capitalizeFirstLetter(currentLang.value)}
-        </Typography>
+      <Stack
+        alignSelf="center"
+        alignItems="center"
+        justifyContent="center"
+        orientation="horizontal"
+      >
         <HeaderGlobalAction
           id="language-popover"
           aria-label={translate('change_lang')}
           isActive={popover.value}
           onClick={popover.toggle}
         >
+          <Typography size={16} style={{ alignSelf: 'center', padding: spacing.xs }}>
+            {capitalizeFirstLetter(currentLang.value)}
+          </Typography>
           <ICONS.CaretDown />
         </HeaderGlobalAction>
       </Stack>

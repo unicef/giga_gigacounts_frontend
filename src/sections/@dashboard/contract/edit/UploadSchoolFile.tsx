@@ -1,48 +1,25 @@
 import { Dispatch, SetStateAction } from 'react'
-import * as XLSX from 'xlsx'
-import { CsvParseError, SchoolCell, Translation } from 'src/@types'
+import { Translation } from 'src/@types'
 import { UploadBox } from 'src/components/upload-box'
 import { useLocales } from 'src/locales'
 import { capitalizeFirstLetter } from 'src/utils/strings'
+import * as XLSX from 'xlsx'
 
 const COLUMNS = {
   external_id: 'A',
   budget: 'B'
 } as const
 
-const getSchool = (sheet: XLSX.WorkSheet, row: number, schools: SchoolCell[]) => {
-  const external_id = sheet[`${COLUMNS.external_id}${row}`]?.v
-  const school = schools.find((s) => s.external_id === String(external_id))
-  if (!school) throw new CsvParseError('parse_errors.school_not_found', row)
-
-  const budget = sheet[`${COLUMNS.budget}${row}`]?.v
-
-  if (!external_id || typeof external_id !== 'number')
-    throw new CsvParseError('parse_errors.school_id', row)
-  if (!budget || typeof budget !== 'number') {
-    throw new CsvParseError('parse_errors.school_budget_missing', row)
-  }
-  if (budget <= 0) throw new CsvParseError('parse_errors.school_budget_positive', row)
-
-  return {
-    ...school,
-    budget: String(budget)
-  }
-}
-
 export default function UploadSchoolFile({
   onUpload,
   setUploadErrorMessage,
-  setParsingErrorMessages,
-  schools
+  setParsingErrorMessages
 }: {
-  onUpload: (schools: { external_id: string; budget: string }[]) => void
+  onUpload: (schools: { external_id: string; budget: number | string; row: number }[]) => void
   setUploadErrorMessage: Dispatch<SetStateAction<Translation | ''>>
   setParsingErrorMessages: Dispatch<SetStateAction<string[]>>
-  schools: SchoolCell[]
 }) {
   const { translate } = useLocales()
-  const translateErrorRow = (message: Translation, row: number) => `${translate(message)} ${row}`
 
   const handleDrop = (acceptedFiles: File[]): void => {
     setParsingErrorMessages([])
@@ -56,21 +33,17 @@ export default function UploadSchoolFile({
       const data = XLSX.read(binaryString, { type: 'binary' })
       const sheetName = data.SheetNames[0]
       const sheet = data.Sheets[sheetName]
-      const addedSchools: SchoolCell[] = []
+      const addedSchools: { external_id: string; row: number; budget: number | string }[] = []
       Object.keys(sheet).forEach((key) => {
         if (!key.startsWith('A')) return
         const row = Number(key.slice(1))
         if (row === 1) return
-        try {
-          const school = getSchool(sheet, row, schools)
-          addedSchools.push(school)
-        } catch (err) {
-          if (err instanceof CsvParseError && err.message)
-            setParsingErrorMessages((prev) => [...prev, translateErrorRow(err.message, err.row)])
-          else throw err
-        }
+        const external_id = String(sheet[`${COLUMNS.external_id}${row}`]?.v)
+        const budget = sheet[`${COLUMNS.budget}${row}`]?.v
+
+        addedSchools.push({ row, external_id, budget })
       })
-      onUpload(addedSchools.map((s) => ({ external_id: s.external_id, budget: s.budget })))
+      onUpload(addedSchools)
     }
     return fileReader.readAsBinaryString(csv)
   }

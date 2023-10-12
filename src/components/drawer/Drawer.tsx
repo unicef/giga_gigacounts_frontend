@@ -68,7 +68,15 @@ export default function DrawerContainer({
       )}
       {header && !wrapHeader && <>{header}</>}
       <div>
-        <div style={{ padding: spacing.xl, minHeight: header ? '83dvh' : '100dvh' }}>{content}</div>
+        <div
+          style={{
+            paddingInline: spacing.xl,
+            paddingBlock: spacing.sm,
+            minHeight: header ? '83dvh' : '100dvh'
+          }}
+        >
+          {content}
+        </div>
         <div
           style={{
             zIndex: 9101,

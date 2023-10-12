@@ -48,7 +48,7 @@ export default function MeasuresTableFilter({
 }: Props) {
   const { spacing } = useTheme()
   const { translate } = useLocales()
-  const { user } = useAuthContext()
+  const { user, isAdmin } = useAuthContext()
 
   const handleFilter = (filterChange: () => void) => {
     setPage(1)
@@ -120,19 +120,22 @@ export default function MeasuresTableFilter({
         ))}
       </Stack>
 
-      <PopoverTitle title="country" />
-
-      <ComboBox
-        id="school-country-select"
-        itemToString={itemToString}
-        items={sortedCountryOptions}
-        selectedItem={countryName}
-        onChange={(e: { selectedItem: string }) => {
-          handleFilterCountry(e.selectedItem ?? user?.country.name)
-          closePopover()
-        }}
-        disabled={sortedCountryOptions.length <= 1}
-      />
+      {isAdmin && (
+        <>
+          <PopoverTitle title="country" />
+          <ComboBox
+            id="school-country-select"
+            itemToString={itemToString}
+            items={sortedCountryOptions}
+            selectedItem={countryName}
+            onChange={(e) => {
+              handleFilterCountry(e.selectedItem ?? user?.country.name)
+              closePopover()
+            }}
+            disabled={sortedCountryOptions.length <= 1}
+          />
+        </>
+      )}
       <PopoverTitle title="region" />
       <Dropdown
         id="region-school-filter"
@@ -175,7 +178,6 @@ export default function MeasuresTableFilter({
       />
 
       <Button
-        size="sm"
         className="btn-max-width-limit"
         kind="secondary"
         style={{ marginTop: spacing.md, width: '100%' }}

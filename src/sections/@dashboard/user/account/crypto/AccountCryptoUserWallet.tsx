@@ -14,7 +14,7 @@ import { SectionTitle, Typography } from 'src/components/typography'
 import Wallet from 'src/components/wallet/Wallet'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 // permissions
-import { ICONS, Views } from 'src/constants'
+import { ICONS, UserSettings, Views } from 'src/constants'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 // api
 import { settingAutomaticContracts } from 'src/api/user'
@@ -35,13 +35,13 @@ export default function AccountCryptoUserWallet() {
   } = useWeb3Context()
 
   const { palette, spacing } = useTheme()
-  const { user } = useAuthContext()
+  const { user, setUser } = useAuthContext()
   const { canEdit } = useAuthorization()
   const { translate } = useLocales()
   const { pushError, pushSuccess } = useSnackbar()
 
   const [automaticContracts, setAutomaticContracts] = useState(
-    user?.automaticContractsEnabled || false
+    user?.[UserSettings.SETTING_AUTOMATIC_CONTRACTS] || false
   )
   const [hasAttachedWallet, setHasAttachedWallet] = useState(Boolean(user?.walletAddress))
   const [wrongAddress, setWrongAddress] = useState(
@@ -151,6 +151,10 @@ export default function AccountCryptoUserWallet() {
       const newAutoamticContracts = !automaticContracts
       await settingAutomaticContracts(newAutoamticContracts)
       setAutomaticContracts(newAutoamticContracts)
+      setUser((prev) => ({
+        ...prev,
+        [UserSettings.SETTING_AUTOMATIC_CONTRACTS]: newAutoamticContracts
+      }))
       pushSuccess('wallet.switch_update_msg_ok')
     } catch {
       pushError('wallet.switch_update_msg_error')
@@ -179,8 +183,8 @@ export default function AccountCryptoUserWallet() {
       <Toggle
         size="md"
         disabled={updating}
-        labelA={translate('wallet.automatic_disabled')}
-        labelB={translate('wallet.automatic_enabled')}
+        labelA={capitalizeFirstLetter(translate('wallet.automatic_disabled'))}
+        labelB={capitalizeFirstLetter(translate('wallet.automatic_enabled'))}
         labelText={translate('wallet.switch_subtitle')}
         toggled={automaticContracts}
         id="toggle automatic contracts"
@@ -257,7 +261,7 @@ export default function AccountCryptoUserWallet() {
               {translate('wallet.disconnect')}
             </Button>
           )}
-          {wallet && (wrongAddress || !hasAttachedWallet) && (
+          {wallet && canEdit(Views.wallet) && (wrongAddress || !hasAttachedWallet) && (
             <Button
               disabled={updating}
               renderIcon={ICONS.Success}

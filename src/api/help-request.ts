@@ -1,4 +1,4 @@
-import { HelpRequestForm, HelpRequestFunctionality, HelpRequestPossibleValue } from 'src/@types'
+import { HelpRequestForm, HelpRequestPossibleValue } from 'src/@types'
 import instance from './init'
 
 export const sendHelpRequest = async (helpRequest: HelpRequestForm & { path: string }) => {
@@ -13,10 +13,5 @@ export const getHelpRequests = async (): Promise<(HelpRequestForm & { path: stri
 
 export const getHelpRequestPossibleValues = async (): Promise<HelpRequestPossibleValue[]> => {
   const response = await instance.get('/help-request-values')
-  return response.data
-}
-
-export const getHelpRequestFunctionalities = async (): Promise<HelpRequestFunctionality[]> => {
-  const response = await instance.get('/help-request-functionalities')
   return response.data
 }

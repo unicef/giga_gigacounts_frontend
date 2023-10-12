@@ -9,7 +9,6 @@ import {
   ICountry,
   ICurrency,
   IDraft,
-  ILta,
   IPendingContractDetails,
   IPeriod,
   Translation
@@ -20,6 +19,7 @@ import instance from './init'
 
 export const getContracts = async (): Promise<IContract[]> => {
   const response = await instance.get('/contract')
+  if (response.status === 200 && !response.data) return []
   return response.data.contracts.map((c: IContract) =>
     parseContractStatus(c.status) === ContractStatus.Draft
       ? { ...c, id: String(DRAFT_ID_OFFSET + Number(c.id)) }
@@ -192,15 +192,6 @@ export const getCurrencies = async (
     params: {
       type,
       networkId,
-      countryId
-    }
-  })
-  return response.data
-}
-
-export const getLtas = async (countryId?: string): Promise<ILta[]> => {
-  const response = await instance.get('/lta', {
-    params: {
       countryId
     }
   })

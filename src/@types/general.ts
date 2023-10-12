@@ -83,7 +83,6 @@ export interface IDraft {
   governmentBehalf: boolean
   automatic: boolean
   isp: IISP | null
-  lta?: ILta
   schools: (ISchool & { budget: string })[]
   notes: string
   ispContacts: IExternalUser[]
@@ -109,7 +108,6 @@ export interface ISchoolsConnections {
 }
 
 export interface IContractsData {
-  ltas: ILtas
   contracts: IContract[]
 }
 export interface IContractDraft {
@@ -121,7 +119,6 @@ export interface IContractDraft {
   currency_id: number
   end_date: string
   government_behalf: boolean
-  lta: ILtas
   start_date: string
   updated_at: string
   schools?: IContractSchools[]
@@ -156,7 +153,6 @@ export interface IContractDetails {
   }[]
   name: string
   isp: string
-  lta: ILta
   attachments: IAttachment[]
   startDate: string
   endDate: string
@@ -189,7 +185,6 @@ export interface IPendingContractDetails {
   id: string
   name: string
   isp: string
-  lta: ILta
   budget?: string
   currency?: ICurrency
   attachments: IAttachment[]
@@ -207,22 +202,11 @@ type DetailsTypeByStatus<Status extends ContractStatus = ContractStatus> = Statu
   ? IPendingContractDetails
   : IContractDetails
 
-export interface ILtas {
-  [key: string]: []
-}
-
-export interface ILta {
-  id: string
-  name: string
-  country_id: string
-}
-
 export interface IContract<Status extends ContractStatus = ContractStatus> {
   added?: boolean
   country?: ICountry
   id: string
   isp?: string
-  lta?: ILta
   name: string
   governmentBehalf?: boolean
   numberOfSchools: string
@@ -236,6 +220,7 @@ export interface IContract<Status extends ContractStatus = ContractStatus> {
   automatic: boolean
   start_date: string | null
   end_date: string | null
+  createdBy: string
 }
 
 export type ContractSchoolsConnection = {
@@ -261,12 +246,12 @@ export interface IContractSchools {
 export interface ISchoolMeasures {
   measure_id: string
   date: string
-  metric_name: string
+  metric_name: Metric
   unit: string
   median_value: number
+  connection: { value: number }
 }
 export interface ISchoolMeasuresExtended extends ISchoolMeasures {
-  contract_name: string
   school_name: string
   school_education_level: EducationLevel
   school_external_id: string
@@ -407,7 +392,6 @@ export type Contract = {
   expectedMetrics: {
     metrics: ({ metricId: string; value: string } | null)[]
   }
-  ltaId?: string
   budget: string
   startDate: string
   endDate: string
@@ -444,7 +428,6 @@ export interface ISchool {
   reliable_measures: boolean
 }
 export type SchoolCell = ISchool & { budget: string }
-
 export interface IFrequency {
   id: string
   name: 'Weekly' | 'Biweekly' | 'Monthly' | 'Daily'
@@ -483,4 +466,5 @@ export interface IPaymentConnection {
     noConnection: number
     unknownConnection: number
   }
+  connectionsMedian: IConnectionMedian[]
 }

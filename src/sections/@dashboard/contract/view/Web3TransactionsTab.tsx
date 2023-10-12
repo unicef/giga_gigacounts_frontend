@@ -79,7 +79,6 @@ export default function Web3TransactionsTab({ contract }: { contract: ContractDe
       tableHead={TABLE_HEAD}
       tableName="transactionLog"
       emptyText="table_no_data.transactions"
-      title="Blockchain Transaction table"
     />
   )
 }

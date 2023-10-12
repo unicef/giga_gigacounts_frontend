@@ -17,8 +17,15 @@ export const createPayment = async (payment: IPaymentForm): Promise<IContractPay
   return response.data
 }
 
-export const getContractPayments = async (contractId: string): Promise<IContractPayment[]> => {
-  const response = await instance.get<IContractPayment[]>(`${ENDPOINT_URL}/contract/${contractId}`)
+export const getContractPayments = async (
+  contractId: string,
+  dateFrom: string,
+  dateTo: string
+): Promise<IContractPayment[]> => {
+  const response = await instance.get<IContractPayment[]>(
+    `${ENDPOINT_URL}/contract/${contractId}`,
+    { params: { dateTo, dateFrom } }
+  )
   return response.data
 }
 
@@ -35,7 +42,7 @@ export const changePaymentStatus = async (paymentId: string, status: PaymentStat
   return response.data
 }
 
-export const getPayments = async (countryId?: string) => {
+export const getPayments = async (dateFrom: string, dateTo: string, countryId?: string) => {
   const response = await instance.get<
     (IContractPayment & {
       contractName: string
@@ -43,7 +50,7 @@ export const getPayments = async (countryId?: string) => {
       contractNumberOfSchools: number
       contractCountryName: string
     })[]
-  >(ENDPOINT_URL, { params: { countryId } })
+  >(ENDPOINT_URL, { params: { dateFrom, dateTo, countryId } })
   return response.data
 }
 

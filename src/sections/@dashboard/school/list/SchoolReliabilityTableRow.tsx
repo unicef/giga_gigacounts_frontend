@@ -3,7 +3,7 @@ import { TableRowProps } from '@carbon/react/lib/components/DataTable/TableRow'
 import { useState } from 'react'
 import { ISchool } from 'src/@types'
 import { setReliability } from 'src/api/school'
-import { ActionButton } from 'src/components/action-button'
+import { ActionLink } from 'src/components/action'
 import { SCHOOL_RELIABILITY_COLOR, STRING_DEFAULT } from 'src/constants'
 import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
@@ -37,26 +37,30 @@ export default function SchoolReliabilityTableRow({ row, rowProps }: Props) {
 
   return (
     <TableRow {...rowProps}>
-      <TableCell style={{ width: '30%' }}>{threeDots(name, 50)}</TableCell>
-      <TableCell style={{ width: '15%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '30%' }}>{threeDots(name, 50)}</TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
         <Tag type={SCHOOL_RELIABILITY_COLOR(checked)}>
           {capitalizeFirstLetter(translate(checked ? 'reliable' : 'unreliable'))}
         </Tag>
       </TableCell>
-      <TableCell style={{ width: '20%' }}>{external_id}</TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '20%' }}>{external_id}</TableCell>
 
-      <TableCell style={{ width: '25%' }}>{location1 || STRING_DEFAULT}</TableCell>
+      <TableCell style={{ verticalAlign: 'middle', width: '20%' }}>
+        {location1 || STRING_DEFAULT}
+      </TableCell>
 
-      <TableCell style={{ width: '10%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
         {checked ? (
-          <ActionButton
+          <ActionLink
             icon="Close"
             description="mark_as_unreliable"
             onClick={() => handleReliableChange(false, row.id)}
+            variant="error"
           />
         ) : (
-          <ActionButton
+          <ActionLink
             icon="Success"
+            variant="success"
             description="mark_as_reliable"
             onClick={() => handleReliableChange(true, row.id)}
           />

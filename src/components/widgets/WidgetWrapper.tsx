@@ -44,7 +44,7 @@ export default function WidgetWrapper({
           justifySelf="flex-start"
         >
           {title && (
-            <Typography as="h4" size={24}>
+            <Typography as="h3" size={24}>
               {typeof title === 'string' ? capitalizeFirstLetter(title) : title}
             </Typography>
           )}

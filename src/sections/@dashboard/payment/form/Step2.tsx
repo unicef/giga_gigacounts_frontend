@@ -2,7 +2,7 @@ import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
-  ContractDetails,
+  IContractDetails,
   IFrequency,
   IPaymentConnection,
   IPeriod,
@@ -16,7 +16,7 @@ import { RHFSelect } from 'src/components/hook-form'
 import { InfoToggletip } from 'src/components/info-toggletip'
 import { ComparingCard } from 'src/components/qos-card'
 import Stack from 'src/components/stack/Stack'
-import { SectionHeading, SectionTitle, Typography } from 'src/components/typography'
+import { SectionHeading, SectionTitle } from 'src/components/typography'
 import { FREQUENCIES_MINIMUM_LENGTH } from 'src/constants'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
@@ -26,7 +26,7 @@ import { capitalizeFirstLetter } from 'src/utils/strings'
 import { PaymentConnectivityBar } from '../graph'
 
 type Step2Props = {
-  contract: ContractDetails | null
+  contract: IContractDetails | null
   paymentFrequency: IFrequency['name']
   paidDate: IPeriod | null
 }
@@ -52,17 +52,15 @@ export default function Step2({ contract, paymentFrequency, paidDate }: Step2Pro
   const realMetrics = Object.fromEntries(
     sentenceMetrics.map((name) => [
       name,
-      contract && contract.isContract
-        ? contract.connectionsMedian.find((m) => m.metric_name === name)
+      paymentConnection
+        ? paymentConnection.connectionsMedian.find((m) => m.metric_name === name)
         : null
     ])
   )
   const expectedMetrics = Object.fromEntries(
     sentenceMetrics.map((name) => [
       name,
-      contract && contract.isContract
-        ? contract.expectedMetrics.find((m) => m.metricName === name)
-        : null
+      contract ? contract.expectedMetrics.find((m) => m.metricName === name) : null
     ])
   )
   const payment = getValues('payment')
@@ -98,7 +96,7 @@ export default function Step2({ contract, paymentFrequency, paidDate }: Step2Pro
 
   return (
     <Stack>
-      {contract && contract.isContract && (
+      {contract && (
         <>
           <SectionTitle
             label={translate('connectivity_quality_check')}
@@ -119,92 +117,40 @@ export default function Step2({ contract, paymentFrequency, paidDate }: Step2Pro
           <Stack orientation="horizontal" alignItems="center" gap={spacing.md}>
             <SectionHeading weight={400} heading="connectivity_distribution_by_status" />
             <InfoToggletip
-              title={
-                <>
-                  <Typography>
-                    {translate('tooltips.connectivity_distribution_status.line1')}
-                  </Typography>
-                  <Typography>
-                    {replaceTranslated(
-                      'tooltips.connectivity_distribution_status.line2',
-                      '{{number}}',
-                      contract.numberOfSchools as Translation
-                    )}
-                  </Typography>
-                  <Typography>
-                    {replaceTwoTranslated(
-                      'tooltips.connectivity_distribution_status.line3',
-                      '{{dateFrom}}',
-                      '{{dateTo}}',
-                      formatDate(dateFrom.toISOString(), '/') as Translation,
-                      formatDate(dateTo.toISOString(), '/')
-                    )}
-                  </Typography>
-                </>
-              }
+              align="top"
+              title={translate('tooltips.connectivity_distribution_status.line1')}
             />
           </Stack>
           <PaymentConnectivityBar
             data={absolutePerecentages}
-            dateFrom={dateFrom.toISOString()}
-            dateTo={dateTo.toISOString()}
-            numberOfSchools={contract.numberOfSchools}
             variant="status"
+            tooltipAlign={(a, i) => {
+              if (a.percentage >= 50) return 'top'
+              return i === 0 ? 'top-left' : 'top-right'
+            }}
           />
           <Stack orientation="horizontal" alignItems="center" gap={spacing.md}>
             <SectionHeading weight={400} heading="connectivity_distribution_by_days" />
             <InfoToggletip
-              title={
-                <>
-                  <Typography>
-                    {translate('tooltips.connectivity_distribution_days.line1')}
-                  </Typography>
-                  <Typography>
-                    {replaceTranslated(
-                      'tooltips.connectivity_distribution_days.line2',
-                      '{{number}}',
-                      contract.numberOfSchools as Translation
-                    )}
-                  </Typography>
-                  <Typography>
-                    {replaceTwoTranslated(
-                      'tooltips.connectivity_distribution_days.line3',
-                      '{{dateFrom}}',
-                      '{{dateTo}}',
-                      formatDate(dateFrom.toISOString(), '/') as Translation,
-                      formatDate(dateTo.toISOString(), '/')
-                    )}
-                  </Typography>
-                </>
-              }
+              align="top"
+              title={translate('tooltips.connectivity_distribution_days.line1')}
             />
           </Stack>
           <PaymentConnectivityBar
             data={daysPercentages}
-            dateFrom={dateFrom.toISOString()}
-            dateTo={dateTo.toISOString()}
-            numberOfSchools={contract.numberOfSchools}
             variant="days"
+            tooltipAlign={(a, i) => {
+              if (a.percentage >= 50) return 'top'
+              return i === 0 ? 'top-left' : 'top-right'
+            }}
           />
         </>
       )}
       <Stack orientation="horizontal" gap={spacing.md} alignItems="center">
         <SectionHeading weight={400} heading="quality_of_service_comparison" />
         <InfoToggletip
-          title={
-            <>
-              <Typography>{translate('tooltips.quality_of_service_comparison.line1')}</Typography>
-              <Typography>
-                {replaceTwoTranslated(
-                  'tooltips.quality_of_service_comparison.line2',
-                  '{{dateFrom}}',
-                  '{{dateTo}}',
-                  formatDate(dateFrom.toISOString(), '/') as Translation,
-                  formatDate(dateTo.toISOString(), '/')
-                )}
-              </Typography>
-            </>
-          }
+          align="top"
+          title={translate('tooltips.quality_of_service_comparison.line1')}
         />
       </Stack>
       <Stack orientation="horizontal" gap={spacing.xl} justifyContent="center" alignItems="center">
@@ -217,6 +163,7 @@ export default function Step2({ contract, paymentFrequency, paidDate }: Step2Pro
               name={i}
               value={Number(realMetrics[transformMetric(i, 'sentence')]?.median_value ?? null)}
               expectedValue={Number(expectedMetrics[transformMetric(i, 'sentence')]?.value ?? null)}
+              period={{ dateFrom: dateFrom.toISOString(), dateTo: dateTo.toISOString() }}
             />
           ))}
         </Stack>
@@ -229,6 +176,7 @@ export default function Step2({ contract, paymentFrequency, paidDate }: Step2Pro
               name={i}
               value={Number(realMetrics[transformMetric(i, 'sentence')]?.median_value ?? null)}
               expectedValue={Number(expectedMetrics[transformMetric(i, 'sentence')]?.value ?? null)}
+              period={{ dateFrom: dateFrom.toISOString(), dateTo: dateTo.toISOString() }}
             />
           ))}
         </Stack>

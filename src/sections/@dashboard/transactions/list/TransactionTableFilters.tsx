@@ -1,17 +1,17 @@
-import { Button, Tag } from '@carbon/react'
-import { Dispatch, SetStateAction } from 'react'
-import { Setter, Translation, Web3TransactionStatus } from 'src/@types'
-import { Stack } from 'src/components/stack'
-import { PopoverTitle } from 'src/components/typography'
+import { Button, Tag } from '@carbon/react';
+import { Dispatch, SetStateAction } from 'react';
+import { Setter, Translation, Web3TransactionStatus } from 'src/@types';
+import { Stack } from 'src/components/stack';
+import { PopoverTitle } from 'src/components/typography';
 import {
   FILTER_ALL_DEFAULT,
   FILTER_TAG_BORDER,
   FilterAll,
   WEB3_TRANSACTION_STATUS_COLORS
-} from 'src/constants'
-import { useLocales } from 'src/locales'
-import { useTheme } from 'src/theme'
-import { capitalizeFirstLetter } from 'src/utils/strings'
+} from 'src/constants';
+import { useLocales } from 'src/locales';
+import { useTheme } from 'src/theme';
+import { capitalizeFirstLetter } from 'src/utils/strings';
 
 type Props = {
   closePopover: () => void
@@ -62,7 +62,6 @@ export default function TransactionTableFilters({
       </Stack>
 
       <Button
-        size="sm"
         className="btn-max-width-limit"
         kind="secondary"
         style={{ marginTop: spacing.md, width: '100%' }}

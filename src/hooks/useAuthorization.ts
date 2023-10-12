@@ -27,5 +27,18 @@ export function useAuthorization() {
     [user]
   )
 
-  return { canAdd, canEdit, canDelete, canView, hasSomeRole, canApprove }
+  const hasAllPermissions = useCallback(
+    (permissionsToHave: readonly string[]) => {
+      if (!user || !user.role) {
+        return false
+      }
+      const userPermissions = user.role.permissions
+      return (
+        userPermissions.length > 0 && permissionsToHave.every((p) => userPermissions.includes(p))
+      )
+    },
+    [user]
+  )
+
+  return { canAdd, canEdit, canDelete, canView, hasSomeRole, canApprove, hasAllPermissions }
 }

@@ -1,6 +1,6 @@
 import { Button, Popover, PopoverContent, TableToolbarSearch } from '@carbon/react'
 import { Dispatch, SetStateAction } from 'react'
-import { PaymentStatus, Setter } from 'src/@types'
+import { MinMax, PaymentStatus, Setter } from 'src/@types'
 import { DownloadCsv } from 'src/components/download'
 import { FilterAll, ICONS } from 'src/constants'
 import { useModal } from 'src/hooks/useModal'
@@ -17,6 +17,11 @@ type Props = {
   search?: boolean
   filterName?: string
   filterStatus: string
+  countryName?: string
+  countryOptions?: string[]
+  setFilterCountry?: Setter<string>
+  setFilterDates: MinMax<Setter<string>>
+  filterDates: MinMax<string>
 }
 
 export default function PaymentTableToolbar({
@@ -27,6 +32,11 @@ export default function PaymentTableToolbar({
   csvDownloadData,
   csvDownloadFileName,
   filterStatus,
+  countryName,
+  countryOptions,
+  setFilterCountry,
+  filterDates,
+  setFilterDates,
   search = false
 }: Props) {
   const { translate } = useLocales()
@@ -60,11 +70,16 @@ export default function PaymentTableToolbar({
         />
         <PopoverContent>
           <PaymentTableFilters
+            countryName={countryName}
+            countryOptions={countryOptions}
+            setFilterCountry={setFilterCountry}
             filterStatus={filterStatus}
             closePopover={popover.close}
             setFilterSearch={setFilterSearch}
             setFilterStatus={setFilterStatus}
             setPage={setPage}
+            filterDates={filterDates}
+            setFilterDates={setFilterDates}
           />
         </PopoverContent>
       </Popover>

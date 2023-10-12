@@ -61,7 +61,6 @@ REACT_APP_NETWORK_ID=80001
 REACT_APP_NODE_PROVIDER_URL=https://polygon-mumbai.g.alchemy.com/v2/
 REACT_APP_NODE_PROVIDER_KEY=NODE_PROVIDER_API_KEY
 REACT_APP_GIGACOUNTS_TOKEN_ADR=
-REACT_APP_GIGACOUNTS_CONTRACTS_HANDLER_ADR=
 REACT_APP_B2C_SIGNUP_SIGNIN_NAME=
 REACT_APP_B2C_FORGOT_PASSWORD_NAME=
 REACT_APP_B2C_EDIT_PROFILE_NAME=
@@ -79,7 +78,6 @@ Some Variable description:
 - REACT_APP_WALLET_CONNECT_PROJECT_ID: Is used to connect wallet with Wallet Connect Protocol
 - REACT_APP_NETWORK_ID: Is a property of the chain managed by the node. e.g (Polygon Mumbai Testnet = 80001)
 - REACT_APP_GIGACOUNTS_TOKEN_ADR: Smart Contract address of Gigacounts Tokens
-- REACT_APP_GIGACOUNTS_CONTRACTS_HANDLER_ADR: Smart contract address of Gigacounts Contracts Handler
 
 
 ## Start app
@@ -102,6 +100,12 @@ PORT=6340 npm start
 ```
 
 Then, login in B2C with the user that you create in Azure. Remember, that you have to configure the same users in your database.
+
+---
+
+## TODO (Improvements)
+
+- Get the smart contract of the secondaryTokens based on the getCurrencies of the database, to remove the tokens environment variable.
 
 ---
 

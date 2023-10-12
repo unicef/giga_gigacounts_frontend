@@ -6,8 +6,8 @@ export function useSettings() {
   const { user } = useAuthContext()
 
   const hasAllSettings = useCallback(
-    (userSettingsToHas: [{ name: UserSettings; value: any }] | []): boolean => {
-      if (!user || userSettingsToHas.length === 0) return false
+    (userSettingsToHas: { name: UserSettings; value: any }[]): boolean => {
+      if (!user) return false
 
       return userSettingsToHas.every((setting) => {
         if (Object.prototype.hasOwnProperty.call(user, setting.name)) {

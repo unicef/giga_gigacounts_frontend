@@ -1,4 +1,5 @@
 import { Button, InlineLoading, Modal, ProgressIndicator, ProgressStep } from '@carbon/react'
+import moment from 'moment'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import {
@@ -17,9 +18,7 @@ import {
 import { deleteAttachment, uploadAttachment } from 'src/api/attachments'
 import { addNewContact, deleteContact } from 'src/api/contacts'
 import { createContractDraft, publishContractDraft, updateContractDraft } from 'src/api/contracts'
-import { getSchools } from 'src/api/school'
 import { addNewTeamMember, deleteTeamMember } from 'src/api/stakeholders'
-import { useAuthContext } from 'src/auth/useAuthContext'
 import CancelDialog from 'src/components/cancel-dialog/CancelDialog'
 import Drawer from 'src/components/drawer/Drawer'
 import FormProvider from 'src/components/hook-form/FormProvider'
@@ -54,21 +53,21 @@ interface Props {
   onClose: () => void
   open: boolean
   isAutomatic?: boolean
+  refetchDraft?: () => void
 }
 
-export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic = false }: Props) {
+export function ContractDetailsDrawer({
+  item: draft,
+  open,
+  onClose,
+  isAutomatic = false,
+  refetchDraft
+}: Props) {
   const navigate = useNavigate()
-  const { user, isAdmin } = useAuthContext()
   const { spacing } = useTheme()
   const { translate, replaceTranslated } = useLocales()
   const { pushSuccess, pushError } = useSnackbar()
-  const {
-    schools: countrySchools,
-    refetchCurrencies,
-    refetchContracts,
-    setSchools,
-    frequencies
-  } = useBusinessContext()
+  const { refetchCurrencies, refetchContracts, frequencies } = useBusinessContext()
   const [activeStep, setActiveStep] = useState<ContractStep>(0)
   const [termsAndConditions, setTermsAndConditions] = useState(false)
 
@@ -79,6 +78,11 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
 
   const [contract, setContract] = useState<ContractSchoolsAndAttachments>(
     schoolsAndAttachmentsDefault
+  )
+
+  const [addLaunchDate, setAddLaunchDate] = useState(
+    Boolean(getValues('launchDate')) &&
+      !moment(getValues('launchDate')).isSame(moment(getValues('startDate')), 'day')
   )
 
   const notCreated = useModal()
@@ -97,9 +101,19 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     country: countryId,
     startDate,
     endDate,
+    launchDate,
     frequencyId,
     isp: ispId
   } = watch()
+
+  useEffect(() => {
+    if (
+      Boolean(launchDate) &&
+      Boolean(startDate) &&
+      !moment(launchDate).isSame(moment(startDate), 'day')
+    )
+      setAddLaunchDate(true)
+  }, [startDate, launchDate])
 
   const filteredFrequencies = useMemo(
     () => frequencies.filter((f) => isValidFrequency(f.name, startDate, endDate)),
@@ -137,15 +151,8 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     if (!draft) return
     setContract((prev) => ({
       ...prev,
-      schools:
-        draft?.schools?.map(({ external_id, budget }: { external_id: string; budget: string }) => ({
-          id: external_id,
-          budget
-        })) ?? []
+      schools: draft?.schools ?? []
     }))
-    if (isAdmin && draft.schools.some((ds) => countrySchools?.every((s) => ds.id !== s.id))) {
-      setSchools(draft.schools)
-    }
     draft.attachments.forEach((a) => {
       const attachment = contract.attachments.find((ca) => a.name === ca.name)
       if (attachment) return
@@ -325,8 +332,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
   }
 
   const handlePost = async (contractForm: ContractForm) => {
-    if (saving || !(await trigger()) || Object.keys(formState.errors).length > 0 || !countrySchools)
-      return false
+    if (saving || !(await trigger()) || Object.keys(formState.errors).length > 0) return false
     const totalBudget = contract.schools
       .reduce((prev, curr) => prev + Number(curr.budget), 0)
       .toFixed(2)
@@ -335,7 +341,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
       setError('budget', { message: translate('budget_exceeds_max_error') })
       return false
     }
-    const newDraft: Contract = getDraftFromForm(currencies, countrySchools, {
+    const newDraft: Contract = getDraftFromForm(currencies, {
       ...contractForm,
       ...contract,
       automatic: isAutomatic
@@ -350,6 +356,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
         setValue('id', createdContract.id)
       }
       refetchContracts()
+      if (refetchDraft) refetchDraft()
       setUnsavedChanges(false)
       return true
     } catch (err) {
@@ -368,8 +375,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
   }
 
   const handlePublish = (contractForm: ContractForm) => {
-    if (!countrySchools) return
-    const newContract: Contract = getDraftFromForm(currencies, countrySchools, {
+    const newContract: Contract = getDraftFromForm(currencies, {
       ...contractForm,
       ...contract,
       automatic: isAutomatic
@@ -385,8 +391,7 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
   }
 
   const handleApproveManually = (contractForm: ContractForm) => {
-    if (!countrySchools) return
-    const newContract: Contract = getDraftFromForm(currencies, countrySchools, {
+    const newContract: Contract = getDraftFromForm(currencies, {
       ...contractForm,
       ...contract,
       automatic: isAutomatic
@@ -415,6 +420,8 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
 
   const stepComponents = [
     <Step1
+      addLaunchDate={addLaunchDate}
+      setAddLaunchDate={setAddLaunchDate}
       isAutomatic={isAutomatic}
       onChange={(c) => {
         setUnsavedChanges(true)
@@ -450,7 +457,6 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     />,
     <Step3 frequencies={filteredFrequencies} handlePost={handlePost} />,
     <Step4
-      handlePost={handlePost}
       ispOptions={ispOptions}
       frequencies={filteredFrequencies}
       fields={contract}
@@ -489,14 +495,10 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
     unsaved.close()
     setUnsavedChanges(false)
     setUploadErrorMessage('')
-    if (isAdmin) {
-      getSchools(user?.country.id)
-        .then(setSchools)
-        .catch((err) => redirectOnError(navigate, err))
-    }
     setCurrencies([])
     onClose()
     refetchContracts()
+    setAddLaunchDate(false)
   }
 
   const handleCreateAnotherContract = () => {
@@ -609,14 +611,12 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
                     renderIcon={ICONS.SuccessOutline}
                     iconDescription={capitalizeFirstLetter(translate('publish'))}
                     disabled={
-                      countrySchools
-                        ? getPublishErrors(
-                            getDraftFromForm(currencies, countrySchools, {
-                              ...getValues(),
-                              ...contract
-                            })
-                          ).length > 0 || !termsAndConditions
-                        : true
+                      getPublishErrors(
+                        getDraftFromForm(currencies, {
+                          ...getValues(),
+                          ...contract
+                        })
+                      ).length > 0 || !termsAndConditions
                     }
                     kind="primary"
                     onClick={() => published.open()}
@@ -657,14 +657,12 @@ export function ContractDetailsDrawer({ item: draft, open, onClose, isAutomatic 
         secondaryButtonText={capitalizeFirstLetter(translate('create_another_contract'))}
         primaryButtonText={capitalizeFirstLetter(translate('publish_contract'))}
         primaryButtonDisabled={
-          countrySchools
-            ? getPublishErrors(
-                getDraftFromForm(currencies, countrySchools, {
-                  ...getValues(),
-                  ...contract
-                })
-              ).length > 0
-            : true
+          getPublishErrors(
+            getDraftFromForm(currencies, {
+              ...getValues(),
+              ...contract
+            })
+          ).length > 0
         }
       >
         <Stack alignItems="center" justifyContent="center" gap={spacing.lg}>

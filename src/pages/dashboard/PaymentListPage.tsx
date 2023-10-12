@@ -1,21 +1,28 @@
+import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate } from 'react-router'
-import { IContractPayment, UserRoles } from 'src/@types'
+import { IContractPayment, ICountry, UserRoles } from 'src/@types'
 import { getPayments } from 'src/api/payments'
 import { useAuthContext } from 'src/auth/useAuthContext'
 import { Banner } from 'src/components/banner'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { useTable } from 'src/components/table'
+import { Footer } from 'src/components/typography'
 import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useAuthorization } from 'src/hooks/useAuthorization'
 import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
 import { useLocales } from 'src/locales'
 import { PaymentTableRow, PaymentTableToolbar } from 'src/sections/@dashboard/payment/list'
+import { formatDate } from 'src/utils/date'
 import { redirectOnError } from '../errors/handlers'
 
 export default function PaymentListPage() {
+  const { user, isAdmin } = useAuthContext()
   const navigate = useNavigate()
+  const { countries } = useBusinessContext()
+
   const { page, rowsPerPage, setPage, setRowsPerPage } = useTable({
     defaultOrderBy: 'dateTo'
   })
@@ -32,42 +39,56 @@ export default function PaymentListPage() {
 
   const [searchParams, generateSetter] = useCustomSearchParams({
     filterName: '',
-    filterStatus: FILTER_ALL_DEFAULT
+    filterStatus: FILTER_ALL_DEFAULT,
+    filterDatesMin: moment().subtract(30, 'day').toISOString(),
+    filterDatesMax: moment().toISOString()
   })
-  const { filterName, filterStatus } = searchParams
+  const { filterName, filterStatus, filterDatesMax, filterDatesMin } = searchParams
   const setFilterName = generateSetter('filterName')
   const setFilterStatus = generateSetter('filterStatus')
+  const filterDates = { max: filterDatesMax, min: filterDatesMin }
+  const setFilterDates = {
+    max: generateSetter('filterDatesMax'),
+    min: generateSetter('filterDatesMin')
+  }
+  const [countryId, setCountryId] = useState(user?.country.id)
 
-  const { translate } = useLocales()
+  const { translate, replaceTwoTranslated } = useLocales()
   const { hasSomeRole } = useAuthorization()
-  const { isAdmin } = useAuthContext()
   const canSeeContractName =
     isAdmin || hasSomeRole([UserRoles.COUNTRY_ACCOUNTANT, UserRoles.COUNTRY_SUPER_ADMIN])
 
   const TABLE_HEAD: { key: string; header: string; align?: string }[] = [
-    { key: 'id', header: `${translate('payment')} #` },
+    { key: 'id', header: translate('payment') },
     { key: 'status', header: translate('status') },
     { key: 'dateTo', header: translate('payment_period') },
-    { key: 'amount', header: translate('amount') },
-    { key: 'connections', header: translate('connection') }
+    { key: 'amount', header: translate('amount') }
   ]
+
   if (canSeeContractName)
     TABLE_HEAD.push({
       key: 'contractName',
       header: translate('contract_name')
     })
 
-  TABLE_HEAD.push({ key: KEY_DEFAULTS[0], header: '' }, { key: KEY_DEFAULTS[1], header: '' })
+  TABLE_HEAD.push(
+    { key: 'connections', header: translate('connectivity_distribution_by_status') },
+    { key: KEY_DEFAULTS[0], header: '' },
+    { key: KEY_DEFAULTS[1], header: '' },
+    { key: KEY_DEFAULTS[2], header: '' }
+  )
 
   const refetchPayments = () => {
-    getPayments().then(setTableData)
+    if (!countryId) return
+    getPayments(filterDates.min, filterDates.max, countryId).then(setTableData)
   }
 
   useEffect(() => {
-    getPayments()
+    if (!countryId) return
+    getPayments(filterDates.min, filterDates.max, countryId)
       .then(setTableData)
       .catch((err) => redirectOnError(navigate, err))
-  }, [navigate])
+  }, [countryId, filterDates.min, filterDates.max, navigate])
 
   const dataFiltered = tableData
     ? applyFilter({
@@ -99,13 +120,23 @@ export default function PaymentListPage() {
         }
       ]
 
+  const handleFilterCountry = (countryName: string) => {
+    const selectedCountry = countries.find((c) => c.name === countryName) as ICountry
+    setCountryId(selectedCountry.id)
+  }
+
+  const selectedCountryName = countries?.find((c) => c.id === countryId)?.name ?? ''
+
   return (
     <>
       <Helmet>
         <title> Payment: List | Gigacounts</title>
       </Helmet>
 
-      <Banner title={translate('payments_log')} />
+      <Banner
+        subtitle={selectedCountryName && isAdmin ? selectedCountryName : ''}
+        title={translate('payments_log')}
+      />
 
       <CustomDataTable
         isSortable
@@ -124,12 +155,16 @@ export default function PaymentListPage() {
           <PaymentTableToolbar
             filterStatus={filterStatus}
             filterName={filterName}
-            search
+            countryName={selectedCountryName}
             csvDownloadData={downloadableData}
             csvDownloadFileName="payments"
             setFilterSearch={setFilterName}
             setFilterStatus={setFilterStatus}
             setPage={setPage}
+            setFilterCountry={handleFilterCountry}
+            countryOptions={countries.map((c) => c.name)}
+            filterDates={filterDates}
+            setFilterDates={setFilterDates}
           />
         }
         data={dataFiltered}
@@ -142,7 +177,16 @@ export default function PaymentListPage() {
         tableHead={TABLE_HEAD}
         tableName="payments"
         emptyText="table_no_data.payments"
-        title="Payments table"
+      />
+      <Footer
+        text={replaceTwoTranslated(
+          'from_date_to_date',
+          '{{dateFrom}}',
+          '{{dateTo}}',
+          formatDate(filterDates.min, '/'),
+          formatDate(filterDates.max, '/')
+        )}
+        required
       />
     </>
   )

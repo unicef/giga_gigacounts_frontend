@@ -36,6 +36,8 @@ export default function NavAccount() {
             hasIconOnly
             size="sm"
             tabIndex={0}
+            tooltipAlignment="end"
+            tooltipPosition="bottom"
             id="account-nav-information"
             iconDescription={capitalizeFirstLetter(translate('settings'))}
             renderIcon={ICONS.Settings}

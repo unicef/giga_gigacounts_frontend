@@ -69,6 +69,8 @@ export default function FeedbackForm() {
         >
           {buttons.map((b) => (
             <Tooltip
+              enterDelayMs={0}
+              leaveDelayMs={0}
               style={{
                 width: '20%'
               }}
@@ -82,7 +84,7 @@ export default function FeedbackForm() {
                 size="xl"
                 iconDescription={b.iconDescription}
               >
-                <b.Icon size={32} />
+                <b.Icon size={24} />
               </Button>
             </Tooltip>
           ))}
@@ -103,7 +105,6 @@ export default function FeedbackForm() {
           <Button
             style={{ width: '50%' }}
             className="btn-max-width-limit"
-            size="sm"
             renderIcon={ICONS.Clean}
             iconDescription={capitalizeFirstLetter(translate('clean_form'))}
             kind="secondary"
@@ -114,7 +115,6 @@ export default function FeedbackForm() {
           <Button
             className="btn-max-width-limit"
             style={{ width: '50%' }}
-            size="sm"
             renderIcon={ICONS.Send}
             iconDescription={capitalizeFirstLetter(translate('send'))}
             type="submit"

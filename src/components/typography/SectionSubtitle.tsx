@@ -9,7 +9,7 @@ export default function SectionSubtitle({ subtitle }: { subtitle: Translation })
   const { translate } = useLocales()
 
   return (
-    <Typography as="h6" variant="disabled" style={{ paddingBottom: spacing.md }}>
+    <Typography as="h6" variant="disabled" style={{ paddingBottom: spacing.xs }}>
       {capitalizeFirstLetter(translate(subtitle))}
     </Typography>
   )

@@ -20,3 +20,15 @@ export type SortableKeys<T extends {}> = Exclude<
 >
 
 export type Setter<T extends string> = (value: T) => void
+
+export type PaginationMetaData = {
+  total: number
+  per_page: number
+  current_page: number
+  last_page: number
+  first_page: number
+  first_page_url: string
+  last_page_url: string
+  next_page_url: string
+  previous_page_url: string
+}

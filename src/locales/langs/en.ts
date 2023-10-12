@@ -203,14 +203,17 @@ const en = {
       title: 'You are about to send the contract for isp signature.',
       content: 'You will recieve a notification when ISP signs.',
       primaryText: 'Send to ISP for signature',
-      secondaryText: 'Back'
+      secondaryText: 'Back',
+      disabledText:
+        'The ISP needs to have a user registered in the system, the ISP for this contract has not.'
     },
     manual: {
       title: 'You are about to confirm ISP signature for yourself.',
       content:
         'By confirming the ISP signature for yourself, you confirm that the ISP is well informed and in agreement of the contract terms. This action can only be done for manual contracts.',
       primaryText: 'Confirm signature manually',
-      secondaryText: 'Back'
+      secondaryText: 'Back',
+      disabledText: 'Confirming manually is only available for manual contracts'
     }
   },
   contract_cancel_modal: {
@@ -510,6 +513,7 @@ const en = {
   send: 'send',
   share: 'share',
   mark_as_paid: 'mark as paid',
+  mark_as_unpaid: 'mark as unpaid',
   close: 'close',
   service_type: 'Service type',
   search_user: 'Search user...',
@@ -548,6 +552,10 @@ const en = {
     title: 'Your payment was created successfully!',
     content: 'Find your payment in the list of payments'
   },
+  payment_updated_modal: {
+    title: 'Your payment was updated successfully!',
+    content: 'Find your payment in the list of payments'
+  },
   payment_approve_modal: {
     title: 'Payment approval',
     content: 'Are you sure you want to approve this payment?'
@@ -581,7 +589,7 @@ const en = {
   forgot_password: 'Forgot password',
   wallet: {
     switch_subtitle:
-      'By enabling this switch, you can configure a wallet here, and a new main menu option will be available to view the automatic contracts (requires logging off and logging in again).',
+      'By enabling this switch, you can configure a wallet here, and a new main menu option will be available to view the automatic contracts.',
     switch_update_msg_ok: 'Saved',
     switch_update_msg_error: 'Error in saving setting',
     label: 'Wallet',
@@ -1081,7 +1089,9 @@ const en = {
   connectivity_distribution_by_days: 'connectivity distribution: by days',
   quality_of_service_comparison: 'quality of service comparison',
   none: 'None',
-  pay_reciev: 'Pay. Reciev.'
+  pay_reciev: 'Pay. Reciev.',
+  reset_table: 'reset table',
+  help_request_subtitle: 'Please fill in your query below or'
 }
 
 export default en

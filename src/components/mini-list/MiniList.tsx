@@ -29,7 +29,7 @@ export default function MiniList<T extends { id: string }>({
   transformData,
   maxChar = 40
 }: Props<T>) {
-  const { spacing } = useTheme()
+  const { spacing, palette } = useTheme()
   return data ? (
     <>
       {data.length > 0 ? (
@@ -68,7 +68,7 @@ export default function MiniList<T extends { id: string }>({
           style={{ width: '100%', height: '100%' }}
           gap={spacing.lg}
         >
-          <PICTOGRAMS.Renew width={32} height={32} />
+          <PICTOGRAMS.NoInfo stroke={palette.text.tertiary} width={32} height={32} />
           <Typography weight={300} as="p" size={28} variant="textTertiary">
             {capitalizeFirstLetter(noDataText)}
           </Typography>

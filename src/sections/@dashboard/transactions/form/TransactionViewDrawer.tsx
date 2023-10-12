@@ -1,11 +1,10 @@
-import { Button, Tag } from '@carbon/react'
+import { Button, TextInput } from '@carbon/react'
 import { IBlockchainTransaction } from 'src/@types'
 import Drawer from 'src/components/drawer/Drawer'
 import FormProvider, { RHFTextField } from 'src/components/hook-form'
 import { Stack } from 'src/components/stack'
-import { SectionTitle, Typography } from 'src/components/typography'
+import { SectionTitle } from 'src/components/typography'
 import { ICONS } from 'src/constants'
-import { WEB3_TRANSACTION_STATUS_COLORS } from 'src/constants/status'
 import { ENV_SUPPORTED_NETWORK_ID, SUPPORTED_NETWORKS } from 'src/constants/web3'
 import { useLocales } from 'src/locales'
 import { useTheme } from 'src/theme'
@@ -14,12 +13,11 @@ import { useTransacitionSchema } from 'src/validations/transaction'
 
 interface Props {
   transaction: IBlockchainTransaction
-  hasError: boolean
   open: boolean
   onClose: VoidFunction
 }
 
-export default function TransactionViewDrawer({ transaction, hasError, open, onClose }: Props) {
+export default function TransactionViewDrawer({ transaction, open, onClose }: Props) {
   const methods = useTransacitionSchema()
   const { translate } = useLocales()
   const { spacing } = useTheme()
@@ -61,19 +59,13 @@ export default function TransactionViewDrawer({ transaction, hasError, open, onC
                 labelText={translate('date')}
               />
               <Stack justifyContent="center" orientation="vertical" style={{ paddingBlock: 0 }}>
-                <Typography as="span" variant="textSecondary" style={{ fontSize: '12px' }}>
-                  {translate('status')}
-                </Typography>
-                <Tag
-                  style={{ marginTop: 10, width: 100, height: 40, border: 'none' }}
-                  type={
-                    hasError
-                      ? WEB3_TRANSACTION_STATUS_COLORS.ERROR
-                      : WEB3_TRANSACTION_STATUS_COLORS.OK
-                  }
-                >
-                  {transaction.status}
-                </Tag>
+                <TextInput
+                  value={transaction.status}
+                  readOnly
+                  id="transaction status"
+                  name="status"
+                  labelText={capitalizeFirstLetter(`${translate('status')}`)}
+                />
               </Stack>
             </Stack>
             <Stack orientation="horizontal" gap={spacing.lg} style={{ paddingBlock: spacing.xs }}>

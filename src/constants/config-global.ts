@@ -10,21 +10,9 @@ export const PATH_AFTER_LOGIN = ROUTES.dashboard.app.route
 // Wallet y Blk
 export const WALLET_CONNECT_PROJECT_ID = process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || ''
 export const GIGACOUNTS_TOKEN_ADR = process.env.REACT_APP_GIGACOUNTS_TOKEN_ADR || ''
-export const GIGACOUNTS_CONTRACT_HANDLER_ADR =
-  process.env.REACT_APP_GIGACOUNTS_CONTRACTS_HANDLER_ADR || ''
 export const NODE_PROVIDER_URL = process.env.REACT_APP_NODE_PROVIDER_URL || ''
 export const NODE_PROVIDER_KEY = process.env.REACT_APP_NODE_PROVIDER_KEY || ''
 export const NETWORK_ID = process.env.REACT_APP_NETWORK_ID || '80001'
-
-// temp-testing
-console.info(
-  WALLET_CONNECT_PROJECT_ID,
-  GIGACOUNTS_TOKEN_ADR,
-  GIGACOUNTS_CONTRACT_HANDLER_ADR,
-  NODE_PROVIDER_URL,
-  NODE_PROVIDER_KEY,
-  NETWORK_ID
-)
 
 // KB base address
 export const KNOWLEDGE_BASE_URL = process.env.REACT_APP_KNOWLEDGE_BASE_URL

@@ -1,13 +1,13 @@
-import { Button, ComboBox } from '@carbon/react'
-import { Dispatch, SetStateAction } from 'react'
-import { Setter } from 'src/@types'
-import { useAuthContext } from 'src/auth/useAuthContext'
-import { Stack } from 'src/components/stack'
-import { PopoverTitle } from 'src/components/typography'
-import { FILTER_ALL_DEFAULT } from 'src/constants'
-import { useLocales } from 'src/locales'
-import { useTheme } from 'src/theme'
-import { capitalizeFirstLetter } from 'src/utils/strings'
+import { Button, ComboBox } from '@carbon/react';
+import { Dispatch, SetStateAction } from 'react';
+import { Setter } from 'src/@types';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import { Stack } from 'src/components/stack';
+import { PopoverTitle } from 'src/components/typography';
+import { FILTER_ALL_DEFAULT } from 'src/constants';
+import { useLocales } from 'src/locales';
+import { useTheme } from 'src/theme';
+import { capitalizeFirstLetter } from 'src/utils/strings';
 
 type Props = {
   closePopover: () => void
@@ -40,7 +40,7 @@ export default function UsersTableFilters({
 }: Props) {
   const { spacing } = useTheme()
   const { translate } = useLocales()
-  const { user } = useAuthContext()
+  const { user, isAdmin } = useAuthContext()
 
   const handleFilterCountry = (country: string) => {
     setPage(1)
@@ -83,19 +83,22 @@ export default function UsersTableFilters({
 
   return (
     <Stack style={{ padding: spacing.md, width: '400px' }} orientation="vertical">
-      <PopoverTitle title="country" />
-      <ComboBox
-        id="user-country-select"
-        itemToString={itemToString}
-        items={sortedCountries}
-        value={itemToString(countryName)}
-        selectedItem={countryName}
-        onChange={(e: { selectedItem: string }) => {
-          handleFilterCountry(e.selectedItem ?? user?.country.name)
-          closePopover()
-        }}
-        disabled={sortedCountries.length <= 1}
-      />
+      {isAdmin && (
+        <>
+          <PopoverTitle title="country" />
+          <ComboBox
+            id="user-country-select"
+            itemToString={itemToString}
+            items={sortedCountries}
+            selectedItem={countryName}
+            onChange={(e) => {
+              handleFilterCountry(e.selectedItem ?? user?.country.name)
+              closePopover()
+            }}
+            disabled={sortedCountries.length <= 1}
+          />
+        </>
+      )}
       <PopoverTitle title="role" />
       <ComboBox
         id="user-role-select"
@@ -103,7 +106,7 @@ export default function UsersTableFilters({
         items={sortedRoles}
         selectedItem={sortedRoles.includes(filterRole) ? filterRole : 'none'}
         value={itemToString(sortedRoles.includes(filterRole) ? filterRole : 'none')}
-        onChange={(e: { selectedItem: string }) => {
+        onChange={(e) => {
           handleFilterRole(e.selectedItem ?? FILTER_ALL_DEFAULT)
           closePopover()
         }}
@@ -116,14 +119,13 @@ export default function UsersTableFilters({
         items={sortedIsps}
         selectedItem={sortedIsps.includes(filterIsp) ? filterIsp : 'none'}
         value={itemToString(sortedIsps.includes(filterIsp) ? filterIsp : 'none')}
-        onChange={(e: { selectedItem: string }) => {
+        onChange={(e) => {
           handleFilterIsp(e.selectedItem ?? FILTER_ALL_DEFAULT)
           closePopover()
         }}
         disabled={sortedIsps.length <= 1}
       />
       <Button
-        size="sm"
         className="btn-max-width-limit"
         kind="secondary"
         style={{ marginTop: spacing.md, width: '100%' }}

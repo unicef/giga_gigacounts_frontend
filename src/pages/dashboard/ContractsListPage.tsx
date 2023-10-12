@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router'
 import { IContract, MinMax, Translation } from 'src/@types'
+import { useAuthContext } from 'src/auth/useAuthContext'
 import { Banner } from 'src/components/banner'
 import CustomJoyride from 'src/components/custom-joyride'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
@@ -22,6 +23,7 @@ import { capitalizeFirstLetter } from 'src/utils/strings'
 export default function ContractsListPage({ automatic }: { automatic: boolean }) {
   const { state } = useLocation()
   const { canAdd } = useAuthorization()
+  const { isAdmin } = useAuthContext()
   const userCanAdd = canAdd(Views.contract)
   const { pushSuccess, pushError } = useSnackbar()
 
@@ -105,13 +107,16 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
   const TABLE_HEAD = [
     { key: 'name', header: `${translate('name')} + ID` },
     { key: 'status', header: translate('status') },
-    { key: 'countryName', header: translate('country') },
-    { key: 'numberOfSchools', header: translate('number_of_schools') },
+    { key: 'isp', header: translate('isp') }
+  ]
+  if (isAdmin) TABLE_HEAD.push({ key: 'countryName', header: translate('country') })
+  TABLE_HEAD.push(
+    { key: 'numberOfSchools', header: translate('schools') },
     { key: 'budget', header: translate('budget') },
     { key: KEY_DEFAULTS[0], header: '' },
-    { key: KEY_DEFAULTS[1], header: '' }
-  ]
-
+    { key: KEY_DEFAULTS[1], header: '' },
+    { key: KEY_DEFAULTS[2], header: '' }
+  )
   const regionOptions = inputContracts
     ? removeDuplicates([
         FILTER_ALL_DEFAULT,
@@ -194,7 +199,6 @@ export default function ContractsListPage({ automatic }: { automatic: boolean })
         tableHead={TABLE_HEAD}
         tableName="contracts"
         emptyText="table_no_data.contracts"
-        title="Contract table"
         buttonsProps={
           userCanAdd
             ? [

@@ -147,7 +147,7 @@ export function ContractFundDrawer({ id, name, budget, open, onClose }: Props) {
               cursor: updating ? 'wait' : 'auto'
             }}
           >
-            <h4 style={{ wordBreak: 'break-all' }}>{title}</h4>
+            <SectionTitle label={title as Translation} style={{ wordBreak: 'break-all' }} />;
           </Stack>
         }
         handleClose={handleCancel}

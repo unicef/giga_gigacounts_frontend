@@ -35,7 +35,7 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
 
   const { budget, schools, currency, notes, breakingRules } = contract
 
-  const actual = contract.isContract
+  const actual = contract.isDetails
     ? {
         [MetricCamel.Uptime]:
           contract.connectionsMedian.find((f) => f.metric_name === Metric.Uptime)?.median_value ??
@@ -77,10 +77,13 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
         >
           <Button
             hasIconOnly
-            iconDescription={capitalizeFirstLetter(translate('options'))}
+            iconDescription={capitalizeFirstLetter(translate('share'))}
             onClick={copyLink.toggle}
-            renderIcon={ICONS.OverflowMenuVertical}
+            renderIcon={ICONS.Share}
             kind="ghost"
+            size="sm"
+            tooltipPosition="bottom"
+            tooltipAlignment="end"
           />
           <PopoverContent>
             <Stack gap={spacing.lg} style={{ padding: spacing.md }}>
@@ -96,7 +99,6 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
                   pushInfo('copied_link')
                   copyLink.close()
                 }}
-                size="sm"
                 renderIcon={ICONS.Copy}
               >
                 {capitalizeFirstLetter(translate('copy_url'))}
@@ -108,6 +110,7 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
 
       {contract.automatic && (
         <InlineNotification
+          hideCloseButton
           kind="info"
           subtitle={translate('automatic_contracts_check_info')}
           lowContrast
@@ -116,36 +119,60 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
 
       <SectionTitle label="quality_of_service" />
       <Grid className="gap-16px" fullWidth>
-        <Column md={spacing.xxs} xlg={spacing.xxs}>
+        <Column
+          className="grid-column-span-8-1500"
+          sm={spacing.xxs}
+          md={spacing.xxs}
+          lg={spacing.xs}
+          xlg={spacing.xxs}
+        >
           <ComparingCard
-            width={300}
+            width="100%"
             average
             name={MetricSnake.Uptime}
             expectedValue={expectedValues[MetricCamel.Uptime]}
             value={actual[MetricCamel.Uptime]}
           />
         </Column>
-        <Column md={spacing.xxs} xlg={spacing.xxs}>
+        <Column
+          className="grid-column-span-8-1500"
+          sm={spacing.xxs}
+          md={spacing.xxs}
+          lg={spacing.xs}
+          xlg={spacing.xxs}
+        >
           <ComparingCard
-            width={300}
+            width="100%"
             average
             name={MetricSnake.Latency}
             expectedValue={expectedValues[MetricCamel.Latency]}
             value={actual[MetricCamel.Latency]}
           />
         </Column>
-        <Column md={spacing.xxs} xlg={spacing.xxs}>
+        <Column
+          className="grid-column-span-8-1500"
+          sm={spacing.xxs}
+          md={spacing.xxs}
+          lg={spacing.xs}
+          xlg={spacing.xxs}
+        >
           <ComparingCard
-            width={300}
+            width="100%"
             average
             name={MetricSnake.DownloadSpeed}
             expectedValue={expectedValues[MetricCamel.DownloadSpeed]}
             value={actual[MetricCamel.DownloadSpeed]}
           />
         </Column>
-        <Column md={spacing.xxs} xlg={spacing.xxs}>
+        <Column
+          className="grid-column-span-8-1500"
+          sm={spacing.xxs}
+          md={spacing.xxs}
+          lg={spacing.xs}
+          xlg={spacing.xxs}
+        >
           <ComparingCard
-            width={300}
+            width="100%"
             average
             name={MetricSnake.UploadSpeed}
             expectedValue={expectedValues[MetricCamel.UploadSpeed]}
@@ -153,7 +180,10 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
           />
         </Column>
       </Grid>
-      <SectionTitle label="isp_contacts" />
+      <SectionTitle
+        style={{ paddingBlockStart: spacing.xl, paddingBlockEnd: spacing.xs }}
+        label="isp_contacts"
+      />
       <UserList
         users={contract.ispContacts}
         paymentRecieverId={
@@ -162,10 +192,16 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
             : null
         }
       />
-      <SectionTitle label="contract_team" />
+      <SectionTitle
+        style={{ paddingBlockStart: spacing.xl, paddingBlockEnd: spacing.xs }}
+        label="contract_team"
+      />
       <UserList users={contract.stakeholders} />
 
-      <SectionTitle label="schools_and_budget" />
+      <SectionTitle
+        style={{ paddingBlockStart: spacing.xl, paddingBlockEnd: spacing.xs }}
+        label="schools_and_budget"
+      />
       <Stack gap={spacing.md}>
         <Stack
           orientation="horizontal"
@@ -195,7 +231,10 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
           />
         </Stack>
       </Stack>
-      <SectionTitle label="comment_section.title" />
+      <SectionTitle
+        style={{ paddingBlockStart: spacing.xl, paddingBlockEnd: spacing.xs }}
+        label="comment_section.title"
+      />
       {notes ? (
         <TextArea value={notes} readOnly labelText="" rows={4} maxCount={1000} enableCounter />
       ) : (
@@ -204,7 +243,10 @@ export default function OverviewTab({ contract, expectedValues }: Props) {
         </Typography>
       )}
 
-      <SectionTitle label="breaking_rules" />
+      <SectionTitle
+        style={{ paddingBlockStart: spacing.xl, paddingBlockEnd: spacing.xs }}
+        label="breaking_rules"
+      />
       {breakingRules ? (
         <TextArea
           value={breakingRules}

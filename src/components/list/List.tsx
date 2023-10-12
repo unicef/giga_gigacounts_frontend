@@ -29,8 +29,8 @@ export default function List<T, U extends JSX.IntrinsicAttributes>({
         <Stack orientation="vertical" gap={rowGap}>
           {dividedItems.map((array, i) => (
             <Stack key={i} orientation="horizontal" gap={columnGap}>
-              {array.map((s) => (
-                <ItemComponent {...getItemComponentProps(s)} />
+              {array.map((s, j) => (
+                <ItemComponent key={`${i}:${j}`} {...getItemComponentProps(s)} />
               ))}
             </Stack>
           ))}

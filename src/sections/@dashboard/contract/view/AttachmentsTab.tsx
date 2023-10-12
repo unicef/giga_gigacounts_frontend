@@ -56,7 +56,6 @@ export default function AttachmentsTab({ attachments }: { attachments: IAttachme
       tableHead={TABLE_HEAD}
       tableName="attachments"
       emptyText="table_no_data.attachments"
-      title="Attachments table"
     />
   )
 }

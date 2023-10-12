@@ -22,3 +22,8 @@ export const resolvePromises = <T, U>(
 }
 
 export const removeDuplicates = <T extends any[]>(arr: T): T => Array.from(new Set(arr)) as T
+
+export const generateRange = (start: number, end: number) =>
+  Array(end - start + 1)
+    .fill(null)
+    .map((_, idx) => start + idx)

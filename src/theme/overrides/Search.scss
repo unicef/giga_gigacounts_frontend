@@ -1,0 +1,7 @@
+input:not([disabled]):not([id='dashboard-country-filter']):hover,
+.cds--text-area:hover {
+  background-color: var(--cds-field-hover-01) !important;
+}
+#dashboard-search:hover {
+  background-color: var(--cds-field-hover-01) !important;
+}

@@ -62,7 +62,7 @@ type CustomDataTableProps<T extends { id: string }, U extends RowComponentPropsB
   setRowsPerPage: (rowsPerPage: number) => void
   tableHead: DataTableHeader[]
   tableName: string
-  title?: string
+  hideSelectAllButton?: boolean
   ToolbarContent?: React.ReactNode
   batchActions?: { icon: Icon; title: string; onClick: (selectedRows: any[]) => void }[]
   selection?: string[]
@@ -70,6 +70,7 @@ type CustomDataTableProps<T extends { id: string }, U extends RowComponentPropsB
   isEmpty: boolean
   getDataKey?: (row: T) => string | number
   rowToDataKey?: (row: any) => string
+  customCount?: number
 }
 
 export default function CustomDataTable<T extends { id: string }, U extends RowComponentPropsBase>({
@@ -88,14 +89,15 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
   setRowsPerPage,
   tableHead,
   tableName,
-  title,
+  hideSelectAllButton = false,
   ToolbarContent,
   batchActions,
   selection,
   emptyText,
   isEmpty,
   getDataKey,
-  rowToDataKey
+  rowToDataKey,
+  customCount
 }: CustomDataTableProps<T, U>) {
   const { translate, replaceTranslated } = useLocales()
   return (
@@ -178,10 +180,10 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
                                   onClick={p.onClick}
                                   kind={p.kind}
                                   renderIcon={p.renderIcon ? ICONS[p.renderIcon] : undefined}
-                                  iconDescription={p.label}
+                                  iconDescription={capitalizeFirstLetter(p.label)}
                                   hasIconOnly={p.hasIconOnly}
                                 >
-                                  {p.label}
+                                  {capitalizeFirstLetter(p.label)}
                                 </Button>
                               </span>
                             ))}
@@ -195,6 +197,7 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
                       <TableRow>
                         {isSelectable && data.length > 0 && (
                           <TableSelectAll
+                            disabled={hideSelectAllButton}
                             {...getSelectionProps()}
                             onSelect={(e) => {
                               getSelectionProps().onSelect(e)
@@ -286,8 +289,17 @@ export default function CustomDataTable<T extends { id: string }, U extends RowC
             }}
           </DataTable>
           <TablePaginationCustom
+            rowsPerPageOptions={(() => {
+              const options = [5]
+              ;[10, 25].forEach((num) => {
+                if (data.length > num) options.push(num)
+              })
+
+              return options
+            })()}
+            pageInputDisabled={Boolean(customCount)}
             id={`${tableName}-table-pagination`}
-            count={data.length}
+            count={customCount || data.length}
             page={page}
             onChangePagination={(pageInfo) => {
               if (pageInfo.page && page !== pageInfo.page) setPage(pageInfo.page)

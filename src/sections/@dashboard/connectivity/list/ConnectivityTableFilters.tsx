@@ -192,7 +192,6 @@ export default function ConnectivityTableFilters({
       />
 
       <Button
-        size="sm"
         className="btn-max-width-limit"
         kind="secondary"
         style={{ marginTop: spacing.md, width: '100%' }}

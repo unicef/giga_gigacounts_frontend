@@ -10,6 +10,7 @@ import {
 } from 'src/@types'
 import { createBlockchainTransaction } from 'src/api/blockchainTransactions'
 import { generateSignContractRandomString, signContractWithWallet } from 'src/api/contracts'
+import { getSettingValue } from 'src/api/settings'
 import {
   attachWallet,
   getGigaTokenOwnerWalletAddress,
@@ -19,15 +20,15 @@ import { useAuthContext } from 'src/auth/useAuthContext'
 import {
   ENV_SUPPORTED_NETWORK,
   ENV_SUPPORTED_NETWORK_ID,
-  GIGACOUNTS_CONTRACT_HANDLER_ADR,
   GIGACOUNTS_TOKEN_ADR,
   INITIAL_WEB3_CONTEXT_VALUE,
   INITIAL_WEB3_STATE,
+  SETTINGS_KEYS,
   SUPPORTED_NETWORKS,
   TRANSACTION_TYPE
 } from 'src/constants'
 import { useLocales } from 'src/locales'
-import { abiHandler } from './abis/abiHandlerv5'
+import { abiHandler } from './abis/abiHandler'
 import { abiToken } from './abis/abiToken'
 import { reducer } from './reducer'
 import { initWeb3Onboard } from './web3-onboard'
@@ -285,11 +286,8 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
       let result
       try {
         const provider = getProvider(wallet)
-        const contractHandler = new ethers.Contract(
-          GIGACOUNTS_CONTRACT_HANDLER_ADR,
-          abiHandler,
-          provider
-        )
+        const contractHandlerAdr = await getSettingValue(SETTINGS_KEYS.web3ContractHandlerAdr)
+        const contractHandler = new ethers.Contract(contractHandlerAdr, abiHandler, provider)
         const contractToken = new ethers.Contract(GIGACOUNTS_TOKEN_ADR, abiToken, provider)
         const response = await contractHandler.getFunds(contractId, GIGACOUNTS_TOKEN_ADR)
         const decimals = await contractToken.decimals()
@@ -352,30 +350,30 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
 
       try {
         const gigaTokenOwnerWalletAddress = await getGigaTokenOwnerWalletAddress()
-        .then((data) => data.walletAddress )
-        .catch((ex) => {
-          console.error (ex.message)
-          return false
-        })
+          .then((data) => data.walletAddress)
+          .catch((ex) => {
+            console.error(ex.message)
+            return false
+          })
 
         const provider = getProvider(wallet)
         const signer = provider.getSigner()
 
         // allowance
         const contractToken = new ethers.Contract(GIGACOUNTS_TOKEN_ADR, abiToken, provider)
+        const contractHandlerAdr = await getSettingValue(SETTINGS_KEYS.web3ContractHandlerAdr)
         let trxAllowance = await contractToken.allowance(
           gigaTokenOwnerWalletAddress,
-          GIGACOUNTS_CONTRACT_HANDLER_ADR
+          contractHandlerAdr
         )
         const decimals = await contractToken.decimals()
         const valueAllowance = ethers.utils.formatUnits(trxAllowance, decimals)
-        console.log('fundcontract allowance', valueAllowance)
         const amount = ethers.utils.parseUnits(budget, decimals)
 
         if (parseInt(budget, 10) > parseInt(valueAllowance, 10)) {
           const trxIncreaseAllowance = await contractToken
             .connect(signer)
-            .increaseAllowance(GIGACOUNTS_CONTRACT_HANDLER_ADR, amount)
+            .increaseAllowance(contractHandlerAdr, amount)
 
           lastTrx = {
             type: TRANSACTION_TYPE.INCREASE_ALLOWANCE,
@@ -384,7 +382,6 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
             status: trxIncreaseAllowance.status
           }
           const trxIncreaseAllowanceWait = await trxIncreaseAllowance.wait()
-          console.log('fundcontract increase allowance result:', trxIncreaseAllowanceWait)
           saveTransactionLog(
             lastTrx.type,
             trxIncreaseAllowanceWait.transactionHash,
@@ -395,25 +392,16 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
           // re-chech allowance
           trxAllowance = await contractToken.allowance(
             gigaTokenOwnerWalletAddress,
-            GIGACOUNTS_CONTRACT_HANDLER_ADR
-          )
-          console.log(
-            'fundcontract allowance re-check',
-            ethers.utils.formatUnits(trxAllowance, decimals)
+            contractHandlerAdr
           )
         }
 
         // check funds
         const provider2 = getProvider(wallet)
         const signer2 = provider2.getSigner()
-        const contractHandler = new ethers.Contract(
-          GIGACOUNTS_CONTRACT_HANDLER_ADR,
-          abiHandler,
-          provider2
-        )
+        const contractHandler = new ethers.Contract(contractHandlerAdr, abiHandler, provider2)
         const response1 = await contractHandler.getFunds(contractId, GIGACOUNTS_TOKEN_ADR)
-        const balance1 = ethers.utils.formatUnits(response1, decimals)
-        console.log('fundcontract getContractBalance: ', balance1)
+        ethers.utils.formatUnits(response1, decimals)
 
         // send funds
         const trxFund = await contractHandler
@@ -426,18 +414,12 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
           status: trxFund.status
         }
         const trxFundWait = await trxFund.wait()
-        console.log('fundcontract funds result:', trxFundWait)
         saveTransactionLog(
           lastTrx.type,
           trxFundWait.transactionHash,
           contractId,
           trxFundWait.status
         )
-
-        // check
-        const response2 = await contractHandler.getFunds(contractId, GIGACOUNTS_TOKEN_ADR)
-        const balance2 = ethers.utils.formatUnits(response2, decimals)
-        console.log('fundcontract getContractBalance: ', balance2)
 
         return true
       } catch (err) {
@@ -455,7 +437,6 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
 
   const fundWallet = useCallback(
     async (walletAddress: string, budget: string): Promise<boolean> => {
-      console.log(`fundWallet wallet:${walletAddress}`)
       if (!wallet?.provider || !account) {
         return false
       }
@@ -482,7 +463,6 @@ export const Web3ContextProvider = ({ children }: { children: React.ReactNode })
           lastTrx.contractId,
           trxWait.status
         )
-        console.log(trxWait)
         return true
       } catch (err) {
         console.error('fundWallet Error:', err)

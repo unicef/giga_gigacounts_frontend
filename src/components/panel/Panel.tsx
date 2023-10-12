@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useState } from 'react'
+import { CSSProperties, useState } from 'react'
 import { SectionTitle } from 'src/components/typography'
 import { ICONS } from 'src/constants'
 import { useTheme } from 'src/theme'
@@ -10,9 +10,16 @@ interface PanelProps {
   label: string
   defaultExpanded?: boolean
   required?: boolean
+  style?: CSSProperties
 }
 
-export default function Panel({ label, children, defaultExpanded = true, required }: PanelProps) {
+export default function Panel({
+  label,
+  children,
+  defaultExpanded = true,
+  required,
+  style
+}: PanelProps) {
   const [expanded, setExpanded] = useState(defaultExpanded)
   const { palette, spacing } = useTheme()
   return (
@@ -24,7 +31,8 @@ export default function Panel({ label, children, defaultExpanded = true, require
           alignItems: 'center',
           justifyContent: 'space-between',
           cursor: 'pointer',
-          marginTop: spacing.xs
+          marginTop: spacing.sm,
+          ...style
         }}
         onClick={() => setExpanded((prev) => !prev)}
       >

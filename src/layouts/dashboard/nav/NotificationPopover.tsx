@@ -67,10 +67,15 @@ export default function NotificationsPanel() {
 
   return (
     <Popover isTabTip onRequestClose={popover.close} open={popover.value} align="bottom-right">
-      <Stack orientation="horizontal">
+      <Stack
+        alignSelf="center"
+        justifyContent="center"
+        alignItems="center"
+        orientation="horizontal"
+      >
         <HeaderGlobalAction
           id="notifications-popover"
-          tooltipAlignment="end"
+          tooltipAlignment="center"
           aria-label={translate('notifications')}
           isActive={popover.value}
           onClick={popover.toggle}
@@ -93,7 +98,7 @@ export default function NotificationsPanel() {
             <Stack alignItems="center" justifyContent="space-between" orientation="horizontal">
               <Typography as="span">{translate('notifications')}</Typography>
               {hasNotifications && (
-                <Button size="sm" kind="ghost" onClick={handleMarkAllAsRead}>
+                <Button kind="ghost" onClick={handleMarkAllAsRead}>
                   {capitalizeFirstLetter(translate('notifications_popover.mark_all_as_read'))}
                 </Button>
               )}
@@ -157,7 +162,12 @@ function NotificationItem({
     >
       <Stack orientation="horizontal" justifyContent="space-between" alignItems="center">
         <Typography variant="disabled">
-          {new Date(notification.sent_at ?? '').toISOString().slice(11, 16)}
+          {(() => {
+            const sentAt = new Date(notification.sent_at ?? '')
+            const hours = String(sentAt.getHours()).padStart(2, '0')
+            const minutes = String(sentAt.getMinutes()).padStart(2, '0')
+            return `${hours}:${minutes}`
+          })()}
         </Typography>
         <Tag type={NOTIFICATION_STATUS_COLORS[parsedStatus]}>
           {capitalizeFirstLetter(translate(`constant_status.notification.${parsedStatus}`))}

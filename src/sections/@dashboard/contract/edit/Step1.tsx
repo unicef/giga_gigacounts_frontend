@@ -1,7 +1,8 @@
-import { Button, Column, ComboBox, Grid, InlineNotification } from '@carbon/react'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { Button, Checkbox, Column, ComboBox, Grid, InlineNotification } from '@carbon/react';
+import moment from 'moment';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useNavigate } from 'react-router';
 import {
   ContractForm,
   IExternalUser,
@@ -10,30 +11,30 @@ import {
   IUser,
   Translation,
   UserRoles
-} from 'src/@types'
-import { getUsers } from 'src/api/user'
-import { useAuthContext } from 'src/auth/useAuthContext'
-import UploadError from 'src/components/errors/UploadError'
+} from 'src/@types';
+import { getUsers } from 'src/api/user';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import UploadError from 'src/components/errors/UploadError';
 import {
   RHFCheckbox,
   RHFComboBox,
   RHFDatePicker,
   RHFSelect,
   RHFTextField
-} from 'src/components/hook-form'
-import FormProvider from 'src/components/hook-form/FormProvider'
-import { Stack } from 'src/components/stack'
-import { SectionSubtitle, SectionTitle } from 'src/components/typography'
-import { UploadBox } from 'src/components/upload-box'
-import { UserChipList } from 'src/components/user'
-import { CONTRACT_TEAM_ROLES, EXTERNAL_CONTACT_ROLE, ISP_CONTACT_ROLES } from 'src/constants'
-import { useBusinessContext } from 'src/context/business/BusinessContext'
-import { useLocales } from 'src/locales'
-import { redirectOnError } from 'src/pages/errors/handlers'
-import { useTheme } from 'src/theme'
-import { capitalizeFirstLetter } from 'src/utils/strings'
-import { useContactSchema } from 'src/validations/contact'
-import { ContractSchoolsAndAttachments } from './types'
+} from 'src/components/hook-form';
+import FormProvider from 'src/components/hook-form/FormProvider';
+import { Stack } from 'src/components/stack';
+import { SectionSubtitle, SectionTitle } from 'src/components/typography';
+import { UploadBox } from 'src/components/upload-box';
+import { UserChipList } from 'src/components/user';
+import { CONTRACT_TEAM_ROLES, EXTERNAL_CONTACT_ROLE, ISP_CONTACT_ROLES } from 'src/constants';
+import { useBusinessContext } from 'src/context/business/BusinessContext';
+import { useLocales } from 'src/locales';
+import { redirectOnError } from 'src/pages/errors/handlers';
+import { useTheme } from 'src/theme';
+import { capitalizeFirstLetter } from 'src/utils/strings';
+import { useContactSchema } from 'src/validations/contact';
+import { ContractSchoolsAndAttachments } from './types';
 
 type Step1Props = {
   onChange: Dispatch<SetStateAction<ContractSchoolsAndAttachments>>
@@ -56,6 +57,8 @@ type Step1Props = {
   isAutomatic: boolean
   ispOptions: IISP[]
   setIspOptions: Dispatch<SetStateAction<IISP[]>>
+  addLaunchDate: boolean
+  setAddLaunchDate: Dispatch<SetStateAction<boolean>>
 }
 
 export default function Step1({
@@ -72,7 +75,9 @@ export default function Step1({
   deleteTeamMember,
   isAutomatic,
   ispOptions,
-  setIspOptions
+  setIspOptions,
+  addLaunchDate,
+  setAddLaunchDate
 }: Step1Props) {
   const navigate = useNavigate()
   const { isAdmin } = useAuthContext()
@@ -95,7 +100,7 @@ export default function Step1({
 
   const [showContactNotification, setShowContactNotification] = useState(false)
 
-  const contactSchema = useContactSchema()
+  const contactSchema = useContactSchema(countries.find((c) => c.id === countryId)?.code ?? 'US')
   const [showContactForm, setShowContactForm] = useState(false)
 
   useEffect(() => {
@@ -224,10 +229,14 @@ export default function Step1({
     resetContactForm()
   }
 
+  const tomorrow = moment().add(1, 'day').toISOString()
+
   return (
     <>
-      <SectionTitle label="contract_details" required />
-      <SectionSubtitle subtitle="add_the_general_details" />
+      <div>
+        <SectionTitle style={{ paddingBlockEnd: 0 }} label="contract_details" required />
+        <SectionSubtitle subtitle="add_the_general_details" />
+      </div>
 
       {isAutomatic && (
         <>
@@ -239,6 +248,7 @@ export default function Step1({
             checked
           />
           <InlineNotification
+            hideCloseButton
             kind="info"
             subtitle={capitalizeFirstLetter(translate('automatic_contracts_check_info'))}
             lowContrast
@@ -294,7 +304,7 @@ export default function Step1({
               <ComboBox
                 placeholder={translate('search_isp_contacts')}
                 items={[...ispContactOptionsFiltered, 'Add']}
-                selectedItem={{ name: '' }}
+                selectedItem={{ name: '' } as IUser}
                 itemToString={(i) =>
                   i === 'Add'
                     ? `${capitalizeFirstLetter(translate('add_external_isp_contact'))} +`
@@ -303,10 +313,10 @@ export default function Step1({
                 id={`isp contact contract combo box ${contractId}`}
                 disabled={!contractName || !ispId}
                 titleText={capitalizeFirstLetter(translate('add_an_isp'))}
-                onChange={(data: { selectedItem: IExternalUser | 'Add' }) =>
+                onChange={(data) =>
                   data.selectedItem === 'Add'
                     ? setShowContactForm(true)
-                    : handleAddContact(data.selectedItem)
+                    : handleAddContact(data.selectedItem as IExternalUser | IUser)
                 }
               />
               {hasContactPeople && isAutomatic && (
@@ -349,6 +359,7 @@ export default function Step1({
                       </Column>
                       <Column className="column-remove-margin-right" span={8}>
                         <RHFTextField
+                          inputMode="numeric"
                           labelText={capitalizeFirstLetter(translate('phone_number'))}
                           id={`contact person phone number ${getValues('id')}`}
                           name="phoneNumber"
@@ -357,9 +368,8 @@ export default function Step1({
                     </Grid>
                     <Button
                       onClick={contactSchema.handleSubmit(handlePostContact)}
-                      size="sm"
                       className="btn-max-width-limit"
-                      style={{ width: '50%', marginBlock: spacing.xl }}
+                      style={{ width: '50%', marginTop: spacing.xl }}
                       kind="secondary"
                     >
                       {capitalizeFirstLetter(translate('add_contact'))}
@@ -372,6 +382,7 @@ export default function Step1({
 
           {showContactNotification && (
             <InlineNotification
+              hideCloseButton
               style={{ marginTop: spacing.md }}
               kind="warning"
               subtitle={capitalizeFirstLetter(translate('payment_receiver_warning'))}
@@ -382,6 +393,7 @@ export default function Step1({
 
         <Stack orientation="horizontal" gap={spacing.md}>
           <RHFDatePicker
+            minDate={tomorrow}
             name="startDate"
             id={`start date picker ${contractId}`}
             size="md"
@@ -396,16 +408,20 @@ export default function Step1({
             onChange={() => handlePost(getValues())}
           />
         </Stack>
-        <RHFCheckbox
+        <Checkbox
+          checked={addLaunchDate}
           id={`add launch date checkbox ${contractId}`}
-          helperText={capitalizeFirstLetter(translate('add_a_contract_launch_day'))}
-          name="addLaunchDate"
-          onChange={(_, checked) => {
+          labelText={capitalizeFirstLetter(translate('add_a_contract_launch_day'))}
+          onChange={(_, { checked }) => {
+            setAddLaunchDate(checked)
             if (!checked) setValue('launchDate', null)
+            handlePost(getValues())
           }}
         />
-        {getValues('addLaunchDate') && (
+        {addLaunchDate && (
           <RHFDatePicker
+            maxDate={getValues('endDate')?.toISOString()}
+            minDate={getValues('startDate')?.toISOString() ?? tomorrow}
             name="launchDate"
             id={`launch date picker ${contractId}`}
             size="md"
@@ -413,9 +429,10 @@ export default function Step1({
             onChange={() => handlePost(getValues())}
           />
         )}
-
-        <SectionTitle label="contract_team" />
-        <SectionSubtitle subtitle="add_the_contract_managers" />
+        <div>
+          <SectionTitle style={{ paddingBlockEnd: 0 }} label="contract_team" />
+          <SectionSubtitle subtitle="add_the_contract_managers" />
+        </div>
         <div
           style={{
             backgroundColor: palette.background.neutral,
@@ -425,12 +442,14 @@ export default function Step1({
           <ComboBox
             placeholder={translate('search_contract_team')}
             items={teamMembersOptionsFiltered}
-            selectedItem={{ name: '' }}
-            itemToString={(i) => (i as IUser).name}
+            selectedItem={{ name: '' } as IUser}
+            itemToString={(i) => (i && 'name' in i ? i.name : '')}
             id={`contract team combo box ${contractId}`}
             disabled={!contractName || teamMembersOptionsFiltered.length === 0}
             titleText={capitalizeFirstLetter(translate('add_a_team_member'))}
-            onChange={(data: { selectedItem: IUser }) => handleAddTeamMember(data.selectedItem)}
+            onChange={(data) =>
+              data.selectedItem ? handleAddTeamMember(data.selectedItem) : undefined
+            }
           />
           {hasTeam && <UserChipList onDelete={deleteTeamMember} users={fields.stakeholders} />}
         </div>

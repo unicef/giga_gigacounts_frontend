@@ -28,7 +28,7 @@ export default function FeedbackPage() {
             <img
               src="/assets/images/dashboard/feedback.png"
               alt="user profile"
-              style={{ alignSelf: 'center', width: '70%', height: '100%' }}
+              style={{ alignSelf: 'center', width: '641px', aspectRatio: '1/1' }}
             />
           </Stack>
         </Stack>
