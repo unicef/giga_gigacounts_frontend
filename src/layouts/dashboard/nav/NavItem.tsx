@@ -26,7 +26,7 @@ export default function NavItem({ data, isActive = true, id }: NavListRootProps)
       isActive={isActive && active}
       large
       renderIcon={() => <NavIcon icon={data.icon} isActive={isActive && active} />}
-      onClick={() => ('path' in data ? navigate(data.path, { state: data.state }) : data.onClick)}
+      onClick={() => ('path' in data ? navigate(data.path, { state: data.state }) : data.onClick())}
     >
       <Typography as="span" variant={isActive && active ? 'default' : 'textTertiary'}>
         {capitalizeFirstLetter(translate(data.title))}

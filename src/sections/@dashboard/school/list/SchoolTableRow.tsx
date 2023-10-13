@@ -32,12 +32,12 @@ export default function SchoolTableRow({
   return (
     <TableRow {...rowProps}>
       <TableSelectRow {...selectionProps} />
-      <TableCell style={{ verticalAlign: 'middle', width: '10%' }}>{external_id}</TableCell>
+      <TableCell style={{ width: '10%' }}>{external_id}</TableCell>
 
-      <TableCell style={{ verticalAlign: 'middle', width: '30%' }}>{name}</TableCell>
-      <TableCell style={{ verticalAlign: 'middle', width: '10%' }}>{region}</TableCell>
+      <TableCell style={{ width: '30%' }}>{name}</TableCell>
+      <TableCell style={{ width: '10%' }}>{region}</TableCell>
 
-      <TableCell style={{ verticalAlign: 'middle', width: '40%' }}>
+      <TableCell style={{ width: '40%' }}>
         {selectionProps.checked ? (
           <TextInput
             id={`budget ${row.id}`}
