@@ -10,7 +10,7 @@ export default function Footer({ required, text }: { text: string; required?: bo
       size={12}
     >
       {required && <>* </>}
-      {text},
+      {text}
     </Typography>
   )
 }

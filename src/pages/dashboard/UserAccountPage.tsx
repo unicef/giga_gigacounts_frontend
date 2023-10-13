@@ -42,10 +42,7 @@ export default function UserAccountPage() {
                 paddingBlock: spacing.lg
               }}
             >
-              <Typography style={{ marginBottom: spacing.xl + spacing.md }} as="h4">
-                {capitalizeFirstLetter(translate('personal_info'))}
-              </Typography>
-
+              <Typography as="h3">{capitalizeFirstLetter(translate('personal_info'))}</Typography>
               <TextInput
                 size="sm"
                 id="user name"
