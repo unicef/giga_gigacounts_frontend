@@ -426,6 +426,28 @@ export default function PaymentDetailsDrawer({
             setValue('payment', viewPayment.paidDate)
             setValue('description', viewPayment.description)
             setValue('status', viewPayment.status)
+            setReceiptFile(
+              viewPayment?.receipt
+                ? {
+                    ...viewPayment.receipt,
+                    status: 'complete',
+                    typeId: '',
+                    type: 'receipt',
+                    file: ''
+                  }
+                : null
+            )
+            setInvoiceFile(
+              viewPayment?.invoice
+                ? {
+                    ...viewPayment.invoice,
+                    status: 'complete',
+                    typeId: '',
+                    type: 'invoice',
+                    file: ''
+                  }
+                : null
+            )
           }
         }}
         contract={contract}
