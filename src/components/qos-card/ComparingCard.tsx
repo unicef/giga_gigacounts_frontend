@@ -41,7 +41,7 @@ export default function ComparingCard({
   const getComparisonVariant = (real: number, total: number) => {
     let percentage = real / total
     if (name === MetricSnake.Latency) percentage **= -1
-    if (percentage >= 0.9) return 'success'
+    if (percentage >= 1) return 'success'
     if (percentage >= 0.7) return 'warning'
     return 'error'
   }
