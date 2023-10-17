@@ -10,7 +10,7 @@ export default function NavShortcuts() {
 
   return (
     <>
-      {shortcuts.map((item, i) => {
+      {shortcuts.map((item) => {
         const userHasPermission =
           item.permissions && item.permissions.length > 0
             ? hasAllPermissions([...item.permissions])
@@ -24,7 +24,7 @@ export default function NavShortcuts() {
           userHasRole &&
           userHasAllSettings && (
             <>
-              <NavItem isActive={false} data={item} />
+              <NavItem key={item.title} isActive={false} data={item} />
               <SideNavDivider />
             </>
           )

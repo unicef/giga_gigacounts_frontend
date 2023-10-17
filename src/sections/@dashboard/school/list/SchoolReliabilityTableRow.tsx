@@ -12,11 +12,11 @@ import { getOrderedFromCells } from 'src/utils/table'
 
 type Props = {
   row: DataTableRow<ISchool[]>
-  selected: boolean
   rowProps: TableRowProps
+  setReliabilityInTable: (newValue: boolean) => void
 }
 
-export default function SchoolReliabilityTableRow({ row, rowProps }: Props) {
+export default function SchoolReliabilityTableRow({ row, rowProps, setReliabilityInTable }: Props) {
   const [external_id, name, location1, reliable_measures] = getOrderedFromCells(
     ['external_id', 'name', 'location1', 'reliable_measures'],
     row.cells
@@ -27,11 +27,13 @@ export default function SchoolReliabilityTableRow({ row, rowProps }: Props) {
 
   const handleReliableChange = (newChecked: boolean, id: string) => {
     setChecked(newChecked)
+    setReliabilityInTable(newChecked)
     setReliability(id, newChecked)
       .then(() => pushSuccess('push.changed_reliability', { append: external_id }))
       .catch(() => {
         pushError('push.changed_reliability_error', { append: external_id })
         setChecked(!newChecked)
+        setReliabilityInTable(!newChecked)
       })
   }
 

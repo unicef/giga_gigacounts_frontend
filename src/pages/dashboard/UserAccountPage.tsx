@@ -44,49 +44,42 @@ export default function UserAccountPage() {
             >
               <Typography as="h3">{capitalizeFirstLetter(translate('personal_info'))}</Typography>
               <TextInput
-                size="sm"
                 id="user name"
                 labelText={capitalizeFirstLetter(translate('name'))}
                 readOnly
                 value={user?.name}
               />
               <TextInput
-                size="sm"
                 id="user lastname"
                 labelText={capitalizeFirstLetter(translate('last_name'))}
                 readOnly
                 value={user?.lastName}
               />
               <TextInput
-                size="sm"
                 id="user role"
                 labelText={capitalizeFirstLetter(translate('role'))}
                 readOnly
                 value={user?.role?.name}
               />
               <TextInput
-                size="sm"
                 id="user email"
                 labelText={capitalizeFirstLetter(translate('email'))}
                 readOnly
                 value={user?.email}
               />
               <TextInput
-                size="sm"
                 id="user phoneNumber"
                 labelText={capitalizeFirstLetter(translate('phone_number'))}
                 readOnly
                 value={user?.phoneNumber}
               />
               <TextInput
-                size="sm"
                 id="user country name"
                 labelText={capitalizeFirstLetter(translate('country_name'))}
                 readOnly
                 value={user?.country.name}
               />
               <TextInput
-                size="sm"
                 id="user address"
                 labelText={capitalizeFirstLetter(translate('address'))}
                 readOnly
