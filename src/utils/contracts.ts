@@ -58,7 +58,7 @@ const getContractFromDraft = (draftForm: IDraft): Contract => ({
   launchDate: draftForm.launchDate ? formatDate(draftForm.launchDate) : '',
   endDate: draftForm.endDate ? formatDate(draftForm.endDate) : '',
   startDate: draftForm.startDate ? formatDate(draftForm.startDate) : '',
-  schools: { schools: draftForm.schools },
+  schools: { schools: draftForm.schools.map((s) => ({ ...s, id: String(s.id) })) },
   countryId: draftForm.country?.id,
   ispId: draftForm.isp?.id,
   expectedMetrics: { metrics: draftForm.expectedMetrics },
@@ -106,7 +106,7 @@ const getDraftFromForm = (
     launchDate: getLaunchDate(),
     budget: budget ? String(budget) : '0',
     schools: {
-      schools
+      schools: schools.map((s) => ({ ...s, id: String(s.id) }))
     },
     expectedMetrics: { metrics: [] },
     automatic,

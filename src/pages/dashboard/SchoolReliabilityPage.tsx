@@ -126,7 +126,6 @@ export default function SchoolReliabilityPage() {
         filterEducationLevel
       })
     : null
-
   const isEmpty = Boolean(tableData && !tableData.length)
   const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
 
@@ -159,6 +158,21 @@ export default function SchoolReliabilityPage() {
         isSortable
         RowComponent={SchoolReliabilityTableRow}
         customCount={total}
+        getRowComponentProps={(row) => ({
+          setReliabilityInTable: (newChecked: boolean) => {
+            setTableData((prev) => {
+              if (!tableData) return prev
+              const indexToChange = tableData.findIndex((r) => row.external_id === r.external_id)
+              if (indexToChange === -1) return prev
+              const newTableData = [...tableData]
+              newTableData[indexToChange] = {
+                ...newTableData[indexToChange],
+                reliable_measures: newChecked
+              }
+              return newTableData
+            })
+          }
+        })}
         ToolbarContent={
           <SchoolReliabilityTableToolbar
             setFilterRegion={setFilterRegion}

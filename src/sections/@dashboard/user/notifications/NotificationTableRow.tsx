@@ -46,21 +46,21 @@ export default function NotificationsTableRow({
     <TableRow {...rowProps}>
       <TableSelectRow {...selectionProps} />
 
-      <TableCell style={{ verticalAlign: 'middle', width: '20%' }}>{title}</TableCell>
-      <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
+      <TableCell style={{ width: '20%' }}>{title}</TableCell>
+      <TableCell style={{ width: '15%' }}>
         <Tag type={NOTIFICATION_STATUS_COLORS[parsedStatus]}>
           {capitalizeFirstLetter(translate(`constant_status.notification.${parsedStatus}`))}
         </Tag>
       </TableCell>
 
-      <TableCell style={{ verticalAlign: 'middle', width: '30%' }}>
+      <TableCell style={{ width: '30%' }}>
         {threeDots(capitalizeFirstLetter(message as string), 150)}
       </TableCell>
-      <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
+      <TableCell style={{ width: '15%' }}>
         {formatDateTime(sentAt, '/', { seconds: false })}
       </TableCell>
 
-      <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
+      <TableCell style={{ width: '15%' }}>
         <Stack alignItems="center" orientation="horizontal" gap={spacing.xs}>
           <ActionLink
             variant="error"

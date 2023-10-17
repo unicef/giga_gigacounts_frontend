@@ -1,8 +1,8 @@
-import { Button, Checkbox, Column, ComboBox, Grid, InlineNotification } from '@carbon/react';
-import moment from 'moment';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { useNavigate } from 'react-router';
+import { Button, Checkbox, Column, ComboBox, Grid, InlineNotification } from '@carbon/react'
+import moment from 'moment'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { useNavigate } from 'react-router'
 import {
   ContractForm,
   IExternalUser,
@@ -11,30 +11,30 @@ import {
   IUser,
   Translation,
   UserRoles
-} from 'src/@types';
-import { getUsers } from 'src/api/user';
-import { useAuthContext } from 'src/auth/useAuthContext';
-import UploadError from 'src/components/errors/UploadError';
+} from 'src/@types'
+import { getUsers } from 'src/api/user'
+import { useAuthContext } from 'src/auth/useAuthContext'
+import UploadError from 'src/components/errors/UploadError'
 import {
   RHFCheckbox,
   RHFComboBox,
   RHFDatePicker,
   RHFSelect,
   RHFTextField
-} from 'src/components/hook-form';
-import FormProvider from 'src/components/hook-form/FormProvider';
-import { Stack } from 'src/components/stack';
-import { SectionSubtitle, SectionTitle } from 'src/components/typography';
-import { UploadBox } from 'src/components/upload-box';
-import { UserChipList } from 'src/components/user';
-import { CONTRACT_TEAM_ROLES, EXTERNAL_CONTACT_ROLE, ISP_CONTACT_ROLES } from 'src/constants';
-import { useBusinessContext } from 'src/context/business/BusinessContext';
-import { useLocales } from 'src/locales';
-import { redirectOnError } from 'src/pages/errors/handlers';
-import { useTheme } from 'src/theme';
-import { capitalizeFirstLetter } from 'src/utils/strings';
-import { useContactSchema } from 'src/validations/contact';
-import { ContractSchoolsAndAttachments } from './types';
+} from 'src/components/hook-form'
+import FormProvider from 'src/components/hook-form/FormProvider'
+import { Stack } from 'src/components/stack'
+import { SectionSubtitle, SectionTitle } from 'src/components/typography'
+import { UploadBox } from 'src/components/upload-box'
+import { UserChipList } from 'src/components/user'
+import { CONTRACT_TEAM_ROLES, EXTERNAL_CONTACT_ROLE, ISP_CONTACT_ROLES } from 'src/constants'
+import { useBusinessContext } from 'src/context/business/BusinessContext'
+import { useLocales } from 'src/locales'
+import { redirectOnError } from 'src/pages/errors/handlers'
+import { useTheme } from 'src/theme'
+import { capitalizeFirstLetter } from 'src/utils/strings'
+import { useContactSchema } from 'src/validations/contact'
+import { ContractSchoolsAndAttachments } from './types'
 
 type Step1Props = {
   onChange: Dispatch<SetStateAction<ContractSchoolsAndAttachments>>
@@ -401,6 +401,7 @@ export default function Step1({
             onChange={() => handlePost(getValues())}
           />
           <RHFDatePicker
+            minDate={getValues('startDate')?.toISOString() ?? tomorrow}
             name="endDate"
             id={`end date picker ${contractId}`}
             size="md"
