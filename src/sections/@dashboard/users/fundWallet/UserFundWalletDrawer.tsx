@@ -1,22 +1,22 @@
-import { Button, InlineNotification } from '@carbon/react'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
-import { ICurrency, WalletBalance } from 'src/@types'
-import { useAuthContext } from 'src/auth/useAuthContext'
-import Drawer from 'src/components/drawer/Drawer'
-import { RHFSelect, RHFTextField } from 'src/components/hook-form'
-import FormProvider from 'src/components/hook-form/FormProvider'
-import { Stack } from 'src/components/stack'
-import { SectionTitle } from 'src/components/typography'
-import { ENV_SUPPORTED_NETWORK_ID, ICONS, SUPPORTED_NETWORKS } from 'src/constants'
-import { useBusinessContext } from 'src/context/business/BusinessContext'
-import { useSnackbar } from 'src/hooks/useSnackbar'
-import { useWeb3Context } from 'src/hooks/useWeb3Context'
-import { useLocales } from 'src/locales'
-import { redirectOnError } from 'src/pages/errors/handlers'
-import { useTheme } from 'src/theme'
-import { capitalizeFirstLetter } from 'src/utils/strings'
-import { UserFundWalletSchema } from './UserFundWalletSchema'
+import { Button, InlineNotification } from '@carbon/react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { ICurrency, WalletBalance } from 'src/@types';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import Drawer from 'src/components/drawer/Drawer';
+import { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import FormProvider from 'src/components/hook-form/FormProvider';
+import { Stack } from 'src/components/stack';
+import { SectionTitle } from 'src/components/typography';
+import { ENV_SUPPORTED_NETWORK_ID, ICONS, SUPPORTED_NETWORKS } from 'src/constants';
+import { useBusinessContext } from 'src/context/business/BusinessContext';
+import { useSnackbar } from 'src/hooks/useSnackbar';
+import { useWeb3Context } from 'src/hooks/useWeb3Context';
+import { useLocales } from 'src/locales';
+import { useTheme } from 'src/theme';
+import { redirectOnError } from 'src/utils/errorHandlers';
+import { capitalizeFirstLetter } from 'src/utils/strings';
+import { UserFundWalletSchema } from './UserFundWalletSchema';
 
 interface Props {
   name: string

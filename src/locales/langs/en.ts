@@ -83,6 +83,8 @@ const en = {
     unsaved_changes: 'You have unsaved changes'
   },
   push: {
+    credentials_sent: 'Your information has been saved successfully',
+    credentials_sent_error: 'There was an error saving your information',
     knowledge_base_error: 'Knowledge base for this page not yet implemented',
     changed_reliability: 'Reliability has been changed for school',
     changed_reliability_error: 'There was an error changing reliability for school',
@@ -122,7 +124,9 @@ const en = {
     pay_payment: 'The payment has been marked as paid',
     pay_payment_error: 'There was an error marking the payment as paid',
     approved_manually_contract: 'The contract was approved manually',
-    approved_manually_contract_error: 'There was an error approving the contract manually'
+    approved_manually_contract_error: 'There was an error approving the contract manually',
+    user_approved: 'User approved correctly',
+    user_approved_error: 'There was an error approving the user'
   },
   duplicate_contract: {
     title: 'Duplicate contract',
@@ -185,6 +189,11 @@ const en = {
   publish_contract_modal: {
     title: 'You are about to publish the contract.',
     content: 'Are you sure you want to publish this contract?'
+  },
+  user_approve_modal: {
+    title: 'You are about to approve the user {{name}} with email {{email}}.',
+    content:
+      'Once you approve, they will be able to access the system as the role you select below.'
   },
   contract_draft_modal: {
     title:
@@ -961,6 +970,13 @@ const en = {
     generic: {
       title: 'Looks like there was an error',
       content: 'Something went wrong processing your request. Please try again.'
+    },
+    notVerified: {
+      title: 'Account not verfied',
+      content:
+        'Thanks for filling your information, an administration user will approve and verify your account as soon as possible.',
+      contentWithoutRoleAndCountry:
+        'Before an admin can approve your account creation you need to fill in the following information.'
     }
   },
   widgets: {
@@ -1091,7 +1107,10 @@ const en = {
   none: 'None',
   pay_reciev: 'Pay. Reciev.',
   reset_table: 'reset table',
-  help_request_subtitle: 'Please fill in your query below or'
+  help_request_subtitle: 'Please fill in your query below or',
+  user_approval: 'User approval',
+  reject: 'Reject',
+  go_back: 'Go back'
 }
 
 export default en

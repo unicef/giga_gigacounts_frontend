@@ -17,7 +17,7 @@ import {
   SchoolReliabilityTableToolbar
 } from 'src/sections/@dashboard/school/list'
 import { removeDuplicates } from 'src/utils/arrays'
-import { redirectOnError } from '../errors/handlers'
+import { redirectOnError } from 'src/utils/errorHandlers'
 
 export default function SchoolReliabilityPage() {
   const navigate = useNavigate()

@@ -1,6 +1,6 @@
-import { Button, TextInput } from '@carbon/react'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Button, TextInput } from '@carbon/react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import {
   ContractDetails,
   ContractStatus,
@@ -11,31 +11,31 @@ import {
   MetricSnake,
   PaymentStatus,
   Translation
-} from 'src/@types'
-import { getContractDetails } from 'src/api/contracts'
-import { getPaymentConnection } from 'src/api/payments'
-import { AttachmentsList } from 'src/components/attachment-list'
-import Drawer from 'src/components/drawer/Drawer'
-import { InfoToggletip } from 'src/components/info-toggletip'
-import { ComparingCard } from 'src/components/qos-card'
-import { Stack } from 'src/components/stack'
+} from 'src/@types';
+import { getContractDetails } from 'src/api/contracts';
+import { getPaymentConnection } from 'src/api/payments';
+import { AttachmentsList } from 'src/components/attachment-list';
+import Drawer from 'src/components/drawer/Drawer';
+import { InfoToggletip } from 'src/components/info-toggletip';
+import { ComparingCard } from 'src/components/qos-card';
+import { Stack } from 'src/components/stack';
 import {
   SectionHeading,
   SectionSubtitle,
   SectionTitle,
   Typography
-} from 'src/components/typography'
-import { ICONS, STRING_DEFAULT, Views } from 'src/constants'
-import { useAuthorization } from 'src/hooks/useAuthorization'
-import { useLocales } from 'src/locales'
-import { redirectOnError } from 'src/pages/errors/handlers'
-import { useTheme } from 'src/theme'
-import { formatDate } from 'src/utils/date'
-import { transformMetric } from 'src/utils/metrics'
-import { getPeriodLabel } from 'src/utils/payments'
-import { parsePaymentStatus } from 'src/utils/status'
-import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/strings'
-import { PaymentConnectivityBar } from '../graph'
+} from 'src/components/typography';
+import { ICONS, STRING_DEFAULT, Views } from 'src/constants';
+import { useAuthorization } from 'src/hooks/useAuthorization';
+import { useLocales } from 'src/locales';
+import { useTheme } from 'src/theme';
+import { formatDate } from 'src/utils/date';
+import { redirectOnError } from 'src/utils/errorHandlers';
+import { transformMetric } from 'src/utils/metrics';
+import { getPeriodLabel } from 'src/utils/payments';
+import { parsePaymentStatus } from 'src/utils/status';
+import { capitalizeFirstLetter, uncapitalizeFirstLetter } from 'src/utils/strings';
+import { PaymentConnectivityBar } from '../graph';
 
 interface Props {
   contract: ContractDetails | { id: string; status: ContractStatus; automatic: boolean }

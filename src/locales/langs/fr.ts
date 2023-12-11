@@ -85,6 +85,8 @@ const fr: TranslationObject = {
     unsaved_changes: 'A des changements sans économiser'
   },
   push: {
+    credentials_sent: 'Vos informations ont été enregistrées avec succès',
+    credentials_sent_error: 'Il y a eu une erreur enregistrant vos informations',
     knowledge_base_error: 'Base de connaissances pour cette page non encore mise en œuvre',
     changed_reliability: "La fiabilité a changé pour l'école",
     changed_reliability_error: "Une erreur s'est produite en modifiant la fiabilité de l'école",
@@ -125,7 +127,9 @@ const fr: TranslationObject = {
     pay_payment: 'Le paiement a été marqué comme payé',
     pay_payment_error: "Une erreur s'est produite lors du marquant du paiement comme payé",
     approved_manually_contract: 'Le contrat a été approuvé manuellement',
-    approved_manually_contract_error: 'Il y a eu une erreur approuvant le contrat manuellement '
+    approved_manually_contract_error: 'Il y a eu une erreur approuvant le contrat manuellement',
+    user_approved: "L'utilisateur approuvé correctement",
+    user_approved_error: "Il y a eu une erreur approuvant l'utilisateur"
   },
   duplicate_contract: {
     title: 'Dupliquer le contrat',
@@ -190,6 +194,11 @@ const fr: TranslationObject = {
   publish_contract_modal: {
     title: 'Vous êtes sur le point de publier le contrat.',
     content: 'Êtes-vous sûr de vouloir publier ce contrat?'
+  },
+  user_approve_modal: {
+    title: "Vous êtes sur le point d'approuver l'utilisateur {{name}} avec un e-mail {{email}}.",
+    content:
+      'Une fois que vous avez approuvé, ils pourront accéder au système comme le rôle que vous sélectionnez ci-dessous.'
   },
   payment_pay_modal: {
     title: 'Marquez le paiement comme payé',
@@ -983,6 +992,13 @@ const fr: TranslationObject = {
     generic: {
       title: `On dirait qu'il y a eu une erreur`,
       content: `Quelque chose s'est mal passé en traitement de votre demande. Veuillez réessayer.`
+    },
+    notVerified: {
+      title: 'Compte non vérifié',
+      content:
+        "Merci d'avoir rempli vos informations, un utilisateur d'administration approuvera et vérifiera votre compte dès que possible.",
+      contentWithoutRoleAndCountry:
+        "Avant qu'un administrateur puisse approuver la création de votre compte, vous devez remplir les informations suivantes."
     }
   },
   widgets: {
@@ -1116,7 +1132,10 @@ const fr: TranslationObject = {
   none: 'Aucun',
   pay_reciev: 'Recep. Paie.',
   reset_table: 'réinitialiser tableau',
-  help_request_subtitle: 'Veuillez remplir votre requête ci-dessous ou'
+  help_request_subtitle: 'Veuillez remplir votre requête ci-dessous ou',
+  user_approval: "Approbation de l'utilisateur",
+  reject: 'Rejeter',
+  go_back: 'Retourner'
 }
 
 export default fr

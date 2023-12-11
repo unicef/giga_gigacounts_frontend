@@ -1,8 +1,8 @@
-import { Button, Checkbox, Column, ComboBox, Grid, InlineNotification } from '@carbon/react'
-import moment from 'moment'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { Button, Checkbox, Column, ComboBox, Grid, InlineNotification } from '@carbon/react';
+import moment from 'moment';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useNavigate } from 'react-router';
 import {
   ContractForm,
   IExternalUser,
@@ -11,10 +11,10 @@ import {
   IUser,
   Translation,
   UserRoles
-} from 'src/@types'
-import { getUsers } from 'src/api/user'
-import { useAuthContext } from 'src/auth/useAuthContext'
-import UploadError from 'src/components/errors/UploadError'
+} from 'src/@types';
+import { getUsers } from 'src/api/user';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import UploadError from 'src/components/errors/UploadError';
 import {
   RHFCheckbox,
   RHFComboBox,
@@ -30,8 +30,8 @@ import { UserChipList } from 'src/components/user'
 import { CONTRACT_TEAM_ROLES, EXTERNAL_CONTACT_ROLE, ISP_CONTACT_ROLES } from 'src/constants'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useLocales } from 'src/locales'
-import { redirectOnError } from 'src/pages/errors/handlers'
 import { useTheme } from 'src/theme'
+import { redirectOnError } from 'src/utils/errorHandlers'
 import { capitalizeFirstLetter } from 'src/utils/strings'
 import { useContactSchema } from 'src/validations/contact'
 import { ContractSchoolsAndAttachments } from './types'
@@ -50,7 +50,7 @@ type Step1Props = {
   addContact: (contactForm: IExternalUser | IUser) => void
   deleteContact: (email: string) => void
   addTeamMember: (teamMemberForm: IUser) => void
-  deleteTeamMember: (id: string) => void
+  deleteTeamMember: (user: IUser) => void
   handlePost: (contractForm: ContractForm) => void
   uploadErrorMessage: Translation | ''
   setUploadErrorMessage: Dispatch<SetStateAction<Translation | ''>>
@@ -191,13 +191,13 @@ export default function Step1({
     (u) => u.role.code === UserRoles.ISP_CONTRACT_MANAGER
   ) as IUser[]
 
-  const handleDeleteContact = (email: string) => {
-    deleteContact(email)
+  const handleDeleteContact = (contact: IUser | IExternalUser) => {
+    deleteContact(contact.email)
     handlePost(getValues())
     if (!isAutomatic) return
     if (selectedContractManagers.length === 1) setValue('paymentReceiverId', '')
     else if (selectedContractManagers.length === 2) {
-      const lastContact = selectedContractManagers.find((c) => c.email !== email)
+      const lastContact = selectedContractManagers.find((c) => c.email !== contact.email)
       setValue('paymentReceiverId', lastContact?.id ?? '')
     }
   }
@@ -267,7 +267,7 @@ export default function Step1({
         <RHFComboBox
           defaultValue={{ value: '', label: '' }}
           id={`country selection ${contractId}`}
-          options={[...countries]
+          items={[...countries]
             .map((c) => ({ value: c.id, label: c.name }))
             .sort((a, b) => a.label.localeCompare(b.label))}
           onChange={() => {
@@ -289,7 +289,7 @@ export default function Step1({
           <RHFComboBox
             defaultValue={{ value: '', label: '' }}
             id={`internet service provider selection ${contractId}`}
-            options={ispOptions.map((i) => ({ value: i.id, label: i.name }))}
+            items={ispOptions.map((i) => ({ value: i.id, label: i.name }))}
             name="isp"
             label={capitalizeFirstLetter(translate('isp'))}
             disabled={!countryId || hasContactPeople}

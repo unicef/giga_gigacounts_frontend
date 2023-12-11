@@ -1,7 +1,7 @@
-import { InlineNotification, TextInput } from '@carbon/react'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { InlineNotification, TextInput } from '@carbon/react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useNavigate } from 'react-router';
 import {
   ContractForm,
   CsvParseError,
@@ -10,29 +10,29 @@ import {
   ISchool,
   SchoolCell,
   Translation
-} from 'src/@types'
+} from 'src/@types';
 import {
   getSchoolsByExternalIdArray,
   getSchoolsByNameOrExternalId,
   getSchoolsPagination
-} from 'src/api/school'
-import CustomDataTable from 'src/components/data-table/CustomDataTable'
-import { DownloadCsv } from 'src/components/download'
-import { ErrorList, UploadError } from 'src/components/errors'
-import { RHFSelect, RHFTextField } from 'src/components/hook-form'
-import { Stack } from 'src/components/stack'
-import { SectionSubtitle, SectionTitle, Typography } from 'src/components/typography'
-import { FILTER_ALL_DEFAULT, FilterAll } from 'src/constants'
-import { useDebounce } from 'src/hooks/useDebounce'
-import useTable from 'src/hooks/useTable'
-import { useLocales } from 'src/locales'
-import { redirectOnError } from 'src/pages/errors/handlers'
-import { SchoolTableRow, SchoolTableToolbar } from 'src/sections/@dashboard/school/list'
-import { useTheme } from 'src/theme'
-import { removeDuplicates } from 'src/utils/arrays'
-import { capitalizeFirstLetter } from 'src/utils/strings'
-import UploadSchoolFile from './UploadSchoolFile'
-import { ContractSchoolsAndAttachments } from './types'
+} from 'src/api/school';
+import CustomDataTable from 'src/components/data-table/CustomDataTable';
+import { DownloadCsv } from 'src/components/download';
+import { ErrorList, UploadError } from 'src/components/errors';
+import { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { Stack } from 'src/components/stack';
+import { SectionSubtitle, SectionTitle, Typography } from 'src/components/typography';
+import { FILTER_ALL_DEFAULT, FilterAll } from 'src/constants';
+import { useDebounce } from 'src/hooks/useDebounce';
+import useTable from 'src/hooks/useTable';
+import { useLocales } from 'src/locales';
+import { SchoolTableRow, SchoolTableToolbar } from 'src/sections/@dashboard/school/list';
+import { useTheme } from 'src/theme';
+import { removeDuplicates } from 'src/utils/arrays';
+import { redirectOnError } from 'src/utils/errorHandlers';
+import { capitalizeFirstLetter } from 'src/utils/strings';
+import UploadSchoolFile from './UploadSchoolFile';
+import { ContractSchoolsAndAttachments } from './types';
 
 type Step2Props = {
   onChange: Dispatch<SetStateAction<ContractSchoolsAndAttachments>>

@@ -20,6 +20,7 @@ import {
   GenericServerError,
   HelpRequestPage,
   MeasuresListPage,
+  NotVerifiedPage,
   NotificationsListPage,
   Page403,
   Page404,
@@ -27,6 +28,7 @@ import {
   PaymentListPage,
   SchoolReliabilityPage,
   UserAccountPage,
+  UsersApprovalPage,
   UsersPage
 } from './elements'
 
@@ -61,6 +63,14 @@ export default function Router() {
             <Web3ContextProvider>
               <UsersPage />
             </Web3ContextProvider>
+          )
+        },
+        {
+          path: 'user-approval',
+          element: (
+            <RoleBasedGuard roles={VIEW_ROLES.userApproval}>
+              <UsersApprovalPage />
+            </RoleBasedGuard>
           )
         },
         {
@@ -167,7 +177,8 @@ export default function Router() {
         { path: '404', element: <Page404 /> },
         { path: '403', element: <Page403 /> },
         { path: '500', element: <Page500 /> },
-        { path: 'generic', element: <GenericServerError /> }
+        { path: 'generic', element: <GenericServerError /> },
+        { path: 'not-verified', element: <NotVerifiedPage /> }
       ]
     },
     {

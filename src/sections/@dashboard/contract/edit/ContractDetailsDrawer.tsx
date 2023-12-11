@@ -1,7 +1,7 @@
-import { Button, InlineLoading, Modal, ProgressIndicator, ProgressStep } from '@carbon/react'
-import moment from 'moment'
-import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Button, InlineLoading, Modal, ProgressIndicator, ProgressStep } from '@carbon/react';
+import moment from 'moment';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import {
   Contract,
   ContractCreationError,
@@ -14,33 +14,33 @@ import {
   IISP,
   IUser,
   Translation
-} from 'src/@types'
-import { deleteAttachment, uploadAttachment } from 'src/api/attachments'
-import { addNewContact, deleteContact } from 'src/api/contacts'
-import { createContractDraft, publishContractDraft, updateContractDraft } from 'src/api/contracts'
-import { addNewTeamMember, deleteTeamMember } from 'src/api/stakeholders'
-import CancelDialog from 'src/components/cancel-dialog/CancelDialog'
-import Drawer from 'src/components/drawer/Drawer'
-import FormProvider from 'src/components/hook-form/FormProvider'
-import Stack from 'src/components/stack/Stack'
-import { SectionTitle, Typography } from 'src/components/typography'
-import { EXTERNAL_CONTACT_ROLE, ICONS, PICTOGRAMS } from 'src/constants'
-import { useBusinessContext } from 'src/context/business/BusinessContext'
-import { useModal } from 'src/hooks/useModal'
-import { useSnackbar } from 'src/hooks/useSnackbar'
-import { useLocales } from 'src/locales'
-import { redirectOnError } from 'src/pages/errors/handlers'
-import { useTheme } from 'src/theme'
-import { getDraftFromForm, getPublishErrors } from 'src/utils/contracts'
-import { isValidFrequency } from 'src/utils/frequencies'
-import { applyToEveryWord, capitalizeFirstLetter, threeDots } from 'src/utils/strings'
-import { useContractSchema } from 'src/validations/contract'
-import { PublishModal } from '../publish'
-import Step1 from './Step1'
-import Step2 from './Step2'
-import Step3 from './Step3'
-import Step4 from './Step4'
-import { ContractSchoolsAndAttachments } from './types'
+} from 'src/@types';
+import { deleteAttachment, uploadAttachment } from 'src/api/attachments';
+import { addNewContact, deleteContact } from 'src/api/contacts';
+import { createContractDraft, publishContractDraft, updateContractDraft } from 'src/api/contracts';
+import { addNewTeamMember, deleteTeamMember } from 'src/api/stakeholders';
+import CancelDialog from 'src/components/cancel-dialog/CancelDialog';
+import Drawer from 'src/components/drawer/Drawer';
+import FormProvider from 'src/components/hook-form/FormProvider';
+import Stack from 'src/components/stack/Stack';
+import { SectionTitle, Typography } from 'src/components/typography';
+import { EXTERNAL_CONTACT_ROLE, ICONS, PICTOGRAMS } from 'src/constants';
+import { useBusinessContext } from 'src/context/business/BusinessContext';
+import { useModal } from 'src/hooks/useModal';
+import { useSnackbar } from 'src/hooks/useSnackbar';
+import { useLocales } from 'src/locales';
+import { useTheme } from 'src/theme';
+import { getDraftFromForm, getPublishErrors } from 'src/utils/contracts';
+import { isValidFrequency } from 'src/utils/frequencies';
+import { redirectOnError } from 'src/utils/errorHandlers';
+import { applyToEveryWord, capitalizeFirstLetter, threeDots } from 'src/utils/strings';
+import { useContractSchema } from 'src/validations/contract';
+import { PublishModal } from '../publish';
+import Step1 from './Step1';
+import Step2 from './Step2';
+import Step3 from './Step3';
+import Step4 from './Step4';
+import { ContractSchoolsAndAttachments } from './types';
 
 const schoolsAndAttachmentsDefault: ContractSchoolsAndAttachments = {
   attachments: [],
@@ -315,16 +315,19 @@ export function ContractDetailsDrawer({
       .finally(() => setSaving(false))
   }
 
-  const handleDeleteTeamMember = (id: string) => {
-    const index = contract.stakeholders.findIndex((a) => a.id === id)
+  const handleDeleteTeamMember = (teamMember: IUser) => {
+    const index = contract.stakeholders.findIndex((a) => a.id === teamMember.id)
     if (index === -1) return
 
     const oldStakeHolders = [...contract.stakeholders]
 
-    setContract((prev) => ({ ...prev, stakeholders: prev.stakeholders.filter((a) => a.id !== id) }))
+    setContract((prev) => ({
+      ...prev,
+      stakeholders: prev.stakeholders.filter((a) => a.id !== teamMember.id)
+    }))
 
     setSaving(true)
-    deleteTeamMember(id, getValues('id'))
+    deleteTeamMember(teamMember.id, getValues('id'))
       .catch(() => {
         setContract((prev) => ({ ...prev, stakeholders: oldStakeHolders }))
       })

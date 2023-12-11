@@ -1,6 +1,6 @@
-import moment from 'moment'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import {
   ContractDetails,
   EducationLevel,
@@ -10,22 +10,22 @@ import {
   MetricCamel,
   MetricSnake,
   MinMax
-} from 'src/@types'
-import { getContractSchools } from 'src/api/contracts'
-import { getSchoolMeasures } from 'src/api/school'
-import CustomDataTable from 'src/components/data-table/CustomDataTable'
-import { useTable } from 'src/components/table'
-import { Footer } from 'src/components/typography'
-import { FILTER_ALL_DEFAULT, FilterAll, KEY_DEFAULTS, STRING_DEFAULT } from 'src/constants'
-import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
-import { useLocales } from 'src/locales'
-import { redirectOnError } from 'src/pages/errors/handlers'
+} from 'src/@types';
+import { getContractSchools } from 'src/api/contracts';
+import { getSchoolMeasures } from 'src/api/school';
+import CustomDataTable from 'src/components/data-table/CustomDataTable';
+import { useTable } from 'src/components/table';
+import { Footer } from 'src/components/typography';
+import { FILTER_ALL_DEFAULT, FilterAll, KEY_DEFAULTS, STRING_DEFAULT } from 'src/constants';
+import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams';
+import { useLocales } from 'src/locales';
 import {
   ConnectivityTableRow,
   ConnectivityTableToolbar
-} from 'src/sections/@dashboard/connectivity/list'
-import { removeDuplicates, resolvePromises } from 'src/utils/arrays'
-import { getConnectivityStatus } from 'src/utils/connectivity'
+} from 'src/sections/@dashboard/connectivity/list';
+import { removeDuplicates, resolvePromises } from 'src/utils/arrays';
+import { getConnectivityStatus } from 'src/utils/connectivity';
+import { redirectOnError } from 'src/utils/errorHandlers';
 
 export default function ConnectionTab({
   contract,

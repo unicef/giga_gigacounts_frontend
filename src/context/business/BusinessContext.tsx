@@ -1,16 +1,16 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router'
-import { IContract, ICountry, ICurrency, IFrequency, IISP, INotification } from 'src/@types'
-import { deleteContractDraft, getContracts, getCountries, getCurrencies } from 'src/api/contracts'
-import { getIsp } from 'src/api/isp'
-import { ISuggestedMetrics, getSuggestedMetrics } from 'src/api/metrics'
-import { discardNotification, getNotifications, readNotification } from 'src/api/notifications'
-import { getFrequencies } from 'src/api/payments'
-import { useAuthContext } from 'src/auth/useAuthContext'
-import { CURRENCIES_TYPES, ENV_SUPPORTED_NETWORK_ID } from 'src/constants'
-import { redirectOnError } from 'src/pages/errors/handlers'
-import { parseContractStatus } from 'src/utils/status'
-import { BusinessContextValue } from './types'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { IContract, ICountry, ICurrency, IFrequency, IISP, INotification } from 'src/@types';
+import { deleteContractDraft, getContracts, getCountries, getCurrencies } from 'src/api/contracts';
+import { getIsp } from 'src/api/isp';
+import { ISuggestedMetrics, getSuggestedMetrics } from 'src/api/metrics';
+import { discardNotification, getNotifications, readNotification } from 'src/api/notifications';
+import { getFrequencies } from 'src/api/payments';
+import { useAuthContext } from 'src/auth/useAuthContext';
+import { CURRENCIES_TYPES, ENV_SUPPORTED_NETWORK_ID } from 'src/constants';
+import { redirectOnError } from 'src/utils/errorHandlers';
+import { parseContractStatus } from 'src/utils/status';
+import { BusinessContextValue } from './types';
 
 const initialState: BusinessContextValue = {
   currencies: [],
@@ -50,6 +50,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   const [currencies, setCurrencies] = useState<ICurrency[]>([])
   const [frequencies, setFrequencies] = useState<IFrequency[]>([])
   const { user, isAuthenticated, isAdmin } = useAuthContext()
+  const isApproved = user?.approved
 
   const handleErrors = useCallback(
     (err: any) => redirectOnError(navigate, err),
@@ -67,7 +68,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
       frequencies,
       suggestedMetrics,
       refetchNotifications: () => {
-        if (!isAuthenticated) return
+        if (!isAuthenticated || !isApproved) return
         getNotifications(user?.id).then(setNotifications)
       },
       refetchContracts: () => {
@@ -86,7 +87,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         return getIsp(countryId)
       },
       refetchCurrencies: (automaticContract: boolean, countryId?: string) => {
-        if (!isAuthenticated) return undefined
+        if (!isAuthenticated || !isApproved) return undefined
         const currencyType = automaticContract ? CURRENCIES_TYPES.STABLE : CURRENCIES_TYPES.FIAT
         const networkId = automaticContract ? ENV_SUPPORTED_NETWORK_ID : undefined
         const finalCountryId = automaticContract ? undefined : countryId
@@ -101,6 +102,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         Promise.allSettled(ids.map((id) => discardNotification(user?.id, id)))
     }),
     [
+      isApproved,
       frequencies,
       suggestedMetrics,
       isAuthenticated,
@@ -114,22 +116,22 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
   )
 
   const getCountryId = useCallback(
-    () => (isAuthenticated ? user?.country.id : null),
+    () => (isAuthenticated ? user?.country?.id : null),
     [user, isAuthenticated]
   )
 
   useEffect(() => {
-    if (!isAuthenticated) return
+    if (!isAuthenticated || !isApproved) return
     getSuggestedMetrics().then(setSuggestedMetrics)
-  }, [isAuthenticated])
+  }, [isAuthenticated, isApproved])
 
   useEffect(() => {
-    if (!isAuthenticated) return
+    if (!isAuthenticated || !isApproved) return
     getNotifications(user?.id).then(setNotifications)
-  }, [isAuthenticated, user])
+  }, [isAuthenticated, user, isApproved])
 
   useEffect(() => {
-    if (!isAuthenticated) return
+    if (!isAuthenticated || !isApproved) return
     getContracts()
       .then((response) => {
         setContracts(
@@ -140,7 +142,7 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
         )
       })
       .catch(handleErrors)
-  }, [isAuthenticated, handleErrors])
+  }, [isAuthenticated, handleErrors, isApproved])
 
   useEffect(() => {
     if (!isAuthenticated) return
@@ -148,23 +150,23 @@ export function BusinessProvider({ children }: { children: React.ReactNode }) {
     getCountries()
       .then((c) => {
         if (isAdmin) setCountries(c)
-        else setCountries(c.filter((country) => country.id === user?.country.id))
+        else setCountries(c.filter((country) => country.id === user?.country?.id))
       })
       .catch(handleErrors)
-  }, [isAuthenticated, user, isAdmin, handleErrors])
+  }, [isAuthenticated, user, isAdmin, handleErrors, isApproved])
 
   useEffect(() => {
     const countryId = getCountryId()
     if (!isAuthenticated || !countryId) return
     getIsp(countryId).then(setInternetProviders).catch(handleErrors)
-  }, [isAuthenticated, countries, isAdmin, user, getCountryId, handleErrors])
+  }, [isAuthenticated, countries, isAdmin, user, getCountryId, handleErrors, isApproved])
 
   useEffect(() => {
     const countryId = getCountryId()
-    if (!isAuthenticated || !countryId) return
+    if (!isAuthenticated || !isApproved || !countryId) return
 
     getCurrencies(countryId).then(setCurrencies).catch(handleErrors)
-  }, [getCountryId, isAuthenticated, handleErrors])
+  }, [getCountryId, isAuthenticated, handleErrors, isApproved])
 
   useEffect(() => {
     getFrequencies().then(setFrequencies).catch(handleErrors)

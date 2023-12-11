@@ -16,7 +16,7 @@ import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
 import { useLocales } from 'src/locales'
 import { PaymentTableRow, PaymentTableToolbar } from 'src/sections/@dashboard/payment/list'
 import { formatDate } from 'src/utils/date'
-import { redirectOnError } from '../errors/handlers'
+import { redirectOnError } from 'src/utils/errorHandlers'
 
 export default function PaymentListPage() {
   const { user, isAdmin } = useAuthContext()
@@ -51,7 +51,7 @@ export default function PaymentListPage() {
     max: generateSetter('filterDatesMax'),
     min: generateSetter('filterDatesMin')
   }
-  const [countryId, setCountryId] = useState(user?.country.id)
+  const [countryId, setCountryId] = useState(user?.country?.id)
 
   const { translate, replaceTwoTranslated } = useLocales()
   const { hasSomeRole } = useAuthorization()
