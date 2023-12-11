@@ -85,6 +85,8 @@ const br: TranslationObject = {
     unsaved_changes: 'Tem mudanças sem salvar'
   },
   push: {
+    credentials_sent: 'Suas informações foram salvas com sucesso',
+    credentials_sent_error: 'Houve um erro mantendo suas informações',
     knowledge_base_error: 'Base de conhecimento para esta página ainda não implementada',
     changed_reliability: 'A confiabilidade mudou para a escola',
     changed_reliability_error: 'Ocorreu um erro alterando a confiabilidade para a escola',
@@ -125,7 +127,9 @@ const br: TranslationObject = {
     pay_payment: 'O pagamento foi marcado como pago',
     pay_payment_error: 'Ocorreu um erro marcando o pagamento conforme pago',
     approved_manually_contract: 'O contrato foi aprovado manualmente',
-    approved_manually_contract_error: 'Ocorreu um erro ao aprovar o contrato manualmente'
+    approved_manually_contract_error: 'Ocorreu um erro ao aprovar o contrato manualmente',
+    user_approved: 'Usuário aprovado corretamente',
+    user_approved_error: 'Houve um erro de aprovação do usuário'
   },
   duplicate_contract: {
     title: 'Duplicar contrato',
@@ -189,6 +193,11 @@ const br: TranslationObject = {
   publish_contract_modal: {
     title: 'Você está prestes a publicar o contrato.',
     content: 'Tem certeza de que deseja publicar este contrato?'
+  },
+  user_approve_modal: {
+    title: 'Você está prestes a aprovar o usuário {{name}} com email {{email}}.',
+    content:
+      'Depois de aprovar, eles poderão acessar o sistema como a função que você selecionar abaixo.'
   },
   payment_pay_modal: {
     title: 'Marque o pagamento conforme pago',
@@ -970,6 +979,13 @@ const br: TranslationObject = {
     generic: {
       title: 'Parece que houve um erro',
       content: 'Algo deu errado processando sua solicitação. Por favor, tente novamente.'
+    },
+    notVerified: {
+      title: 'Não verificado',
+      content:
+        'Obrigado por preencher suas informações, um usuário da administração aprovará e verificará sua conta o mais rápido possível.',
+      contentWithoutRoleAndCountry:
+        'Antes que um administrador possa aprovar a criação de sua conta, ele deve concluir as seguintes informações.'
     }
   },
   widgets: {
@@ -1102,7 +1118,10 @@ const br: TranslationObject = {
   none: 'Nenhum',
   pay_reciev: 'Recep. Paga.',
   reset_table: 'reiniciar tela',
-  help_request_subtitle: 'Conclua sua consulta abaixo ou'
+  help_request_subtitle: 'Conclua sua consulta abaixo ou',
+  user_approval: 'Aprovação do usuário',
+  reject: 'Rejeitar',
+  go_back: 'Voltar'
 }
 
 export default br

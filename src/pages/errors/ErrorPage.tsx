@@ -7,7 +7,7 @@ import { useTheme } from 'src/theme'
 
 type Props = {
   title: Translation
-  code: Translation | number
+  code?: Translation | number
   content?: Translation
   helmet: string
 }
@@ -27,10 +27,11 @@ export default function ErrorPage({ title, code, content, helmet }: Props) {
           justifyContent="center"
           style={{ width: '100%', textAlign: 'center' }}
         >
-          <Typography style={{ fontSize: '156px', fontWeight: '400' }} as="span">
-            {typeof code === 'number' ? code : translate(code)}
-          </Typography>
-
+          {code && (
+            <Typography style={{ fontSize: '156px', fontWeight: '400' }} as="span">
+              {typeof code === 'number' ? code : translate(code)}
+            </Typography>
+          )}
           <Typography
             as="h1"
             style={{ fontSize: '32px', fontWeight: '500', marginBottom: spacing.xl }}

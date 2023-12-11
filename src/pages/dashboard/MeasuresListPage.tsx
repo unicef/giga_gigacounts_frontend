@@ -31,8 +31,8 @@ import { MeasureTableRow, MeasureTableToolbar } from 'src/sections/@dashboard/me
 import { removeDuplicates } from 'src/utils/arrays'
 import { getConnectivityStatus } from 'src/utils/connectivity'
 import { formatDate } from 'src/utils/date'
+import { redirectOnError } from 'src/utils/errorHandlers'
 import { capitalizeFirstLetter } from 'src/utils/strings'
-import { redirectOnError } from '../errors/handlers'
 
 export default function MeasuresListPage() {
   const { page, rowsPerPage, setPage, setRowsPerPage } = useTable({
@@ -43,7 +43,7 @@ export default function MeasuresListPage() {
   const [schools, setSchools] = useState<ISchool[] | null>(null)
   const { translate } = useLocales()
   const navigate = useNavigate()
-  const [countryId, setCountryId] = useState(user?.country.id)
+  const [countryId, setCountryId] = useState(user?.country?.id)
   const [tableData, setTableData] = useState<ISchoolMeasuresExtended[] | null>(null)
   const [total, setTotal] = useState(0)
   const [searchParams, generateSetter] = useCustomSearchParams({
@@ -158,7 +158,7 @@ export default function MeasuresListPage() {
     setTableData(null)
     setSchools([])
     setFilterName('')
-    if (schoolPage === 1 && countryId !== user?.country.id) fetchPage(countryId, 1)
+    if (schoolPage === 1 && countryId !== user?.country?.id) fetchPage(countryId, 1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryId])
 
@@ -245,7 +245,7 @@ export default function MeasuresListPage() {
 
   const handleFilterCountry = (countryName: string) => {
     const selectedCountry = countries.find((c) => c.name === countryName) as ICountry
-    setCountryId(selectedCountry.id)
+    setCountryId(selectedCountry?.id)
   }
 
   const selectedCountryName = countries?.find((c) => c.id === countryId)?.name ?? ''

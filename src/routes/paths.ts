@@ -20,7 +20,6 @@ export const ROUTES = {
   dashboard: {
     root: createRoute(ROOTS_DASHBOARD, { name: 'dashboard' }),
     connection: createRoute('/connectivity', { root: ROOTS_DASHBOARD }),
-
     contract: {
       root: createRoute('/contract', {
         name: 'contracts_list',
@@ -53,6 +52,9 @@ export const ROUTES = {
       })
     },
     app: createRoute('/app', { root: ROOTS_DASHBOARD }),
+    userApproval: {
+      root: createRoute('/user-approval', { root: ROOTS_DASHBOARD, name: 'user-approval' })
+    },
     user: {
       root: createRoute('/user', { root: ROOTS_DASHBOARD, name: 'user' }),
       new: createRoute('/user/new', { root: ROOTS_DASHBOARD }),
@@ -114,5 +116,6 @@ export const ROUTES = {
   faqs: createRoute('/faqs'),
   page403: createRoute('/403'),
   page404: createRoute('/404'),
-  page500: createRoute('/500')
+  page500: createRoute('/500'),
+  notVerified: createRoute('/error/not-verified')
 }

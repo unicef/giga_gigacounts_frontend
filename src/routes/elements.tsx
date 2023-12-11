@@ -23,6 +23,7 @@ export const Page404 = Loadable(lazy(() => import('src/pages/errors/Page404')))
 export const GenericServerError = Loadable(
   lazy(() => import('src/pages/errors/GenericServerErrorPage'))
 )
+export const NotVerifiedPage = Loadable(lazy(() => import('src/pages/errors/NotVerifiedPage')))
 
 export const ContractsListPage = Loadable(
   lazy(() => import('src/pages/dashboard/ContractsListPage'))
@@ -40,3 +41,6 @@ export const SchoolReliabilityPage = Loadable(
 )
 
 export const UsersPage = Loadable(lazy(() => import('src/pages/dashboard/UsersPage')))
+export const UsersApprovalPage = Loadable(
+  lazy(() => import('src/pages/dashboard/UsersApprovalPage'))
+)

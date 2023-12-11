@@ -31,6 +31,7 @@ export default function UsersTableRow({ row, rowProps, lastName }: Props) {
   const { account } = useWeb3Context()
   const fundWallet = useModal()
   const withoutVerifiedWallet = useModal()
+
   const canFundWallet = hasSomeRole([UserRoles.GIGA_ADMIN]) && walletAddress
   const actions: {
     icon: Icon
@@ -55,16 +56,16 @@ export default function UsersTableRow({ row, rowProps, lastName }: Props) {
         {name} {lastName ?? ''}
       </TableCell>
       <TableCell style={{ verticalAlign: 'middle', width: '20%' }}>{roleName}</TableCell>
-      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '12.5%' : '15%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '10%' : '12.5%' }}>
         {countryName}
       </TableCell>
-      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '12.5%' : '15%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '10%' : '12.5%' }}>
         {ispName ?? STRING_DEFAULT}
       </TableCell>
-      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '12.5%' : '15%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '10%' : '12.5%' }}>
         {email}
       </TableCell>
-      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '12.5%' : '15%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: isAdmin ? '10%' : '12.5%' }}>
         {phoneNumber ?? STRING_DEFAULT}
       </TableCell>
       {isAdmin && (
@@ -82,7 +83,7 @@ export default function UsersTableRow({ row, rowProps, lastName }: Props) {
           )}
         </TableCell>
       )}
-      <TableCell style={{ verticalAlign: 'middle', width: '5%' }}>
+      <TableCell style={{ verticalAlign: 'middle', width: '15%' }}>
         {actions.map((opt) => (
           <ActionLink
             variant={opt.variant}

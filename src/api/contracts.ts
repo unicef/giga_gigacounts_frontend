@@ -66,10 +66,14 @@ export const updateContractDraft = async (contract: Contract) => {
   } catch (err) {
     if (
       err &&
-      err.errors &&
-      err.errors.some((error: { field: keyof IDraft; rule: string }) => error.field && error.rule)
+      err.response &&
+      err.response.data &&
+      err.response.data.errors &&
+      err.response.data.errors.some(
+        (error: { field: keyof IDraft; rule: string }) => error.field && error.rule
+      )
     ) {
-      throw err.errors.map(
+      throw err.response.data.errors.map(
         (error: { field: keyof IDraft; rule: string }) =>
           new ContractCreationError(
             `field_errors.${error.rule}` as Translation,

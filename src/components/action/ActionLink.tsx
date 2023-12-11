@@ -20,9 +20,16 @@ type Props = {
     | 'disabled'
     | 'textSecondary'
     | 'textTertiary'
+  size?: 16 | 20 | 24 | 32 | '16' | '20' | '24' | '32'
 }
 
-export default function ActionLink({ onClick, description, icon, variant = 'default' }: Props) {
+export default function ActionLink({
+  onClick,
+  description,
+  icon,
+  variant = 'default',
+  size = 16
+}: Props) {
   const Icon = ICONS[icon]
   const { translate } = useLocales()
   const { spacing, palette } = useTheme()
@@ -37,7 +44,7 @@ export default function ActionLink({ onClick, description, icon, variant = 'defa
     success: palette.success.dark,
     warning: palette.warning.dark,
     error: palette.error.dark,
-    disabled: palette.text.disabled,
+    disabled: palette.text.disabled
   }
 
   const color = colors[variant]
@@ -47,13 +54,13 @@ export default function ActionLink({ onClick, description, icon, variant = 'defa
       style={{
         color,
         cursor: 'pointer',
-        fontSize: 12,
+        fontSize: Number(size) - 4,
         display: 'flex',
         alignItems: 'center',
         gap: spacing.xxs
       }}
     >
-      <Icon size={16} /> {capitalizeFirstLetter(translate(description))}
+      <Icon size={size} /> {capitalizeFirstLetter(translate(description))}
     </Link>
   )
 }

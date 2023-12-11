@@ -1,39 +1,41 @@
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate } from 'react-router'
-import { ICountry, IExternalUserWithId, IUser } from 'src/@types'
-import { getUsers } from 'src/api/user'
-import { useAuthContext } from 'src/auth/useAuthContext'
+import { IRole, IUser, UserRoles } from 'src/@types'
+import { approveUser, getUserRoles, getUsersApprovalsRequest } from 'src/api/user'
 import { Banner } from 'src/components/banner'
 import CustomDataTable from 'src/components/data-table/CustomDataTable'
 import { useTable } from 'src/components/table'
 import { FILTER_ALL_DEFAULT, KEY_DEFAULTS } from 'src/constants'
 import { useBusinessContext } from 'src/context/business/BusinessContext'
 import { useCustomSearchParams } from 'src/hooks/useCustomSearchParams'
+import { useSnackbar } from 'src/hooks/useSnackbar'
 import { useLocales } from 'src/locales'
-import { UsersTableRow, UsersTableToolbar } from 'src/sections/@dashboard/users/list'
+import {
+  UsersApprovalTableRow,
+  UsersApprovalTableToolbar
+} from 'src/sections/@dashboard/users/approval'
 import { removeDuplicates } from 'src/utils/arrays'
 import { redirectOnError } from 'src/utils/errorHandlers'
 
-export default function UsersPage() {
+export default function UsersApprovalPage() {
   const navigate = useNavigate()
   const { page, rowsPerPage, setPage, setRowsPerPage } = useTable()
-  const { user, isAdmin } = useAuthContext()
+  const { pushSuccess, pushError } = useSnackbar()
   const { countries } = useBusinessContext()
 
-  const [countryId, setCountryId] = useState(user?.country.id ?? '')
-  const [tableData, setTableData] = useState<(IExternalUserWithId | IUser)[] | null>(null)
+  const [tableData, setTableData] = useState<(IUser & { roleName: string })[] | null>(null)
+  const [userRoles, setUserRoles] = useState<Omit<IRole, 'permissions'>[] | null>(null)
 
   const [searchParams, generateSetter] = useCustomSearchParams({
     filterName: '',
     filterRole: FILTER_ALL_DEFAULT,
     filterIsp: FILTER_ALL_DEFAULT
   })
-  const { filterName, filterRole, filterIsp } = searchParams
+  const { filterName, filterRole } = searchParams
 
   const setFilterName = generateSetter('filterName')
   const setFilterRole = generateSetter('filterRole')
-  const setFilterIsp = generateSetter('filterIsp')
 
   const { translate } = useLocales()
 
@@ -43,80 +45,85 @@ export default function UsersPage() {
     { key: 'countryName', header: translate('country') },
     { key: 'ispName', header: translate('isp') },
     { key: 'email', header: translate('email') },
-    { key: 'phoneNumber', header: translate('phone_number') }
+    { key: KEY_DEFAULTS[0], header: '' },
+    { key: KEY_DEFAULTS[1], header: '' }
   ]
-  if (isAdmin) TABLE_HEAD.push({ key: 'walletAddress', header: translate('wallet.label') })
-
-  TABLE_HEAD.push({ key: KEY_DEFAULTS[0], header: '' }, { key: KEY_DEFAULTS[1], header: '' })
 
   useEffect(() => {
-    getUsers(countryId, [], true)
+    getUsersApprovalsRequest()
       .then(setTableData)
       .catch((err) => redirectOnError(navigate, err))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countryId])
+  }, [])
+
+  useEffect(() => {
+    getUserRoles()
+      .then(setUserRoles)
+      .catch((err) => redirectOnError(navigate, err))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const dataFiltered = tableData
     ? applyFilter({
         inputData: tableData,
         filterName,
-        filterRole,
-        filterIsp
-      }).map((r) => ({ ...r, roleName: r.role.name }))
+        filterRole
+      }).map((r) => ({ ...r, roleName: r.role?.name }))
     : null
 
   const isEmpty = Boolean(tableData && !tableData.length)
   const isNotFound = !isEmpty && Boolean(dataFiltered && !dataFiltered.length)
 
-  const roleOptions = tableData
+  const tableRoleOptions = tableData
     ? removeDuplicates([
         FILTER_ALL_DEFAULT,
-        ...tableData.map((u) => u.role.name || FILTER_ALL_DEFAULT)
+        ...tableData.map((u) => u.role?.name || FILTER_ALL_DEFAULT)
       ])
     : []
 
-  const ispOptions = tableData
-    ? removeDuplicates([
-        FILTER_ALL_DEFAULT,
-        ...tableData.map((u) => ('ispName' in u ? u.ispName : FILTER_ALL_DEFAULT))
-      ])
-    : []
-
-  const handleFilterCountry = (countryName: string) => {
-    const selectedCountry = countries.find((c) => c.name === countryName) as ICountry
-    setCountryId(selectedCountry.id)
+  const handleApprove = (id: string) => (role: UserRoles | '', ispId: string) => {
+    if (role === '') return
+    const prevUsers = tableData
+    setTableData((prev) => (prev ? prev.filter((u) => id !== u.id) : null))
+    approveUser(id, role, ispId)
+      .then(() => pushSuccess('push.user_approved'))
+      .catch(() => {
+        pushError('push.user_approved_error')
+        setTableData(prevUsers)
+      })
   }
-  const selectedCountryName = countries?.find((c) => c.id === countryId)?.name ?? ''
+
+  const filterOutRoles = [UserRoles.GIGA_ADMIN, UserRoles.GIGA_VIEW_ONLY]
+  const roleOptions = userRoles
+    ? removeDuplicates(userRoles)
+        .filter((r) => r?.code && !filterOutRoles.includes(r?.code))
+        .sort((a, b) => a.name.localeCompare(b.name))
+    : []
 
   return (
     <>
       <Helmet>
-        <title> Users: List | Gigacounts</title>
+        <title> User Approval: List | Gigacounts</title>
       </Helmet>
-      <Banner
-        subtitle={selectedCountryName && isAdmin ? selectedCountryName : ''}
-        title={translate('stakeholders_and_collaborators')}
-      />
+      <Banner title={translate('user_approval')} />
       <CustomDataTable
         isSortable
-        RowComponent={UsersTableRow}
+        RowComponent={UsersApprovalTableRow}
         getRowComponentProps={(row) => ({
-          lastName: 'lastName' in row ? row.lastName : undefined
+          lastName: 'lastName' in row ? row.lastName : undefined,
+          requestedRole: row.role,
+          roleOptions,
+          approveUser: handleApprove(row.id),
+          countryId: countries.find((c) => c.name === row.countryName)?.id ?? ''
         })}
         ToolbarContent={
-          <UsersTableToolbar
+          <UsersApprovalTableToolbar
             filterSearch={filterName}
-            filterIsp={filterIsp}
-            setFilterIsp={setFilterIsp}
-            ispOptions={ispOptions}
             filterRole={filterRole}
             setFilterRole={setFilterRole}
-            roleOptions={roleOptions}
-            countryName={countries.find((c) => c.id === countryId)?.name ?? ''}
-            setFilterCountry={handleFilterCountry}
+            roleOptions={tableRoleOptions}
             setFilterSearch={setFilterName}
             setPage={setPage}
-            countryOptions={countries.map((c) => c.name)}
           />
         }
         getDataKey={(row) => row.email}
@@ -138,13 +145,11 @@ export default function UsersPage() {
 function applyFilter({
   inputData,
   filterName,
-  filterRole,
-  filterIsp
+  filterRole
 }: {
   filterRole: string
-  inputData: (IUser | IExternalUserWithId)[]
+  inputData: (IUser & { roleName: string })[]
   filterName: string
-  filterIsp: string
 }) {
   if (filterName)
     inputData = inputData.filter((user) =>
@@ -152,9 +157,6 @@ function applyFilter({
     )
   if (filterRole !== FILTER_ALL_DEFAULT)
     inputData = inputData.filter((user) => user.role.name === filterRole)
-
-  if (filterIsp !== FILTER_ALL_DEFAULT)
-    inputData = inputData.filter((user) => ('ispName' in user ? user.ispName === filterIsp : false))
 
   return inputData
 }

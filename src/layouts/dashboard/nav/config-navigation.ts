@@ -1,10 +1,11 @@
-import { UserRoles } from 'src/@types';
-import { UserSettings, Views } from 'src/constants';
-import { NavListProps } from 'src/layouts/dashboard/nav/types';
-import { ROUTES } from 'src/routes/paths';
+import { UserRoles } from 'src/@types'
+import { UserSettings, Views } from 'src/constants'
+import { NavListProps } from 'src/layouts/dashboard/nav/types'
+import { ROUTES } from 'src/routes/paths'
 
 export const VIEW_ROLES = {
-  schools: [UserRoles.GIGA_ADMIN]
+  schools: [UserRoles.GIGA_ADMIN],
+  userApproval: [UserRoles.GIGA_ADMIN]
 } as const
 export const VIEW_SETTINGS = {
   automatic_contracts: [{ name: UserSettings.SETTING_AUTOMATIC_CONTRACTS, value: true }]
@@ -15,7 +16,7 @@ export const VIEW_PERMISSIONS = {
   automatic_contracts: [`${Views.contract}.read`],
   payments: [`${Views.payment}.read`],
   payments_logs: [`${Views.paymentLog}.read`],
-  schools: [`${Views.school}.read`],
+  schools: [`${Views.school}.read`]
 } as const
 
 const navConfig = [
@@ -42,7 +43,7 @@ const navConfig = [
       {
         title: 'schools_connectivity',
         path: ROUTES.dashboard.connection.route,
-        icon: 'Connection',
+        icon: 'Connection'
       },
       {
         title: 'schools',
@@ -55,6 +56,12 @@ const navConfig = [
         title: 'stakeholders',
         path: ROUTES.dashboard.users.root.route,
         icon: 'Users'
+      },
+      {
+        title: 'user_approval',
+        path: ROUTES.dashboard.userApproval.root.route,
+        icon: 'UserApproval',
+        roles: VIEW_ROLES.userApproval
       },
       {
         title: 'automatic_contracts',

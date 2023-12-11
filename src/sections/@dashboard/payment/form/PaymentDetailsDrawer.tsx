@@ -1,6 +1,6 @@
-import { Button, Modal, ProgressIndicator, ProgressStep } from '@carbon/react'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Button, Modal, ProgressIndicator, ProgressStep } from '@carbon/react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import {
   ContractDetails,
   ContractStatus,
@@ -14,25 +14,25 @@ import {
   PaymentForm,
   PaymentStep,
   Translation
-} from 'src/@types'
-import { getContractDetails } from 'src/api/contracts'
-import { changePaymentStatus, createPayment, updatePayment } from 'src/api/payments'
-import CancelDialog from 'src/components/cancel-dialog/CancelDialog'
-import Drawer from 'src/components/drawer/Drawer'
-import FormProvider from 'src/components/hook-form/FormProvider'
-import { Stack } from 'src/components/stack'
-import { SectionTitle, Typography } from 'src/components/typography'
-import { ICONS, PICTOGRAMS } from 'src/constants'
-import { useModal } from 'src/hooks/useModal'
-import { useSnackbar } from 'src/hooks/useSnackbar'
-import { useLocales } from 'src/locales'
-import { redirectOnError } from 'src/pages/errors/handlers'
-import { useTheme } from 'src/theme'
-import { applyToEveryWord, capitalizeFirstLetter } from 'src/utils/strings'
-import { usePaymentSchema } from 'src/validations/payment'
-import PaymentViewDrawer from './PaymentViewDrawer'
-import Step1 from './Step1'
-import Step2 from './Step2'
+} from 'src/@types';
+import { getContractDetails } from 'src/api/contracts';
+import { changePaymentStatus, createPayment, updatePayment } from 'src/api/payments';
+import CancelDialog from 'src/components/cancel-dialog/CancelDialog';
+import Drawer from 'src/components/drawer/Drawer';
+import FormProvider from 'src/components/hook-form/FormProvider';
+import { Stack } from 'src/components/stack';
+import { SectionTitle, Typography } from 'src/components/typography';
+import { ICONS, PICTOGRAMS } from 'src/constants';
+import { useModal } from 'src/hooks/useModal';
+import { useSnackbar } from 'src/hooks/useSnackbar';
+import { useLocales } from 'src/locales';
+import { useTheme } from 'src/theme';
+import { redirectOnError } from 'src/utils/errorHandlers';
+import { applyToEveryWord, capitalizeFirstLetter } from 'src/utils/strings';
+import { usePaymentSchema } from 'src/validations/payment';
+import PaymentViewDrawer from './PaymentViewDrawer';
+import Step1 from './Step1';
+import Step2 from './Step2';
 
 interface Props {
   paymentFrequency: IFrequency['name']

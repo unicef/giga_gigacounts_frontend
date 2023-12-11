@@ -32,7 +32,7 @@ export default function GeneralAppPage() {
   const [contracts, setContracts] = useState<IDashboardContract[] | null>(null)
   const { user, isAdmin } = useAuthContext()
   const { countries } = useBusinessContext()
-  const [countryId, setCountryId] = useState(user?.country.id)
+  const [countryId, setCountryId] = useState(user?.country?.id)
 
   useEffect(() => {
     if (canViewPayments)
@@ -91,7 +91,7 @@ export default function GeneralAppPage() {
                   id="dashboard-country-filter"
                   size="lg"
                   onChange={({ selectedItem }: { selectedItem: ICountry | null }) => {
-                    setCountryId(selectedItem?.id ?? user?.country.id)
+                    setCountryId(selectedItem?.id ?? user?.country?.id)
                   }}
                   selectedItem={countries.find((c) => c.id === countryId)}
                   items={[...countries].sort((a, b) => a.name.localeCompare(b.name))}

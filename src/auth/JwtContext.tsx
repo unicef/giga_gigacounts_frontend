@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router'
 import { GenericServerError, UserRoles } from 'src/@types'
 import { getUserProfile } from 'src/api/user'
 import LoadingScreen from 'src/components/loading-screen/LoadingScreen'
+import ApprovalBasedGuard from './ApprovalBasedGuard'
 import { loginRequest } from './auth-config'
 import { AuthUserType, AuthorizationContext } from './types'
 import { isValidToken, setSession } from './utils'
@@ -72,7 +73,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   return (
     <>
       <AuthenticatedTemplate>
-        <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={memoizedValue}>
+          <ApprovalBasedGuard user={user}>{children}</ApprovalBasedGuard>
+        </AuthContext.Provider>
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
         <LoadingScreen />

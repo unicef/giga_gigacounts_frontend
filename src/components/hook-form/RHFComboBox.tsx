@@ -8,7 +8,7 @@ type RHFComboBoxProps<T> = {
   native?: boolean
   maxHeight?: boolean | number
   label: string
-  options: { value: T; label: string }[]
+  items: { value: T; label: string }[]
   onBlur?: () => void
   disabled?: boolean
   selectedItem?: { value: T; label: string }
@@ -23,13 +23,14 @@ type RHFComboBoxProps<T> = {
   readOnly?: boolean
   size?: 'md' | 'lg' | 'sm'
   defaultValue: { value: T; label: string }
+  placeholder?: string
 }
 
 export default function RHFComboBox<T>({
   name,
   native,
   label,
-  options,
+  items,
   id,
   defaultValue,
   ...other
@@ -42,11 +43,11 @@ export default function RHFComboBox<T>({
       render={({ field, fieldState: { error } }) => (
         <ComboBox
           id={id}
-          items={options}
+          items={items}
           titleText={label}
           itemToString={(item) => (item as { value: T; label: string })?.label ?? ''}
           {...other}
-          selectedItem={options.find((f) => f.value === field.value)}
+          selectedItem={items.find((f) => f.value === field.value)}
           onChange={(e: { selectedItem: { value: T; label: string } | null }) => {
             if (!e.selectedItem) {
               field.onChange(defaultValue.value)
@@ -55,7 +56,7 @@ export default function RHFComboBox<T>({
           }}
           invalid={Boolean(error)}
           invalidText={error?.message}
-          disabled={!other.readOnly && (other.disabled || options.length <= 1)}
+          disabled={!other.readOnly && (other.disabled || items.length <= 1)}
         />
       )}
     />

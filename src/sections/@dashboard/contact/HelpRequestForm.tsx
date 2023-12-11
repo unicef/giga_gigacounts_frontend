@@ -13,8 +13,8 @@ import { Stack } from 'src/components/stack';
 import { ICONS } from 'src/constants';
 import { useSnackbar } from 'src/hooks/useSnackbar';
 import { useLocales } from 'src/locales';
-import { redirectOnError } from 'src/pages/errors/handlers';
 import { useTheme } from 'src/theme';
+import { redirectOnError } from 'src/utils/errorHandlers';
 import { capitalizeFirstLetter } from 'src/utils/strings';
 import { useHelpRequestSchema } from 'src/validations/help-request';
 

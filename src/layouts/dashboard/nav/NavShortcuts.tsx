@@ -25,7 +25,7 @@ export default function NavShortcuts() {
           userHasAllSettings && (
             <>
               <NavItem key={item.title} isActive={false} data={item} />
-              <SideNavDivider />
+              <SideNavDivider key={`divider ${item.title}`} />
             </>
           )
         )
